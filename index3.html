@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Xếp Kẹo - Trò chơi nhiều màn</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.55), transparent 34%),
+        linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #333;
+    }
+
+    .game-wrapper {
+      width: min(96vw, 620px);
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(14px);
+      border-radius: 30px;
+      box-shadow: 0 22px 70px rgba(120, 70, 40, 0.26);
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.78);
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .game-header h1 {
+      font-size: 32px;
+      color: #ff6b35;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .game-header p {
+      color: #7a5b4b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .level-title {
+      margin: 14px 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: #fff7f0;
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: inset 0 0 0 1px rgba(255, 132, 82, 0.16);
+    }
+
+    .level-title strong {
+      color: #ff5c35;
+      font-size: 18px;
+    }
+
+    .level-title span {
+      color: #8c6b5b;
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .info-panel {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .info-card {
+      background: #fff7f0;
+      border-radius: 18px;
+      padding: 12px 8px;
+      text-align: center;
+      box-shadow: inset 0 0 0 1px rgba(255, 132, 82, 0.16);
+    }
+
+    .info-card span {
+      display: block;
+      font-size: 12px;
+      color: #8c6b5b;
+      margin-bottom: 4px;
+    }
+
+    .info-card strong {
+      font-size: 20px;
+      color: #ff6b35;
+    }
+
+    .progress-wrap {
+      margin: 10px 0 14px;
+      background: #ffe8d8;
+      height: 16px;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(160, 90, 40, 0.16);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff7a45, #ff4f70);
+      transition: width 0.25s ease;
+    }
+
+    .board {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 6px;
+      background: rgba(255, 132, 82, 0.18);
+      padding: 8px;
+      border-radius: 24px;
+      box-shadow:
+        inset 0 8px 18px rgba(150, 90, 50, 0.14),
+        0 10px 30px rgba(150, 90, 50, 0.15);
+      user-select: none;
+      touch-action: none;
+    }
+
+    .tile {
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(24px, 7vw, 42px);
+      cursor: pointer;
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease,
+        filter 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tile::after {
+      content: "";
+      position: absolute;
+      top: 10%;
+      left: 14%;
+      width: 36%;
+      height: 24%;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.38);
+      transform: rotate(-25deg);
+      pointer-events: none;
+    }
+
+    .tile:hover {
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .tile.selected {
+      transform: scale(1.08);
+      box-shadow:
+        0 0 0 4px #fff,
+        0 0 0 8px rgba(255, 107, 53, 0.55),
+        0 8px 20px rgba(255, 107, 53, 0.35);
+      z-index: 2;
+    }
+
+    .tile.matched {
+      animation: pop 0.28s ease forwards;
+    }
+
+    .tile.shake {
+      animation: shake 0.28s ease;
+    }
+
+    .tile.empty {
+      opacity: 0;
+      transform: scale(0.2);
+      pointer-events: none;
+    }
+
+    .type-0 {
+      background: linear-gradient(145deg, #ff5f6d, #ffc371);
+    }
+
+    .type-1 {
+      background: linear-gradient(145deg, #f9d423, #ff4e50);
+    }
+
+    .type-2 {
+      background: linear-gradient(145deg, #a18cd1, #fbc2eb);
+    }
+
+    .type-3 {
+      background: linear-gradient(145deg, #43cea2, #185a9d);
+    }
+
+    .type-4 {
+      background: linear-gradient(145deg, #84fab0, #8fd3f4);
+    }
+
+    .type-5 {
+      background: linear-gradient(145deg, #f6d365, #fda085);
+    }
+
+    .status {
+      min-height: 26px;
+      text-align: center;
+      margin: 14px 0 10px;
+      color: #7a4e39;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      padding: 13px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #ff7a45, #ff4f70);
+      color: white;
+      box-shadow: 0 8px 18px rgba(255, 89, 88, 0.32);
+    }
+
+    .secondary-btn {
+      background: #fff2e8;
+      color: #ff6b35;
+      box-shadow: inset 0 0 0 1px rgba(255, 107, 53, 0.2);
+    }
+
+    .level-panel {
+      margin-top: 16px;
+      background: rgba(255, 247, 240, 0.82);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255, 132, 82, 0.16);
+    }
+
+    .level-panel h2 {
+      font-size: 15px;
+      color: #7a4e39;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .level-btn {
+      padding: 10px 4px;
+      border-radius: 14px;
+      background: #fff;
+      color: #ff6b35;
+      box-shadow: inset 0 0 0 1px rgba(255, 107, 53, 0.2);
+      font-size: 13px;
+    }
+
+    .level-btn.active {
+      background: linear-gradient(135deg, #ff7a45, #ff4f70);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(255, 89, 88, 0.25);
+    }
+
+    .level-btn.locked {
+      color: #9f8f86;
+      background: #f2ebe7;
+      box-shadow: none;
+    }
+
+    .tips {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 12px;
+      color: #8a6a58;
+      line-height: 1.6;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      60% {
+        transform: scale(1.28);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(0.15);
+        opacity: 0;
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      50% {
+        transform: translateX(5px);
+      }
+
+      75% {
+        transform: translateX(-4px);
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 12px;
+      }
+
+      .game-wrapper {
+        padding: 16px;
+        border-radius: 22px;
+      }
+
+      .game-header h1 {
+        font-size: 26px;
+      }
+
+      .level-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .level-title span {
+        text-align: left;
+      }
+
+      .info-panel {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .board {
+        gap: 4px;
+        padding: 6px;
+        border-radius: 18px;
+      }
+
+      .tile {
+        border-radius: 13px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .level-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .info-card strong {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="game-wrapper">
+    <header class="game-header">
+      <h1>Xếp Kẹo</h1>
+      <p>Đổi vị trí hai ô liền kề, ghép 3 hình giống nhau trở lên để xóa điểm</p>
+    </header>
+
+    <section class="level-title">
+      <strong id="levelName">Màn 1</strong>
+      <span id="levelDesc">Mục tiêu cơ bản</span>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-card">
+        <span>Điểm</span>
+        <strong id="score">0</strong>
+      </div>
+
+      <div class="info-card">
+        <span>Mục tiêu</span>
+        <strong id="target">500</strong>
+      </div>
+
+      <div class="info-card">
+        <span>Lượt</span>
+        <strong id="moves">30</strong>
+      </div>
+
+      <div class="info-card">
+        <span>Kỷ lục</span>
+        <strong id="best">0</strong>
+      </div>
+    </section>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <section id="board" class="board"></section>
+
+    <div id="status" class="status">Nhấn hoặc kéo hai ô liền kề để bắt đầu chơi</div>
+
+    <div class="controls">
+      <button class="primary-btn" id="restartBtn">Chơi lại</button>
+      <button class="secondary-btn" id="shuffleBtn">Xáo trộn</button>
+      <button class="primary-btn" id="nextBtn" disabled>Màn tiếp theo</button>
+    </div>
+
+    <section class="level-panel">
+      <h2>Chọn màn chơi</h2>
+      <div class="level-grid" id="levelGrid"></div>
+    </section>
+
+    <div class="tips">
+      Luật chơi: Mỗi lần đổi vị trí hợp lệ sẽ mất 1 lượt. Đạt đủ điểm mục tiêu để mở khóa màn tiếp theo.
+    </div>
+  </main>
+
+  <script>
+    const boardEl = document.getElementById("board");
+    const scoreEl = document.getElementById("score");
+    const targetEl = document.getElementById("target");
+    const movesEl = document.getElementById("moves");
+    const bestEl = document.getElementById("best");
+    const statusEl = document.getElementById("status");
+    const restartBtn = document.getElementById("restartBtn");
+    const shuffleBtn = document.getElementById("shuffleBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const levelGridEl = document.getElementById("levelGrid");
+    const levelNameEl = document.getElementById("levelName");
+    const levelDescEl = document.getElementById("levelDesc");
+    const progressBarEl = document.getElementById("progressBar");
+
+    const SIZE = 8;
+    const TOTAL = SIZE * SIZE;
+
+    const CANDIES = ["🍓", "🍋", "🍇", "💎", "🍀", "⭐"];
+
+    const LEVELS = [
+      {
+        name: "Màn 1",
+        desc: "Khởi động nhẹ nhàng",
+        target: 500,
+        moves: 30,
+        candyCount: 5
+      },
+      {
+        name: "Màn 2",
+        desc: "Tăng tốc một chút",
+        target: 800,
+        moves: 28,
+        candyCount: 5
+      },
+      {
+        name: "Màn 3",
+        desc: "Cần tạo combo nhiều hơn",
+        target: 1100,
+        moves: 26,
+        candyCount: 5
+      },
+      {
+        name: "Màn 4",
+        desc: "Thêm biểu tượng mới",
+        target: 1400,
+        moves: 26,
+        candyCount: 6
+      },
+      {
+        name: "Màn 5",
+        desc: "Ít lượt hơn, điểm cao hơn",
+        target: 1700,
+        moves: 24,
+        candyCount: 6
+      },
+      {
+        name: "Màn 6",
+        desc: "Thử thách combo",
+        target: 2100,
+        moves: 24,
+        candyCount: 6
+      },
+      {
+        name: "Màn 7",
+        desc: "Cần tính toán nước đi",
+        target: 2500,
+        moves: 22,
+        candyCount: 6
+      },
+      {
+        name: "Màn 8",
+        desc: "Màn khó",
+        target: 3000,
+        moves: 22,
+        candyCount: 6
+      },
+      {
+        name: "Màn 9",
+        desc: "Gần tới chiến thắng",
+        target: 3600,
+        moves: 20,
+        candyCount: 6
+      },
+      {
+        name: "Màn 10",
+        desc: "Thử thách cuối cùng",
+        target: 4500,
+        moves: 20,
+        candyCount: 6
+      }
+    ];
+
+    let board = [];
+    let score = 0;
+    let moves = 30;
+    let currentLevelIndex = 0;
+    let highestUnlocked = Number(localStorage.getItem("match3_vi_highest_unlocked") || 0);
+    let bestByLevel = loadBestByLevel();
+
+    let selectedIndex = null;
+    let pointerStartIndex = null;
+    let suppressNextClick = false;
+    let isBusy = false;
+    let isGameOver = false;
+    let isPassed = false;
+
+    function loadBestByLevel() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("match3_vi_best_by_level") || "{}");
+        return saved && typeof saved === "object" ? saved : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem("match3_vi_highest_unlocked", String(highestUnlocked));
+      localStorage.setItem("match3_vi_best_by_level", JSON.stringify(bestByLevel));
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function currentLevel() {
+      return LEVELS[currentLevelIndex];
+    }
+
+    function randomCandy() {
+      return Math.floor(Math.random() * currentLevel().candyCount);
+    }
+
+    function rowOf(index) {
+      return Math.floor(index / SIZE);
+    }
+
+    function colOf(index) {
+      return index % SIZE;
+    }
+
+    function isAdjacent(a, b) {
+      const diff = Math.abs(a - b);
+
+      if (diff === SIZE) return true;
+
+      if (diff === 1 && rowOf(a) === rowOf(b)) {
+        return true;
+      }
+
+      return false;
+    }
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function updateStats() {
+      const level = currentLevel();
+      const best = bestByLevel[currentLevelIndex] || 0;
+      const progress = Math.min(100, Math.floor((score / level.target) * 100));
+
+      scoreEl.textContent = score;
+      targetEl.textContent = level.target;
+      movesEl.textContent = moves;
+      bestEl.textContent = best;
+      levelNameEl.textContent = level.name;
+      levelDescEl.textContent = level.desc;
+      progressBarEl.style.width = progress + "%";
+
+      nextBtn.disabled = !canGoNextLevel();
+
+      renderLevelButtons();
+    }
+
+    function canGoNextLevel() {
+      if (currentLevelIndex >= LEVELS.length - 1) {
+        return false;
+      }
+
+      return highestUnlocked >= currentLevelIndex + 1;
+    }
+
+    function createCleanBoard() {
+      board = new Array(TOTAL).fill(null);
+
+      for (let i = 0; i < TOTAL; i++) {
+        let candy;
+
+        do {
+          candy = randomCandy();
+        } while (
+          (
+            colOf(i) >= 2 &&
+            board[i - 1] === candy &&
+            board[i - 2] === candy
+          )
+          ||
+          (
+            rowOf(i) >= 2 &&
+            board[i - SIZE] === candy &&
+            board[i - SIZE * 2] === candy
+          )
+        );
+
+        board[i] = candy;
+      }
+    }
+
+    function renderBoard(matchedSet = new Set(), shakeSet = new Set()) {
+      boardEl.innerHTML = "";
+
+      for (let i = 0; i < TOTAL; i++) {
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.dataset.index = i;
+
+        const value = board[i];
+
+        if (value === null || value === undefined) {
+          tile.classList.add("empty");
+        } else {
+          tile.classList.add(`type-${value}`);
+          tile.textContent = CANDIES[value];
+        }
+
+        if (selectedIndex === i) {
+          tile.classList.add("selected");
+        }
+
+        if (matchedSet.has(i)) {
+          tile.classList.add("matched");
+        }
+
+        if (shakeSet.has(i)) {
+          tile.classList.add("shake");
+        }
+
+        boardEl.appendChild(tile);
+      }
+    }
+
+    function renderLevelButtons() {
+      levelGridEl.innerHTML = "";
+
+      LEVELS.forEach((level, index) => {
+        const button = document.createElement("button");
+        button.className = "level-btn";
+
+        if (index === currentLevelIndex) {
+          button.classList.add("active");
+        }
+
+        if (index > highestUnlocked) {
+          button.classList.add("locked");
+          button.textContent = "🔒 " + (index + 1);
+        } else {
+          button.textContent = "Màn " + (index + 1);
+        }
+
+        button.addEventListener("click", () => {
+          if (index > highestUnlocked) {
+            setStatus("Màn này chưa được mở khóa");
+            return;
+          }
+
+          loadLevel(index);
+        });
+
+        levelGridEl.appendChild(button);
+      });
+    }
+
+    function findMatches() {
+      const matches = new Set();
+
+      for (let r = 0; r < SIZE; r++) {
+        let count = 1;
+
+        for (let c = 1; c <= SIZE; c++) {
+          const currentIndex = r * SIZE + c;
+          const prevIndex = r * SIZE + c - 1;
+
+          const current = c < SIZE ? board[currentIndex] : null;
+          const previous = board[prevIndex];
+
+          if (current !== null && current === previous) {
+            count++;
+          } else {
+            if (count >= 3 && previous !== null) {
+              for (let k = 0; k < count; k++) {
+                matches.add(r * SIZE + c - 1 - k);
+              }
+            }
+
+            count = 1;
+          }
+        }
+      }
+
+      for (let c = 0; c < SIZE; c++) {
+        let count = 1;
+
+        for (let r = 1; r <= SIZE; r++) {
+          const currentIndex = r * SIZE + c;
+          const prevIndex = (r - 1) * SIZE + c;
+
+          const current = r < SIZE ? board[currentIndex] : null;
+          const previous = board[prevIndex];
+
+          if (current !== null && current === previous) {
+            count++;
+          } else {
+            if (count >= 3 && previous !== null) {
+              for (let k = 0; k < count; k++) {
+                matches.add((r - 1 - k) * SIZE + c);
+              }
+            }
+
+            count = 1;
+          }
+        }
+      }
+
+      return matches;
+    }
+
+    function swapTiles(a, b) {
+      const temp = board[a];
+      board[a] = board[b];
+      board[b] = temp;
+    }
+
+    function removeMatches(matchSet) {
+      for (const index of matchSet) {
+        board[index] = null;
+      }
+    }
+
+    function dropCandies() {
+      for (let c = 0; c < SIZE; c++) {
+        let writeRow = SIZE - 1;
+
+        for (let r = SIZE - 1; r >= 0; r--) {
+          const index = r * SIZE + c;
+
+          if (board[index] !== null) {
+            const writeIndex = writeRow * SIZE + c;
+
+            board[writeIndex] = board[index];
+
+            if (writeIndex !== index) {
+              board[index] = null;
+            }
+
+            writeRow--;
+          }
+        }
+      }
+    }
+
+    function fillEmptyCandies() {
+      for (let i = 0; i < TOTAL; i++) {
+        if (board[i] === null) {
+          board[i] = randomCandy();
+        }
+      }
+    }
+
+    function hasPossibleMove() {
+      for (let i = 0; i < TOTAL; i++) {
+        const right = i + 1;
+        const down = i + SIZE;
+
+        if (right < TOTAL && rowOf(i) === rowOf(right)) {
+          swapTiles(i, right);
+          const hasMatch = findMatches().size > 0;
+          swapTiles(i, right);
+
+          if (hasMatch) return true;
+        }
+
+        if (down < TOTAL) {
+          swapTiles(i, down);
+          const hasMatch = findMatches().size > 0;
+          swapTiles(i, down);
+
+          if (hasMatch) return true;
+        }
+      }
+
+      return false;
+    }
+
+    function shuffleBoard() {
+      let safeCount = 0;
+
+      do {
+        for (let i = board.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          swapTiles(i, j);
+        }
+
+        safeCount++;
+
+        if (safeCount > 120) {
+          createCleanBoard();
+          break;
+        }
+      } while (findMatches().size > 0 || !hasPossibleMove());
+
+      selectedIndex = null;
+      renderBoard();
+    }
+
+    async function resolveBoard() {
+      let combo = 0;
+      let matches = findMatches();
+
+      while (matches.size > 0) {
+        combo++;
+
+        let addScore = matches.size * 10 * combo;
+
+        if (matches.size >= 4) {
+          addScore += 30;
+        }
+
+        if (matches.size >= 5) {
+          addScore += 80;
+        }
+
+        score += addScore;
+
+        setStatus(`Đã xóa ${matches.size} ô, combo x${combo}, +${addScore} điểm`);
+        updateBestScore();
+        updateStats();
+
+        renderBoard(matches);
+        await sleep(260);
+
+        removeMatches(matches);
+        renderBoard();
+        await sleep(120);
+
+        dropCandies();
+        renderBoard();
+        await sleep(180);
+
+        fillEmptyCandies();
+        renderBoard();
+        await sleep(180);
+
+        matches = findMatches();
+      }
+
+      if (!hasPossibleMove() && !isGameOver) {
+        setStatus("Không còn nước đi hợp lệ, đã tự động xáo trộn");
+        shuffleBoard();
+      }
+    }
+
+    function updateBestScore() {
+      const oldBest = bestByLevel[currentLevelIndex] || 0;
+
+      if (score > oldBest) {
+        bestByLevel[currentLevelIndex] = score;
+        saveProgress();
+      }
+    }
+
+    function checkLevelState() {
+      const level = currentLevel();
+
+      if (!isPassed && score >= level.target) {
+        isPassed = true;
+
+        if (currentLevelIndex < LEVELS.length - 1) {
+          highestUnlocked = Math.max(highestUnlocked, currentLevelIndex + 1);
+          saveProgress();
+          setStatus(`Tuyệt vời! Bạn đã vượt qua ${level.name}. Màn tiếp theo đã mở khóa.`);
+        } else {
+          setStatus("Xuất sắc! Bạn đã hoàn thành tất cả các màn.");
+        }
+
+        updateStats();
+        return;
+      }
+
+      if (moves <= 0) {
+        isGameOver = true;
+
+        if (score >= level.target) {
+          setStatus(`Qua màn! Điểm của bạn: ${score}`);
+        } else {
+          setStatus(`Hết lượt! Bạn cần ${level.target} điểm để qua màn. Điểm hiện tại: ${score}`);
+        }
+
+        updateStats();
+      }
+    }
+
+    async function trySwap(a, b) {
+      if (isBusy || isGameOver) return;
+      if (!isAdjacent(a, b)) return;
+
+      isBusy = true;
+      selectedIndex = null;
+
+      swapTiles(a, b);
+      renderBoard();
+      await sleep(160);
+
+      const matches = findMatches();
+
+      if (matches.size === 0) {
+        swapTiles(a, b);
+        renderBoard(new Set(), new Set([a, b]));
+        setStatus("Lần đổi này không tạo được combo, đã tự động hoàn tác");
+        await sleep(280);
+        renderBoard();
+        isBusy = false;
+        return;
+      }
+
+      moves--;
+      updateStats();
+
+      await resolveBoard();
+
+      updateBestScore();
+      checkLevelState();
+
+      if (!isGameOver && !isPassed) {
+        setStatus("Tiếp tục đổi các ô liền kề để đạt đủ điểm mục tiêu");
+      }
+
+      if (!isGameOver && isPassed) {
+        setStatus("Bạn đã qua màn. Có thể tiếp tục chơi hoặc bấm Màn tiếp theo.");
+      }
+
+      isBusy = false;
+    }
+
+    function handleTileClick(index) {
+      if (isBusy || isGameOver) return;
+      if (board[index] === null) return;
+
+      if (selectedIndex === null) {
+        selectedIndex = index;
+        renderBoard();
+        return;
+      }
+
+      if (selectedIndex === index) {
+        selectedIndex = null;
+        renderBoard();
+        return;
+      }
+
+      if (isAdjacent(selectedIndex, index)) {
+        const from = selectedIndex;
+        const to = index;
+        selectedIndex = null;
+        renderBoard();
+        trySwap(from, to);
+      } else {
+        selectedIndex = index;
+        renderBoard();
+      }
+    }
+
+    function getTileIndexFromEvent(event) {
+      const tile = event.target.closest(".tile");
+
+      if (!tile) return null;
+
+      return Number(tile.dataset.index);
+    }
+
+    boardEl.addEventListener("pointerdown", event => {
+      if (isBusy || isGameOver) return;
+
+      const index = getTileIndexFromEvent(event);
+
+      if (index === null) return;
+
+      pointerStartIndex = index;
+    });
+
+    boardEl.addEventListener("pointerup", event => {
+      if (isBusy || isGameOver) return;
+
+      const endIndex = getTileIndexFromEvent(event);
+
+      if (
+        pointerStartIndex !== null &&
+        endIndex !== null &&
+        pointerStartIndex !== endIndex &&
+        isAdjacent(pointerStartIndex, endIndex)
+      ) {
+        suppressNextClick = true;
+
+        const from = pointerStartIndex;
+        const to = endIndex;
+
+        pointerStartIndex = null;
+        selectedIndex = null;
+
+        renderBoard();
+        trySwap(from, to);
+      } else {
+        pointerStartIndex = null;
+      }
+    });
+
+    boardEl.addEventListener("click", event => {
+      if (suppressNextClick) {
+        suppressNextClick = false;
+        return;
+      }
+
+      const index = getTileIndexFromEvent(event);
+
+      if (index === null) return;
+
+      handleTileClick(index);
+    });
+
+    restartBtn.addEventListener("click", () => {
+      startGame();
+    });
+
+    shuffleBtn.addEventListener("click", () => {
+      if (isBusy || isGameOver) return;
+
+      moves = Math.max(0, moves - 1);
+      updateStats();
+
+      shuffleBoard();
+
+      if (moves <= 0) {
+        checkLevelState();
+      } else {
+        setStatus("Đã xáo trộn, mất 1 lượt");
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!canGoNextLevel()) return;
+
+      loadLevel(currentLevelIndex + 1);
+    });
+
+    function loadLevel(index) {
+      if (index < 0 || index >= LEVELS.length) return;
+
+      if (index > highestUnlocked) {
+        setStatus("Màn này chưa được mở khóa");
+        return;
+      }
+
+      currentLevelIndex = index;
+      startGame();
+    }
+
+    function startGame() {
+      const level = currentLevel();
+
+      score = 0;
+      moves = level.moves;
+      selectedIndex = null;
+      pointerStartIndex = null;
+      isBusy = false;
+      isGameOver = false;
+      isPassed = false;
+
+      do {
+        createCleanBoard();
+      } while (!hasPossibleMove());
+
+      updateStats();
+      renderBoard();
+
+      setStatus(`${level.name}: Đạt ${level.target} điểm trong ${level.moves} lượt để qua màn`);
+    }
+
+    startGame();
+  </script>
+</body>
+</html>

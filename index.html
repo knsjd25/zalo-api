@@ -2,1155 +2,1623 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Xếp Kẹo - Trò chơi nhiều màn</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>Sổ thu chi trên điện thoại</title>
+  <meta name="description" content="Ứng dụng sổ thu chi cá nhân tối ưu cho điện thoại, hỗ trợ ghi thu nhập, chi tiêu, thống kê theo danh mục, tìm kiếm, lọc dữ liệu, nhập xuất sao lưu và lưu cục bộ." />
   <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #7a8497;
+      --line: #e7eaf0;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eaf1ff;
+      --danger: #ef4444;
+      --danger-soft: #fff1f2;
+      --success: #16a34a;
+      --success-soft: #ecfdf3;
+      --shadow: 0 14px 34px rgba(17, 24, 39, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --bottom-nav-height: 76px;
+    }
+
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
+      margin: 0;
       min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.55), transparent 34%),
-        linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      color: #333;
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 34%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 42%, #eef4ff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     }
 
-    .game-wrapper {
-      width: min(96vw, 620px);
-      background: rgba(255, 255, 255, 0.84);
-      backdrop-filter: blur(14px);
-      border-radius: 30px;
-      box-shadow: 0 22px 70px rgba(120, 70, 40, 0.26);
-      padding: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.78);
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
     }
 
-    .game-header {
-      text-align: center;
-      margin-bottom: 14px;
-    }
-
-    .game-header h1 {
-      font-size: 32px;
-      color: #ff6b35;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-    }
-
-    .game-header p {
-      color: #7a5b4b;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .level-title {
-      margin: 14px 0 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      background: #fff7f0;
-      border-radius: 18px;
-      padding: 12px 14px;
-      box-shadow: inset 0 0 0 1px rgba(255, 132, 82, 0.16);
-    }
-
-    .level-title strong {
-      color: #ff5c35;
-      font-size: 18px;
-    }
-
-    .level-title span {
-      color: #8c6b5b;
-      font-size: 13px;
-      text-align: right;
-    }
-
-    .info-panel {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .info-card {
-      background: #fff7f0;
-      border-radius: 18px;
-      padding: 12px 8px;
-      text-align: center;
-      box-shadow: inset 0 0 0 1px rgba(255, 132, 82, 0.16);
-    }
-
-    .info-card span {
-      display: block;
-      font-size: 12px;
-      color: #8c6b5b;
-      margin-bottom: 4px;
-    }
-
-    .info-card strong {
-      font-size: 20px;
-      color: #ff6b35;
-    }
-
-    .progress-wrap {
-      margin: 10px 0 14px;
-      background: #ffe8d8;
-      height: 16px;
-      border-radius: 999px;
-      overflow: hidden;
-      box-shadow: inset 0 2px 6px rgba(160, 90, 40, 0.16);
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff7a45, #ff4f70);
-      transition: width 0.25s ease;
-    }
-
-    .board {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      grid-template-rows: repeat(8, 1fr);
-      gap: 6px;
-      background: rgba(255, 132, 82, 0.18);
-      padding: 8px;
-      border-radius: 24px;
-      box-shadow:
-        inset 0 8px 18px rgba(150, 90, 50, 0.14),
-        0 10px 30px rgba(150, 90, 50, 0.15);
-      user-select: none;
-      touch-action: none;
-    }
-
-    .tile {
-      border-radius: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(24px, 7vw, 42px);
+    button {
+      border: 0;
       cursor: pointer;
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        opacity 0.18s ease,
-        filter 0.18s ease;
+      user-select: none;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+      font-size: 16px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(37, 99, 235, 0.72);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #3b4558;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .app {
+      width: min(100%, 560px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: calc(14px + env(safe-area-inset-top)) 16px 12px;
+      background: rgba(248, 251, 255, 0.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(231, 234, 240, 0.75);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: 900;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+    }
+
+    .today {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .header-btn {
+      min-height: 40px;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .content {
+      padding: 14px 14px 0;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.16s ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-card {
       position: relative;
       overflow: hidden;
+      border-radius: 28px;
+      padding: 20px;
+      color: #fff;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.32), transparent 32%),
+        linear-gradient(135deg, #2563eb 0%, #1d4ed8 48%, #0f172a 100%);
+      box-shadow: 0 20px 38px rgba(37, 99, 235, 0.23);
     }
 
-    .tile::after {
+    .hero-card::after {
       content: "";
       position: absolute;
-      top: 10%;
-      left: 14%;
-      width: 36%;
-      height: 24%;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.38);
-      transform: rotate(-25deg);
-      pointer-events: none;
+      right: -30px;
+      bottom: -46px;
+      width: 150px;
+      height: 150px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    .tile:hover {
-      transform: translateY(-2px) scale(1.03);
+    .hero-label {
+      position: relative;
+      z-index: 1;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 13px;
     }
 
-    .tile.selected {
-      transform: scale(1.08);
-      box-shadow:
-        0 0 0 4px #fff,
-        0 0 0 8px rgba(255, 107, 53, 0.55),
-        0 8px 20px rgba(255, 107, 53, 0.35);
-      z-index: 2;
+    .hero-balance {
+      position: relative;
+      z-index: 1;
+      margin-top: 8px;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      word-break: break-all;
     }
 
-    .tile.matched {
-      animation: pop 0.28s ease forwards;
+    .hero-sub {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
     }
 
-    .tile.shake {
-      animation: shake 0.28s ease;
+    .hero-mini {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.17);
     }
 
-    .tile.empty {
-      opacity: 0;
-      transform: scale(0.2);
-      pointer-events: none;
+    .hero-mini .name {
+      color: rgba(255,255,255,0.73);
+      font-size: 12px;
     }
 
-    .type-0 {
-      background: linear-gradient(145deg, #ff5f6d, #ffc371);
+    .hero-mini .value {
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 900;
+      word-break: break-all;
     }
 
-    .type-1 {
-      background: linear-gradient(145deg, #f9d423, #ff4e50);
-    }
-
-    .type-2 {
-      background: linear-gradient(145deg, #a18cd1, #fbc2eb);
-    }
-
-    .type-3 {
-      background: linear-gradient(145deg, #43cea2, #185a9d);
-    }
-
-    .type-4 {
-      background: linear-gradient(145deg, #84fab0, #8fd3f4);
-    }
-
-    .type-5 {
-      background: linear-gradient(145deg, #f6d365, #fda085);
-    }
-
-    .status {
-      min-height: 26px;
-      text-align: center;
-      margin: 14px 0 10px;
-      color: #7a4e39;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    .controls {
+    .quick-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin-top: 14px;
     }
 
-    button {
-      border: none;
-      border-radius: 16px;
-      padding: 13px 10px;
-      font-size: 14px;
+    .quick-btn {
+      min-height: 68px;
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      color: var(--text);
       font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
 
-    button:hover {
-      transform: translateY(-2px);
+    .quick-btn span {
+      font-size: 21px;
+      line-height: 1;
     }
 
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
+    .quick-btn small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 20px 2px 10px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .section-title button {
+      color: var(--primary);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .card {
+      border: 1px solid rgba(231, 234, 240, 0.85);
+      border-radius: var(--radius-xl);
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .form-card {
+      padding: 17px;
+    }
+
+    .form-row {
+      margin-bottom: 14px;
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .type-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .type-option {
+      min-height: 52px;
+      border-radius: 16px;
+      color: var(--muted);
+      background: #f4f6fb;
+      font-weight: 900;
+      border: 1px solid transparent;
+    }
+
+    .type-option.active[data-type="expense"] {
+      color: #b91c1c;
+      background: var(--danger-soft);
+      border-color: #fecdd3;
+    }
+
+    .type-option.active[data-type="income"] {
+      color: #166534;
+      background: var(--success-soft);
+      border-color: #bbf7d0;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn,
+    .ghost-btn {
+      min-height: 50px;
+      border-radius: 16px;
+      padding: 0 16px;
+      font-weight: 900;
     }
 
     .primary-btn {
-      background: linear-gradient(135deg, #ff7a45, #ff4f70);
-      color: white;
-      box-shadow: 0 8px 18px rgba(255, 89, 88, 0.32);
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
     }
 
     .secondary-btn {
-      background: #fff2e8;
-      color: #ff6b35;
-      box-shadow: inset 0 0 0 1px rgba(255, 107, 53, 0.2);
+      color: #fff;
+      background: #111827;
     }
 
-    .level-panel {
-      margin-top: 16px;
-      background: rgba(255, 247, 240, 0.82);
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: inset 0 0 0 1px rgba(255, 132, 82, 0.16);
+    .danger-btn {
+      color: #fff;
+      background: var(--danger);
     }
 
-    .level-panel h2 {
-      font-size: 15px;
-      color: #7a4e39;
-      margin-bottom: 10px;
-      text-align: center;
+    .ghost-btn {
+      color: var(--text);
+      background: #f3f6fb;
     }
 
-    .level-grid {
+    .button-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .filter-card {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .record-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .record-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid rgba(231, 234, 240, 0.9);
+      box-shadow: 0 10px 26px rgba(17, 24, 39, 0.055);
+    }
+
+    .record-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .record-icon.expense {
+      color: #b91c1c;
+      background: var(--danger-soft);
+    }
+
+    .record-icon.income {
+      color: #166534;
+      background: var(--success-soft);
+    }
+
+    .record-main {
+      min-width: 0;
+    }
+
+    .record-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .record-title strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+      min-height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: #4b5563;
+      background: #f2f4f7;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .record-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .record-note {
+      margin-top: 6px;
+      color: #5c6678;
+      font-size: 12px;
+      line-height: 1.45;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .record-side {
+      text-align: right;
+      display: grid;
+      justify-items: end;
       gap: 8px;
     }
 
-    .level-btn {
-      padding: 10px 4px;
-      border-radius: 14px;
+    .amount {
+      font-size: 16px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .amount.expense {
+      color: var(--danger);
+    }
+
+    .amount.income {
+      color: var(--success);
+    }
+
+    .more-btn {
+      width: 34px;
+      height: 30px;
+      border-radius: 12px;
+      color: #4b5563;
+      background: #f3f4f6;
+      font-weight: 900;
+    }
+
+    .record-actions {
+      display: none;
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 2px;
+    }
+
+    .record-card.open .record-actions {
+      display: grid;
+    }
+
+    .empty {
+      padding: 24px 16px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 22px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.72);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      padding: 15px;
+      border-radius: 22px;
       background: #fff;
-      color: #ff6b35;
-      box-shadow: inset 0 0 0 1px rgba(255, 107, 53, 0.2);
+      border: 1px solid rgba(231, 234, 240, 0.9);
+      box-shadow: 0 10px 26px rgba(17, 24, 39, 0.052);
+    }
+
+    .stat-card .name {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .stat-card .value {
+      margin-top: 8px;
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 900;
+      word-break: break-all;
+    }
+
+    .income-color { color: var(--success); }
+    .expense-color { color: var(--danger); }
+    .primary-color { color: var(--primary); }
+
+    .chart-card {
+      margin-bottom: 12px;
+    }
+
+    .chart-title {
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .bar-item {
+      margin-bottom: 13px;
+    }
+
+    .bar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
       font-size: 13px;
     }
 
-    .level-btn.active {
-      background: linear-gradient(135deg, #ff7a45, #ff4f70);
-      color: #fff;
-      box-shadow: 0 8px 18px rgba(255, 89, 88, 0.25);
+    .bar-head span {
+      color: #374151;
+      font-weight: 800;
     }
 
-    .level-btn.locked {
-      color: #9f8f86;
-      background: #f2ebe7;
-      box-shadow: none;
+    .bar-head strong {
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .bar {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #edf1f8;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+    }
+
+    .settings-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .settings-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .category-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: #374151;
+      background: #f3f6fb;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .category-chip button {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--danger);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 50;
+      transform: translateX(-50%);
+      width: min(100%, 560px);
+      height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,0.92);
+      border-top: 1px solid rgba(231, 234, 240, 0.9);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 -14px 34px rgba(17, 24, 39, 0.08);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .nav-btn {
+      min-width: 0;
+      border-radius: 18px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .nav-btn .icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .tips {
       margin-top: 12px;
-      text-align: center;
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px solid var(--line);
       font-size: 12px;
-      color: #8a6a58;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    @keyframes pop {
-      0% {
-        transform: scale(1);
-        opacity: 1;
+    .mini-title {
+      margin: 18px 2px 10px;
+      color: #303b4f;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    @media (min-width: 760px) {
+      .app {
+        width: min(100% - 36px, 1180px);
       }
 
-      60% {
-        transform: scale(1.28);
-        opacity: 0.8;
+      .app-header {
+        border-radius: 0 0 26px 26px;
       }
 
-      100% {
-        transform: scale(0.15);
-        opacity: 0;
+      .content {
+        padding: 18px 0 0;
+      }
+
+      .desktop-grid {
+        display: grid;
+        grid-template-columns: 380px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .desktop-left,
+      .desktop-right {
+        display: grid;
+        gap: 16px;
+      }
+
+      .screen {
+        display: block;
+        animation: none;
+      }
+
+      .screen[data-screen="dashboard"] .quick-grid,
+      .bottom-nav {
+        display: none;
+      }
+
+      .app {
+        padding-bottom: 30px;
+      }
+
+      .record-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .record-card {
+        min-height: 136px;
       }
     }
 
-    @keyframes shake {
-      0%, 100% {
-        transform: translateX(0);
+    @media (max-width: 380px) {
+      .hero-balance {
+        font-size: 30px;
       }
 
-      25% {
-        transform: translateX(-5px);
-      }
-
-      50% {
-        transform: translateX(5px);
-      }
-
-      75% {
-        transform: translateX(-4px);
-      }
-    }
-
-    @media (max-width: 520px) {
-      body {
-        padding: 12px;
-      }
-
-      .game-wrapper {
-        padding: 16px;
-        border-radius: 22px;
-      }
-
-      .game-header h1 {
-        font-size: 26px;
-      }
-
-      .level-title {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .level-title span {
-        text-align: left;
-      }
-
-      .info-panel {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .board {
-        gap: 4px;
-        padding: 6px;
-        border-radius: 18px;
-      }
-
-      .tile {
-        border-radius: 13px;
-      }
-
-      .controls {
+      .hero-sub,
+      .two-cols,
+      .filter-row,
+      .stats-grid {
         grid-template-columns: 1fr;
       }
 
-      .level-grid {
-        grid-template-columns: repeat(5, 1fr);
+      .record-card {
+        grid-template-columns: auto 1fr;
       }
 
-      .info-card strong {
-        font-size: 18px;
+      .record-side {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        justify-items: stretch;
+        text-align: left;
       }
     }
   </style>
 </head>
-
 <body>
-  <main class="game-wrapper">
-    <header class="game-header">
-      <h1>Xếp Kẹo</h1>
-      <p>Đổi vị trí hai ô liền kề, ghép 3 hình giống nhau trở lên để xóa điểm</p>
+  <div class="app">
+    <header class="app-header">
+      <div class="header-row">
+        <div class="brand">
+          <div class="logo">₫</div>
+          <div>
+            <h1>Sổ thu chi</h1>
+            <div class="today" id="todayText">Hôm nay</div>
+          </div>
+        </div>
+        <button class="header-btn" data-jump="add">+ Ghi khoản</button>
+      </div>
     </header>
 
-    <section class="level-title">
-      <strong id="levelName">Màn 1</strong>
-      <span id="levelDesc">Mục tiêu cơ bản</span>
-    </section>
+    <main class="content">
+      <div class="desktop-grid">
+        <div class="desktop-left">
+          <section class="screen active" data-screen="dashboard">
+            <div class="hero-card">
+              <div class="hero-label">Số dư hiện tại</div>
+              <div class="hero-balance" id="balance">0 ₫</div>
+              <div class="hero-sub">
+                <div class="hero-mini">
+                  <div class="name">Tổng thu nhập</div>
+                  <div class="value" id="totalIncome">0 ₫</div>
+                </div>
+                <div class="hero-mini">
+                  <div class="name">Tổng chi tiêu</div>
+                  <div class="value" id="totalExpense">0 ₫</div>
+                </div>
+              </div>
+            </div>
 
-    <section class="info-panel">
-      <div class="info-card">
-        <span>Điểm</span>
-        <strong id="score">0</strong>
+            <div class="quick-grid">
+              <button class="quick-btn" data-jump="add" data-quick-type="expense"><span>➖</span><small>Ghi chi</small></button>
+              <button class="quick-btn" data-jump="add" data-quick-type="income"><span>➕</span><small>Ghi thu</small></button>
+              <button class="quick-btn" data-jump="records"><span>📒</span><small>Xem chi tiết</small></button>
+            </div>
+
+            <div class="section-title">
+              <h2>Tổng quan tháng này</h2>
+              <button data-jump="stats">Xem thống kê</button>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="name">Chi tháng này</div>
+                <div class="value expense-color" id="monthExpense">0 ₫</div>
+              </div>
+              <div class="stat-card">
+                <div class="name">Thu tháng này</div>
+                <div class="value income-color" id="monthIncome">0 ₫</div>
+              </div>
+            </div>
+
+            <div class="section-title">
+              <h2>Ghi chép gần đây</h2>
+              <button data-jump="records">Tất cả</button>
+            </div>
+            <div class="record-list" id="recentList"></div>
+          </section>
+
+          <section class="screen" data-screen="add">
+            <div class="section-title">
+              <h2 id="formTitle">Ghi một khoản</h2>
+              <button id="resetFormTextBtn">Xóa nhập liệu</button>
+            </div>
+            <div class="card form-card">
+              <form id="recordForm">
+                <input type="hidden" id="recordId" />
+                <input type="hidden" id="type" value="expense" />
+
+                <div class="type-toggle">
+                  <button type="button" class="type-option active" data-type="expense">Chi tiêu</button>
+                  <button type="button" class="type-option" data-type="income">Thu nhập</button>
+                </div>
+
+                <div class="form-row">
+                  <label for="amount">Số tiền</label>
+                  <input id="amount" type="number" min="1" step="1000" inputmode="numeric" placeholder="Ví dụ: 68000" required />
+                </div>
+
+                <div class="two-cols">
+                  <div class="form-row">
+                    <label for="date">Ngày</label>
+                    <input id="date" type="date" required />
+                  </div>
+                  <div class="form-row">
+                    <label for="category">Danh mục</label>
+                    <select id="category" required></select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <label for="title">Tiêu đề</label>
+                  <input id="title" type="text" maxlength="40" placeholder="Ví dụ: Ăn trưa, lương, tiền thuê nhà" required />
+                </div>
+
+                <div class="form-row">
+                  <label for="note">Ghi chú</label>
+                  <textarea id="note" maxlength="200" placeholder="Không bắt buộc, ví dụ: Ăn tối với bạn bè, thưởng dự án"></textarea>
+                </div>
+
+                <button class="primary-btn" type="submit" style="width:100%;" id="submitBtn">Lưu ghi chép</button>
+                <button class="ghost-btn hidden" type="button" style="width:100%; margin-top:10px;" id="cancelEditBtn">Hủy chỉnh sửa</button>
+              </form>
+            </div>
+          </section>
+
+          <section class="screen" data-screen="settings">
+            <div class="section-title">
+              <h2>Cài đặt</h2>
+            </div>
+            <div class="settings-list">
+              <div class="card settings-card">
+                <h3>Sao lưu dữ liệu</h3>
+                <p>Dữ liệu được lưu trong trình duyệt hiện tại trên điện thoại. Trước khi đổi điện thoại, xóa bộ nhớ đệm hoặc gỡ trình duyệt, hãy xuất bản sao lưu trước.</p>
+                <div class="button-row">
+                  <button class="secondary-btn" id="exportJsonBtn">Xuất sao lưu</button>
+                  <button class="ghost-btn" id="importJsonBtn">Nhập sao lưu</button>
+                </div>
+                <button class="primary-btn" id="exportCsvBtn" style="width:100%; margin-top:10px;">Xuất chi tiết CSV</button>
+              </div>
+
+              <div class="card settings-card">
+                <h3>Quản lý danh mục</h3>
+                <div class="two-cols">
+                  <div class="form-row">
+                    <label for="newCategoryType">Loại</label>
+                    <select id="newCategoryType">
+                      <option value="expense">Danh mục chi</option>
+                      <option value="income">Danh mục thu</option>
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <label for="newCategoryName">Tên</label>
+                    <input id="newCategoryName" type="text" maxlength="16" placeholder="Ví dụ: Di chuyển" />
+                  </div>
+                </div>
+                <button class="primary-btn" id="addCategoryBtn" style="width:100%;">Thêm danh mục</button>
+
+                <div class="mini-title">Danh mục chi</div>
+                <div class="category-list" id="expenseCategoryList"></div>
+
+                <div class="mini-title">Danh mục thu</div>
+                <div class="category-list" id="incomeCategoryList"></div>
+              </div>
+
+              <div class="tips">
+                Phiên bản hiện tại là trang di động thuần front-end, có thể triển khai trực tiếp như một website tĩnh. Sau này có thể mở rộng thành PWA cài lên màn hình điện thoại, đồng bộ đám mây, nhắc ngân sách, nhập sao kê ví điện tử hoặc ngân hàng.
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="desktop-right">
+          <section class="screen" data-screen="records">
+            <div class="section-title">
+              <h2>Chi tiết giao dịch</h2>
+              <button data-jump="add">Thêm mới</button>
+            </div>
+
+            <div class="card filter-card">
+              <input id="search" type="search" placeholder="Tìm tiêu đề, danh mục, ghi chú" />
+              <div class="filter-row">
+                <select id="filterType">
+                  <option value="all">Tất cả loại</option>
+                  <option value="income">Chỉ xem thu</option>
+                  <option value="expense">Chỉ xem chi</option>
+                </select>
+                <input id="filterMonth" type="month" />
+              </div>
+              <select id="sortBy">
+                <option value="date-desc">Ngày mới nhất</option>
+                <option value="date-asc">Ngày cũ nhất</option>
+                <option value="amount-desc">Số tiền cao nhất</option>
+                <option value="amount-asc">Số tiền thấp nhất</option>
+              </select>
+            </div>
+
+            <div class="record-list" id="recordList"></div>
+          </section>
+
+          <section class="screen" data-screen="stats">
+            <div class="section-title">
+              <h2>Thống kê phân tích</h2>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="name">Tổng thu nhập</div>
+                <div class="value income-color" id="statsIncome">0 ₫</div>
+              </div>
+              <div class="stat-card">
+                <div class="name">Tổng chi tiêu</div>
+                <div class="value expense-color" id="statsExpense">0 ₫</div>
+              </div>
+              <div class="stat-card">
+                <div class="name">Số dư</div>
+                <div class="value primary-color" id="statsBalance">0 ₫</div>
+              </div>
+              <div class="stat-card">
+                <div class="name">Số ghi chép</div>
+                <div class="value" id="statsCount">0</div>
+              </div>
+            </div>
+
+            <div class="card chart-card">
+              <div class="chart-title">Xếp hạng danh mục chi</div>
+              <div id="expenseChart"></div>
+            </div>
+            <div class="card chart-card">
+              <div class="chart-title">Xếp hạng danh mục thu</div>
+              <div id="incomeChart"></div>
+            </div>
+          </section>
+        </div>
       </div>
+    </main>
 
-      <div class="info-card">
-        <span>Mục tiêu</span>
-        <strong id="target">500</strong>
-      </div>
+    <nav class="bottom-nav" aria-label="Điều hướng dưới cùng">
+      <button class="nav-btn active" data-tab="dashboard"><span class="icon">🏠</span>Trang chủ</button>
+      <button class="nav-btn" data-tab="records"><span class="icon">📒</span>Chi tiết</button>
+      <button class="nav-btn" data-tab="add"><span class="icon">＋</span>Ghi sổ</button>
+      <button class="nav-btn" data-tab="stats"><span class="icon">📊</span>Thống kê</button>
+      <button class="nav-btn" data-tab="settings"><span class="icon">⚙️</span>Cài đặt</button>
+    </nav>
+  </div>
 
-      <div class="info-card">
-        <span>Lượt</span>
-        <strong id="moves">30</strong>
-      </div>
-
-      <div class="info-card">
-        <span>Kỷ lục</span>
-        <strong id="best">0</strong>
-      </div>
-    </section>
-
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <section id="board" class="board"></section>
-
-    <div id="status" class="status">Nhấn hoặc kéo hai ô liền kề để bắt đầu chơi</div>
-
-    <div class="controls">
-      <button class="primary-btn" id="restartBtn">Chơi lại</button>
-      <button class="secondary-btn" id="shuffleBtn">Xáo trộn</button>
-      <button class="primary-btn" id="nextBtn" disabled>Màn tiếp theo</button>
-    </div>
-
-    <section class="level-panel">
-      <h2>Chọn màn chơi</h2>
-      <div class="level-grid" id="levelGrid"></div>
-    </section>
-
-    <div class="tips">
-      Luật chơi: Mỗi lần đổi vị trí hợp lệ sẽ mất 1 lượt. Đạt đủ điểm mục tiêu để mở khóa màn tiếp theo.
-    </div>
-  </main>
+  <input type="file" id="jsonFileInput" accept="application/json" class="file-input" />
 
   <script>
-    const boardEl = document.getElementById("board");
-    const scoreEl = document.getElementById("score");
-    const targetEl = document.getElementById("target");
-    const movesEl = document.getElementById("moves");
-    const bestEl = document.getElementById("best");
-    const statusEl = document.getElementById("status");
-    const restartBtn = document.getElementById("restartBtn");
-    const shuffleBtn = document.getElementById("shuffleBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const levelGridEl = document.getElementById("levelGrid");
-    const levelNameEl = document.getElementById("levelName");
-    const levelDescEl = document.getElementById("levelDesc");
-    const progressBarEl = document.getElementById("progressBar");
+    "use strict";
 
-    const SIZE = 8;
-    const TOTAL = SIZE * SIZE;
+    const STORAGE_KEY = "mobile_accounting_records_vi_v1";
+    const CATEGORY_KEY = "mobile_accounting_categories_vi_v1";
 
-    const CANDIES = ["🍓", "🍋", "🍇", "💎", "🍀", "⭐"];
+    const defaultCategories = {
+      expense: ["Ăn uống", "Di chuyển", "Mua sắm", "Nhà ở", "Giải trí", "Y tế", "Học tập", "Khác"],
+      income: ["Lương", "Thưởng", "Việc phụ", "Đầu tư", "Quà tặng", "Khác"]
+    };
 
-    const LEVELS = [
-      {
-        name: "Màn 1",
-        desc: "Khởi động nhẹ nhàng",
-        target: 500,
-        moves: 30,
-        candyCount: 5
-      },
-      {
-        name: "Màn 2",
-        desc: "Tăng tốc một chút",
-        target: 800,
-        moves: 28,
-        candyCount: 5
-      },
-      {
-        name: "Màn 3",
-        desc: "Cần tạo combo nhiều hơn",
-        target: 1100,
-        moves: 26,
-        candyCount: 5
-      },
-      {
-        name: "Màn 4",
-        desc: "Thêm biểu tượng mới",
-        target: 1400,
-        moves: 26,
-        candyCount: 6
-      },
-      {
-        name: "Màn 5",
-        desc: "Ít lượt hơn, điểm cao hơn",
-        target: 1700,
-        moves: 24,
-        candyCount: 6
-      },
-      {
-        name: "Màn 6",
-        desc: "Thử thách combo",
-        target: 2100,
-        moves: 24,
-        candyCount: 6
-      },
-      {
-        name: "Màn 7",
-        desc: "Cần tính toán nước đi",
-        target: 2500,
-        moves: 22,
-        candyCount: 6
-      },
-      {
-        name: "Màn 8",
-        desc: "Màn khó",
-        target: 3000,
-        moves: 22,
-        candyCount: 6
-      },
-      {
-        name: "Màn 9",
-        desc: "Gần tới chiến thắng",
-        target: 3600,
-        moves: 20,
-        candyCount: 6
-      },
-      {
-        name: "Màn 10",
-        desc: "Thử thách cuối cùng",
-        target: 4500,
-        moves: 20,
-        candyCount: 6
-      }
-    ];
+    let records = loadRecords();
+    let categories = loadCategories();
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
-    let board = [];
-    let score = 0;
-    let moves = 30;
-    let currentLevelIndex = 0;
-    let highestUnlocked = Number(localStorage.getItem("match3_vi_highest_unlocked") || 0);
-    let bestByLevel = loadBestByLevel();
+    const elements = {
+      todayText: $("#todayText"),
+      balance: $("#balance"),
+      totalIncome: $("#totalIncome"),
+      totalExpense: $("#totalExpense"),
+      monthExpense: $("#monthExpense"),
+      monthIncome: $("#monthIncome"),
+      statsIncome: $("#statsIncome"),
+      statsExpense: $("#statsExpense"),
+      statsBalance: $("#statsBalance"),
+      statsCount: $("#statsCount"),
+      recentList: $("#recentList"),
+      recordList: $("#recordList"),
+      expenseChart: $("#expenseChart"),
+      incomeChart: $("#incomeChart"),
+      form: $("#recordForm"),
+      recordId: $("#recordId"),
+      type: $("#type"),
+      amount: $("#amount"),
+      date: $("#date"),
+      category: $("#category"),
+      title: $("#title"),
+      note: $("#note"),
+      formTitle: $("#formTitle"),
+      submitBtn: $("#submitBtn"),
+      cancelEditBtn: $("#cancelEditBtn"),
+      resetFormTextBtn: $("#resetFormTextBtn"),
+      search: $("#search"),
+      filterType: $("#filterType"),
+      filterMonth: $("#filterMonth"),
+      sortBy: $("#sortBy"),
+      exportJsonBtn: $("#exportJsonBtn"),
+      importJsonBtn: $("#importJsonBtn"),
+      exportCsvBtn: $("#exportCsvBtn"),
+      jsonFileInput: $("#jsonFileInput"),
+      newCategoryType: $("#newCategoryType"),
+      newCategoryName: $("#newCategoryName"),
+      addCategoryBtn: $("#addCategoryBtn"),
+      expenseCategoryList: $("#expenseCategoryList"),
+      incomeCategoryList: $("#incomeCategoryList")
+    };
 
-    let selectedIndex = null;
-    let pointerStartIndex = null;
-    let suppressNextClick = false;
-    let isBusy = false;
-    let isGameOver = false;
-    let isPassed = false;
-
-    function loadBestByLevel() {
-      try {
-        const saved = JSON.parse(localStorage.getItem("match3_vi_best_by_level") || "{}");
-        return saved && typeof saved === "object" ? saved : {};
-      } catch (error) {
-        return {};
-      }
+    function init() {
+      elements.todayText.textContent = formatToday();
+      elements.date.value = todayISO();
+      elements.filterMonth.value = getCurrentMonth();
+      updateCategoryOptions();
+      bindEvents();
+      render();
     }
 
-    function saveProgress() {
-      localStorage.setItem("match3_vi_highest_unlocked", String(highestUnlocked));
-      localStorage.setItem("match3_vi_best_by_level", JSON.stringify(bestByLevel));
-    }
+    function bindEvents() {
+      $$(".nav-btn").forEach((button) => {
+        button.addEventListener("click", () => showScreen(button.dataset.tab));
+      });
 
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function currentLevel() {
-      return LEVELS[currentLevelIndex];
-    }
-
-    function randomCandy() {
-      return Math.floor(Math.random() * currentLevel().candyCount);
-    }
-
-    function rowOf(index) {
-      return Math.floor(index / SIZE);
-    }
-
-    function colOf(index) {
-      return index % SIZE;
-    }
-
-    function isAdjacent(a, b) {
-      const diff = Math.abs(a - b);
-
-      if (diff === SIZE) return true;
-
-      if (diff === 1 && rowOf(a) === rowOf(b)) {
-        return true;
-      }
-
-      return false;
-    }
-
-    function setStatus(text) {
-      statusEl.textContent = text;
-    }
-
-    function updateStats() {
-      const level = currentLevel();
-      const best = bestByLevel[currentLevelIndex] || 0;
-      const progress = Math.min(100, Math.floor((score / level.target) * 100));
-
-      scoreEl.textContent = score;
-      targetEl.textContent = level.target;
-      movesEl.textContent = moves;
-      bestEl.textContent = best;
-      levelNameEl.textContent = level.name;
-      levelDescEl.textContent = level.desc;
-      progressBarEl.style.width = progress + "%";
-
-      nextBtn.disabled = !canGoNextLevel();
-
-      renderLevelButtons();
-    }
-
-    function canGoNextLevel() {
-      if (currentLevelIndex >= LEVELS.length - 1) {
-        return false;
-      }
-
-      return highestUnlocked >= currentLevelIndex + 1;
-    }
-
-    function createCleanBoard() {
-      board = new Array(TOTAL).fill(null);
-
-      for (let i = 0; i < TOTAL; i++) {
-        let candy;
-
-        do {
-          candy = randomCandy();
-        } while (
-          (
-            colOf(i) >= 2 &&
-            board[i - 1] === candy &&
-            board[i - 2] === candy
-          )
-          ||
-          (
-            rowOf(i) >= 2 &&
-            board[i - SIZE] === candy &&
-            board[i - SIZE * 2] === candy
-          )
-        );
-
-        board[i] = candy;
-      }
-    }
-
-    function renderBoard(matchedSet = new Set(), shakeSet = new Set()) {
-      boardEl.innerHTML = "";
-
-      for (let i = 0; i < TOTAL; i++) {
-        const tile = document.createElement("div");
-        tile.className = "tile";
-        tile.dataset.index = i;
-
-        const value = board[i];
-
-        if (value === null || value === undefined) {
-          tile.classList.add("empty");
-        } else {
-          tile.classList.add(`type-${value}`);
-          tile.textContent = CANDIES[value];
-        }
-
-        if (selectedIndex === i) {
-          tile.classList.add("selected");
-        }
-
-        if (matchedSet.has(i)) {
-          tile.classList.add("matched");
-        }
-
-        if (shakeSet.has(i)) {
-          tile.classList.add("shake");
-        }
-
-        boardEl.appendChild(tile);
-      }
-    }
-
-    function renderLevelButtons() {
-      levelGridEl.innerHTML = "";
-
-      LEVELS.forEach((level, index) => {
-        const button = document.createElement("button");
-        button.className = "level-btn";
-
-        if (index === currentLevelIndex) {
-          button.classList.add("active");
-        }
-
-        if (index > highestUnlocked) {
-          button.classList.add("locked");
-          button.textContent = "🔒 " + (index + 1);
-        } else {
-          button.textContent = "Màn " + (index + 1);
-        }
-
+      $$('[data-jump]').forEach((button) => {
         button.addEventListener("click", () => {
-          if (index > highestUnlocked) {
-            setStatus("Màn này chưa được mở khóa");
-            return;
-          }
-
-          loadLevel(index);
+          const quickType = button.dataset.quickType;
+          if (quickType) setType(quickType);
+          showScreen(button.dataset.jump);
         });
+      });
 
-        levelGridEl.appendChild(button);
+      $$(".type-option").forEach((button) => {
+        button.addEventListener("click", () => setType(button.dataset.type));
+      });
+
+      elements.form.addEventListener("submit", handleSubmit);
+      elements.cancelEditBtn.addEventListener("click", resetForm);
+      elements.resetFormTextBtn.addEventListener("click", resetForm);
+      elements.search.addEventListener("input", renderRecords);
+      elements.filterType.addEventListener("change", renderRecords);
+      elements.filterMonth.addEventListener("change", renderRecords);
+      elements.sortBy.addEventListener("change", renderRecords);
+      elements.exportJsonBtn.addEventListener("click", exportJson);
+      elements.importJsonBtn.addEventListener("click", () => elements.jsonFileInput.click());
+      elements.jsonFileInput.addEventListener("change", importJson);
+      elements.exportCsvBtn.addEventListener("click", exportCsv);
+      elements.addCategoryBtn.addEventListener("click", addCategory);
+    }
+
+    function showScreen(name) {
+      const desktop = window.matchMedia("(min-width: 760px)").matches;
+      if (!desktop) {
+        $$(".screen").forEach((screen) => screen.classList.toggle("active", screen.dataset.screen === name));
+      }
+      $$(".nav-btn").forEach((button) => button.classList.toggle("active", button.dataset.tab === name));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setType(type) {
+      elements.type.value = type;
+      $$(".type-option").forEach((button) => button.classList.toggle("active", button.dataset.type === type));
+      updateCategoryOptions();
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+
+      const amount = Number(elements.amount.value);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        alert("Vui lòng nhập số tiền hợp lệ.");
+        return;
+      }
+
+      const payload = {
+        id: elements.recordId.value || createId(),
+        type: elements.type.value === "income" ? "income" : "expense",
+        amount: Math.round(amount),
+        date: elements.date.value || todayISO(),
+        category: elements.category.value || "Khác",
+        title: elements.title.value.trim(),
+        note: elements.note.value.trim(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!payload.title) {
+        alert("Vui lòng nhập tiêu đề.");
+        return;
+      }
+
+      const index = records.findIndex((record) => record.id === payload.id);
+      if (index >= 0) {
+        payload.createdAt = records[index].createdAt || payload.createdAt;
+        records[index] = payload;
+      } else {
+        records.push(payload);
+      }
+
+      saveRecords();
+      resetForm();
+      render();
+      showScreen("dashboard");
+    }
+
+    function resetForm() {
+      elements.form.reset();
+      elements.recordId.value = "";
+      elements.date.value = todayISO();
+      elements.formTitle.textContent = "Ghi một khoản";
+      elements.submitBtn.textContent = "Lưu ghi chép";
+      elements.cancelEditBtn.classList.add("hidden");
+      setType("expense");
+    }
+
+    function editRecord(id) {
+      const record = records.find((item) => item.id === id);
+      if (!record) return;
+
+      elements.recordId.value = record.id;
+      setType(record.type);
+      elements.amount.value = record.amount;
+      elements.date.value = record.date;
+      elements.category.value = record.category;
+      elements.title.value = record.title;
+      elements.note.value = record.note || "";
+      elements.formTitle.textContent = "Chỉnh sửa ghi chép";
+      elements.submitBtn.textContent = "Cập nhật ghi chép";
+      elements.cancelEditBtn.classList.remove("hidden");
+      showScreen("add");
+    }
+
+    function deleteRecord(id) {
+      const record = records.find((item) => item.id === id);
+      if (!record) return;
+      if (!confirm(`Bạn có chắc muốn xóa ghi chép “${record.title}” không?`)) return;
+      records = records.filter((item) => item.id !== id);
+      saveRecords();
+      render();
+    }
+
+    function toggleRecordActions(id) {
+      const card = document.querySelector(`[data-record-id="${CSS.escape(id)}"]`);
+      if (card) card.classList.toggle("open");
+    }
+
+    function render() {
+      renderSummary();
+      renderRecords();
+      renderCharts();
+      renderCategoryLists();
+    }
+
+    function renderSummary() {
+      const income = sum(records.filter((item) => item.type === "income"));
+      const expense = sum(records.filter((item) => item.type === "expense"));
+      const balance = income - expense;
+      const month = getCurrentMonth();
+      const monthExpense = sum(records.filter((item) => item.type === "expense" && item.date.startsWith(month)));
+      const monthIncome = sum(records.filter((item) => item.type === "income" && item.date.startsWith(month)));
+
+      elements.balance.textContent = money(balance);
+      elements.totalIncome.textContent = money(income);
+      elements.totalExpense.textContent = money(expense);
+      elements.monthExpense.textContent = money(monthExpense);
+      elements.monthIncome.textContent = money(monthIncome);
+      elements.statsIncome.textContent = money(income);
+      elements.statsExpense.textContent = money(expense);
+      elements.statsBalance.textContent = money(balance);
+      elements.statsCount.textContent = String(records.length);
+    }
+
+    function renderRecords() {
+      const filtered = getFilteredRecords();
+      const recent = [...records]
+        .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
+        .slice(0, 4);
+
+      renderRecordList(elements.recordList, filtered, "Chưa có giao dịch. Nhấn “Ghi sổ” ở thanh dưới để thêm một khoản.");
+      renderRecordList(elements.recentList, recent, "Chưa có ghi chép gần đây. Hãy ghi một khoản trước.");
+    }
+
+    function renderRecordList(container, list, emptyText) {
+      if (!list.length) {
+        container.innerHTML = `<div class="empty">${escapeHTML(emptyText)}</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map((record) => {
+        const typeText = record.type === "income" ? "Thu nhập" : "Chi tiêu";
+        const symbol = record.type === "income" ? "+" : "-";
+        const icon = record.type === "income" ? "Thu" : "Chi";
+        return `
+          <article class="record-card" data-record-id="${escapeHTML(record.id)}">
+            <div class="record-icon ${record.type}">${icon}</div>
+            <div class="record-main">
+              <div class="record-title">
+                <strong>${escapeHTML(record.title)}</strong>
+                <span class="tag">${escapeHTML(record.category)}</span>
+              </div>
+              <div class="record-meta">${escapeHTML(record.date)} · ${typeText}</div>
+              ${record.note ? `<div class="record-note">${escapeHTML(record.note)}</div>` : ""}
+            </div>
+            <div class="record-side">
+              <div class="amount ${record.type}">${symbol}${money(record.amount)}</div>
+              <button class="more-btn" type="button" data-action="toggle" data-id="${escapeHTML(record.id)}">⋯</button>
+            </div>
+            <div class="record-actions">
+              <button class="ghost-btn" type="button" data-action="edit" data-id="${escapeHTML(record.id)}">Sửa</button>
+              <button class="danger-btn" type="button" data-action="delete" data-id="${escapeHTML(record.id)}">Xóa</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      container.querySelectorAll("button[data-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const id = button.dataset.id;
+          const action = button.dataset.action;
+          if (action === "toggle") toggleRecordActions(id);
+          if (action === "edit") editRecord(id);
+          if (action === "delete") deleteRecord(id);
+        });
       });
     }
 
-    function findMatches() {
-      const matches = new Set();
-
-      for (let r = 0; r < SIZE; r++) {
-        let count = 1;
-
-        for (let c = 1; c <= SIZE; c++) {
-          const currentIndex = r * SIZE + c;
-          const prevIndex = r * SIZE + c - 1;
-
-          const current = c < SIZE ? board[currentIndex] : null;
-          const previous = board[prevIndex];
-
-          if (current !== null && current === previous) {
-            count++;
-          } else {
-            if (count >= 3 && previous !== null) {
-              for (let k = 0; k < count; k++) {
-                matches.add(r * SIZE + c - 1 - k);
-              }
-            }
-
-            count = 1;
-          }
-        }
-      }
-
-      for (let c = 0; c < SIZE; c++) {
-        let count = 1;
-
-        for (let r = 1; r <= SIZE; r++) {
-          const currentIndex = r * SIZE + c;
-          const prevIndex = (r - 1) * SIZE + c;
-
-          const current = r < SIZE ? board[currentIndex] : null;
-          const previous = board[prevIndex];
-
-          if (current !== null && current === previous) {
-            count++;
-          } else {
-            if (count >= 3 && previous !== null) {
-              for (let k = 0; k < count; k++) {
-                matches.add((r - 1 - k) * SIZE + c);
-              }
-            }
-
-            count = 1;
-          }
-        }
-      }
-
-      return matches;
+    function renderCharts() {
+      renderCategoryChart("expense", elements.expenseChart);
+      renderCategoryChart("income", elements.incomeChart);
     }
 
-    function swapTiles(a, b) {
-      const temp = board[a];
-      board[a] = board[b];
-      board[b] = temp;
-    }
+    function renderCategoryChart(type, container) {
+      const list = records.filter((item) => item.type === type);
+      const grouped = groupByCategory(list);
+      const entries = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+      const max = entries.length ? entries[0][1] : 0;
 
-    function removeMatches(matchSet) {
-      for (const index of matchSet) {
-        board[index] = null;
-      }
-    }
-
-    function dropCandies() {
-      for (let c = 0; c < SIZE; c++) {
-        let writeRow = SIZE - 1;
-
-        for (let r = SIZE - 1; r >= 0; r--) {
-          const index = r * SIZE + c;
-
-          if (board[index] !== null) {
-            const writeIndex = writeRow * SIZE + c;
-
-            board[writeIndex] = board[index];
-
-            if (writeIndex !== index) {
-              board[index] = null;
-            }
-
-            writeRow--;
-          }
-        }
-      }
-    }
-
-    function fillEmptyCandies() {
-      for (let i = 0; i < TOTAL; i++) {
-        if (board[i] === null) {
-          board[i] = randomCandy();
-        }
-      }
-    }
-
-    function hasPossibleMove() {
-      for (let i = 0; i < TOTAL; i++) {
-        const right = i + 1;
-        const down = i + SIZE;
-
-        if (right < TOTAL && rowOf(i) === rowOf(right)) {
-          swapTiles(i, right);
-          const hasMatch = findMatches().size > 0;
-          swapTiles(i, right);
-
-          if (hasMatch) return true;
-        }
-
-        if (down < TOTAL) {
-          swapTiles(i, down);
-          const hasMatch = findMatches().size > 0;
-          swapTiles(i, down);
-
-          if (hasMatch) return true;
-        }
-      }
-
-      return false;
-    }
-
-    function shuffleBoard() {
-      let safeCount = 0;
-
-      do {
-        for (let i = board.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          swapTiles(i, j);
-        }
-
-        safeCount++;
-
-        if (safeCount > 120) {
-          createCleanBoard();
-          break;
-        }
-      } while (findMatches().size > 0 || !hasPossibleMove());
-
-      selectedIndex = null;
-      renderBoard();
-    }
-
-    async function resolveBoard() {
-      let combo = 0;
-      let matches = findMatches();
-
-      while (matches.size > 0) {
-        combo++;
-
-        let addScore = matches.size * 10 * combo;
-
-        if (matches.size >= 4) {
-          addScore += 30;
-        }
-
-        if (matches.size >= 5) {
-          addScore += 80;
-        }
-
-        score += addScore;
-
-        setStatus(`Đã xóa ${matches.size} ô, combo x${combo}, +${addScore} điểm`);
-        updateBestScore();
-        updateStats();
-
-        renderBoard(matches);
-        await sleep(260);
-
-        removeMatches(matches);
-        renderBoard();
-        await sleep(120);
-
-        dropCandies();
-        renderBoard();
-        await sleep(180);
-
-        fillEmptyCandies();
-        renderBoard();
-        await sleep(180);
-
-        matches = findMatches();
-      }
-
-      if (!hasPossibleMove() && !isGameOver) {
-        setStatus("Không còn nước đi hợp lệ, đã tự động xáo trộn");
-        shuffleBoard();
-      }
-    }
-
-    function updateBestScore() {
-      const oldBest = bestByLevel[currentLevelIndex] || 0;
-
-      if (score > oldBest) {
-        bestByLevel[currentLevelIndex] = score;
-        saveProgress();
-      }
-    }
-
-    function checkLevelState() {
-      const level = currentLevel();
-
-      if (!isPassed && score >= level.target) {
-        isPassed = true;
-
-        if (currentLevelIndex < LEVELS.length - 1) {
-          highestUnlocked = Math.max(highestUnlocked, currentLevelIndex + 1);
-          saveProgress();
-          setStatus(`Tuyệt vời! Bạn đã vượt qua ${level.name}. Màn tiếp theo đã mở khóa.`);
-        } else {
-          setStatus("Xuất sắc! Bạn đã hoàn thành tất cả các màn.");
-        }
-
-        updateStats();
+      if (!entries.length) {
+        const text = type === "income" ? "Chưa có dữ liệu thống kê thu nhập" : "Chưa có dữ liệu thống kê chi tiêu";
+        container.innerHTML = `<div class="empty">${text}</div>`;
         return;
       }
 
-      if (moves <= 0) {
-        isGameOver = true;
+      container.innerHTML = entries.map(([name, value]) => {
+        const width = max ? Math.max(5, (value / max) * 100) : 0;
+        return `
+          <div class="bar-item">
+            <div class="bar-head">
+              <span>${escapeHTML(name)}</span>
+              <strong>${money(value)}</strong>
+            </div>
+            <div class="bar"><span style="width:${width}%;"></span></div>
+          </div>
+        `;
+      }).join("");
+    }
 
-        if (score >= level.target) {
-          setStatus(`Qua màn! Điểm của bạn: ${score}`);
-        } else {
-          setStatus(`Hết lượt! Bạn cần ${level.target} điểm để qua màn. Điểm hiện tại: ${score}`);
+    function getFilteredRecords() {
+      const keyword = elements.search.value.trim().toLowerCase();
+      const type = elements.filterType.value;
+      const month = elements.filterMonth.value;
+      const sortBy = elements.sortBy.value;
+
+      let result = records.filter((record) => {
+        const text = `${record.title} ${record.category} ${record.note || ""}`.toLowerCase();
+        const matchKeyword = !keyword || text.includes(keyword);
+        const matchType = type === "all" || record.type === type;
+        const matchMonth = !month || record.date.startsWith(month);
+        return matchKeyword && matchType && matchMonth;
+      });
+
+      result = [...result].sort((a, b) => {
+        if (sortBy === "date-desc") return b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt);
+        if (sortBy === "date-asc") return a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt);
+        if (sortBy === "amount-desc") return b.amount - a.amount;
+        if (sortBy === "amount-asc") return a.amount - b.amount;
+        return 0;
+      });
+
+      return result;
+    }
+
+    function updateCategoryOptions() {
+      const type = elements.type.value === "income" ? "income" : "expense";
+      const list = categories[type] || [];
+      elements.category.innerHTML = list.map((name) => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join("");
+    }
+
+    function renderCategoryLists() {
+      renderCategoryList("expense", elements.expenseCategoryList);
+      renderCategoryList("income", elements.incomeCategoryList);
+    }
+
+    function renderCategoryList(type, container) {
+      const list = categories[type] || [];
+      container.innerHTML = list.map((name) => `
+        <span class="category-chip">
+          ${escapeHTML(name)}
+          <button type="button" data-type="${type}" data-name="${escapeHTML(name)}">×</button>
+        </span>
+      `).join("");
+
+      container.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => removeCategory(button.dataset.type, button.dataset.name));
+      });
+    }
+
+    function addCategory() {
+      const type = elements.newCategoryType.value;
+      const name = elements.newCategoryName.value.trim();
+      if (!name) {
+        alert("Vui lòng nhập tên danh mục.");
+        return;
+      }
+      if (categories[type].includes(name)) {
+        alert("Danh mục đã tồn tại.");
+        return;
+      }
+      categories[type].push(name);
+      saveCategories();
+      elements.newCategoryName.value = "";
+      updateCategoryOptions();
+      renderCategoryLists();
+    }
+
+    function removeCategory(type, name) {
+      const used = records.some((record) => record.type === type && record.category === name);
+      if (used) {
+        alert("Danh mục này đã có ghi chép nên không thể xóa. Bạn có thể sửa danh mục của các ghi chép liên quan trước.");
+        return;
+      }
+      categories[type] = categories[type].filter((item) => item !== name);
+      if (!categories[type].length) categories[type].push("Khác");
+      saveCategories();
+      updateCategoryOptions();
+      renderCategoryLists();
+    }
+
+    function exportJson() {
+      const data = {
+        app: "mobile-accounting-book-vi",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        records,
+        categories
+      };
+      downloadFile(JSON.stringify(data, null, 2), `sao-luu-so-thu-chi-${todayISO()}.json`, "application/json;charset=utf-8");
+    }
+
+    function importJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!Array.isArray(data.records)) throw new Error("Định dạng tệp sao lưu không đúng.");
+          if (!confirm("Sau khi nhập, dữ liệu sổ thu chi hiện tại trong trình duyệt sẽ bị ghi đè. Bạn có chắc muốn tiếp tục không?")) return;
+
+          records = data.records.map(normalizeRecord).filter(Boolean);
+          categories = normalizeCategories(data.categories || defaultCategories);
+          saveRecords();
+          saveCategories();
+          updateCategoryOptions();
+          render();
+          showScreen("dashboard");
+          alert("Nhập dữ liệu thành công.");
+        } catch (error) {
+          alert("Nhập dữ liệu thất bại: " + error.message);
+        } finally {
+          elements.jsonFileInput.value = "";
         }
+      };
+      reader.readAsText(file, "utf-8");
+    }
 
-        updateStats();
+    function exportCsv() {
+      const header = ["Ngày", "Loại", "Danh mục", "Tiêu đề", "Số tiền", "Ghi chú"];
+      const rows = getFilteredRecords().map((record) => [
+        record.date,
+        record.type === "income" ? "Thu nhập" : "Chi tiêu",
+        record.category,
+        record.title,
+        record.amount,
+        record.note || ""
+      ]);
+      const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+      downloadFile("\ufeff" + csv, `chi-tiet-so-thu-chi-${todayISO()}.csv`, "text/csv;charset=utf-8");
+    }
+
+    function normalizeRecord(record) {
+      if (!record || typeof record !== "object") return null;
+      const type = record.type === "income" ? "income" : "expense";
+      const amount = Number(record.amount);
+      if (!Number.isFinite(amount) || amount <= 0) return null;
+      return {
+        id: String(record.id || createId()),
+        type,
+        amount: Math.round(amount),
+        date: /^\d{4}-\d{2}-\d{2}$/.test(record.date) ? record.date : todayISO(),
+        category: String(record.category || "Khác"),
+        title: String(record.title || "Ghi chép chưa đặt tên").slice(0, 40),
+        note: String(record.note || "").slice(0, 200),
+        createdAt: record.createdAt || new Date().toISOString(),
+        updatedAt: record.updatedAt || new Date().toISOString()
+      };
+    }
+
+    function normalizeCategories(input) {
+      const result = {
+        expense: Array.isArray(input.expense) ? uniqueClean(input.expense) : [...defaultCategories.expense],
+        income: Array.isArray(input.income) ? uniqueClean(input.income) : [...defaultCategories.income]
+      };
+      if (!result.expense.length) result.expense.push("Khác");
+      if (!result.income.length) result.income.push("Khác");
+      return result;
+    }
+
+    function uniqueClean(list) {
+      return [...new Set(list.map((item) => String(item).trim()).filter(Boolean))];
+    }
+
+    function groupByCategory(list) {
+      return list.reduce((map, record) => {
+        map[record.category] = (map[record.category] || 0) + Number(record.amount || 0);
+        return map;
+      }, {});
+    }
+
+    function sum(list) {
+      return list.reduce((total, item) => total + Number(item.amount || 0), 0);
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0
+      }).format(value || 0);
+    }
+
+    function todayISO() {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function getCurrentMonth() {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      return `${year}-${month}`;
+    }
+
+    function formatToday() {
+      const date = new Date();
+      return new Intl.DateTimeFormat("vi-VN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long"
+      }).format(date);
+    }
+
+    function createId() {
+      return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function loadRecords() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY)
+          || localStorage.getItem("mobile_accounting_records_v2")
+          || localStorage.getItem("personal_accounting_records_v1");
+        if (!raw) return [];
+        return JSON.parse(raw).map(normalizeRecord).filter(Boolean);
+      } catch {
+        return [];
       }
     }
 
-    async function trySwap(a, b) {
-      if (isBusy || isGameOver) return;
-      if (!isAdjacent(a, b)) return;
-
-      isBusy = true;
-      selectedIndex = null;
-
-      swapTiles(a, b);
-      renderBoard();
-      await sleep(160);
-
-      const matches = findMatches();
-
-      if (matches.size === 0) {
-        swapTiles(a, b);
-        renderBoard(new Set(), new Set([a, b]));
-        setStatus("Lần đổi này không tạo được combo, đã tự động hoàn tác");
-        await sleep(280);
-        renderBoard();
-        isBusy = false;
-        return;
-      }
-
-      moves--;
-      updateStats();
-
-      await resolveBoard();
-
-      updateBestScore();
-      checkLevelState();
-
-      if (!isGameOver && !isPassed) {
-        setStatus("Tiếp tục đổi các ô liền kề để đạt đủ điểm mục tiêu");
-      }
-
-      if (!isGameOver && isPassed) {
-        setStatus("Bạn đã qua màn. Có thể tiếp tục chơi hoặc bấm Màn tiếp theo.");
-      }
-
-      isBusy = false;
+    function saveRecords() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
     }
 
-    function handleTileClick(index) {
-      if (isBusy || isGameOver) return;
-      if (board[index] === null) return;
-
-      if (selectedIndex === null) {
-        selectedIndex = index;
-        renderBoard();
-        return;
-      }
-
-      if (selectedIndex === index) {
-        selectedIndex = null;
-        renderBoard();
-        return;
-      }
-
-      if (isAdjacent(selectedIndex, index)) {
-        const from = selectedIndex;
-        const to = index;
-        selectedIndex = null;
-        renderBoard();
-        trySwap(from, to);
-      } else {
-        selectedIndex = index;
-        renderBoard();
+    function loadCategories() {
+      try {
+        const raw = localStorage.getItem(CATEGORY_KEY);
+        if (!raw) return clone(defaultCategories);
+        return normalizeCategories(JSON.parse(raw));
+      } catch {
+        return clone(defaultCategories);
       }
     }
 
-    function getTileIndexFromEvent(event) {
-      const tile = event.target.closest(".tile");
-
-      if (!tile) return null;
-
-      return Number(tile.dataset.index);
+    function saveCategories() {
+      localStorage.setItem(CATEGORY_KEY, JSON.stringify(categories));
     }
 
-    boardEl.addEventListener("pointerdown", event => {
-      if (isBusy || isGameOver) return;
-
-      const index = getTileIndexFromEvent(event);
-
-      if (index === null) return;
-
-      pointerStartIndex = index;
-    });
-
-    boardEl.addEventListener("pointerup", event => {
-      if (isBusy || isGameOver) return;
-
-      const endIndex = getTileIndexFromEvent(event);
-
-      if (
-        pointerStartIndex !== null &&
-        endIndex !== null &&
-        pointerStartIndex !== endIndex &&
-        isAdjacent(pointerStartIndex, endIndex)
-      ) {
-        suppressNextClick = true;
-
-        const from = pointerStartIndex;
-        const to = endIndex;
-
-        pointerStartIndex = null;
-        selectedIndex = null;
-
-        renderBoard();
-        trySwap(from, to);
-      } else {
-        pointerStartIndex = null;
-      }
-    });
-
-    boardEl.addEventListener("click", event => {
-      if (suppressNextClick) {
-        suppressNextClick = false;
-        return;
-      }
-
-      const index = getTileIndexFromEvent(event);
-
-      if (index === null) return;
-
-      handleTileClick(index);
-    });
-
-    restartBtn.addEventListener("click", () => {
-      startGame();
-    });
-
-    shuffleBtn.addEventListener("click", () => {
-      if (isBusy || isGameOver) return;
-
-      moves = Math.max(0, moves - 1);
-      updateStats();
-
-      shuffleBoard();
-
-      if (moves <= 0) {
-        checkLevelState();
-      } else {
-        setStatus("Đã xáo trộn, mất 1 lượt");
-      }
-    });
-
-    nextBtn.addEventListener("click", () => {
-      if (!canGoNextLevel()) return;
-
-      loadLevel(currentLevelIndex + 1);
-    });
-
-    function loadLevel(index) {
-      if (index < 0 || index >= LEVELS.length) return;
-
-      if (index > highestUnlocked) {
-        setStatus("Màn này chưa được mở khóa");
-        return;
-      }
-
-      currentLevelIndex = index;
-      startGame();
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
     }
 
-    function startGame() {
-      const level = currentLevel();
-
-      score = 0;
-      moves = level.moves;
-      selectedIndex = null;
-      pointerStartIndex = null;
-      isBusy = false;
-      isGameOver = false;
-      isPassed = false;
-
-      do {
-        createCleanBoard();
-      } while (!hasPossibleMove());
-
-      updateStats();
-      renderBoard();
-
-      setStatus(`${level.name}: Đạt ${level.target} điểm trong ${level.moves} lượt để qua màn`);
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
 
-    startGame();
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return `"${text.replace(/"/g, '""')}"`;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    init();
   </script>
 </body>
 </html>

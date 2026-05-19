@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>Ghi chép kho hàng - Công Ty TMDV TRANGTRAINAMAY VN</title>
+  <style>
+    :root {
+      --primary: #0f7cff;
+      --primary-dark: #075fc7;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --orange: #f97316;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 760px;
+      margin: 0 auto;
+      padding-bottom: 88px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0f7cff, #05b6ff);
+      color: #fff;
+      padding: 22px 16px 28px;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      box-shadow: 0 14px 30px rgba(15, 124, 255, 0.22);
+    }
+
+    .company {
+      font-size: 13px;
+      opacity: 0.88;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 0.5px;
+      font-weight: 800;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      font-size: 13px;
+      opacity: 0.88;
+      line-height: 1.5;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 0 14px;
+      margin-top: -18px;
+    }
+
+    .summary-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 14px 10px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      min-width: 0;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+      white-space: nowrap;
+    }
+
+    .summary-value {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .summary-card.in .summary-value {
+      color: var(--green);
+    }
+
+    .summary-card.out .summary-value {
+      color: var(--red);
+    }
+
+    .section {
+      margin: 14px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 16px 16px 8px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .form {
+      padding: 8px 16px 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 6px;
+      font-weight: 650;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 12px 12px;
+      outline: none;
+      background: #fbfdff;
+      color: var(--text);
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .field textarea {
+      min-height: 74px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(15, 124, 255, 0.72);
+      box-shadow: 0 0 0 4px rgba(15, 124, 255, 0.1);
+      background: #fff;
+    }
+
+    .type-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .type-tab {
+      border-radius: 14px;
+      padding: 12px 10px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-weight: 800;
+      border: 1px solid #e5e7eb;
+    }
+
+    .type-tab.active-in {
+      background: rgba(22, 163, 74, 0.1);
+      color: var(--green);
+      border-color: rgba(22, 163, 74, 0.25);
+    }
+
+    .type-tab.active-out {
+      background: rgba(220, 38, 38, 0.09);
+      color: var(--red);
+      border-color: rgba(220, 38, 38, 0.24);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      min-height: 46px;
+      border-radius: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      opacity: 0.88;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 18px rgba(15, 124, 255, 0.2);
+    }
+
+    .btn-secondary {
+      background: #eef2ff;
+      color: #1d4ed8;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--red);
+    }
+
+    .btn-gray {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .toolbar {
+      padding: 12px 16px 4px;
+      display: grid;
+      grid-template-columns: 1fr 116px;
+      gap: 10px;
+    }
+
+    .search-input,
+    .filter-select {
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 11px 12px;
+      background: #fbfdff;
+      outline: none;
+      min-width: 0;
+    }
+
+    .list {
+      padding: 4px 12px 14px;
+      max-height: 520px;
+      overflow: auto;
+    }
+
+    .record {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 13px 4px;
+      border-bottom: 1px solid #eef0f4;
+    }
+
+    .record:last-child {
+      border-bottom: none;
+    }
+
+    .record-main {
+      min-width: 0;
+    }
+
+    .record-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .record-name {
+      font-size: 15px;
+      font-weight: 800;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .pill-in {
+      background: rgba(22, 163, 74, 0.12);
+      color: var(--green);
+    }
+
+    .pill-out {
+      background: rgba(220, 38, 38, 0.1);
+      color: var(--red);
+    }
+
+    .record-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
+    .record-note {
+      margin-top: 4px;
+      color: #4b5563;
+      font-size: 12px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .record-qty {
+      text-align: right;
+      min-width: 76px;
+    }
+
+    .qty-num {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .qty-unit {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .record-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .small-btn {
+      border-radius: 10px;
+      padding: 7px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .small-btn.delete {
+      background: #fee2e2;
+      color: var(--red);
+    }
+
+    .empty {
+      padding: 36px 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .stock-list {
+      padding: 6px 16px 16px;
+    }
+
+    .stock-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid #eef0f4;
+    }
+
+    .stock-item:last-child {
+      border-bottom: none;
+    }
+
+    .stock-name {
+      font-weight: 800;
+      font-size: 14px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .stock-value {
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .stock-value.negative {
+      color: var(--red);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 760px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(229, 231, 235, 0.9);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+      z-index: 20;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--muted);
+      border-radius: 14px;
+      padding: 8px 4px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .nav-btn.active {
+      background: rgba(15, 124, 255, 0.1);
+      color: var(--primary);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .data-actions {
+      padding: 8px 16px 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .notice {
+      margin: 8px 16px 16px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid #fed7aa;
+    }
+
+    .footer-text {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      padding: 4px 16px 24px;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 82px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(17, 24, 39, 0.92);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.22s ease;
+      z-index: 99;
+      max-width: 82%;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.48);
+      z-index: 60;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-mask.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 760px;
+      background: #fff;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+      box-shadow: 0 -20px 40px rgba(15, 23, 42, 0.16);
+    }
+
+    .modal h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .modal p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    @media (max-width: 420px) {
+      .header {
+        padding-top: 18px;
+      }
+
+      .title {
+        font-size: 23px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .summary-card {
+        padding: 12px 8px;
+      }
+
+      .summary-value {
+        font-size: 18px;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .record {
+        grid-template-columns: 1fr;
+      }
+
+      .record-qty {
+        text-align: left;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+
+      .record-buttons {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="company">Công Ty TMDV TRANGTRAINAMAY VN</div>
+      <div class="title-row">
+        <h1 class="title">Ghi chép kho hàng</h1>
+        <div class="badge">Nhập kho / Xuất kho</div>
+      </div>
+      <p class="subtitle">Dùng để ghi chép nhập kho, xuất kho, khách hàng/nhà cung cấp, số lượng, đơn giá và ghi chú. Dữ liệu được lưu cục bộ trên thiết bị hiện tại.</p>
+    </header>
+
+    <section class="summary" aria-label="Tổng quan">
+      <div class="summary-card">
+        <div class="summary-label">Số ghi chép</div>
+        <div class="summary-value" id="totalRecords">0</div>
+      </div>
+      <div class="summary-card in">
+        <div class="summary-label">Tổng nhập</div>
+        <div class="summary-value" id="totalIn">0</div>
+      </div>
+      <div class="summary-card out">
+        <div class="summary-label">Tổng xuất</div>
+        <div class="summary-value" id="totalOut">0</div>
+      </div>
+    </section>
+
+    <main>
+      <div class="page active" id="pageAdd">
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title" id="formTitle">Thêm ghi chép</h2>
+            <span class="section-note">Lưu cục bộ</span>
+          </div>
+
+          <form class="form" id="recordForm">
+            <div class="type-tabs">
+              <button type="button" class="type-tab active-in" data-type="in">Nhập kho</button>
+              <button type="button" class="type-tab" data-type="out">Xuất kho</button>
+            </div>
+
+            <input type="hidden" id="editId" value="" />
+            <input type="hidden" id="recordType" value="in" />
+
+            <div class="grid">
+              <div class="field">
+                <label for="date">Ngày</label>
+                <input id="date" type="date" required />
+              </div>
+              <div class="field">
+                <label for="productName">Tên hàng hóa</label>
+                <input id="productName" type="text" placeholder="Ví dụ: vải, linh kiện máy" maxlength="40" required />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="field">
+                <label for="quantity">Số lượng</label>
+                <input id="quantity" type="number" min="0.01" step="0.01" placeholder="Ví dụ: 10" required />
+              </div>
+              <div class="field">
+                <label for="unit">Đơn vị</label>
+                <input id="unit" type="text" placeholder="cái / thùng / kg" maxlength="12" value="cái" />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="field">
+                <label for="price">Đơn giá</label>
+                <input id="price" type="number" min="0" step="0.01" placeholder="Không bắt buộc" />
+              </div>
+              <div class="field">
+                <label for="partner">Khách hàng / Nhà cung cấp</label>
+                <input id="partner" type="text" placeholder="Ví dụ: Khách A / Nhà cung cấp B" maxlength="50" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="orderNo">Mã đơn / Mã chứng từ</label>
+              <input id="orderNo" type="text" placeholder="Ví dụ: TR-20260519-001" maxlength="40" />
+            </div>
+
+            <div class="field">
+              <label for="note">Ghi chú</label>
+              <textarea id="note" placeholder="Có thể ghi thông tin vận chuyển, thanh toán, người phụ trách..." maxlength="200"></textarea>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-primary" type="submit" id="saveBtn">Lưu ghi chép</button>
+              <button class="btn btn-gray" type="button" id="resetBtn">Xóa nội dung</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div class="page" id="pageList">
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Chi tiết ghi chép</h2>
+            <span class="section-note" id="listCount">0 mục</span>
+          </div>
+
+          <div class="toolbar">
+            <input class="search-input" id="searchInput" type="search" placeholder="Tìm hàng hóa, khách hàng, mã đơn" />
+            <select class="filter-select" id="filterType">
+              <option value="all">Tất cả</option>
+              <option value="in">Chỉ nhập kho</option>
+              <option value="out">Chỉ xuất kho</option>
+            </select>
+          </div>
+
+          <div class="list" id="recordList"></div>
+        </section>
+      </div>
+
+      <div class="page" id="pageStock">
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Tổng hợp tồn kho</h2>
+            <span class="section-note">Nhập kho - Xuất kho</span>
+          </div>
+          <div class="stock-list" id="stockList"></div>
+        </section>
+      </div>
+
+      <div class="page" id="pageData">
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Quản lý dữ liệu</h2>
+            <span class="section-note">Sao lưu / Khôi phục</span>
+          </div>
+
+          <div class="notice">
+            Phiên bản hiện tại là công cụ H5 lưu dữ liệu cục bộ, phù hợp để nhúng vào Zalo Mini App và thử nghiệm trước. Nếu cần đồng bộ nhiều thiết bị, cần kết nối máy chủ hoặc Cloudflare Worker + D1/R2 ở phiên bản sau.
+          </div>
+
+          <div class="data-actions">
+            <button class="btn btn-primary" id="exportCsvBtn" type="button">Xuất bảng CSV</button>
+            <button class="btn btn-secondary" id="exportJsonBtn" type="button">Xuất sao lưu JSON</button>
+            <button class="btn btn-gray" id="importBtn" type="button">Nhập sao lưu JSON</button>
+            <button class="btn btn-danger" id="clearAllBtn" type="button">Xóa toàn bộ dữ liệu</button>
+            <input class="file-input" id="importFile" type="file" accept="application/json,.json" />
+          </div>
+        </section>
+
+        <div class="footer-text">
+          © Công Ty TMDV TRANGTRAINAMAY VN<br />Ghi chép kho hàng · Trade Record
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="底部导航">
+    <button class="nav-btn active" data-page="pageAdd">Thêm</button>
+    <button class="nav-btn" data-page="pageList">Chi tiết</button>
+    <button class="nav-btn" data-page="pageStock">Tồn kho</button>
+    <button class="nav-btn" data-page="pageData">Quản lý</button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-mask" id="confirmModal">
+    <div class="modal">
+      <h3 id="confirmTitle">Xác nhận thao tác</h3>
+      <p id="confirmText">Bạn có chắc muốn tiếp tục không?</p>
+      <div class="modal-actions">
+        <button class="btn btn-gray" id="cancelConfirm" type="button">Hủy</button>
+        <button class="btn btn-danger" id="okConfirm" type="button">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'trangtrainamay_trade_records_vi_v1';
+      var records = [];
+      var pendingConfirm = null;
+
+      var el = {
+        totalRecords: document.getElementById('totalRecords'),
+        totalIn: document.getElementById('totalIn'),
+        totalOut: document.getElementById('totalOut'),
+        recordForm: document.getElementById('recordForm'),
+        formTitle: document.getElementById('formTitle'),
+        saveBtn: document.getElementById('saveBtn'),
+        resetBtn: document.getElementById('resetBtn'),
+        editId: document.getElementById('editId'),
+        recordType: document.getElementById('recordType'),
+        date: document.getElementById('date'),
+        productName: document.getElementById('productName'),
+        quantity: document.getElementById('quantity'),
+        unit: document.getElementById('unit'),
+        price: document.getElementById('price'),
+        partner: document.getElementById('partner'),
+        orderNo: document.getElementById('orderNo'),
+        note: document.getElementById('note'),
+        recordList: document.getElementById('recordList'),
+        listCount: document.getElementById('listCount'),
+        searchInput: document.getElementById('searchInput'),
+        filterType: document.getElementById('filterType'),
+        stockList: document.getElementById('stockList'),
+        exportCsvBtn: document.getElementById('exportCsvBtn'),
+        exportJsonBtn: document.getElementById('exportJsonBtn'),
+        importBtn: document.getElementById('importBtn'),
+        importFile: document.getElementById('importFile'),
+        clearAllBtn: document.getElementById('clearAllBtn'),
+        toast: document.getElementById('toast'),
+        confirmModal: document.getElementById('confirmModal'),
+        confirmTitle: document.getElementById('confirmTitle'),
+        confirmText: document.getElementById('confirmText'),
+        cancelConfirm: document.getElementById('cancelConfirm'),
+        okConfirm: document.getElementById('okConfirm')
+      };
+
+      function todayString() {
+        var d = new Date();
+        var year = d.getFullYear();
+        var month = String(d.getMonth() + 1).padStart(2, '0');
+        var day = String(d.getDate()).padStart(2, '0');
+        return year + '-' + month + '-' + day;
+      }
+
+      function uid() {
+        return 'r_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+      }
+
+      function normalizeNumber(value) {
+        var n = Number(value);
+        if (!isFinite(n)) return 0;
+        return Math.round(n * 100) / 100;
+      }
+
+      function money(value) {
+        var n = normalizeNumber(value);
+        return n ? n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+      }
+
+      function qty(value) {
+        var n = normalizeNumber(value);
+        return Number.isInteger(n) ? String(n) : String(n.toFixed(2)).replace(/\.00$/, '').replace(/0$/, '');
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function loadRecords() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          records = raw ? JSON.parse(raw) : [];
+          if (!Array.isArray(records)) records = [];
+        } catch (error) {
+          records = [];
+          showToast('Không đọc được dữ liệu cục bộ, đã đặt lại về rỗng');
+        }
+      }
+
+      function saveRecords() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      }
+
+      function showToast(message) {
+        el.toast.textContent = message;
+        el.toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(function () {
+          el.toast.classList.remove('show');
+        }, 1800);
+      }
+
+      function setType(type) {
+        el.recordType.value = type;
+        document.querySelectorAll('.type-tab').forEach(function (btn) {
+          btn.classList.remove('active-in', 'active-out');
+          if (btn.dataset.type === type) {
+            btn.classList.add(type === 'in' ? 'active-in' : 'active-out');
+          }
+        });
+      }
+
+      function resetForm() {
+        el.recordForm.reset();
+        el.editId.value = '';
+        el.date.value = todayString();
+        el.unit.value = 'cái';
+        setType('in');
+        el.formTitle.textContent = 'Thêm ghi chép';
+        el.saveBtn.textContent = 'Lưu ghi chép';
+      }
+
+      function getFormData() {
+        var productName = el.productName.value.trim();
+        var quantity = normalizeNumber(el.quantity.value);
+        if (!productName) {
+          showToast('Vui lòng nhập tên hàng hóa');
+          return null;
+        }
+        if (quantity <= 0) {
+          showToast('Số lượng phải lớn hơn 0');
+          return null;
+        }
+
+        return {
+          id: el.editId.value || uid(),
+          type: el.recordType.value,
+          date: el.date.value || todayString(),
+          productName: productName,
+          quantity: quantity,
+          unit: el.unit.value.trim() || 'cái',
+          price: normalizeNumber(el.price.value),
+          partner: el.partner.value.trim(),
+          orderNo: el.orderNo.value.trim(),
+          note: el.note.value.trim(),
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      function upsertRecord(record) {
+        var index = records.findIndex(function (item) { return item.id === record.id; });
+        if (index >= 0) {
+          record.createdAt = records[index].createdAt || record.updatedAt;
+          records[index] = record;
+        } else {
+          record.createdAt = record.updatedAt;
+          records.unshift(record);
+        }
+        saveRecords();
+        renderAll();
+      }
+
+      function deleteRecord(id) {
+        records = records.filter(function (item) { return item.id !== id; });
+        saveRecords();
+        renderAll();
+        showToast('Đã xóa');
+      }
+
+      function editRecord(id) {
+        var item = records.find(function (record) { return record.id === id; });
+        if (!item) return;
+
+        el.editId.value = item.id;
+        setType(item.type);
+        el.date.value = item.date || todayString();
+        el.productName.value = item.productName || '';
+        el.quantity.value = item.quantity || '';
+        el.unit.value = item.unit || 'cái';
+        el.price.value = item.price || '';
+        el.partner.value = item.partner || '';
+        el.orderNo.value = item.orderNo || '';
+        el.note.value = item.note || '';
+        el.formTitle.textContent = 'Chỉnh sửa ghi chép';
+        el.saveBtn.textContent = 'Lưu chỉnh sửa';
+        switchPage('pageAdd');
+      }
+
+      function getFilteredRecords() {
+        var keyword = el.searchInput.value.trim().toLowerCase();
+        var type = el.filterType.value;
+        return records
+          .filter(function (item) {
+            if (type !== 'all' && item.type !== type) return false;
+            if (!keyword) return true;
+            var text = [item.productName, item.partner, item.orderNo, item.note, item.date].join(' ').toLowerCase();
+            return text.indexOf(keyword) >= 0;
+          })
+          .sort(function (a, b) {
+            var da = (a.date || '') + (a.createdAt || '');
+            var db = (b.date || '') + (b.createdAt || '');
+            return db.localeCompare(da);
+          });
+      }
+
+      function renderSummary() {
+        var totalIn = 0;
+        var totalOut = 0;
+        records.forEach(function (item) {
+          if (item.type === 'in') totalIn += normalizeNumber(item.quantity);
+          if (item.type === 'out') totalOut += normalizeNumber(item.quantity);
+        });
+        el.totalRecords.textContent = records.length;
+        el.totalIn.textContent = qty(totalIn);
+        el.totalOut.textContent = qty(totalOut);
+      }
+
+      function renderList() {
+        var list = getFilteredRecords();
+        el.listCount.textContent = list.length + ' mục';
+
+        if (!list.length) {
+          el.recordList.innerHTML = '<div class="empty">Chưa có ghi chép.<br />Bạn có thể thêm thông tin nhập kho hoặc xuất kho ở trang “Thêm”.</div>';
+          return;
+        }
+
+        el.recordList.innerHTML = list.map(function (item) {
+          var isIn = item.type === 'in';
+          var amount = normalizeNumber(item.quantity) * normalizeNumber(item.price);
+          var meta = [
+            'Ngày: ' + escapeHtml(item.date || '-'),
+            item.partner ? 'Khách hàng/Nhà cung cấp: ' + escapeHtml(item.partner) : '',
+            item.orderNo ? 'Mã đơn: ' + escapeHtml(item.orderNo) : '',
+            item.price ? 'Đơn giá: ' + money(item.price) + ', Thành tiền: ' + money(amount) : ''
+          ].filter(Boolean).join('<br />');
+
+          return '' +
+            '<article class="record">' +
+              '<div class="record-main">' +
+                '<div class="record-top">' +
+                  '<span class="record-name">' + escapeHtml(item.productName) + '</span>' +
+                  '<span class="pill ' + (isIn ? 'pill-in' : 'pill-out') + '">' + (isIn ? 'Nhập kho' : 'Xuất kho') + '</span>' +
+                '</div>' +
+                '<div class="record-meta">' + meta + '</div>' +
+                (item.note ? '<div class="record-note">Ghi chú: ' + escapeHtml(item.note) + '</div>' : '') +
+                '<div class="record-buttons">' +
+                  '<button class="small-btn" data-action="edit" data-id="' + escapeHtml(item.id) + '">Sửa</button>' +
+                  '<button class="small-btn delete" data-action="delete" data-id="' + escapeHtml(item.id) + '">Xóa</button>' +
+                '</div>' +
+              '</div>' +
+              '<div class="record-qty">' +
+                '<div class="qty-num" style="color:' + (isIn ? 'var(--green)' : 'var(--red)') + '">' + (isIn ? '+' : '-') + qty(item.quantity) + '</div>' +
+                '<div class="qty-unit">' + escapeHtml(item.unit || 'cái') + '</div>' +
+              '</div>' +
+            '</article>';
+        }).join('');
+      }
+
+      function buildStock() {
+        var stockMap = {};
+        records.forEach(function (item) {
+          var key = (item.productName || '').trim();
+          if (!key) return;
+          var unit = item.unit || 'cái';
+          var mapKey = key + '||' + unit;
+          if (!stockMap[mapKey]) {
+            stockMap[mapKey] = { productName: key, unit: unit, value: 0 };
+          }
+          stockMap[mapKey].value += item.type === 'in' ? normalizeNumber(item.quantity) : -normalizeNumber(item.quantity);
+        });
+        return Object.keys(stockMap).map(function (key) { return stockMap[key]; })
+          .sort(function (a, b) { return a.productName.localeCompare(b.productName, 'zh-CN'); });
+      }
+
+      function renderStock() {
+        var stock = buildStock();
+        if (!stock.length) {
+          el.stockList.innerHTML = '<div class="empty">Chưa có dữ liệu tồn kho.<br />Sau khi thêm ghi chép nhập kho và xuất kho, hệ thống sẽ tự động tổng hợp tại đây.</div>';
+          return;
+        }
+
+        el.stockList.innerHTML = stock.map(function (item) {
+          return '' +
+            '<div class="stock-item">' +
+              '<div class="stock-name">' + escapeHtml(item.productName) + '</div>' +
+              '<div class="stock-value ' + (item.value < 0 ? 'negative' : '') + '">' + qty(item.value) + ' ' + escapeHtml(item.unit) + '</div>' +
+            '</div>';
+        }).join('');
+      }
+
+      function renderAll() {
+        renderSummary();
+        renderList();
+        renderStock();
+      }
+
+      function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(function (page) {
+          page.classList.toggle('active', page.id === pageId);
+        });
+        document.querySelectorAll('.nav-btn').forEach(function (btn) {
+          btn.classList.toggle('active', btn.dataset.page === pageId);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function confirmAction(title, text, onOk) {
+        pendingConfirm = onOk;
+        el.confirmTitle.textContent = title;
+        el.confirmText.textContent = text;
+        el.confirmModal.classList.add('show');
+      }
+
+      function closeConfirm() {
+        pendingConfirm = null;
+        el.confirmModal.classList.remove('show');
+      }
+
+      function downloadFile(filename, content, mimeType) {
+        var blob = new Blob([content], { type: mimeType || 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+
+      function toCsvCell(value) {
+        var text = String(value == null ? '' : value);
+        if (/[",\n]/.test(text)) {
+          return '"' + text.replace(/"/g, '""') + '"';
+        }
+        return text;
+      }
+
+      function exportCsv() {
+        if (!records.length) {
+          showToast('Chưa có dữ liệu để xuất');
+          return;
+        }
+        var header = ['Ngày', 'Loại', 'Tên hàng hóa', 'Số lượng', 'Đơn vị', 'Đơn giá', 'Thành tiền', 'Khách hàng/Nhà cung cấp', 'Mã đơn/Mã chứng từ', 'Ghi chú'];
+        var rows = records.map(function (item) {
+          var amount = normalizeNumber(item.quantity) * normalizeNumber(item.price);
+          return [
+            item.date,
+            item.type === 'in' ? 'Nhập kho' : 'Xuất kho',
+            item.productName,
+            item.quantity,
+            item.unit,
+            item.price || '',
+            item.price ? amount : '',
+            item.partner,
+            item.orderNo,
+            item.note
+          ];
+        });
+        var csv = '\ufeff' + [header].concat(rows).map(function (row) {
+          return row.map(toCsvCell).join(',');
+        }).join('\n');
+        downloadFile('trade-records-' + todayString() + '.csv', csv, 'text/csv;charset=utf-8');
+        showToast('Đã xuất CSV');
+      }
+
+      function exportJson() {
+        if (!records.length) {
+          showToast('Chưa có dữ liệu để xuất');
+          return;
+        }
+        var data = {
+          app: 'Ghi chép kho hàng',
+          company: 'Công Ty TMDV TRANGTRAINAMAY VN',
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          records: records
+        };
+        downloadFile('trade-records-backup-' + todayString() + '.json', JSON.stringify(data, null, 2), 'application/json;charset=utf-8');
+        showToast('Đã xuất sao lưu JSON');
+      }
+
+      function importJsonFile(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var data = JSON.parse(String(reader.result || '{}'));
+            var imported = Array.isArray(data) ? data : data.records;
+            if (!Array.isArray(imported)) throw new Error('Invalid JSON');
+            var cleaned = imported.map(function (item) {
+              return {
+                id: item.id || uid(),
+                type: item.type === 'out' ? 'out' : 'in',
+                date: item.date || todayString(),
+                productName: String(item.productName || '').trim(),
+                quantity: normalizeNumber(item.quantity),
+                unit: item.unit || 'cái',
+                price: normalizeNumber(item.price),
+                partner: item.partner || '',
+                orderNo: item.orderNo || '',
+                note: item.note || '',
+                createdAt: item.createdAt || new Date().toISOString(),
+                updatedAt: item.updatedAt || new Date().toISOString()
+              };
+            }).filter(function (item) {
+              return item.productName && item.quantity > 0;
+            });
+
+            if (!cleaned.length) {
+              showToast('Không nhận diện được ghi chép hợp lệ');
+              return;
+            }
+
+            confirmAction('Nhập sao lưu', 'Sẽ nhập ' + cleaned.length + ' ghi chép và ghi đè dữ liệu cục bộ hiện tại. Bạn có chắc muốn tiếp tục không?', function () {
+              records = cleaned;
+              saveRecords();
+              renderAll();
+              resetForm();
+              showToast('Nhập thành công');
+            });
+          } catch (error) {
+            showToast('Định dạng tệp JSON không đúng');
+          } finally {
+            el.importFile.value = '';
+          }
+        };
+        reader.readAsText(file, 'utf-8');
+      }
+
+      function bindEvents() {
+        document.querySelectorAll('.type-tab').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            setType(btn.dataset.type);
+          });
+        });
+
+        el.recordForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+          var data = getFormData();
+          if (!data) return;
+          upsertRecord(data);
+          resetForm();
+          showToast('Đã lưu');
+        });
+
+        el.resetBtn.addEventListener('click', resetForm);
+
+        document.querySelectorAll('.nav-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            switchPage(btn.dataset.page);
+          });
+        });
+
+        el.searchInput.addEventListener('input', renderList);
+        el.filterType.addEventListener('change', renderList);
+
+        el.recordList.addEventListener('click', function (event) {
+          var target = event.target.closest('button[data-action]');
+          if (!target) return;
+          var id = target.dataset.id;
+          var action = target.dataset.action;
+          if (action === 'edit') {
+            editRecord(id);
+          }
+          if (action === 'delete') {
+            confirmAction('Xóa ghi chép', 'Sau khi xóa sẽ không thể khôi phục. Bạn có chắc muốn xóa ghi chép này không?', function () {
+              deleteRecord(id);
+            });
+          }
+        });
+
+        el.exportCsvBtn.addEventListener('click', exportCsv);
+        el.exportJsonBtn.addEventListener('click', exportJson);
+        el.importBtn.addEventListener('click', function () {
+          el.importFile.click();
+        });
+        el.importFile.addEventListener('change', function () {
+          importJsonFile(el.importFile.files[0]);
+        });
+
+        el.clearAllBtn.addEventListener('click', function () {
+          if (!records.length) {
+            showToast('Hiện chưa có dữ liệu');
+            return;
+          }
+          confirmAction('Xóa toàn bộ dữ liệu', 'Thao tác này sẽ xóa toàn bộ ghi chép kho hàng trên thiết bị hiện tại. Bạn có chắc muốn tiếp tục không?', function () {
+            records = [];
+            saveRecords();
+            renderAll();
+            resetForm();
+            showToast('Đã xóa toàn bộ dữ liệu');
+          });
+        });
+
+        el.cancelConfirm.addEventListener('click', closeConfirm);
+        el.confirmModal.addEventListener('click', function (event) {
+          if (event.target === el.confirmModal) closeConfirm();
+        });
+        el.okConfirm.addEventListener('click', function () {
+          var fn = pendingConfirm;
+          closeConfirm();
+          if (typeof fn === 'function') fn();
+        });
+      }
+
+      function seedExampleIfEmpty() {
+        // Không tạo dữ liệu mẫu. Trang mở lần đầu sẽ là danh sách trống.
+      }
+
+      function init() {
+        el.date.value = todayString();
+        loadRecords();
+        bindEvents();
+        renderAll();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

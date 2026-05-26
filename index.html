@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
-  <title>Sổ thu chi trên điện thoại</title>
-  <meta name="description" content="Ứng dụng sổ thu chi cá nhân tối ưu cho điện thoại, hỗ trợ ghi thu nhập, chi tiêu, thống kê theo danh mục, tìm kiếm, lọc dữ liệu, nhập xuất sao lưu và lưu cục bộ." />
+  <title>TRANGTRAINAMAY VN Sổ kế toán</title>
+  <meta name="description" content="Ứng dụng sổ kế toán cá nhân tối ưu cho điện thoại, hỗ trợ ghi thu nhập, chi tiêu, thống kê theo danh mục, tìm kiếm, lọc dữ liệu, nhập xuất sao lưu và lưu cục bộ." />
   <style>
     :root {
       --bg: #f5f7fb;
@@ -816,7 +816,7 @@
         <div class="brand">
           <div class="logo">₫</div>
           <div>
-            <h1>Sổ thu chi</h1>
+            <h1>Sổ kế toán</h1>
             <div class="today" id="todayText">Hôm nay</div>
           </div>
         </div>
@@ -888,7 +888,7 @@
 
                 <div class="form-row">
                   <label for="amount">Số tiền</label>
-                  <input id="amount" type="number" min="1" step="1000" inputmode="numeric" placeholder="Ví dụ: 68000" required />
+                  <input id="amount" type="text" inputmode="numeric" autocomplete="off" maxlength="15" placeholder="Ví dụ: 68.000 hoặc 68000" required />
                 </div>
 
                 <div class="two-cols">
@@ -1043,6 +1043,7 @@
     "use strict";
 
     const STORAGE_KEY = "mobile_accounting_records_vi_v1";
+    const APP_VERSION = "1.0.3";
     const CATEGORY_KEY = "mobile_accounting_categories_vi_v1";
 
     const defaultCategories = {
@@ -1124,6 +1125,8 @@
       });
 
       elements.form.addEventListener("submit", handleSubmit);
+      elements.amount.addEventListener("input", handleAmountInput);
+      elements.amount.addEventListener("blur", formatAmountInput);
       elements.cancelEditBtn.addEventListener("click", resetForm);
       elements.resetFormTextBtn.addEventListener("click", resetForm);
       elements.search.addEventListener("input", renderRecords);
@@ -1155,9 +1158,10 @@
     function handleSubmit(event) {
       event.preventDefault();
 
-      const amount = Number(elements.amount.value);
+      const amount = parseAmount(elements.amount.value);
       if (!Number.isFinite(amount) || amount <= 0) {
-        alert("Vui lòng nhập số tiền hợp lệ.");
+        alert("Vui lòng nhập số tiền hợp lệ. Ví dụ: 68000 hoặc 68.000");
+        elements.amount.focus();
         return;
       }
 
@@ -1208,7 +1212,7 @@
 
       elements.recordId.value = record.id;
       setType(record.type);
-      elements.amount.value = record.amount;
+      elements.amount.value = formatPlainAmount(record.amount);
       elements.date.value = record.date;
       elements.category.value = record.category;
       elements.title.value = record.title;
@@ -1229,7 +1233,8 @@
     }
 
     function toggleRecordActions(id) {
-      const card = document.querySelector(`[data-record-id="${CSS.escape(id)}"]`);
+      const card = Array.from(document.querySelectorAll(".record-card"))
+        .find((item) => item.dataset.recordId === id);
       if (card) card.classList.toggle("open");
     }
 
@@ -1262,7 +1267,7 @@
     function renderRecords() {
       const filtered = getFilteredRecords();
       const recent = [...records]
-        .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
+        .sort((a, b) => b.date.localeCompare(a.date) || String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
         .slice(0, 4);
 
       renderRecordList(elements.recordList, filtered, "Chưa có giao dịch. Nhấn “Ghi sổ” ở thanh dưới để thêm một khoản.");
@@ -1359,8 +1364,8 @@
       });
 
       result = [...result].sort((a, b) => {
-        if (sortBy === "date-desc") return b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt);
-        if (sortBy === "date-asc") return a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt);
+        if (sortBy === "date-desc") return b.date.localeCompare(a.date) || String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+        if (sortBy === "date-asc") return a.date.localeCompare(b.date) || String(a.createdAt || "").localeCompare(String(b.createdAt || ""));
         if (sortBy === "amount-desc") return b.amount - a.amount;
         if (sortBy === "amount-asc") return a.amount - b.amount;
         return 0;
@@ -1428,12 +1433,12 @@
     function exportJson() {
       const data = {
         app: "mobile-accounting-book-vi",
-        version: 1,
+        version: 2,
         exportedAt: new Date().toISOString(),
         records,
         categories
       };
-      downloadFile(JSON.stringify(data, null, 2), `sao-luu-so-thu-chi-${todayISO()}.json`, "application/json;charset=utf-8");
+      downloadFile(JSON.stringify(data, null, 2), `sao-luu-so-ke-toan-${todayISO()}.json`, "application/json;charset=utf-8");
     }
 
     function importJson(event) {
@@ -1445,7 +1450,7 @@
         try {
           const data = JSON.parse(reader.result);
           if (!Array.isArray(data.records)) throw new Error("Định dạng tệp sao lưu không đúng.");
-          if (!confirm("Sau khi nhập, dữ liệu sổ thu chi hiện tại trong trình duyệt sẽ bị ghi đè. Bạn có chắc muốn tiếp tục không?")) return;
+          if (!confirm("Sau khi nhập, dữ liệu sổ kế toán hiện tại trong trình duyệt sẽ bị ghi đè. Bạn có chắc muốn tiếp tục không?")) return;
 
           records = data.records.map(normalizeRecord).filter(Boolean);
           categories = normalizeCategories(data.categories || defaultCategories);
@@ -1475,13 +1480,13 @@
         record.note || ""
       ]);
       const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
-      downloadFile("\ufeff" + csv, `chi-tiet-so-thu-chi-${todayISO()}.csv`, "text/csv;charset=utf-8");
+      downloadFile("\ufeff" + csv, `chi-tiet-so-ke-toan-${todayISO()}.csv`, "text/csv;charset=utf-8");
     }
 
     function normalizeRecord(record) {
       if (!record || typeof record !== "object") return null;
       const type = record.type === "income" ? "income" : "expense";
-      const amount = Number(record.amount);
+      const amount = parseAmount(record.amount);
       if (!Number.isFinite(amount) || amount <= 0) return null;
       return {
         id: String(record.id || createId()),
@@ -1519,6 +1524,35 @@
 
     function sum(list) {
       return list.reduce((total, item) => total + Number(item.amount || 0), 0);
+    }
+
+    function getAmountDigits(value) {
+      return String(value ?? "").replace(/[^0-9]/g, "");
+    }
+
+    function parseAmount(value) {
+      const digits = getAmountDigits(value).slice(0, 15);
+      if (!digits) return 0;
+      const amount = Number(digits);
+      return Number.isFinite(amount) ? amount : 0;
+    }
+
+    function formatPlainAmount(value) {
+      const amount = parseAmount(value);
+      if (!amount) return "";
+      return new Intl.NumberFormat("vi-VN", {
+        maximumFractionDigits: 0
+      }).format(amount);
+    }
+
+    function handleAmountInput() {
+      const digits = getAmountDigits(elements.amount.value).slice(0, 15);
+      elements.amount.value = digits;
+    }
+
+    function formatAmountInput() {
+      const amount = parseAmount(elements.amount.value);
+      elements.amount.value = amount > 0 ? formatPlainAmount(amount) : "";
     }
 
     function money(value) {
@@ -1564,14 +1598,22 @@
           || localStorage.getItem("mobile_accounting_records_v2")
           || localStorage.getItem("personal_accounting_records_v1");
         if (!raw) return [];
-        return JSON.parse(raw).map(normalizeRecord).filter(Boolean);
+        const normalized = JSON.parse(raw).map(normalizeRecord).filter(Boolean);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        } catch {}
+        return normalized;
       } catch {
         return [];
       }
     }
 
     function saveRecords() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      } catch (error) {
+        alert("Không thể lưu dữ liệu trên thiết bị hiện tại. Vui lòng kiểm tra dung lượng hoặc quyền lưu trữ của trình duyệt.");
+      }
     }
 
     function loadCategories() {
@@ -1585,7 +1627,11 @@
     }
 
     function saveCategories() {
-      localStorage.setItem(CATEGORY_KEY, JSON.stringify(categories));
+      try {
+        localStorage.setItem(CATEGORY_KEY, JSON.stringify(categories));
+      } catch (error) {
+        alert("Không thể lưu danh mục trên thiết bị hiện tại. Vui lòng kiểm tra dung lượng hoặc quyền lưu trữ của trình duyệt.");
+      }
     }
 
     function clone(value) {
@@ -1601,7 +1647,7 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     function csvCell(value) {

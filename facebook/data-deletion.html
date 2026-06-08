@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Data Deletion Instructions - Fruit Match</title>
+  <meta name="description" content="Data deletion instructions for Fruit Match users." />
+  <link rel="canonical" href="https://YOUR_DOMAIN.com/data-deletion.html" />
+
+  <meta property="og:title" content="Data Deletion Instructions - Fruit Match" />
+  <meta property="og:description" content="Data deletion instructions for Fruit Match users." />
+  <meta property="og:image" content="https://YOUR_DOMAIN.com/assets/fruit-match-banner-1920x1080.png" />
+  <meta property="og:url" content="https://YOUR_DOMAIN.com/data-deletion.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Fruit Match" />
+
+  <style>
+
+    :root {
+      --primary: #7c5cff;
+      --primary-dark: #5638d6;
+      --orange: #ff8c5a;
+      --pink: #ff7ab6;
+      --text: #20263a;
+      --muted: #667085;
+      --bg-1: #f8f4ff;
+      --bg-2: #fff4ec;
+      --card: rgba(255, 255, 255, 0.9);
+      --border: rgba(124, 92, 255, 0.16);
+      --shadow: 0 18px 45px rgba(86, 56, 214, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.2), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(255, 140, 90, 0.17), transparent 32%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    a {
+      color: var(--primary-dark);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .page {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+
+    .hero {
+      padding: 34px 28px;
+      border-radius: 30px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      text-align: center;
+      margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.1);
+      color: var(--primary-dark);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 7vw, 58px);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 14px auto 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .content {
+      padding: 30px;
+      border-radius: 30px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    h2 {
+      margin: 34px 0 12px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h2:first-child { margin-top: 0; }
+
+    p { margin: 0 0 16px; }
+
+    ul, ol {
+      margin: 0 0 18px;
+      padding-left: 22px;
+    }
+
+    li { margin-bottom: 8px; }
+
+    .note-box {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(124, 92, 255, 0.08);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      color: var(--primary-dark);
+      font-weight: 750;
+      margin: 18px 0;
+    }
+
+    .contact-box {
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.1), rgba(255, 140, 90, 0.1));
+      border: 1px solid var(--border);
+      margin-top: 18px;
+    }
+
+    .link-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .pill-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.1);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 960px);
+        padding: 18px 0 36px;
+      }
+
+      .hero, .content {
+        border-radius: 24px;
+      }
+
+      .hero {
+        padding: 28px 18px;
+      }
+
+      .content {
+        padding: 22px 18px;
+      }
+
+      h2 { font-size: 21px; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="badge">Fruit Match</div>
+      <h1>Data Deletion Instructions</h1>
+      <p class="subtitle">How to request deletion of Fruit Match data.</p>
+
+      <nav class="link-row" aria-label="Main links">
+        <a class="pill-link" href="/facebook-app/">Open Game</a>
+        <a class="pill-link" href="/privacy.html">Privacy Policy</a>
+        <a class="pill-link" href="/data-deletion.html">Data Deletion</a>
+        <a class="pill-link" href="/terms.html">Terms</a>
+      </nav>
+    </header>
+
+    <article class="content">
+
+      <h2>1. Overview</h2>
+      <p>
+        This page explains how users can request deletion of data related to Fruit Match.
+      </p>
+      <p>
+        The basic version of Fruit Match is a lightweight browser-based H5 game and
+        does not require account registration or Facebook Login.
+      </p>
+
+      <h2>2. How to Request Data Deletion</h2>
+      <p>
+        To request data deletion, please send an email to:
+      </p>
+      <div class="contact-box">
+        <strong>Email:</strong> <a href="mailto:yilunfan155@gmail.com">yilunfan155@gmail.com</a>
+      </div>
+
+      <h2>3. Email Format</h2>
+      <p>Please include the following information in your request:</p>
+      <ul>
+        <li><strong>Subject:</strong> Fruit Match Data Deletion Request</li>
+        <li><strong>Game Name:</strong> Fruit Match</li>
+        <li><strong>Request Type:</strong> Data Deletion</li>
+        <li><strong>Related user ID, share ID, or email:</strong> if applicable</li>
+      </ul>
+
+      <h2>4. What We Will Delete</h2>
+      <p>
+        If server-side data associated with your request exists, we will delete or
+        anonymize it within a reasonable period after verifying the request.
+      </p>
+      <p>Possible data may include:</p>
+      <ul>
+        <li>Server-side share records, if any</li>
+        <li>Game session records, if any</li>
+        <li>Account or login data, if such features are added in the future</li>
+      </ul>
+
+      <h2>5. Local Browser Data</h2>
+      <p>
+        Some game data may be stored locally in your browser, such as score, moves,
+        or temporary progress. This local data is stored on your own device.
+      </p>
+      <p>
+        You can delete it by clearing your browser’s site data, cache, or local storage.
+      </p>
+
+      <h2>6. If No Server-Side Data Exists</h2>
+      <p>
+        If the basic version of the Game has not stored any server-side personal data
+        about you, we will inform you that there is no server-side personal data to delete.
+      </p>
+
+      <h2>7. Facebook or Platform Settings</h2>
+      <p>
+        If you accessed the Game through Facebook or another platform, you may also
+        remove the app or website connection from your platform account settings.
+      </p>
+
+      <h2>8. Contact</h2>
+      <p>
+        For deletion requests or questions, contact us at:
+      </p>
+      <div class="contact-box">
+        <strong>Email:</strong> <a href="mailto:yilunfan155@gmail.com">yilunfan155@gmail.com</a>
+      </div>
+
+    </article>
+
+    <footer class="footer">
+      © 2026 Fruit Match. All rights reserved.
+    </footer>
+  </main>
+</body>
+</html>

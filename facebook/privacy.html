@@ -1,69 +1,377 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Privacy Policy - Fruit Match</title>
-  <meta name="description" content="Privacy Policy for Fruit Match, a lightweight H5 match-3 game that does not require login in its basic version.">
-  <link rel="canonical" href="/privacy.html">
-  <link rel="icon" href="/assets/fruit-match-logo-512x512.png">
-  <link rel="stylesheet" href="/assets/site.css">
+  <meta name="description" content="Privacy Policy for Fruit Match, a browser-based H5 match-3 fruit puzzle game." />
+  <link rel="canonical" href="https://YOUR_DOMAIN.com/privacy.html" />
+
+  <meta property="og:title" content="Privacy Policy - Fruit Match" />
+  <meta property="og:description" content="Privacy Policy for Fruit Match, a browser-based H5 match-3 fruit puzzle game." />
+  <meta property="og:image" content="https://YOUR_DOMAIN.com/assets/fruit-match-banner-1920x1080.png" />
+  <meta property="og:url" content="https://YOUR_DOMAIN.com/privacy.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Fruit Match" />
+
+  <style>
+
+    :root {
+      --primary: #7c5cff;
+      --primary-dark: #5638d6;
+      --orange: #ff8c5a;
+      --pink: #ff7ab6;
+      --text: #20263a;
+      --muted: #667085;
+      --bg-1: #f8f4ff;
+      --bg-2: #fff4ec;
+      --card: rgba(255, 255, 255, 0.9);
+      --border: rgba(124, 92, 255, 0.16);
+      --shadow: 0 18px 45px rgba(86, 56, 214, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.2), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(255, 140, 90, 0.17), transparent 32%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    a {
+      color: var(--primary-dark);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .page {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+
+    .hero {
+      padding: 34px 28px;
+      border-radius: 30px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      text-align: center;
+      margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.1);
+      color: var(--primary-dark);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 7vw, 58px);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 14px auto 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .content {
+      padding: 30px;
+      border-radius: 30px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    h2 {
+      margin: 34px 0 12px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h2:first-child { margin-top: 0; }
+
+    p { margin: 0 0 16px; }
+
+    ul, ol {
+      margin: 0 0 18px;
+      padding-left: 22px;
+    }
+
+    li { margin-bottom: 8px; }
+
+    .note-box {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(124, 92, 255, 0.08);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      color: var(--primary-dark);
+      font-weight: 750;
+      margin: 18px 0;
+    }
+
+    .contact-box {
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.1), rgba(255, 140, 90, 0.1));
+      border: 1px solid var(--border);
+      margin-top: 18px;
+    }
+
+    .link-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .pill-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.1);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 960px);
+        padding: 18px 0 36px;
+      }
+
+      .hero, .content {
+        border-radius: 24px;
+      }
+
+      .hero {
+        padding: 28px 18px;
+      }
+
+      .content {
+        padding: 22px 18px;
+      }
+
+      h2 { font-size: 21px; }
+    }
+
+  </style>
 </head>
+
 <body>
-  <div class="shell">
-    <header class="topbar">
-      <a class="brand" href="/game/"><span class="logo-bubble" aria-hidden="true">🍓</span><span><strong>Fruit Match</strong><span>Privacy</span></span></a>
-      <nav class="nav-links" aria-label="Site links">
-        <a href="/facebook-app/">Facebook App</a>
-        <a href="/game/">Game</a>
-        <a href="/data-deletion.html">Data Deletion</a>
-        <a href="/terms.html">Terms</a>
+  <main class="page">
+    <header class="hero">
+      <div class="badge">Fruit Match</div>
+      <h1>Privacy Policy</h1>
+      <p class="subtitle">Effective Date: June 8, 2026</p>
+
+      <nav class="link-row" aria-label="Main links">
+        <a class="pill-link" href="/facebook-app/">Open Game</a>
+        <a class="pill-link" href="/privacy.html">Privacy Policy</a>
+        <a class="pill-link" href="/data-deletion.html">Data Deletion</a>
+        <a class="pill-link" href="/terms.html">Terms</a>
       </nav>
     </header>
 
-    <main class="content-card">
-      <span class="eyebrow">Effective date: June 8, 2026</span>
-      <h1>Privacy Policy</h1>
-      <p>This Privacy Policy explains how Fruit Match handles information when you play the game through a mobile browser, Facebook in-app browser, or other WebView environment.</p>
+    <article class="content">
 
-      <h2>Information We Collect</h2>
-      <p>The basic version of Fruit Match does not require account registration or login. We may process technical information that your browser normally sends when loading a web page, such as device type, browser type, approximate language settings, and page request information.</p>
+      <h2>1. Introduction</h2>
+      <p>
+        This Privacy Policy explains how Fruit Match (“we”, “our”, or “the Game”)
+        handles information when you use our browser-based H5 match-3 puzzle game.
+      </p>
+      <p>
+        Fruit Match is a casual game designed to be played directly in a web browser,
+        mobile browser, or in-app browser.
+      </p>
 
-      <h2>Information We Do Not Collect</h2>
-      <p>We do not require your name, Facebook profile, contact list, payment information, or precise location to play the basic version of Fruit Match. We do not ask for Facebook Login, Graph API permissions, App Secret, or Facebook access tokens.</p>
+      <h2>2. Information We Collect</h2>
+      <p>
+        In the basic version, we do not require users to create an account, log in,
+        or provide personal information.
+      </p>
+      <p>We may process limited technical or gameplay-related information, such as:</p>
+      <ul>
+        <li>Browser type and device type</li>
+        <li>Approximate access time</li>
+        <li>Basic gameplay information, such as score, moves, or game session status</li>
+        <li>Error logs or performance information</li>
+        <li>Referral source, such as whether the Game was opened from a shared link or social platform</li>
+      </ul>
 
-      <h2>Local Storage</h2>
-      <p>Fruit Match may use browser local storage to save simple game information such as score, progress, preferences, or recent play state. This information is stored on your device and can usually be cleared through your browser settings.</p>
+      <h2>3. Information We Do Not Collect</h2>
+      <p>In the basic single-player version, we do not intentionally collect:</p>
+      <ul>
+        <li>Real name</li>
+        <li>Phone number</li>
+        <li>Government ID</li>
+        <li>Precise location</li>
+        <li>Payment information</li>
+        <li>Contact list</li>
+        <li>Private messages</li>
+        <li>Sensitive personal information</li>
+      </ul>
 
-      <h2>Cookies</h2>
-      <p>The basic game does not require cookies for account login. Hosting providers, browsers, or third-party platforms may use cookies or similar technologies according to their own policies.</p>
+      <div class="note-box">
+        The basic version of Fruit Match does not require Facebook Login or any
+        social media account login.
+      </div>
 
-      <h2>Third-Party Services</h2>
-      <p>You may access Fruit Match through third-party platforms, including Facebook or Meta products. Those platforms may collect information under their own privacy policies. Please review the relevant platform privacy terms for details.</p>
+      <h2>4. How We Use Information</h2>
+      <p>We may use limited technical or gameplay information to:</p>
+      <ul>
+        <li>Provide and operate the Game</li>
+        <li>Improve gameplay experience and performance</li>
+        <li>Detect bugs, crashes, or technical issues</li>
+        <li>Understand general usage trends</li>
+        <li>Support sharing or WebView entry features</li>
+        <li>Prevent abuse or misuse of the Game</li>
+      </ul>
+      <p>We do not sell users’ personal information.</p>
 
-      <h2>Facebook or Meta Features</h2>
-      <p>Fruit Match is designed to be available in Facebook in-app browser and WebView contexts. The basic version does not integrate Facebook Login, Graph API, or Facebook permissions. If future features use platform identifiers, we will update this policy.</p>
+      <h2>5. Local Storage</h2>
+      <p>
+        The Game may use browser local storage to save simple game status, such as
+        score, remaining moves, basic settings, or temporary gameplay progress.
+      </p>
+      <p>
+        This information is stored on your device or browser. You can clear it by
+        clearing your browser data or website storage.
+      </p>
 
-      <h2>Data Sharing</h2>
-      <p>We do not sell personal information. We may share limited technical information with hosting, security, analytics, or platform providers when needed to operate and protect the game.</p>
+      <h2>6. Cookies and Similar Technologies</h2>
+      <p>
+        The basic version of the Game does not require cookies for account login.
+        If analytics, advertising, or social sharing features are added in the future,
+        cookies or similar technologies may be used to measure usage or support those services.
+      </p>
 
-      <h2>Data Retention</h2>
-      <p>Local game data remains on your device until you clear it or your browser removes it. Server logs, if any, are retained only as long as reasonably needed for security, debugging, and service operation.</p>
+      <h2>7. Third-Party Services</h2>
+      <p>
+        The Game may be accessed through third-party platforms such as Facebook,
+        social media apps, mobile browsers, or external websites. These platforms
+        may process information according to their own privacy policies.
+      </p>
+      <p>Possible third-party service categories may include:</p>
+      <ul>
+        <li>Web hosting providers</li>
+        <li>Analytics tools</li>
+        <li>Advertising networks</li>
+        <li>Social sharing platforms</li>
+        <li>Error monitoring tools</li>
+      </ul>
 
-      <h2>Data Deletion</h2>
-      <p>You can request deletion of server-side personal data by following the instructions on our <a href="/data-deletion.html">Data Deletion Instructions</a> page. If the basic version has no server-side account data related to you, we may explain that there is no server-side personal data to delete.</p>
+      <h2>8. Facebook or Meta Features</h2>
+      <p>
+        The basic version of Fruit Match does not require Facebook Login.
+        If we later add Facebook Login, Facebook sharing, or other Meta platform
+        features, we may receive limited information that you choose to share through
+        those features, depending on the permissions requested and approved.
+      </p>
 
-      <h2>Children’s Privacy</h2>
-      <p>Fruit Match is intended for general entertainment. We do not knowingly collect personal information from children. If you believe a child has provided personal information, contact us so we can review and delete it when applicable.</p>
+      <h2>9. Data Sharing</h2>
+      <p>We do not sell personal information.</p>
+      <p>We may share limited information only in the following situations:</p>
+      <ul>
+        <li>With service providers that help us operate the Game</li>
+        <li>When required by law or legal process</li>
+        <li>To protect the security, rights, or integrity of the Game</li>
+        <li>With your consent, such as when you choose to share content through a social platform</li>
+      </ul>
 
-      <h2>Security</h2>
-      <p>We use reasonable measures to protect the game and related systems. No internet service can be guaranteed to be completely secure, but we avoid collecting unnecessary personal information in the basic version.</p>
+      <h2>10. Data Retention</h2>
+      <p>
+        For the basic single-player version, most gameplay data is stored locally
+        in your browser and remains there until you clear it.
+      </p>
+      <p>
+        If server-side data is created, such as a shared game link or gameplay record,
+        we retain it only as long as reasonably necessary to provide the feature or maintain the service.
+      </p>
 
-      <h2>Contact Us</h2>
-      <p>For privacy questions or requests, contact us at <a href="mailto:yilunfan155@gmail.com">yilunfan155@gmail.com</a>.</p>
-    </main>
+      <h2>11. Data Deletion</h2>
+      <p>
+        You may request deletion of any data associated with your use of the Game.
+        To request deletion, please contact us and include the relevant user ID,
+        share ID, or email address if applicable.
+      </p>
+      <p>
+        If the Game does not store any account data about you, we will inform you
+        that there is no server-side personal data to delete.
+      </p>
 
-    <footer class="footer"><a href="/game/">Play Fruit Match</a> · <a href="/terms.html">Terms of Service</a></footer>
-  </div>
+      <h2>12. Children’s Privacy</h2>
+      <p>
+        Fruit Match is a casual puzzle game. We do not knowingly collect personal
+        information from children. If you believe that a child has provided personal
+        information to us, please contact us and we will take appropriate steps to delete it.
+      </p>
+
+      <h2>13. Security</h2>
+      <p>
+        We take reasonable measures to protect the Game and any information processed
+        through it. However, no internet service or electronic storage method is completely secure.
+      </p>
+
+      <h2>14. Changes to This Privacy Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. When we update it,
+        we will revise the “Effective Date” at the top of this page.
+      </p>
+
+      <h2>15. Contact Us</h2>
+      <p>
+        If you have questions about this Privacy Policy or want to request data deletion,
+        please contact us at:
+      </p>
+      <div class="contact-box">
+        <strong>Email:</strong> <a href="mailto:yilunfan155@gmail.com">yilunfan155@gmail.com</a>
+      </div>
+
+    </article>
+
+    <footer class="footer">
+      © 2026 Fruit Match. All rights reserved.
+    </footer>
+  </main>
 </body>
 </html>

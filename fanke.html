@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="format-detection" content="telephone=no" />
+<title>Sổ khách đến</title>
+<meta name="description" content="Ứng dụng quản lý khách đến hỗ trợ ghi chép khách vào, khách ra, người cần gặp, mục đích đến và lịch sử tiếp khách." />
+<style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --accent: #f59e0b;
+      --bg: #fff7ed;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #eadfd4;
+      --green: #059669;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --orange: #f97316;
+      --shadow: 0 18px 42px rgba(124, 58, 237, 0.10);
+      --soft-shadow: 0 10px 24px rgba(146, 64, 14, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(251, 191, 36, 0.22), transparent 32%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.16), transparent 30%),
+        linear-gradient(180deg, #fffaf2 0%, #fff7ed 48%, #f8f5ff 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 860px;
+      margin: 0 auto;
+      padding-bottom: 92px;
+    }
+
+    .header {
+      position: relative;
+      margin: 14px 14px 4px;
+      padding: 24px 18px 26px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 88% 20%, rgba(245, 158, 11, 0.18), transparent 30%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 245, 255, 0.96));
+      border: 1px solid rgba(234, 179, 8, 0.18);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      width: 72px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      opacity: 0.95;
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      bottom: -52px;
+      width: 170px;
+      height: 170px;
+      border-radius: 999px;
+      background: rgba(124, 58, 237, 0.08);
+    }
+
+    .company {
+      display: inline-flex;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(124, 58, 237, 0.10);
+      color: var(--primary-dark);
+      border: 1px solid rgba(124, 58, 237, 0.12);
+      font-size: 12px;
+      font-weight: 800;
+      margin: 12px 0 10px;
+    }
+
+    .title-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: -0.2px;
+      color: #111827;
+    }
+
+    .header-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, #ffffff, #f5f3ff);
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      box-shadow:
+        inset 0 0 0 1px rgba(124, 58, 237, 0.12),
+        0 12px 24px rgba(124, 58, 237, 0.16);
+      flex: 0 0 auto;
+    }
+
+    .subtitle {
+      position: relative;
+      z-index: 1;
+      margin: 10px 0 0;
+      color: #5f6470;
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 640px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 0 14px;
+      margin-top: 12px;
+    }
+
+    .summary-card {
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 20px;
+      padding: 14px 10px;
+      border: 1px solid rgba(234, 223, 212, 0.9);
+      box-shadow: var(--soft-shadow);
+      min-width: 0;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+      white-space: nowrap;
+    }
+
+    .summary-value {
+      font-size: 22px;
+      line-height: 1.1;
+      font-weight: 950;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .summary-card.in .summary-value { color: var(--green); }
+    .summary-card.out .summary-value { color: var(--red); }
+    .summary-card.current .summary-value { color: var(--purple); }
+
+    .section {
+      margin: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: var(--radius);
+      box-shadow: var(--soft-shadow);
+      border: 1px solid rgba(234, 223, 212, 0.92);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 18px 8px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 950;
+      color: #111827;
+    }
+
+    .section-note {
+      font-size: 12px;
+      color: var(--primary-dark);
+      background: #f5f3ff;
+      border: 1px solid rgba(124, 58, 237, 0.10);
+      padding: 5px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
+    .form {
+      padding: 8px 18px 18px;
+    }
+
+    .status-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 5px;
+      border-radius: 18px;
+      background: #fbf6ef;
+      border: 1px solid rgba(234, 223, 212, 0.86);
+    }
+
+    .status-tab {
+      min-height: 48px;
+      border-radius: 14px;
+      background: transparent;
+      color: #6b7280;
+      font-weight: 950;
+      transition: 0.16s ease;
+    }
+
+    .status-tab.active-in {
+      background: #ecfdf5;
+      color: var(--green);
+      box-shadow: 0 8px 18px rgba(5, 150, 105, 0.08);
+    }
+
+    .status-tab.active-out {
+      background: #fff1f2;
+      color: var(--red);
+      box-shadow: 0 8px 18px rgba(220, 38, 38, 0.07);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #4b5563;
+      font-weight: 800;
+    }
+
+    .field input,
+    .field select,
+    .field textarea,
+    .toolbar input,
+    .toolbar select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fffdf9;
+      color: var(--text);
+      border-radius: 15px;
+      padding: 12px;
+      outline: none;
+      transition: border 0.18s, box-shadow 0.18s, background 0.18s;
+      min-width: 0;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus,
+    .toolbar input:focus,
+    .toolbar select:focus {
+      border-color: rgba(124, 58, 237, 0.55);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.10);
+      background: #fff;
+    }
+
+    .field textarea {
+      min-height: 78px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      min-height: 46px;
+      border-radius: 15px;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      opacity: 0.88;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(124, 58, 237, 0.20);
+    }
+
+    .btn-gray {
+      background: #f8f4ee;
+      color: #4b5563;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--red);
+    }
+
+    .btn-secondary {
+      background: #f5f3ff;
+      color: var(--primary-dark);
+    }
+
+    .toolbar {
+      padding: 12px 18px 4px;
+      display: grid;
+      grid-template-columns: 1fr 128px 128px;
+      gap: 10px;
+    }
+
+    .list {
+      padding: 6px 14px 16px;
+      max-height: 560px;
+      overflow: auto;
+    }
+
+    .record {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px 6px;
+      border-bottom: 1px solid #f0e7dc;
+    }
+
+    .record:last-child {
+      border-bottom: none;
+    }
+
+    .record-main {
+      min-width: 0;
+    }
+
+    .record-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 7px;
+    }
+
+    .visitor-name {
+      font-weight: 950;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pill {
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .pill-in {
+      background: rgba(5, 150, 105, 0.11);
+      color: var(--green);
+    }
+
+    .pill-out {
+      background: rgba(220, 38, 38, 0.09);
+      color: var(--red);
+    }
+
+    .record-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+      word-break: break-word;
+    }
+
+    .record-note {
+      margin-top: 5px;
+      color: #4b5563;
+      font-size: 12px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .record-side {
+      min-width: 88px;
+      text-align: right;
+    }
+
+    .time-main {
+      font-weight: 950;
+      font-size: 15px;
+      color: var(--primary-dark);
+    }
+
+    .time-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .record-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .small-btn {
+      border-radius: 11px;
+      padding: 7px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      background: #f8f4ee;
+      color: #374151;
+    }
+
+    .small-btn.delete {
+      background: #fee2e2;
+      color: var(--red);
+    }
+
+    .small-btn.checkout {
+      background: #fffbeb;
+      color: #b45309;
+    }
+
+    .empty {
+      padding: 38px 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .inside-list {
+      padding: 6px 18px 18px;
+    }
+
+    .inside-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid #f0e7dc;
+    }
+
+    .inside-item:last-child {
+      border-bottom: none;
+    }
+
+    .inside-name {
+      font-weight: 950;
+      letter-spacing: 0.2px;
+      margin-bottom: 4px;
+    }
+
+    .inside-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .quick-out {
+      background: #fff7ed;
+      color: #c2410c;
+      border-radius: 13px;
+      padding: 9px 11px;
+      font-weight: 950;
+      font-size: 12px;
+      white-space: nowrap;
+      border: 1px solid #fed7aa;
+    }
+
+    .data-actions {
+      padding: 8px 18px 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .notice {
+      margin: 8px 18px 16px;
+      padding: 13px;
+      border-radius: 16px;
+      background: #f5f3ff;
+      color: #5b21b6;
+      border: 1px solid rgba(124, 58, 237, 0.14);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: calc(100% - 18px);
+      max-width: 842px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(234, 223, 212, 0.95);
+      border-radius: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+      z-index: 20;
+      box-shadow: 0 16px 32px rgba(124, 58, 237, 0.12);
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--muted);
+      border-radius: 15px;
+      padding: 9px 4px;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .nav-btn.active {
+      background: #f5f3ff;
+      color: var(--primary);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 96px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(31, 41, 55, 0.94);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.22s ease;
+      z-index: 99;
+      max-width: 82%;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 41, 55, 0.48);
+      z-index: 60;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-mask.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 860px;
+      background: #fffdf9;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+      box-shadow: 0 -20px 40px rgba(31, 41, 55, 0.16);
+    }
+
+    .modal h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .modal p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .header {
+        margin: 10px 10px 4px;
+        border-radius: 26px;
+      }
+
+      .header-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 18px;
+        font-size: 24px;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: 10px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .record {
+        grid-template-columns: 1fr;
+      }
+
+      .record-side {
+        text-align: left;
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+
+      .record-buttons {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+<header class="header"><div class="company"></div><div class="title-row"><h1>Sổ khách đến</h1><div class="header-icon" aria-hidden="true">👥</div></div><p class="subtitle">Sổ tiếp khách gọn nhẹ cho lễ tân: ghi khách vào, khách ra, người cần gặp, mục đích đến và lịch sử tiếp khách.</p></header>
+<section class="summary" aria-label="Tổng quan"><div class="summary-card"><div class="summary-label">Tổng ghi chép</div><div class="summary-value" id="totalRecords">0</div></div><div class="summary-card in"><div class="summary-label">Khách vào</div><div class="summary-value" id="totalIn">0</div></div><div class="summary-card out"><div class="summary-label">Khách ra</div><div class="summary-value" id="totalOut">0</div></div><div class="summary-card current"><div class="summary-label">Đang ở lại</div><div class="summary-value" id="currentInside">0</div></div></section>
+<main>
+<div class="page active" id="pageAdd"><section class="section"><div class="section-header"><h2 class="section-title" id="formTitle">Thêm ghi chép khách</h2><span class="section-note">Ghi thủ công</span></div><form class="form" id="recordForm"><div class="status-tabs"><button type="button" class="status-tab active-in" data-status="in">Ghi khách vào</button><button type="button" class="status-tab" data-status="out">Ghi khách ra</button></div><input type="hidden" id="editId" value="" /><input type="hidden" id="visitStatus" value="in" /><div class="grid"><div class="field"><label for="dateTime">Thời gian ghi chép</label><input id="dateTime" type="datetime-local" required /></div><div class="field"><label for="visitorName">Tên khách</label><input id="visitorName" type="text" placeholder="Ví dụ: Nguyễn Văn A" maxlength="50" required /></div></div><div class="grid"><div class="field"><label for="phone">Số điện thoại</label><input id="phone" type="tel" placeholder="Không bắt buộc" maxlength="30" /></div><div class="field"><label for="companyName">Đơn vị / Công ty</label><input id="companyName" type="text" placeholder="Không bắt buộc" maxlength="60" /></div></div><div class="grid"><div class="field"><label for="hostName">Người cần gặp</label><input id="hostName" type="text" placeholder="Ví dụ: Bộ phận kinh doanh" maxlength="50" /></div><div class="field"><label for="visitPurpose">Mục đích đến</label><select id="visitPurpose"><option value="Gặp đối tác">Gặp đối tác</option><option value="Giao hàng">Giao hàng</option><option value="Nhận hàng">Nhận hàng</option><option value="Phỏng vấn">Phỏng vấn</option><option value="Bảo trì">Bảo trì</option><option value="Khác">Khác</option></select></div></div><div class="grid"><div class="field"><label for="documentCode">Mã giấy tờ / Mã khách</label><input id="documentCode" type="text" placeholder="Không bắt buộc" maxlength="40" /></div><div class="field"><label for="operator">Người ghi chép</label><input id="operator" type="text" placeholder="Ví dụ: Lễ tân A" maxlength="30" /></div></div><div class="field"><label for="remark">Ghi chú</label><textarea id="remark" placeholder="Có thể ghi số người đi cùng, khu vực đến, vật phẩm mang theo hoặc tình huống đặc biệt." maxlength="200"></textarea></div><div class="actions"><button class="btn btn-primary" type="submit" id="saveBtn">Lưu ghi chép</button><button class="btn btn-gray" type="button" id="resetBtn">Xóa biểu mẫu</button></div></form></section></div>
+<div class="page" id="pageList"><section class="section"><div class="section-header"><h2 class="section-title">Danh sách ghi chép</h2><span class="section-note" id="listCount">0 mục</span></div><div class="toolbar"><input id="searchInput" type="search" placeholder="Tìm tên khách, điện thoại, công ty, người cần gặp" /><select id="filterStatus"><option value="all">Tất cả</option><option value="in">Chỉ khách vào</option><option value="out">Chỉ khách ra</option></select><select id="filterDate"><option value="all">Tất cả ngày</option><option value="today">Hôm nay</option><option value="7days">7 ngày gần đây</option><option value="30days">30 ngày gần đây</option></select></div><div class="list" id="recordList"></div></section></div>
+<div class="page" id="pageInside"><section class="section"><div class="section-header"><h2 class="section-title">Khách đang ở lại</h2><span class="section-note">Theo ghi chép cuối cùng</span></div><div class="inside-list" id="insideList"></div></section></div>
+<div class="page" id="pageData"><section class="section"><div class="section-header"><h2 class="section-title">Quản lý dữ liệu</h2><span class="section-note">Xuất / Sao lưu</span></div><div class="notice">Đây là phiên bản độc lập, không tải dữ liệu lên máy chủ. Ghi chép được lưu trong trình duyệt của thiết bị hiện tại. Khi đổi thiết bị, xóa bộ nhớ trình duyệt hoặc gỡ ứng dụng, dữ liệu có thể bị mất. Nên định kỳ xuất CSV hoặc sao lưu JSON.</div><div class="data-actions"><button class="btn btn-primary" id="exportCsvBtn" type="button">Xuất bảng CSV</button><button class="btn btn-secondary" id="exportJsonBtn" type="button">Xuất sao lưu JSON</button><button class="btn btn-gray" id="importBtn" type="button">Nhập sao lưu JSON</button><button class="btn btn-danger" id="clearAllBtn" type="button">Xóa toàn bộ ghi chép</button><input class="file-input" id="importFile" type="file" accept="application/json,.json" /></div></section></div>
+</main></div>
+<nav class="bottom-nav" aria-label="Điều hướng dưới cùng"><button class="nav-btn active" data-page="pageAdd">Ghi chép</button><button class="nav-btn" data-page="pageList">Danh sách</button><button class="nav-btn" data-page="pageInside">Đang ở lại</button><button class="nav-btn" data-page="pageData">Quản lý</button></nav><div class="toast" id="toast"></div><div class="modal-mask" id="confirmModal"><div class="modal"><h3 id="confirmTitle">Xác nhận thao tác</h3><p id="confirmText">Bạn có chắc muốn tiếp tục không?</p><div class="modal-actions"><button class="btn btn-gray" id="cancelConfirm" type="button">Hủy</button><button class="btn btn-danger" id="okConfirm" type="button">Xác nhận</button></div></div></div>
+<script>
+(function(){"use strict";var STORAGE_KEY="visitor_management_records_vi_v1";var records=[];var pendingConfirm=null;var el={totalRecords:document.getElementById("totalRecords"),totalIn:document.getElementById("totalIn"),totalOut:document.getElementById("totalOut"),currentInside:document.getElementById("currentInside"),recordForm:document.getElementById("recordForm"),formTitle:document.getElementById("formTitle"),saveBtn:document.getElementById("saveBtn"),resetBtn:document.getElementById("resetBtn"),editId:document.getElementById("editId"),visitStatus:document.getElementById("visitStatus"),dateTime:document.getElementById("dateTime"),visitorName:document.getElementById("visitorName"),phone:document.getElementById("phone"),companyName:document.getElementById("companyName"),hostName:document.getElementById("hostName"),visitPurpose:document.getElementById("visitPurpose"),documentCode:document.getElementById("documentCode"),operator:document.getElementById("operator"),remark:document.getElementById("remark"),searchInput:document.getElementById("searchInput"),filterStatus:document.getElementById("filterStatus"),filterDate:document.getElementById("filterDate"),recordList:document.getElementById("recordList"),listCount:document.getElementById("listCount"),insideList:document.getElementById("insideList"),exportCsvBtn:document.getElementById("exportCsvBtn"),exportJsonBtn:document.getElementById("exportJsonBtn"),importBtn:document.getElementById("importBtn"),importFile:document.getElementById("importFile"),clearAllBtn:document.getElementById("clearAllBtn"),toast:document.getElementById("toast"),confirmModal:document.getElementById("confirmModal"),confirmTitle:document.getElementById("confirmTitle"),confirmText:document.getElementById("confirmText"),cancelConfirm:document.getElementById("cancelConfirm"),okConfirm:document.getElementById("okConfirm")};function uid(){return"g_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8)}function nowLocalDateTime(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+"T"+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}function todayDate(){return nowLocalDateTime().slice(0,10)}function normalizeName(v){return String(v||"").trim().replace(/\s+/g," ")}function normalizePhone(v){return String(v||"").trim().replace(/\s+/g,"")}function getVisitorKey(item){var name=normalizeName(item.visitorName).toLowerCase();var phone=normalizePhone(item.phone);var doc=String(item.documentCode||"").trim().toLowerCase();return doc||phone||name}function escapeHtml(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#39;")}function formatDateTime(v){if(!v)return{date:"-",time:"-"};var p=String(v).split("T");return{date:p[0]||"-",time:(p[1]||"").slice(0,5)||"-"}}function loadRecords(){try{var raw=localStorage.getItem(STORAGE_KEY);records=raw?JSON.parse(raw):[];if(!Array.isArray(records))records=[];records=records.map(normalizeRecord).filter(Boolean)}catch(e){records=[];showToast("Không đọc được dữ liệu cục bộ, đã đặt lại về rỗng")}}function saveRecords(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(records))}catch(e){showToast("Không thể lưu dữ liệu trên thiết bị hiện tại")}}function normalizeRecord(item){if(!item||typeof item!=="object")return null;var visitorName=normalizeName(item.visitorName);if(!visitorName)return null;return{id:item.id||uid(),status:item.status==="out"?"out":"in",dateTime:item.dateTime||nowLocalDateTime(),visitorName:visitorName,phone:normalizePhone(item.phone),companyName:String(item.companyName||"").trim(),hostName:String(item.hostName||"").trim(),visitPurpose:item.visitPurpose||"Khác",documentCode:String(item.documentCode||"").trim(),operator:String(item.operator||"").trim(),remark:String(item.remark||"").trim(),createdAt:item.createdAt||new Date().toISOString(),updatedAt:item.updatedAt||new Date().toISOString()}}function showToast(msg){el.toast.textContent=msg;el.toast.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(function(){el.toast.classList.remove("show")},1800)}function setStatus(status){el.visitStatus.value=status;document.querySelectorAll(".status-tab").forEach(function(btn){btn.classList.remove("active-in","active-out");if(btn.dataset.status===status)btn.classList.add(status==="in"?"active-in":"active-out")})}function resetForm(){el.recordForm.reset();el.editId.value="";el.dateTime.value=nowLocalDateTime();el.visitPurpose.value="Gặp đối tác";setStatus("in");el.formTitle.textContent="Thêm ghi chép khách";el.saveBtn.textContent="Lưu ghi chép"}function getFormData(){var visitorName=normalizeName(el.visitorName.value);if(!visitorName){showToast("Vui lòng nhập tên khách");el.visitorName.focus();return null}return{id:el.editId.value||uid(),status:el.visitStatus.value==="out"?"out":"in",dateTime:el.dateTime.value||nowLocalDateTime(),visitorName:visitorName,phone:normalizePhone(el.phone.value),companyName:el.companyName.value.trim(),hostName:el.hostName.value.trim(),visitPurpose:el.visitPurpose.value||"Khác",documentCode:el.documentCode.value.trim(),operator:el.operator.value.trim(),remark:el.remark.value.trim(),updatedAt:new Date().toISOString()}}function upsertRecord(record){var index=records.findIndex(function(item){return item.id===record.id});if(index>=0){record.createdAt=records[index].createdAt||record.updatedAt;records[index]=record}else{record.createdAt=record.updatedAt;records.unshift(record)}saveRecords();renderAll()}function deleteRecord(id){records=records.filter(function(item){return item.id!==id});saveRecords();renderAll();showToast("Đã xóa")}function editRecord(id){var item=records.find(function(r){return r.id===id});if(!item)return;el.editId.value=item.id;setStatus(item.status);el.dateTime.value=item.dateTime||nowLocalDateTime();el.visitorName.value=item.visitorName||"";el.phone.value=item.phone||"";el.companyName.value=item.companyName||"";el.hostName.value=item.hostName||"";el.visitPurpose.value=item.visitPurpose||"Khác";el.documentCode.value=item.documentCode||"";el.operator.value=item.operator||"";el.remark.value=item.remark||"";el.formTitle.textContent="Chỉnh sửa ghi chép";el.saveBtn.textContent="Lưu thay đổi";switchPage("pageAdd")}function getSortedRecords(){return records.slice().sort(function(a,b){var da=String(a.dateTime||"")+String(a.createdAt||"");var db=String(b.dateTime||"")+String(b.createdAt||"");return db.localeCompare(da)})}function isWithinDateRange(item,filter){if(filter==="all")return true;var date=String(item.dateTime||"").slice(0,10);if(!date)return false;var itemTime=new Date(date+"T00:00:00").getTime();var todayTime=new Date(todayDate()+"T00:00:00").getTime();var dayMs=86400000;if(filter==="today")return date===todayDate();if(filter==="7days")return itemTime>=todayTime-6*dayMs;if(filter==="30days")return itemTime>=todayTime-29*dayMs;return true}function getFilteredRecords(){var keyword=el.searchInput.value.trim().toLowerCase();var status=el.filterStatus.value;var dateFilter=el.filterDate.value;return getSortedRecords().filter(function(item){if(status!=="all"&&item.status!==status)return false;if(!isWithinDateRange(item,dateFilter))return false;if(!keyword)return true;var text=[item.visitorName,item.phone,item.companyName,item.hostName,item.visitPurpose,item.documentCode,item.operator,item.remark,item.dateTime].join(" ").toLowerCase();return text.indexOf(keyword)>=0})}function getInsideVisitors(){var latestByVisitor={};getSortedRecords().slice().reverse().forEach(function(item){var key=getVisitorKey(item);if(key)latestByVisitor[key]=item});return Object.keys(latestByVisitor).map(function(k){return latestByVisitor[k]}).filter(function(item){return item.status==="in"}).sort(function(a,b){return String(b.dateTime||"").localeCompare(String(a.dateTime||""))})}function renderSummary(){var totalIn=0,totalOut=0;records.forEach(function(item){if(item.status==="in")totalIn+=1;if(item.status==="out")totalOut+=1});el.totalRecords.textContent=records.length;el.totalIn.textContent=totalIn;el.totalOut.textContent=totalOut;el.currentInside.textContent=getInsideVisitors().length}function renderList(){var list=getFilteredRecords();el.listCount.textContent=list.length+" mục";if(!list.length){el.recordList.innerHTML='<div class="empty">Chưa có ghi chép khách.<br />Bạn có thể thêm khách vào hoặc khách ra tại trang “Ghi chép”.</div>';return}el.recordList.innerHTML=list.map(function(item){var isIn=item.status==="in";var t=formatDateTime(item.dateTime);var meta=[item.phone?"Điện thoại: "+escapeHtml(item.phone):"",item.companyName?"Đơn vị: "+escapeHtml(item.companyName):"",item.hostName?"Người cần gặp: "+escapeHtml(item.hostName):"",item.visitPurpose?"Mục đích: "+escapeHtml(item.visitPurpose):"",item.documentCode?"Mã giấy tờ / Mã khách: "+escapeHtml(item.documentCode):"",item.operator?"Người ghi chép: "+escapeHtml(item.operator):""].filter(Boolean).join("<br />");return '<article class="record"><div class="record-main"><div class="record-top"><span class="visitor-name">'+escapeHtml(item.visitorName)+'</span><span class="pill '+(isIn?"pill-in":"pill-out")+'">'+(isIn?"Khách vào":"Khách ra")+'</span></div><div class="record-meta">'+meta+'</div>'+(item.remark?'<div class="record-note">Ghi chú: '+escapeHtml(item.remark)+'</div>':'')+'<div class="record-buttons">'+(isIn?'<button class="small-btn checkout" data-action="quickOut" data-id="'+escapeHtml(item.id)+'">Ghi khách ra</button>':'')+'<button class="small-btn" data-action="edit" data-id="'+escapeHtml(item.id)+'">Sửa</button><button class="small-btn delete" data-action="delete" data-id="'+escapeHtml(item.id)+'">Xóa</button></div></div><div class="record-side"><div class="time-main">'+escapeHtml(t.time)+'</div><div class="time-sub">'+escapeHtml(t.date)+'</div></div></article>'}).join("")}function renderInside(){var inside=getInsideVisitors();if(!inside.length){el.insideList.innerHTML='<div class="empty">Chưa có khách đang ở lại.<br />Hệ thống xác định theo ghi chép cuối cùng của từng khách.</div>';return}el.insideList.innerHTML=inside.map(function(item){var t=formatDateTime(item.dateTime);return '<div class="inside-item"><div><div class="inside-name">'+escapeHtml(item.visitorName)+'</div><div class="inside-meta">Thời gian vào: '+escapeHtml(t.date+" "+t.time)+(item.phone?'<br />Điện thoại: '+escapeHtml(item.phone):'')+(item.companyName?'<br />Đơn vị: '+escapeHtml(item.companyName):'')+(item.hostName?'<br />Người cần gặp: '+escapeHtml(item.hostName):'')+(item.visitPurpose?'<br />Mục đích: '+escapeHtml(item.visitPurpose):'')+'</div></div><button class="quick-out" data-action="quickOutByKey" data-key="'+escapeHtml(getVisitorKey(item))+'">Ghi khách ra</button></div>'}).join("")}function renderAll(){renderSummary();renderList();renderInside()}function switchPage(pageId){document.querySelectorAll(".page").forEach(function(page){page.classList.toggle("active",page.id===pageId)});document.querySelectorAll(".nav-btn").forEach(function(btn){btn.classList.toggle("active",btn.dataset.page===pageId)});window.scrollTo({top:0,behavior:"smooth"})}function confirmAction(title,text,onOk){pendingConfirm=onOk;el.confirmTitle.textContent=title;el.confirmText.textContent=text;el.confirmModal.classList.add("show")}function closeConfirm(){pendingConfirm=null;el.confirmModal.classList.remove("show")}function downloadFile(filename,content,mimeType){var blob=new Blob([content],{type:mimeType||"text/plain;charset=utf-8"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url)},1000)}function toCsvCell(value){var text=String(value==null?"":value);if(/[",\n]/.test(text))return '"'+text.replace(/"/g,'""')+'"';return text}function exportCsv(){if(!records.length){showToast("Chưa có dữ liệu để xuất");return}var header=["Thời gian ghi chép","Trạng thái","Tên khách","Số điện thoại","Đơn vị / Công ty","Người cần gặp","Mục đích đến","Mã giấy tờ / Mã khách","Người ghi chép","Ghi chú"];var rows=getSortedRecords().map(function(item){return[String(item.dateTime||"").replace("T"," "),item.status==="in"?"Khách vào":"Khách ra",item.visitorName,item.phone,item.companyName,item.hostName,item.visitPurpose,item.documentCode,item.operator,item.remark]});var csv="\ufeff"+[header].concat(rows).map(function(row){return row.map(toCsvCell).join(",")}).join("\n");downloadFile("quan-ly-khach-den-"+todayDate()+".csv",csv,"text/csv;charset=utf-8");showToast("Đã xuất CSV")}function exportJson(){if(!records.length){showToast("Chưa có dữ liệu để xuất");return}var data={app:"Quản lý khách đến",version:1,exportedAt:new Date().toISOString(),records:records};downloadFile("quan-ly-khach-den-backup-"+todayDate()+".json",JSON.stringify(data,null,2),"application/json;charset=utf-8");showToast("Đã xuất sao lưu JSON")}function importJsonFile(file){if(!file)return;var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(String(reader.result||"{}"));var imported=Array.isArray(data)?data:data.records;if(!Array.isArray(imported))throw new Error("Invalid JSON");var cleaned=imported.map(normalizeRecord).filter(Boolean);if(!cleaned.length){showToast("Không nhận diện được ghi chép hợp lệ");return}confirmAction("Nhập sao lưu","Sẽ nhập "+cleaned.length+" ghi chép và ghi đè dữ liệu hiện tại. Bạn có chắc muốn tiếp tục không?",function(){records=cleaned;saveRecords();resetForm();renderAll();showToast("Nhập thành công")})}catch(e){showToast("Định dạng tệp JSON không đúng")}finally{el.importFile.value=""}};reader.readAsText(file,"utf-8")}function quickOutFromRecord(id){var latest=records.find(function(item){return item.id===id});if(latest)createOutRecord(latest)}function quickOutByKey(key){var latest=getInsideVisitors().find(function(item){return getVisitorKey(item)===key});if(latest)createOutRecord(latest)}function createOutRecord(latest){var record={id:uid(),status:"out",dateTime:nowLocalDateTime(),visitorName:latest.visitorName,phone:latest.phone||"",companyName:latest.companyName||"",hostName:latest.hostName||"",visitPurpose:latest.visitPurpose||"Khác",documentCode:latest.documentCode||"",operator:latest.operator||"",remark:"Ghi khách ra nhanh",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};records.unshift(record);saveRecords();renderAll();showToast("Đã ghi khách ra")}function bindEvents(){document.querySelectorAll(".status-tab").forEach(function(btn){btn.addEventListener("click",function(){setStatus(btn.dataset.status)})});el.recordForm.addEventListener("submit",function(event){event.preventDefault();var data=getFormData();if(!data)return;upsertRecord(data);resetForm();showToast("Đã lưu")});el.resetBtn.addEventListener("click",resetForm);document.querySelectorAll(".nav-btn").forEach(function(btn){btn.addEventListener("click",function(){switchPage(btn.dataset.page)})});el.searchInput.addEventListener("input",renderList);el.filterStatus.addEventListener("change",renderList);el.filterDate.addEventListener("change",renderList);el.recordList.addEventListener("click",function(event){var target=event.target.closest("button[data-action]");if(!target)return;var id=target.dataset.id;var action=target.dataset.action;if(action==="edit")editRecord(id);if(action==="delete")confirmAction("Xóa ghi chép","Sau khi xóa sẽ không thể khôi phục. Bạn có chắc muốn xóa ghi chép này không?",function(){deleteRecord(id)});if(action==="quickOut")confirmAction("Ghi khách ra","Bạn có chắc muốn thêm ghi chép khách ra không?",function(){quickOutFromRecord(id)})});el.insideList.addEventListener("click",function(event){var target=event.target.closest('button[data-action="quickOutByKey"]');if(!target)return;var key=target.dataset.key;confirmAction("Ghi khách ra","Bạn có chắc muốn thêm ghi chép khách ra không?",function(){quickOutByKey(key)})});el.exportCsvBtn.addEventListener("click",exportCsv);el.exportJsonBtn.addEventListener("click",exportJson);el.importBtn.addEventListener("click",function(){el.importFile.click()});el.importFile.addEventListener("change",function(){importJsonFile(el.importFile.files[0])});el.clearAllBtn.addEventListener("click",function(){if(!records.length){showToast("Hiện chưa có dữ liệu");return}confirmAction("Xóa toàn bộ ghi chép","Thao tác này sẽ xóa toàn bộ ghi chép trên thiết bị hiện tại. Bạn có chắc muốn tiếp tục không?",function(){records=[];saveRecords();resetForm();renderAll();showToast("Đã xóa toàn bộ")})});el.cancelConfirm.addEventListener("click",closeConfirm);el.confirmModal.addEventListener("click",function(event){if(event.target===el.confirmModal)closeConfirm()});el.okConfirm.addEventListener("click",function(){var fn=pendingConfirm;closeConfirm();if(typeof fn==="function")fn()})}function init(){loadRecords();el.dateTime.value=nowLocalDateTime();bindEvents();renderAll()}init()})();
+</script>
+</body></html>

@@ -1,1 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mobile Match-3 Puzzle Game</title>
 
+  <style>
+    :root {
+      --page-bg-1: #f6f2ff;
+      --page-bg-2: #eef7ff;
+      --primary: #7c5cff;
+      --primary-dark: #5638d6;
+      --orange: #ff8c5a;
+      --green: #19c37d;
+      --red: #ff5f6d;
+      --blue: #38a3ff;
+      --yellow: #ffc857;
+      --text: #20263a;
+      --muted: #7a8299;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.82);
+      --border: rgba(124, 92, 255, 0.16);
+      --shadow-soft: 0 14px 36px rgba(86, 56, 214, 0.14);
+      --shadow-card: 0 10px 24px rgba(32, 38, 58, 0.1);
+      --board-size: min(calc(100vw - 28px), 430px);
+      --cell-gap: 6px;
+      --cell-size: calc((var(--board-size) - var(--cell-gap) * 7) / 8);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      overscroll-behavior: none;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.22), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255, 140, 90, 0.18), transparent 30%),
+        linear-gradient(145deg, var(--page-bg-1), var(--page-bg-2));
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .phone-shell {
+      width: min(100%, 520px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top) 12px calc(18px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .game-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 12px 0 10px;
+      backdrop-filter: blur(14px);
+    }
+
+    .header-card {
+      min-height: 64px;
+      padding: 12px 14px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .game-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .game-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--orange));
+      box-shadow: 0 10px 20px rgba(124, 92, 255, 0.24);
+      flex: 0 0 auto;
+    }
+
+    .game-title-text {
+      min-width: 0;
+    }
+
+    .game-title {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .game-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-btn {
+      height: 42px;
+      min-width: 42px;
+      border: 0;
+      border-radius: 16px;
+      background: rgba(124, 92, 255, 0.1);
+      color: var(--primary-dark);
+      font-weight: 900;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+      flex: 0 0 auto;
+    }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 8px 0 12px;
+    }
+
+    .stat-card {
+      min-height: 74px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      box-shadow: var(--shadow-card);
+      padding: 11px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      color: var(--primary-dark);
+      font-size: 23px;
+      font-weight: 1000;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .progress-wrap {
+      padding: 12px 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 12px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.12);
+      overflow: hidden;
+      box-shadow: inset 0 2px 5px rgba(86, 56, 214, 0.08);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--orange));
+      transition: width 0.25s ease;
+    }
+
+    .message-card {
+      min-height: 48px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      border-radius: 20px;
+      background: rgba(124, 92, 255, 0.1);
+      color: var(--primary-dark);
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1.45;
+      display: flex;
+      align-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+    }
+
+    .board-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .board-card {
+      width: calc(var(--board-size) + 18px);
+      height: calc(var(--board-size) + 18px);
+      padding: 9px;
+      border-radius: 30px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.68)),
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.16), transparent 40%);
+      border: 1px solid rgba(124, 92, 255, 0.18);
+      box-shadow:
+        0 20px 44px rgba(86, 56, 214, 0.16),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .board {
+      width: var(--board-size);
+      height: var(--board-size);
+      display: grid;
+      grid-template-columns: repeat(8, var(--cell-size));
+      grid-template-rows: repeat(8, var(--cell-size));
+      gap: var(--cell-gap);
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    .cell {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      border: 0;
+      padding: 0;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.9),
+        0 6px 12px rgba(32, 38, 58, 0.12);
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease,
+        opacity 0.18s ease;
+    }
+
+    .cell:active {
+      transform: scale(0.94);
+    }
+
+    .cell.selected {
+      outline: 4px solid rgba(255, 140, 90, 0.88);
+      transform: scale(1.08);
+      z-index: 5;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.95),
+        0 10px 22px rgba(255, 140, 90, 0.3);
+    }
+
+    .cell.hint {
+      outline: 4px solid rgba(25, 195, 125, 0.88);
+      animation: hintPulse 0.65s ease-in-out infinite alternate;
+      z-index: 6;
+    }
+
+    .cell.matched {
+      animation: pop 0.24s ease forwards;
+    }
+
+    .gem {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      font-size: clamp(20px, 7vw, 36px);
+      line-height: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gem::before {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.62), transparent 46%);
+      pointer-events: none;
+    }
+
+    .gem::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      top: 14%;
+      width: 20%;
+      height: 12%;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.55);
+      filter: blur(1px);
+    }
+
+    .gem span {
+      position: relative;
+      filter: drop-shadow(0 4px 5px rgba(0,0,0,0.18));
+    }
+
+    .type-0 {
+      background: linear-gradient(135deg, #ff7a84, #e84157);
+    }
+
+    .type-1 {
+      background: linear-gradient(135deg, #62c4ff, #198cff);
+    }
+
+    .type-2 {
+      background: linear-gradient(135deg, #51efb1, #12b978);
+    }
+
+    .type-3 {
+      background: linear-gradient(135deg, #ffe074, #ffb31a);
+    }
+
+    .type-4 {
+      background: linear-gradient(135deg, #b9a8ff, #745cff);
+    }
+
+    .type-5 {
+      background: linear-gradient(135deg, #ffb199, #ff765a);
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      65% {
+        transform: scale(1.2) rotate(5deg);
+        opacity: 0.82;
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    @keyframes hintPulse {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.08);
+      }
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .main-action {
+      grid-column: 1 / -1;
+      height: 56px;
+      border: 0;
+      border-radius: 22px;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 1000;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 14px 26px rgba(86, 56, 214, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sub-action {
+      height: 50px;
+      border: 0;
+      border-radius: 20px;
+      color: var(--primary-dark);
+      font-size: 15px;
+      font-weight: 950;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .main-action:active,
+    .sub-action:active,
+    .mini-btn:active {
+      transform: scale(0.97);
+    }
+
+    .rules-card {
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(124, 92, 255, 0.14);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 10px;
+    }
+
+    .rules-title {
+      margin: 0 0 8px;
+      font-size: 15px;
+      font-weight: 1000;
+    }
+
+    .rules-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .toast-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(32, 38, 58, 0.28);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .toast-mask.show {
+      display: flex;
+    }
+
+    .result-card {
+      width: min(360px, 100%);
+      padding: 24px;
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 22px 50px rgba(32, 38, 58, 0.26);
+      text-align: center;
+    }
+
+    .result-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 12px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      font-size: 36px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.14), rgba(255, 140, 90, 0.16));
+    }
+
+    .result-title {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 1000;
+      letter-spacing: -0.03em;
+    }
+
+    .result-desc {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .result-btn {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 1000;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--orange));
+      box-shadow: 0 12px 24px rgba(124, 92, 255, 0.24);
+    }
+
+    @media (min-width: 760px) {
+      body {
+        padding: 24px 0;
+      }
+
+      .phone-shell {
+        min-height: auto;
+        border-radius: 38px;
+        padding: 18px 14px 20px;
+        background: rgba(255, 255, 255, 0.34);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 24px 70px rgba(86, 56, 214, 0.16);
+      }
+    }
+
+    @media (max-width: 380px) {
+      :root {
+        --cell-gap: 5px;
+        --board-size: min(calc(100vw - 24px), 380px);
+      }
+
+      .phone-shell {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .header-card {
+        border-radius: 21px;
+      }
+
+      .game-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+      }
+
+      .game-title {
+        font-size: 18px;
+      }
+
+      .stat-value {
+        font-size: 21px;
+      }
+
+      .cell,
+      .gem {
+        border-radius: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="phone-shell">
+    <header class="game-header">
+      <div class="header-card">
+        <div class="game-title-wrap">
+          <div class="game-logo">M</div>
+          <div class="game-title-text">
+            <h1 class="game-title">Fruit Match</h1>
+            <div class="game-subtitle">Mobile H5 · Match-3 Puzzle</div>
+          </div>
+        </div>
+
+        <button class="mini-btn" id="helpBtn" type="button" aria-label="How to play">?</button>
+      </div>
+    </header>
+
+    <section class="stats-panel">
+      <div class="stat-card">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="scoreText">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Moves</div>
+        <div class="stat-value" id="movesText">30</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Combo</div>
+        <div class="stat-value" id="comboText">0</div>
+      </div>
+    </section>
+
+    <section class="progress-wrap">
+      <div class="progress-top">
+        <span>Target Score: <strong id="targetText">6000</strong></span>
+        <span id="progressText">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </section>
+
+    <section class="message-card" id="messageText">
+      Tap one fruit, then tap an adjacent fruit to swap.
+    </section>
+
+    <section class="board-wrap">
+      <div class="board-card">
+        <div class="board" id="board" aria-label="Match-3 game board"></div>
+      </div>
+    </section>
+
+    <section class="control-panel">
+      <button class="main-action" id="restartBtn" type="button">
+        <span>🔄</span>
+        <span>Restart</span>
+      </button>
+
+      <button class="sub-action" id="hintBtn" type="button">
+        <span>💡</span>
+        <span>Hint</span>
+      </button>
+
+      <button class="sub-action" id="shuffleBtn" type="button">
+        <span>🎲</span>
+        <span>Shuffle</span>
+      </button>
+    </section>
+
+    <section class="rules-card" id="rulesCard">
+      <h2 class="rules-title">How to Play</h2>
+      <p class="rules-text">
+        Tap two adjacent fruits to swap them. Match three or more identical fruits
+        in a row or column to clear them. Bigger clears and combo chains give more
+        points. Reach the target score before your moves run out.
+      </p>
+    </section>
+  </main>
+
+  <div class="toast-mask" id="resultMask">
+    <div class="result-card">
+      <div class="result-icon" id="resultIcon">🎉</div>
+      <h2 class="result-title" id="resultTitle">Level Complete</h2>
+      <p class="result-desc" id="resultDesc">You reached the target score.</p>
+      <button class="result-btn" id="resultRestartBtn" type="button">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const ROWS = 8;
+    const COLS = 8;
+    const TYPES = 6;
+    const START_MOVES = 30;
+    const TARGET_SCORE = 6000;
+
+    const ICONS = ["🍓", "🍊", "🍇", "🍋", "🥝", "🍒"];
+
+    let board = [];
+    let score = 0;
+    let moves = START_MOVES;
+    let combo = 0;
+    let selected = null;
+    let locked = false;
+    let gameOver = false;
+    let hintCells = new Set();
+
+    const boardEl = document.getElementById("board");
+    const scoreText = document.getElementById("scoreText");
+    const movesText = document.getElementById("movesText");
+    const comboText = document.getElementById("comboText");
+    const targetText = document.getElementById("targetText");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const messageText = document.getElementById("messageText");
+    const restartBtn = document.getElementById("restartBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const shuffleBtn = document.getElementById("shuffleBtn");
+    const helpBtn = document.getElementById("helpBtn");
+    const rulesCard = document.getElementById("rulesCard");
+    const resultMask = document.getElementById("resultMask");
+    const resultIcon = document.getElementById("resultIcon");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultDesc = document.getElementById("resultDesc");
+    const resultRestartBtn = document.getElementById("resultRestartBtn");
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function randomType() {
+      return Math.floor(Math.random() * TYPES);
+    }
+
+    function isInside(row, col) {
+      return row >= 0 && row < ROWS && col >= 0 && col < COLS;
+    }
+
+    function areAdjacent(a, b) {
+      return Math.abs(a.row - b.row) + Math.abs(a.col - b.col) === 1;
+    }
+
+    function safeSetMessage(text) {
+      messageText.textContent = text;
+    }
+
+    function wouldCreateInitialMatch(row, col, type) {
+      const left1 = col >= 1 ? board[row][col - 1] : null;
+      const left2 = col >= 2 ? board[row][col - 2] : null;
+      const up1 = row >= 1 ? board[row - 1][col] : null;
+      const up2 = row >= 2 ? board[row - 2][col] : null;
+
+      return (left1 === type && left2 === type) || (up1 === type && up2 === type);
+    }
+
+    function createCleanBoard() {
+      board = [];
+
+      for (let row = 0; row < ROWS; row++) {
+        board[row] = [];
+
+        for (let col = 0; col < COLS; col++) {
+          let type = randomType();
+          let guard = 0;
+
+          while (wouldCreateInitialMatch(row, col, type) && guard < 30) {
+            type = randomType();
+            guard++;
+          }
+
+          board[row][col] = type;
+        }
+      }
+
+      if (!hasAvailableMove()) {
+        createCleanBoard();
+      }
+    }
+
+    function createCells() {
+      boardEl.innerHTML = "";
+
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const cell = document.createElement("button");
+          cell.className = "cell";
+          cell.type = "button";
+          cell.dataset.row = String(row);
+          cell.dataset.col = String(col);
+          cell.setAttribute("aria-label", `Row ${row + 1}, Column ${col + 1}`);
+
+          cell.addEventListener("click", () => {
+            handleCellClick(row, col);
+          });
+
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function getCellEl(row, col) {
+      return boardEl.children[row * COLS + col];
+    }
+
+    function renderBoard(matchedSet = new Set()) {
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const cell = getCellEl(row, col);
+          const type = board[row][col];
+          const key = `${row},${col}`;
+
+          cell.className = "cell";
+
+          if (selected && selected.row === row && selected.col === col) {
+            cell.classList.add("selected");
+          }
+
+          if (hintCells.has(key)) {
+            cell.classList.add("hint");
+          }
+
+          if (matchedSet.has(key)) {
+            cell.classList.add("matched");
+          }
+
+          if (type === null || type === undefined) {
+            cell.innerHTML = "";
+          } else {
+            cell.innerHTML = `
+              <div class="gem type-${type}">
+                <span>${ICONS[type]}</span>
+              </div>
+            `;
+          }
+        }
+      }
+    }
+
+    function updateStats() {
+      const progress = Math.min(100, Math.floor((score / TARGET_SCORE) * 100));
+
+      scoreText.textContent = String(score);
+      movesText.textContent = String(moves);
+      comboText.textContent = String(combo);
+      targetText.textContent = String(TARGET_SCORE);
+      progressText.textContent = `${progress}%`;
+      progressFill.style.width = `${progress}%`;
+    }
+
+    function swapCells(a, b) {
+      const temp = board[a.row][a.col];
+      board[a.row][a.col] = board[b.row][b.col];
+      board[b.row][b.col] = temp;
+    }
+
+    function findMatches() {
+      const matched = new Set();
+
+      for (let row = 0; row < ROWS; row++) {
+        let col = 0;
+
+        while (col < COLS) {
+          const type = board[row][col];
+
+          if (type === null || type === undefined) {
+            col++;
+            continue;
+          }
+
+          let end = col + 1;
+
+          while (end < COLS && board[row][end] === type) {
+            end++;
+          }
+
+          if (end - col >= 3) {
+            for (let c = col; c < end; c++) {
+              matched.add(`${row},${c}`);
+            }
+          }
+
+          col = end;
+        }
+      }
+
+      for (let col = 0; col < COLS; col++) {
+        let row = 0;
+
+        while (row < ROWS) {
+          const type = board[row][col];
+
+          if (type === null || type === undefined) {
+            row++;
+            continue;
+          }
+
+          let end = row + 1;
+
+          while (end < ROWS && board[end][col] === type) {
+            end++;
+          }
+
+          if (end - row >= 3) {
+            for (let r = row; r < end; r++) {
+              matched.add(`${r},${col}`);
+            }
+          }
+
+          row = end;
+        }
+      }
+
+      return matched;
+    }
+
+    function clearMatches(matchedSet) {
+      matchedSet.forEach((key) => {
+        const [row, col] = key.split(",").map(Number);
+        board[row][col] = null;
+      });
+    }
+
+    function collapseBoard() {
+      for (let col = 0; col < COLS; col++) {
+        const existing = [];
+
+        for (let row = ROWS - 1; row >= 0; row--) {
+          if (board[row][col] !== null && board[row][col] !== undefined) {
+            existing.push(board[row][col]);
+          }
+        }
+
+        for (let row = ROWS - 1; row >= 0; row--) {
+          if (existing.length > 0) {
+            board[row][col] = existing.shift();
+          } else {
+            board[row][col] = randomType();
+          }
+        }
+      }
+    }
+
+    async function resolveBoard() {
+      locked = true;
+      combo = 0;
+      hintCells.clear();
+
+      while (true) {
+        const matchedSet = findMatches();
+
+        if (matchedSet.size === 0) {
+          break;
+        }
+
+        combo++;
+        const roundScore = matchedSet.size * 60 * combo;
+        score += roundScore;
+
+        safeSetMessage(`Cleared ${matchedSet.size} fruits! Combo x${combo}. +${roundScore} points.`);
+        updateStats();
+
+        renderBoard(matchedSet);
+        await sleep(240);
+
+        clearMatches(matchedSet);
+        renderBoard();
+        await sleep(100);
+
+        collapseBoard();
+        renderBoard();
+        await sleep(190);
+      }
+
+      selected = null;
+      renderBoard();
+      updateStats();
+
+      if (score >= TARGET_SCORE) {
+        showResult(true);
+        return;
+      }
+
+      if (moves <= 0) {
+        showResult(false);
+        return;
+      }
+
+      if (!hasAvailableMove()) {
+        safeSetMessage("No available moves. The board has been shuffled.");
+        await sleep(350);
+        shuffleBoardUntilMoveAvailable();
+        renderBoard();
+      } else if (combo === 0) {
+        safeSetMessage("Keep swapping adjacent fruits to make a match.");
+      } else {
+        safeSetMessage("Nice combo! Keep going for a higher score.");
+      }
+
+      combo = 0;
+      updateStats();
+      locked = false;
+    }
+
+    async function attemptSwap(a, b) {
+      if (locked || gameOver) return;
+
+      locked = true;
+      hintCells.clear();
+
+      swapCells(a, b);
+      selected = null;
+      renderBoard();
+
+      await sleep(130);
+
+      const matchedSet = findMatches();
+
+      if (matchedSet.size === 0) {
+        swapCells(a, b);
+        renderBoard();
+        safeSetMessage("No match created. Try another move.");
+        await sleep(100);
+        locked = false;
+        return;
+      }
+
+      moves--;
+      updateStats();
+      await resolveBoard();
+    }
+
+    function handleCellClick(row, col) {
+      if (locked || gameOver) return;
+
+      hintCells.clear();
+
+      const current = { row, col };
+
+      if (!selected) {
+        selected = current;
+        safeSetMessage("Fruit selected. Tap an adjacent fruit to swap.");
+        renderBoard();
+        return;
+      }
+
+      if (selected.row === row && selected.col === col) {
+        selected = null;
+        safeSetMessage("Selection canceled.");
+        renderBoard();
+        return;
+      }
+
+      if (!areAdjacent(selected, current)) {
+        selected = current;
+        safeSetMessage("Only adjacent fruits can be swapped. New fruit selected.");
+        renderBoard();
+        return;
+      }
+
+      attemptSwap(selected, current);
+    }
+
+    function hasAvailableMove() {
+      return Boolean(findAvailableMove());
+    }
+
+    function findAvailableMove() {
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const current = { row, col };
+          const candidates = [
+            { row: row + 1, col },
+            { row, col: col + 1 },
+          ];
+
+          for (const next of candidates) {
+            if (!isInside(next.row, next.col)) continue;
+
+            swapCells(current, next);
+            const hasMatch = findMatches().size > 0;
+            swapCells(current, next);
+
+            if (hasMatch) {
+              return [current, next];
+            }
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function shuffleBoardUntilMoveAvailable() {
+      hintCells.clear();
+
+      const flat = board.flat();
+      let guard = 0;
+
+      do {
+        for (let i = flat.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const temp = flat[i];
+          flat[i] = flat[j];
+          flat[j] = temp;
+        }
+
+        for (let row = 0; row < ROWS; row++) {
+          for (let col = 0; col < COLS; col++) {
+            board[row][col] = flat[row * COLS + col];
+          }
+        }
+
+        guard++;
+      } while ((findMatches().size > 0 || !hasAvailableMove()) && guard < 80);
+
+      if (guard >= 80) {
+        createCleanBoard();
+      }
+    }
+
+    function showHint() {
+      if (locked || gameOver) return;
+
+      const move = findAvailableMove();
+
+      if (!move) {
+        safeSetMessage("No valid moves found. The board has been shuffled.");
+        shuffleBoardUntilMoveAvailable();
+        renderBoard();
+        return;
+      }
+
+      hintCells.clear();
+
+      move.forEach((cell) => {
+        hintCells.add(`${cell.row},${cell.col}`);
+      });
+
+      selected = null;
+      safeSetMessage("The highlighted fruits can be swapped.");
+      renderBoard();
+
+      setTimeout(() => {
+        hintCells.clear();
+        renderBoard();
+      }, 1800);
+    }
+
+    function manualShuffle() {
+      if (locked || gameOver) return;
+
+      selected = null;
+      hintCells.clear();
+      shuffleBoardUntilMoveAvailable();
+      renderBoard();
+      safeSetMessage("Board shuffled. Keep playing!");
+    }
+
+    function showResult(isWin) {
+      gameOver = true;
+      locked = true;
+
+      if (isWin) {
+        resultIcon.textContent = "🎉";
+        resultTitle.textContent = "Level Complete";
+        resultDesc.textContent = `You scored ${score} points and reached the target score!`;
+        safeSetMessage("Level complete! Tap Restart to play again.");
+      } else {
+        resultIcon.textContent = "💪";
+        resultTitle.textContent = "Game Over";
+        resultDesc.textContent = `You scored ${score} points. Try again and beat the target score.`;
+        safeSetMessage("No moves left. Tap Restart to try again.");
+      }
+
+      resultMask.classList.add("show");
+    }
+
+    function hideResult() {
+      resultMask.classList.remove("show");
+    }
+
+    function restartGame() {
+      score = 0;
+      moves = START_MOVES;
+      combo = 0;
+      selected = null;
+      locked = false;
+      gameOver = false;
+      hintCells.clear();
+
+      hideResult();
+      createCleanBoard();
+      renderBoard();
+      updateStats();
+      safeSetMessage("New game started! Tap one fruit, then tap an adjacent fruit to swap.");
+    }
+
+    function toggleRules() {
+      const isHidden = rulesCard.style.display === "none";
+      rulesCard.style.display = isHidden ? "block" : "none";
+    }
+
+    restartBtn.addEventListener("click", restartGame);
+    resultRestartBtn.addEventListener("click", restartGame);
+    hintBtn.addEventListener("click", showHint);
+    shuffleBtn.addEventListener("click", manualShuffle);
+    helpBtn.addEventListener("click", toggleRules);
+
+    createCells();
+    restartGame();
+  </script>
+</body>
+</html>

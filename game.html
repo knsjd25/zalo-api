@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>手机端消消乐小游戏</title>
+  <title>Mobile Match-3 Puzzle Game</title>
 
   <style>
     :root {
@@ -41,7 +41,7 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at top left, rgba(124, 92, 255, 0.22), transparent 30%),
@@ -577,37 +577,37 @@
     <header class="game-header">
       <div class="header-card">
         <div class="game-title-wrap">
-          <div class="game-logo">消</div>
+          <div class="game-logo">M</div>
           <div class="game-title-text">
-            <h1 class="game-title">水果消消乐</h1>
-            <div class="game-subtitle">手机 H5 单机版 · 三连消除</div>
+            <h1 class="game-title">Fruit Match</h1>
+            <div class="game-subtitle">Mobile H5 · Match-3 Puzzle</div>
           </div>
         </div>
 
-        <button class="mini-btn" id="helpBtn" type="button" aria-label="玩法说明">?</button>
+        <button class="mini-btn" id="helpBtn" type="button" aria-label="How to play">?</button>
       </div>
     </header>
 
     <section class="stats-panel">
       <div class="stat-card">
-        <div class="stat-label">分数</div>
+        <div class="stat-label">Score</div>
         <div class="stat-value" id="scoreText">0</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">步数</div>
+        <div class="stat-label">Moves</div>
         <div class="stat-value" id="movesText">30</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">连锁</div>
+        <div class="stat-label">Combo</div>
         <div class="stat-value" id="comboText">0</div>
       </div>
     </section>
 
     <section class="progress-wrap">
       <div class="progress-top">
-        <span>目标分数：<strong id="targetText">6000</strong></span>
+        <span>Target Score: <strong id="targetText">6000</strong></span>
         <span id="progressText">0%</span>
       </div>
       <div class="progress-bar">
@@ -616,37 +616,38 @@
     </section>
 
     <section class="message-card" id="messageText">
-      点击一个水果，再点击相邻水果进行交换。
+      Tap one fruit, then tap an adjacent fruit to swap.
     </section>
 
     <section class="board-wrap">
       <div class="board-card">
-        <div class="board" id="board" aria-label="消消乐棋盘"></div>
+        <div class="board" id="board" aria-label="Match-3 game board"></div>
       </div>
     </section>
 
     <section class="control-panel">
       <button class="main-action" id="restartBtn" type="button">
         <span>🔄</span>
-        <span>重新开始</span>
+        <span>Restart</span>
       </button>
 
       <button class="sub-action" id="hintBtn" type="button">
         <span>💡</span>
-        <span>提示一步</span>
+        <span>Hint</span>
       </button>
 
       <button class="sub-action" id="shuffleBtn" type="button">
         <span>🎲</span>
-        <span>重排棋盘</span>
+        <span>Shuffle</span>
       </button>
     </section>
 
     <section class="rules-card" id="rulesCard">
-      <h2 class="rules-title">玩法说明</h2>
+      <h2 class="rules-title">How to Play</h2>
       <p class="rules-text">
-        点击两个相邻水果交换位置，横向或纵向三个及以上相同水果连成一排即可消除。
-        消除越多、连锁越多，得分越高。在步数用完前达到目标分数即可通关。
+        Tap two adjacent fruits to swap them. Match three or more identical fruits
+        in a row or column to clear them. Bigger clears and combo chains give more
+        points. Reach the target score before your moves run out.
       </p>
     </section>
   </main>
@@ -654,9 +655,9 @@
   <div class="toast-mask" id="resultMask">
     <div class="result-card">
       <div class="result-icon" id="resultIcon">🎉</div>
-      <h2 class="result-title" id="resultTitle">恭喜通关</h2>
-      <p class="result-desc" id="resultDesc">你已经达到目标分数。</p>
-      <button class="result-btn" id="resultRestartBtn" type="button">再来一局</button>
+      <h2 class="result-title" id="resultTitle">Level Complete</h2>
+      <p class="result-desc" id="resultDesc">You reached the target score.</p>
+      <button class="result-btn" id="resultRestartBtn" type="button">Play Again</button>
     </div>
   </div>
 
@@ -760,7 +761,7 @@
           cell.type = "button";
           cell.dataset.row = String(row);
           cell.dataset.col = String(col);
-          cell.setAttribute("aria-label", `第 ${row + 1} 行，第 ${col + 1} 列`);
+          cell.setAttribute("aria-label", `Row ${row + 1}, Column ${col + 1}`);
 
           cell.addEventListener("click", () => {
             handleCellClick(row, col);
@@ -929,7 +930,7 @@
         const roundScore = matchedSet.size * 60 * combo;
         score += roundScore;
 
-        safeSetMessage(`消除 ${matchedSet.size} 个，连锁 ${combo} 次，获得 ${roundScore} 分！`);
+        safeSetMessage(`Cleared ${matchedSet.size} fruits! Combo x${combo}. +${roundScore} points.`);
         updateStats();
 
         renderBoard(matchedSet);
@@ -959,14 +960,14 @@
       }
 
       if (!hasAvailableMove()) {
-        safeSetMessage("当前没有可消除的移动，已自动重排棋盘。");
+        safeSetMessage("No available moves. The board has been shuffled.");
         await sleep(350);
         shuffleBoardUntilMoveAvailable();
         renderBoard();
       } else if (combo === 0) {
-        safeSetMessage("继续交换相邻水果，制造三连消除。");
+        safeSetMessage("Keep swapping adjacent fruits to make a match.");
       } else {
-        safeSetMessage("不错，继续挑战更高连锁！");
+        safeSetMessage("Nice combo! Keep going for a higher score.");
       }
 
       combo = 0;
@@ -991,7 +992,7 @@
       if (matchedSet.size === 0) {
         swapCells(a, b);
         renderBoard();
-        safeSetMessage("这次交换没有形成三连，换个位置试试。");
+        safeSetMessage("No match created. Try another move.");
         await sleep(100);
         locked = false;
         return;
@@ -1011,21 +1012,21 @@
 
       if (!selected) {
         selected = current;
-        safeSetMessage("已选中一个水果，请点击相邻水果交换。");
+        safeSetMessage("Fruit selected. Tap an adjacent fruit to swap.");
         renderBoard();
         return;
       }
 
       if (selected.row === row && selected.col === col) {
         selected = null;
-        safeSetMessage("已取消选择。");
+        safeSetMessage("Selection canceled.");
         renderBoard();
         return;
       }
 
       if (!areAdjacent(selected, current)) {
         selected = current;
-        safeSetMessage("只能交换相邻水果，已重新选择当前位置。");
+        safeSetMessage("Only adjacent fruits can be swapped. New fruit selected.");
         renderBoard();
         return;
       }
@@ -1097,7 +1098,7 @@
       const move = findAvailableMove();
 
       if (!move) {
-        safeSetMessage("暂时没有可消除的移动，已为你重排棋盘。");
+        safeSetMessage("No valid moves found. The board has been shuffled.");
         shuffleBoardUntilMoveAvailable();
         renderBoard();
         return;
@@ -1110,7 +1111,7 @@
       });
 
       selected = null;
-      safeSetMessage("绿色高亮的两个水果可以交换。");
+      safeSetMessage("The highlighted fruits can be swapped.");
       renderBoard();
 
       setTimeout(() => {
@@ -1126,7 +1127,7 @@
       hintCells.clear();
       shuffleBoardUntilMoveAvailable();
       renderBoard();
-      safeSetMessage("棋盘已重排，继续挑战吧！");
+      safeSetMessage("Board shuffled. Keep playing!");
     }
 
     function showResult(isWin) {
@@ -1135,14 +1136,14 @@
 
       if (isWin) {
         resultIcon.textContent = "🎉";
-        resultTitle.textContent = "恭喜通关";
-        resultDesc.textContent = `你获得了 ${score} 分，成功达到目标分数！`;
-        safeSetMessage("恭喜通关！点击重新开始可再来一局。");
+        resultTitle.textContent = "Level Complete";
+        resultDesc.textContent = `You scored ${score} points and reached the target score!`;
+        safeSetMessage("Level complete! Tap Restart to play again.");
       } else {
         resultIcon.textContent = "💪";
-        resultTitle.textContent = "本局结束";
-        resultDesc.textContent = `你获得了 ${score} 分，距离目标还差一点点。`;
-        safeSetMessage("步数用完了，点击重新开始再来一局。");
+        resultTitle.textContent = "Game Over";
+        resultDesc.textContent = `You scored ${score} points. Try again and beat the target score.`;
+        safeSetMessage("No moves left. Tap Restart to try again.");
       }
 
       resultMask.classList.add("show");
@@ -1165,7 +1166,7 @@
       createCleanBoard();
       renderBoard();
       updateStats();
-      safeSetMessage("新一局开始！点击一个水果，再点击相邻水果进行交换。");
+      safeSetMessage("New game started! Tap one fruit, then tap an adjacent fruit to swap.");
     }
 
     function toggleRules() {

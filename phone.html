@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sổ Điện Thoại Việt Nam - Phone Book</title>
+  <meta name="description" content="Sổ điện thoại online đơn giản để lưu tên, số điện thoại, Zalo, địa chỉ và ghi chú. Có tìm kiếm, in, xuất CSV và lưu trên trình duyệt." />
+  <style>
+    :root {
+      --bg: #fff7ed;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+      --soft: #ffedd5;
+      --line: #fed7aa;
+      --green: #16a34a;
+      --red: #dc2626;
+      --blue: #2563eb;
+      --shadow: 0 18px 45px rgba(124, 45, 18, 0.14);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(251, 146, 60, 0.25), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(253, 186, 116, 0.32), transparent 36%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-main, .hero-side, .panel {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(251, 146, 60, 0.35);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-main {
+      padding: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -65px;
+      width: 230px;
+      height: 230px;
+      background: repeating-linear-gradient(135deg, #fed7aa 0 14px, #ffedd5 14px 28px);
+      border-radius: 50%;
+      opacity: 0.55;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: #9a3412;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4vw, 54px);
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+      position: relative;
+      z-index: 1;
+    }
+
+    .lead {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+      max-width: 650px;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat {
+      background: #fff7ed;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 15px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 24px;
+      color: #c2410c;
+    }
+
+    .stat span {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .hero-side {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .notice {
+      padding: 16px;
+      background: linear-gradient(135deg, #fff7ed, #ffffff);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      line-height: 1.6;
+      color: #7c2d12;
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto auto;
+      gap: 10px;
+      margin: 22px 0;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #fdba74;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    textarea { min-height: 84px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      white-space: nowrap;
+      transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 8px 18px rgba(249, 115, 22, 0.22);
+    }
+
+    .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn.secondary { background: #fff; color: #9a3412; border: 1px solid #fdba74; box-shadow: none; }
+    .btn.green { background: var(--green); box-shadow: 0 8px 18px rgba(22, 163, 74, 0.18); }
+    .btn.red { background: var(--red); box-shadow: none; }
+    .btn.blue { background: var(--blue); box-shadow: none; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel { padding: 22px; }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #7c2d12;
+      margin: 0 0 6px 2px;
+    }
+
+    .list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .list-head h2 { margin: 0; }
+
+    .alpha-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0 0 16px;
+    }
+
+    .alpha {
+      border: 1px solid #fdba74;
+      background: #fff7ed;
+      color: #9a3412;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 36px;
+    }
+
+    .alpha.active, .alpha:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .contacts {
+      display: grid;
+      gap: 12px;
+    }
+
+    .contact-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      padding: 15px;
+      border-radius: 18px;
+      border: 1px solid #fed7aa;
+      background: linear-gradient(135deg, #ffffff, #fff7ed);
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 18px;
+      box-shadow: inset 0 -8px 14px rgba(154, 52, 18, 0.15);
+    }
+
+    .contact-name {
+      margin: 0 0 5px;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .contact-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .contact-note {
+      margin-top: 8px;
+      color: #7c2d12;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      border: 1px solid #fdba74;
+      background: white;
+      color: #9a3412;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 42px 16px;
+      color: var(--muted);
+      background: #fff7ed;
+      border: 1px dashed #fb923c;
+      border-radius: 18px;
+    }
+
+    .hidden-file { display: none; }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 30px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero, .layout { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .toolbar input { grid-column: 1 / -1; }
+      .stats { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100% - 20px, 1180px); padding-top: 16px; }
+      .hero-main, .hero-side, .panel { border-radius: 18px; padding: 18px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .contact-card { grid-template-columns: 1fr; }
+      .actions { flex-direction: row; flex-wrap: wrap; }
+    }
+
+    @media print {
+      body { background: white; }
+      .hero, .toolbar, .form-panel, .alpha-bar, footer, .actions { display: none !important; }
+      .page { width: 100%; padding: 0; }
+      .layout { display: block; }
+      .panel { box-shadow: none; border: 0; padding: 0; }
+      .contact-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 1px solid #999;
+        background: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="badge">📒 Sổ điện thoại cá nhân</div>
+        <h1>Sổ Điện Thoại Việt Nam</h1>
+        <p class="lead">Ghi lại tên, số điện thoại, Zalo, địa chỉ và ghi chú. Dữ liệu được lưu trực tiếp trên trình duyệt của bạn, phù hợp để làm công cụ nhỏ trên website hoặc dùng nội bộ.</p>
+        <div class="stats">
+          <div class="stat"><b id="totalCount">0</b><span>Tổng liên hệ</span></div>
+          <div class="stat"><b id="zaloCount">0</b><span>Có Zalo</span></div>
+          <div class="stat"><b id="todayCount">0</b><span>Thêm hôm nay</span></div>
+        </div>
+      </div>
+      <aside class="hero-side">
+        <div class="notice"><b>功能说明：</b>本页面不需要后台数据库，联系人会保存在浏览器 localStorage。适合做成网站工具页面，也可以后续接入数据库。</div>
+        <div class="notice"><b>Xuất dữ liệu:</b> Có thể xuất CSV/JSON, nhập JSON và in danh sách liên hệ.</div>
+      </aside>
+    </section>
+
+    <section class="toolbar">
+      <input id="searchInput" type="search" placeholder="Tìm kiếm tên, số điện thoại, Zalo, địa chỉ..." />
+      <button class="btn secondary" id="printBtn">In</button>
+      <button class="btn secondary" id="exportCsvBtn">Xuất CSV</button>
+      <button class="btn secondary" id="exportJsonBtn">Xuất JSON</button>
+      <button class="btn secondary" id="importBtn">Nhập JSON</button>
+      <input class="hidden-file" id="importFile" type="file" accept="application/json" />
+    </section>
+
+    <section class="layout">
+      <aside class="panel form-panel">
+        <h2 id="formTitle">Thêm liên hệ</h2>
+        <form id="contactForm" class="form-grid">
+          <input type="hidden" id="contactId" />
+          <div>
+            <label for="name">Họ tên *</label>
+            <input id="name" required placeholder="Ví dụ: Nguyễn Văn An" />
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="phone">Số điện thoại *</label>
+              <input id="phone" required placeholder="Ví dụ: 0912 345 678" inputmode="tel" />
+            </div>
+            <div>
+              <label for="zalo">Zalo</label>
+              <input id="zalo" placeholder="Số Zalo hoặc tên Zalo" />
+            </div>
+          </div>
+          <div>
+            <label for="address">Địa chỉ</label>
+            <input id="address" placeholder="Tỉnh/thành, quận/huyện..." />
+          </div>
+          <div>
+            <label for="group">Nhóm</label>
+            <select id="group">
+              <option value="Gia đình">Gia đình</option>
+              <option value="Bạn bè">Bạn bè</option>
+              <option value="Công việc">Công việc</option>
+              <option value="Khách hàng">Khách hàng</option>
+              <option value="Dịch vụ">Dịch vụ</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+          <div>
+            <label for="note">Ghi chú</label>
+            <textarea id="note" placeholder="Thông tin thêm..."></textarea>
+          </div>
+          <button class="btn green" type="submit" id="saveBtn">Lưu liên hệ</button>
+          <button class="btn secondary" type="button" id="resetBtn">Làm mới</button>
+        </form>
+      </aside>
+
+      <section class="panel">
+        <div class="list-head">
+          <h2>Danh sách liên hệ</h2>
+          <button class="btn red" id="clearBtn" type="button">Xóa tất cả</button>
+        </div>
+        <div class="alpha-bar" id="alphaBar"></div>
+        <div class="contacts" id="contacts"></div>
+      </section>
+    </section>
+
+    <footer>© 2026 Sổ Điện Thoại Việt Nam · Printable & Web Phone Book</footer>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'vietnam_phonebook_contacts_v1';
+    const VIETNAMESE_LETTERS = ['Tất cả','A','B','C','D','Đ','E','G','H','I','K','L','M','N','O','P','Q','R','S','T','U','V','X','Y','#'];
+
+    const $ = (id) => document.getElementById(id);
+    const form = $('contactForm');
+    const contactsEl = $('contacts');
+    const alphaBar = $('alphaBar');
+    const searchInput = $('searchInput');
+    const importFile = $('importFile');
+
+    let contacts = loadContacts();
+    let activeLetter = 'Tất cả';
+
+    function loadContacts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+
+    function saveContacts() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+      updateStats();
+    }
+
+    function normalizeText(text) {
+      return (text || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase();
+    }
+
+    function getFirstLetter(name) {
+      const trimmed = (name || '').trim().toUpperCase();
+      if (!trimmed) return '#';
+      const first = trimmed[0];
+      if (first === 'Đ') return 'Đ';
+      return /[A-Z]/.test(first) ? first : '#';
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const d = new Date(dateString);
+      return d.toLocaleDateString('vi-VN');
+    }
+
+    function escapeHtml(text) {
+      return (text || '').toString().replace(/[&<>"]/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;'
+      }[char]));
+    }
+
+    function renderAlphaBar() {
+      alphaBar.innerHTML = VIETNAMESE_LETTERS.map(letter => `
+        <button class="alpha ${letter === activeLetter ? 'active' : ''}" data-letter="${letter}">${letter}</button>
+      `).join('');
+    }
+
+    function getFilteredContacts() {
+      const q = normalizeText(searchInput.value);
+      return contacts
+        .filter(contact => {
+          const byLetter = activeLetter === 'Tất cả' || getFirstLetter(contact.name) === activeLetter;
+          const haystack = normalizeText([contact.name, contact.phone, contact.zalo, contact.address, contact.group, contact.note].join(' '));
+          return byLetter && (!q || haystack.includes(q));
+        })
+        .sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+    }
+
+    function renderContacts() {
+      renderAlphaBar();
+      const list = getFilteredContacts();
+      if (list.length === 0) {
+        contactsEl.innerHTML = '<div class="empty">Chưa có liên hệ phù hợp. Hãy thêm liên hệ mới ở bên trái.</div>';
+        return;
+      }
+
+      contactsEl.innerHTML = list.map(contact => {
+        const letter = getFirstLetter(contact.name);
+        return `
+          <article class="contact-card">
+            <div class="avatar">${escapeHtml(letter)}</div>
+            <div>
+              <h3 class="contact-name">${escapeHtml(contact.name)}</h3>
+              <div class="contact-meta">
+                <span>☎ ${escapeHtml(contact.phone)}</span>
+                ${contact.zalo ? `<span>💬 Zalo: ${escapeHtml(contact.zalo)}</span>` : ''}
+                ${contact.group ? `<span>🏷 ${escapeHtml(contact.group)}</span>` : ''}
+                ${contact.address ? `<span>📍 ${escapeHtml(contact.address)}</span>` : ''}
+                <span>🗓 ${formatDate(contact.createdAt)}</span>
+              </div>
+              ${contact.note ? `<div class="contact-note">${escapeHtml(contact.note)}</div>` : ''}
+            </div>
+            <div class="actions">
+              <button class="icon-btn" onclick="editContact('${contact.id}')">Sửa</button>
+              <button class="icon-btn" onclick="copyPhone('${contact.id}')">Copy</button>
+              <button class="icon-btn" onclick="deleteContact('${contact.id}')">Xóa</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function updateStats() {
+      const today = new Date().toISOString().slice(0, 10);
+      $('totalCount').textContent = contacts.length;
+      $('zaloCount').textContent = contacts.filter(c => c.zalo && c.zalo.trim()).length;
+      $('todayCount').textContent = contacts.filter(c => (c.createdAt || '').slice(0, 10) === today).length;
+    }
+
+    function resetForm() {
+      form.reset();
+      $('contactId').value = '';
+      $('formTitle').textContent = 'Thêm liên hệ';
+      $('saveBtn').textContent = 'Lưu liên hệ';
+    }
+
+    function getFormData() {
+      return {
+        id: $('contactId').value || crypto.randomUUID(),
+        name: $('name').value.trim(),
+        phone: $('phone').value.trim(),
+        zalo: $('zalo').value.trim(),
+        address: $('address').value.trim(),
+        group: $('group').value,
+        note: $('note').value.trim(),
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = getFormData();
+      if (!data.name || !data.phone) return;
+
+      const editingId = $('contactId').value;
+      if (editingId) {
+        contacts = contacts.map(contact => contact.id === editingId ? { ...contact, ...data, createdAt: contact.createdAt || data.createdAt } : contact);
+      } else {
+        contacts.push(data);
+      }
+      saveContacts();
+      resetForm();
+      renderContacts();
+    });
+
+    window.editContact = function(id) {
+      const contact = contacts.find(c => c.id === id);
+      if (!contact) return;
+      $('contactId').value = contact.id;
+      $('name').value = contact.name || '';
+      $('phone').value = contact.phone || '';
+      $('zalo').value = contact.zalo || '';
+      $('address').value = contact.address || '';
+      $('group').value = contact.group || 'Khác';
+      $('note').value = contact.note || '';
+      $('formTitle').textContent = 'Sửa liên hệ';
+      $('saveBtn').textContent = 'Cập nhật liên hệ';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.deleteContact = function(id) {
+      const contact = contacts.find(c => c.id === id);
+      if (!contact) return;
+      if (!confirm(`Xóa liên hệ "${contact.name}"?`)) return;
+      contacts = contacts.filter(c => c.id !== id);
+      saveContacts();
+      renderContacts();
+    };
+
+    window.copyPhone = async function(id) {
+      const contact = contacts.find(c => c.id === id);
+      if (!contact) return;
+      try {
+        await navigator.clipboard.writeText(contact.phone);
+        alert('Đã sao chép số điện thoại');
+      } catch {
+        prompt('Sao chép số điện thoại:', contact.phone);
+      }
+    };
+
+    $('resetBtn').addEventListener('click', resetForm);
+    searchInput.addEventListener('input', renderContacts);
+
+    alphaBar.addEventListener('click', (event) => {
+      const button = event.target.closest('.alpha');
+      if (!button) return;
+      activeLetter = button.dataset.letter;
+      renderContacts();
+    });
+
+    $('clearBtn').addEventListener('click', () => {
+      if (!contacts.length) return;
+      if (!confirm('Bạn chắc chắn muốn xóa tất cả liên hệ?')) return;
+      contacts = [];
+      saveContacts();
+      resetForm();
+      renderContacts();
+    });
+
+    $('printBtn').addEventListener('click', () => window.print());
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    $('exportJsonBtn').addEventListener('click', () => {
+      downloadFile('so-dien-thoai.json', JSON.stringify(contacts, null, 2), 'application/json;charset=utf-8');
+    });
+
+    $('exportCsvBtn').addEventListener('click', () => {
+      const headers = ['Họ tên', 'Số điện thoại', 'Zalo', 'Địa chỉ', 'Nhóm', 'Ghi chú', 'Ngày thêm'];
+      const rows = contacts.map(c => [c.name, c.phone, c.zalo, c.address, c.group, c.note, formatDate(c.createdAt)]);
+      const csv = [headers, ...rows]
+        .map(row => row.map(value => `"${(value || '').toString().replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+      downloadFile('so-dien-thoai.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
+    });
+
+    $('importBtn').addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', async () => {
+      const file = importFile.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const imported = JSON.parse(text);
+        if (!Array.isArray(imported)) throw new Error('JSON không hợp lệ');
+        const cleaned = imported
+          .filter(item => item.name && item.phone)
+          .map(item => ({
+            id: item.id || crypto.randomUUID(),
+            name: item.name || '',
+            phone: item.phone || '',
+            zalo: item.zalo || '',
+            address: item.address || '',
+            group: item.group || 'Khác',
+            note: item.note || '',
+            createdAt: item.createdAt || new Date().toISOString()
+          }));
+        contacts = [...contacts, ...cleaned];
+        saveContacts();
+        renderContacts();
+        alert(`Đã nhập ${cleaned.length} liên hệ`);
+      } catch (error) {
+        alert('Không thể nhập file JSON. Vui lòng kiểm tra lại định dạng.');
+      } finally {
+        importFile.value = '';
+      }
+    });
+
+    updateStats();
+    renderContacts();
+  </script>
+</body>
+</html>

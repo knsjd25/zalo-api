@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nhật ký sửa chữa và bảo dưỡng xe</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: #f4f6fb;
+      color: #1f2937;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      padding: 22px 18px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: #2563eb;
+      cursor: pointer;
+    }
+
+    .record {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .record-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .plate {
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .tag {
+      font-size: 12px;
+      color: #1d4ed8;
+      background: #dbeafe;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .info {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #4b5563;
+    }
+
+    .info b {
+      color: #111827;
+    }
+
+    .delete-btn {
+      width: 100%;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      padding: 9px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      color: #9ca3af;
+      padding: 24px 0;
+      font-size: 14px;
+    }
+
+    .count {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="header">
+      <h1>Nhật ký sửa chữa và bảo dưỡng xe</h1>
+      <p>Phiên bản offline, lưu dữ liệu trên thiết bị, không cần đăng nhập</p>
+    </div>
+
+    <div class="card">
+      <h2>Thêm bản ghi mới</h2>
+
+      <form id="recordForm">
+        <label>Biển số xe *</label>
+        <input id="plate" type="text" placeholder="Nhập biển số xe" required />
+
+        <label>Loại bản ghi *</label>
+        <select id="type" required>
+          <option value="Bảo dưỡng">Bảo dưỡng</option>
+          <option value="Sửa chữa">Sửa chữa</option>
+          <option value="Thay phụ tùng">Thay phụ tùng</option>
+          <option value="Khác">Khác</option>
+        </select>
+
+        <label>Ngày thực hiện *</label>
+        <input id="date" type="text" placeholder="Ví dụ: 13/07/2026" required />
+
+        <label>Số km hiện tại</label>
+        <input id="mileage" type="number" placeholder="Nhập số km hiện tại" />
+
+        <label>Chi phí</label>
+        <input id="cost" type="number" placeholder="Nhập chi phí" />
+
+        <label>Nội dung sửa chữa / bảo dưỡng *</label>
+        <textarea id="content" placeholder="Ví dụ: thay nhớt, thay lọc nhớt, kiểm tra phanh" required></textarea>
+
+        <label>Ngày bảo dưỡng tiếp theo</label>
+        <input id="nextDate" type="text" placeholder="Ví dụ: 13/10/2026" />
+
+        <label>Ghi chú</label>
+        <textarea id="remark" placeholder="Thông tin bổ sung, có thể để trống"></textarea>
+
+        <button class="btn" type="submit">Lưu bản ghi</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Danh sách bản ghi</h2>
+      <div class="count" id="countText">Tổng cộng 0 bản ghi</div>
+      <div id="recordList"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "vehicle_maintenance_records_vi_clean";
+
+    const form = document.getElementById("recordForm");
+    const recordList = document.getElementById("recordList");
+    const countText = document.getElementById("countText");
+
+    function getTodayText() {
+      const d = new Date();
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    function getRecords() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    }
+
+    function saveRecords(records) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderRecords() {
+      const records = getRecords();
+
+      countText.textContent = `Tổng cộng ${records.length} bản ghi`;
+
+      if (records.length === 0) {
+        recordList.innerHTML = `<div class="empty">Chưa có bản ghi sửa chữa hoặc bảo dưỡng</div>`;
+        return;
+      }
+
+      recordList.innerHTML = records.map(item => `
+        <div class="record">
+          <div class="record-title">
+            <div class="plate">${escapeHtml(item.plate)}</div>
+            <div class="tag">${escapeHtml(item.type)}</div>
+          </div>
+
+          <div class="info">
+            <div>Ngày: <b>${escapeHtml(item.date)}</b></div>
+            <div>Số km: <b>${item.mileage ? escapeHtml(item.mileage) + " km" : "Chưa nhập"}</b></div>
+            <div>Chi phí: <b>${item.cost ? escapeHtml(item.cost) + " VNĐ" : "Chưa nhập"}</b></div>
+            <div>Nội dung: <b>${escapeHtml(item.content)}</b></div>
+            <div>Bảo dưỡng tiếp theo: <b>${item.nextDate ? escapeHtml(item.nextDate) : "Chưa thiết lập"}</b></div>
+            <div>Ghi chú: <b>${item.remark ? escapeHtml(item.remark) : "Không có"}</b></div>
+          </div>
+
+          <button class="delete-btn" onclick="deleteRecord('${item.id}')">Xóa bản ghi</button>
+        </div>
+      `).join("");
+    }
+
+    function deleteRecord(id) {
+      if (!confirm("Bạn có chắc muốn xóa bản ghi này không?")) return;
+
+      const records = getRecords().filter(item => item.id !== id);
+      saveRecords(records);
+      renderRecords();
+    }
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const record = {
+        id: Date.now().toString(),
+        plate: document.getElementById("plate").value.trim(),
+        type: document.getElementById("type").value,
+        date: document.getElementById("date").value.trim(),
+        mileage: document.getElementById("mileage").value.trim(),
+        cost: document.getElementById("cost").value.trim(),
+        content: document.getElementById("content").value.trim(),
+        nextDate: document.getElementById("nextDate").value.trim(),
+        remark: document.getElementById("remark").value.trim()
+      };
+
+      if (!record.plate || !record.date || !record.content) {
+        alert("Vui lòng nhập biển số xe, ngày thực hiện và nội dung sửa chữa / bảo dưỡng");
+        return;
+      }
+
+      const records = getRecords();
+      records.unshift(record);
+      saveRecords(records);
+
+      form.reset();
+      document.getElementById("date").value = getTodayText();
+
+      renderRecords();
+      alert("Đã lưu thành công");
+    });
+
+    document.getElementById("date").value = getTodayText();
+    renderRecords();
+  </script>
+</body>
+</html>

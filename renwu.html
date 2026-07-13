@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nhắc việc hằng ngày</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f4f7ff 0%, #eef3ff 45%, #ffffff 100%);
+      color: #1f2937;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 18px 16px 28px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .title-box h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .title-box p {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .date-card {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #4f7cff, #7c5cff);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 12px 25px rgba(79, 124, 255, 0.28);
+      flex-shrink: 0;
+    }
+
+    .date-card .day {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .date-card .month {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .summary-item {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(230, 235, 255, 0.9);
+      border-radius: 18px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(36, 52, 88, 0.06);
+    }
+
+    .summary-item strong {
+      display: block;
+      font-size: 20px;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .summary-item span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      padding: 16px;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 14px 35px rgba(36, 52, 88, 0.08);
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title small {
+      font-size: 12px;
+      color: #8b95a7;
+      font-weight: 500;
+    }
+
+    .clear-btn {
+      border: none;
+      background: #f3f4f6;
+      color: #4b5563;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .clear-btn:active {
+      transform: scale(0.97);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 7px;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: #f7f9ff;
+      border-radius: 15px;
+      padding: 13px 14px;
+      font-size: 15px;
+      color: #111827;
+      border: 1px solid transparent;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #5b7cff;
+      background: #fff;
+    }
+
+    textarea {
+      resize: none;
+      min-height: 74px;
+      line-height: 1.5;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #4f7cff, #7c5cff);
+      color: #fff;
+      box-shadow: 0 12px 25px rgba(79, 124, 255, 0.25);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .tab {
+      border: none;
+      white-space: nowrap;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: #f1f4ff;
+      color: #657084;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: #111827;
+      color: #fff;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .task-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 14px;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 22px rgba(36, 52, 88, 0.06);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .task-card.done {
+      opacity: 0.58;
+    }
+
+    .check-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #c7d2fe;
+      background: #fff;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .task-card.done .check-btn {
+      background: #4f7cff;
+      border-color: #4f7cff;
+    }
+
+    .task-card.done .check-btn::after {
+      content: "✓";
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      position: absolute;
+      left: 5px;
+      top: 0;
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .task-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .task-card.done .task-name {
+      text-decoration: line-through;
+    }
+
+    .priority {
+      flex-shrink: 0;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .priority.high {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .priority.medium {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .priority.low {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 7px;
+    }
+
+    .task-note {
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-top: 5px;
+      word-break: break-word;
+    }
+
+    .task-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 7px 10px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .small-btn.delete {
+      background: #fff1f2;
+      color: #e11d48;
+    }
+
+    .empty {
+      padding: 30px 10px;
+      text-align: center;
+      color: #8b95a7;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
+      z-index: 30;
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      bottom: 40px;
+    }
+
+    @media (min-width: 768px) {
+      .app {
+        padding-top: 30px;
+      }
+
+      .title-box h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="title-box">
+        <h1>Nhắc việc hằng ngày</h1>
+        <p id="todayText">Ghi nhớ công việc hôm nay</p>
+      </div>
+
+      <div class="date-card">
+        <div class="day" id="dayText">13</div>
+        <div class="month" id="monthText">Tháng 7</div>
+      </div>
+    </header>
+
+    <section class="summary">
+      <div class="summary-item">
+        <strong id="totalCount">0</strong>
+        <span>Tất cả</span>
+      </div>
+      <div class="summary-item">
+        <strong id="todayCount">0</strong>
+        <span>Hôm nay</span>
+      </div>
+      <div class="summary-item">
+        <strong id="doneCount">0</strong>
+        <span>Đã xong</span>
+      </div>
+    </section>
+
+    <section class="panel" id="addPanel">
+      <div class="panel-title">
+        <span>Thêm công việc</span>
+        <small>Tự động lưu trên máy</small>
+      </div>
+
+      <div class="form-group">
+        <label>Tên công việc</label>
+        <input id="taskTitle" type="text" placeholder="Ví dụ: Họp lúc 3 giờ chiều" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ngày nhắc</label>
+          <input id="taskDate" type="date" />
+        </div>
+
+        <div class="form-group">
+          <label>Giờ nhắc</label>
+          <input id="taskTime" type="time" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Mức độ ưu tiên</label>
+          <select id="taskPriority">
+            <option value="high">Quan trọng</option>
+            <option value="medium" selected>Bình thường</option>
+            <option value="low">Không gấp</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Phân loại</label>
+          <select id="taskCategory">
+            <option value="Cuộc sống">Cuộc sống</option>
+            <option value="Công việc">Công việc</option>
+            <option value="Học tập">Học tập</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ghi chú</label>
+        <textarea id="taskNote" placeholder="Có thể ghi địa điểm, người liên hệ hoặc việc cần chuẩn bị"></textarea>
+      </div>
+
+      <button class="btn btn-primary" onclick="addTask()">Thêm nhắc việc</button>
+    </section>
+
+    <section class="panel" id="listPanel">
+      <div class="panel-title">
+        <span>Danh sách công việc</span>
+        <button class="clear-btn" onclick="clearDone()">Xóa việc đã xong</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="setFilter('all', this)">Tất cả</button>
+        <button class="tab" onclick="setFilter('today', this)">Hôm nay</button>
+        <button class="tab" onclick="setFilter('todo', this)">Chưa xong</button>
+        <button class="tab" onclick="setFilter('done', this)">Đã xong</button>
+      </div>
+
+      <div class="task-list" id="taskList"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "daily_task_reminder_h5_vi";
+
+    let tasks = [];
+    let currentFilter = "all";
+
+    const taskTitle = document.getElementById("taskTitle");
+    const taskDate = document.getElementById("taskDate");
+    const taskTime = document.getElementById("taskTime");
+    const taskPriority = document.getElementById("taskPriority");
+    const taskCategory = document.getElementById("taskCategory");
+    const taskNote = document.getElementById("taskNote");
+    const taskList = document.getElementById("taskList");
+
+    init();
+
+    function init() {
+      initDate();
+      loadTasks();
+      renderTasks();
+      requestNotificationPermission();
+
+      setInterval(checkReminders, 30000);
+    }
+
+    function initDate() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+
+      document.getElementById("dayText").innerText = now.getDate();
+      document.getElementById("monthText").innerText = `Tháng ${now.getMonth() + 1}`;
+      document.getElementById("todayText").innerText =
+        `Ngày ${now.getDate()} tháng ${now.getMonth() + 1} năm ${yyyy}`;
+
+      taskDate.value = `${yyyy}-${mm}-${dd}`;
+
+      const hour = String(now.getHours()).padStart(2, "0");
+      const minute = String(now.getMinutes()).padStart(2, "0");
+      taskTime.value = `${hour}:${minute}`;
+    }
+
+    function addTask() {
+      const title = taskTitle.value.trim();
+      const date = taskDate.value;
+      const time = taskTime.value;
+
+      if (!title) {
+        showToast("Vui lòng nhập tên công việc");
+        taskTitle.focus();
+        return;
+      }
+
+      if (!date || !time) {
+        showToast("Vui lòng chọn ngày và giờ nhắc");
+        return;
+      }
+
+      const task = {
+        id: Date.now(),
+        title,
+        date,
+        time,
+        priority: taskPriority.value,
+        category: taskCategory.value,
+        note: taskNote.value.trim(),
+        done: false,
+        createdAt: new Date().toISOString(),
+        reminded: false
+      };
+
+      tasks.unshift(task);
+      saveTasks();
+      renderTasks();
+
+      taskTitle.value = "";
+      taskNote.value = "";
+      taskPriority.value = "medium";
+      taskCategory.value = "Cuộc sống";
+
+      showToast("Đã thêm công việc");
+    }
+
+    function renderTasks() {
+      updateSummary();
+
+      const filtered = getFilteredTasks();
+
+      if (filtered.length === 0) {
+        taskList.innerHTML = `
+          <div class="empty">
+            Chưa có công việc nào<br />
+            Hãy thêm một nhắc việc cho hôm nay
+          </div>
+        `;
+        return;
+      }
+
+      taskList.innerHTML = filtered
+        .map(task => {
+          return `
+            <div class="task-card ${task.done ? "done" : ""}">
+              <button class="check-btn" onclick="toggleDone(${task.id})"></button>
+
+              <div class="task-content">
+                <div class="task-top">
+                  <div class="task-name">${escapeHtml(task.title)}</div>
+                  <span class="priority ${task.priority}">
+                    ${priorityText(task.priority)}
+                  </span>
+                </div>
+
+                <div class="task-meta">
+                  <span>📅 ${task.date}</span>
+                  <span>⏰ ${task.time}</span>
+                  <span>🏷 ${escapeHtml(task.category)}</span>
+                </div>
+
+                ${task.note ? `<div class="task-note">${escapeHtml(task.note)}</div>` : ""}
+
+                <div class="task-actions">
+                  <button class="small-btn" onclick="editTask(${task.id})">Sửa</button>
+                  <button class="small-btn delete" onclick="deleteTask(${task.id})">Xóa</button>
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function getFilteredTasks() {
+      const today = getToday();
+
+      if (currentFilter === "today") {
+        return tasks.filter(task => task.date === today);
+      }
+
+      if (currentFilter === "todo") {
+        return tasks.filter(task => !task.done);
+      }
+
+      if (currentFilter === "done") {
+        return tasks.filter(task => task.done);
+      }
+
+      return tasks;
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+
+      document.querySelectorAll(".tab").forEach(item => {
+        item.classList.remove("active");
+      });
+
+      btn.classList.add("active");
+
+      renderTasks();
+    }
+
+    function toggleDone(id) {
+      tasks = tasks.map(task => {
+        if (task.id === id) {
+          return {
+            ...task,
+            done: !task.done
+          };
+        }
+
+        return task;
+      });
+
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      if (!confirm("Bạn có chắc muốn xóa công việc này không?")) return;
+
+      tasks = tasks.filter(task => task.id !== id);
+      saveTasks();
+      renderTasks();
+
+      showToast("Đã xóa công việc");
+    }
+
+    function editTask(id) {
+      const task = tasks.find(item => item.id === id);
+      if (!task) return;
+
+      taskTitle.value = task.title;
+      taskDate.value = task.date;
+      taskTime.value = task.time;
+      taskPriority.value = task.priority;
+      taskCategory.value = task.category;
+      taskNote.value = task.note || "";
+
+      tasks = tasks.filter(item => item.id !== id);
+      saveTasks();
+      renderTasks();
+
+      document.getElementById("addPanel").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      showToast("Đang sửa, vui lòng cập nhật rồi thêm lại");
+    }
+
+    function clearDone() {
+      const doneCount = tasks.filter(task => task.done).length;
+
+      if (doneCount === 0) {
+        showToast("Không có công việc đã hoàn thành");
+        return;
+      }
+
+      if (!confirm(`Bạn có chắc muốn xóa ${doneCount} công việc đã hoàn thành không?`)) return;
+
+      tasks = tasks.filter(task => !task.done);
+      saveTasks();
+      renderTasks();
+
+      showToast("Đã xóa công việc đã hoàn thành");
+    }
+
+    function updateSummary() {
+      const today = getToday();
+
+      document.getElementById("totalCount").innerText = tasks.length;
+
+      document.getElementById("todayCount").innerText =
+        tasks.filter(task => task.date === today).length;
+
+      document.getElementById("doneCount").innerText =
+        tasks.filter(task => task.done).length;
+    }
+
+    function checkReminders() {
+      const now = new Date();
+      const currentDate = getToday();
+
+      const currentTime =
+        `${String(now.getHours()).padStart(2, "0")}:` +
+        `${String(now.getMinutes()).padStart(2, "0")}`;
+
+      let changed = false;
+
+      tasks.forEach(task => {
+        if (
+          !task.done &&
+          !task.reminded &&
+          task.date === currentDate &&
+          task.time <= currentTime
+        ) {
+          task.reminded = true;
+          changed = true;
+
+          showToast(`Nhắc việc: ${task.title}`);
+          showNotification(task.title, task.note || "Bạn có một công việc cần xử lý");
+        }
+      });
+
+      if (changed) {
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    function requestNotificationPermission() {
+      if (!("Notification" in window)) return;
+
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+
+    function showNotification(title, body) {
+      if (!("Notification" in window)) return;
+
+      if (Notification.permission === "granted") {
+        new Notification("Nhắc việc hằng ngày", {
+          body: `${title}: ${body}`
+        });
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+      const data = localStorage.getItem(STORAGE_KEY);
+
+      try {
+        tasks = data ? JSON.parse(data) : [];
+      } catch (error) {
+        tasks = [];
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function getToday() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function priorityText(priority) {
+      const map = {
+        high: "Quan trọng",
+        medium: "Bình thường",
+        low: "Không gấp"
+      };
+
+      return map[priority] || "Bình thường";
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+
+      toast.innerText = text;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

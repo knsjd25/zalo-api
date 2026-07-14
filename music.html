@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>MyTools H5 v10.23</title>
+<style>
+:root{
+  --bg:#07101b;
+  --bg2:#0b1421;
+  --card:#111b2a;
+  --card2:#151f31;
+  --line:rgba(255,255,255,.075);
+  --text:#f7f8ff;
+  --muted:#8d97ac;
+  --muted2:#5d687c;
+  --purple:#8a5cff;
+  --purple2:#6d4cff;
+  --blue:#37a2ff;
+  --green:#35d38b;
+  --red:#ff5b7d;
+  --orange:#ffb45c;
+  --shadow:0 24px 80px rgba(0,0,0,.38);
+  --radius:20px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:#eef1f7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--text)}
+body{display:flex;justify-content:center;align-items:stretch}
+.phone{
+  width:min(100vw,430px);
+  min-height:100vh;
+  background:
+    radial-gradient(260px 240px at 80% -40px,rgba(110,83,255,.26),transparent 70%),
+    radial-gradient(220px 220px at -80px 30%,rgba(55,162,255,.12),transparent 70%),
+    linear-gradient(180deg,#08111c,#080f18 60%,#050a12);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06),var(--shadow);
+}
+.statusbar{
+  height:34px;
+  padding:10px 16px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#fff;
+  font-size:12px;
+  opacity:.96;
+  letter-spacing:.2px;
+}
+.status-icons{font-size:12px;letter-spacing:1px}
+.app-shell{display:none;min-height:calc(100vh - 34px);padding:0 14px calc(132px + var(--safe-bottom));position:relative}
+body.logged-in .app-shell{display:block}
+.login-shell{min-height:100vh;padding:34px 26px;display:flex;flex-direction:column;justify-content:center}
+body.logged-in .login-shell{display:none}
+.login-logo{
+  width:66px;height:66px;border-radius:22px;margin:0 auto 18px;
+  background:linear-gradient(135deg,#6a5cff,#9d5cff);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 18px 50px rgba(110,83,255,.35);
+  font-size:34px;
+}
+.login-title{text-align:center;font-size:34px;letter-spacing:3px;font-weight:900;margin:0 0 34px}
+.login-card{
+  background:rgba(255,255,255,.94);
+  color:#121826;
+  border-radius:22px;
+  padding:26px 20px;
+  box-shadow:0 24px 80px rgba(0,0,0,.18);
+}
+.login-label{font-size:14px;color:#555e70;margin-bottom:10px;font-weight:800}
+.login-input{
+  width:100%;height:52px;border:1px solid #e5e7ef;border-radius:14px;
+  padding:0 14px;font-size:15px;outline:0;background:#fff;color:#111827;
+}
+.login-btn{
+  width:100%;height:54px;border:0;border-radius:15px;margin-top:20px;
+  color:#fff;font-weight:900;font-size:16px;background:linear-gradient(135deg,#6555ff,#8e55ff);
+  box-shadow:0 16px 34px rgba(112,85,255,.32);
+}
+.login-msg{min-height:20px;text-align:center;color:#e11d48;font-size:13px;margin:12px 0 0}
+.login-foot{position:absolute;left:0;right:0;bottom:22px;text-align:center;color:#758195;font-size:12px}
+.topbar{height:50px;display:flex;align-items:center;justify-content:space-between}
+.icon-btn{
+  width:36px;height:36px;border:0;border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+}
+.text-btn{height:32px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:#c9cdfa;padding:0 12px;font-weight:800}
+.page-title{font-size:18px;font-weight:900;margin:0;text-align:center;flex:1}
+.sub-title{color:var(--muted);font-size:12px}
+.page{display:none;animation:fade .14s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+.search{
+  height:44px;border:0;border-radius:12px;background:rgba(255,255,255,.06);color:#fff;width:100%;
+  outline:0;padding:0 14px;font-size:14px;margin:8px 0 14px;
+}
+.search::placeholder{color:#536072}
+.hero{
+  height:118px;border-radius:18px;overflow:hidden;position:relative;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(18,35,58,.85),rgba(83,55,170,.65)),url('') center/cover;
+  border:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:flex-end;padding:16px;
+}
+.hero:before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(160px 100px at 70% 20%,rgba(105,94,255,.45),transparent 70%);
+}
+.hero-content{position:relative;z-index:1}
+.hero h2{margin:0 0 6px;font-size:20px}
+.hero p{margin:0;color:#b0b7c8;font-size:12px}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.quick{
+  background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:16px;padding:10px 4px;text-align:center;color:#cdd4e5;font-size:12px;
+}
+.quick .qicon{display:block;margin:0 auto 7px;width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#2ec5ff,#855cff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px}
+.section-head h3{margin:0;font-size:17px}
+.section-head button{border:0;background:transparent;color:#8e74ff;font-size:13px;font-weight:800}
+.list{display:grid;gap:8px}
+.song-row,.task-row,.user-row,.setting-row,.log-row{
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.055);border-radius:16px;
+  padding:10px;display:flex;align-items:center;gap:10px;
+}
+.cover{
+  width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#24415c,#8a5cff);
+  flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden;font-weight:900;
+}
+.cover img{width:100%;height:100%;object-fit:cover}
+.song-info,.task-info,.user-info{min-width:0;flex:1}
+.name{font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-actions{display:flex;align-items:center;gap:8px}
+.small-btn{
+  min-width:32px;height:32px;border:0;border-radius:10px;background:rgba(255,255,255,.07);color:#cfd6e7;font-weight:900;
+}
+.small-btn.primary{background:linear-gradient(135deg,#6d58ff,#9b55ff);color:#fff}
+.small-btn.danger{background:rgba(255,91,125,.12);color:#ff7d98}
+.tag{display:inline-flex;align-items:center;height:24px;border-radius:999px;padding:0 8px;font-size:12px;font-weight:800;background:rgba(255,255,255,.07);color:#d7dbeb}
+.tag.green{background:rgba(53,211,139,.12);color:#5ee3a6}.tag.red{background:rgba(255,91,125,.12);color:#ff7d98}.tag.orange{background:rgba(255,180,92,.12);color:#ffd08f}.tag.blue{background:rgba(55,162,255,.12);color:#7dc7ff}
+.player-card{
+  background:linear-gradient(145deg,#15193f,#10172a 70%,#21124b);border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;padding:16px;margin:6px 0 14px;box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.player-top{display:flex;gap:14px;align-items:center}
+.big-cover{width:112px;height:112px;border-radius:18px;background:linear-gradient(135deg,#274a68,#7b5cff);overflow:hidden;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:40px}
+.big-cover img{width:100%;height:100%;object-fit:cover}
+.player-name{font-size:19px;font-weight:900;line-height:1.25}
+.player-artist{color:#a6aec2;font-size:13px;margin-top:8px}
+.progress{height:4px;border-radius:999px;background:rgba(255,255,255,.12);margin:18px 0 8px;overflow:hidden}
+.progress span{display:block;height:100%;width:20%;background:linear-gradient(90deg,#5b6dff,#9b55ff)}
+.time-line{display:flex;justify-content:space-between;color:#c9cce5;font-size:12px}
+.controls{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.play-big{width:60px;height:60px;border:0;border-radius:50%;background:linear-gradient(135deg,#6b58ff,#9d55ff);color:#fff;font-size:28px;box-shadow:0 14px 34px rgba(115,88,255,.3)}
+.control-mini{width:40px;height:40px;border:0;border-radius:14px;background:transparent;color:#d9def1;font-size:22px}
+.audio-hidden{width:100%;margin-top:12px;filter:invert(1) opacity(.75)}
+.lyrics{
+  min-height:210px;border-radius:20px;padding:22px 18px;text-align:center;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
+  color:#cfd5e8;line-height:2;font-size:15px;white-space:pre-wrap;overflow:auto;max-height:360px;
+}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
+.stat{background:rgba(255,255,255,.055);border-radius:14px;padding:12px 10px}
+.stat b{display:block;font-size:24px;margin-bottom:3px}
+.stat span{font-size:12px;color:var(--muted)}
+.form-card,.panel{
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px;margin:10px 0;
+}
+.field{margin-bottom:10px}
+.field label{display:block;color:#aab2c6;font-size:12px;margin-bottom:7px;font-weight:800}
+.input,.select,.textarea{
+  width:100%;border:0;outline:0;border-radius:12px;background:rgba(255,255,255,.065);color:#fff;padding:0 12px;font-size:14px;
+}
+.input,.select{height:44px}.textarea{min-height:112px;padding:12px;resize:vertical}
+.btn{
+  height:46px;border:0;border-radius:13px;background:linear-gradient(135deg,#6d58ff,#9b55ff);color:#fff;font-weight:900;padding:0 16px;
+}
+.btn.secondary{background:rgba(255,255,255,.07);color:#d9def1}.btn.danger{background:rgba(255,91,125,.15);color:#ff8aa3}
+.btn.full{width:100%}
+.segment{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:rgba(255,255,255,.04);padding:4px;border-radius:14px;margin:8px 0 14px;
+}
+.seg{height:36px;border:0;border-radius:11px;background:transparent;color:#a6aec2;font-weight:800}
+.seg.active{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.task-tabs{display:flex;gap:8px;margin:6px 0 12px;overflow:auto}
+.task-tabs .tag.active{background:linear-gradient(135deg,#6d58ff,#9b55ff);color:#fff}
+.user-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#d2caff,#744fff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.copy-key{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#b9c4d9}
+.file-box{
+  border:1px dashed rgba(119,153,255,.35);border-radius:18px;padding:26px;text-align:center;background:rgba(55,162,255,.045);color:#b9c6df;
+}
+.file-box input{display:none}
+.upload-item{background:rgba(255,255,255,.04);border-radius:12px;padding:10px;margin-top:8px;color:#b8c2d7;font-size:12px}
+.switch{margin-left:auto;width:44px;height:26px;border-radius:999px;background:#283142;position:relative}
+.switch:after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s}
+.switch.on{background:#7a5cff}.switch.on:after{left:21px}
+.bottom-nav{
+  position:absolute;left:0;right:0;bottom:0;padding:8px 12px calc(8px + var(--safe-bottom));
+  background:rgba(7,13,23,.92);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.07);
+  display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+}
+.nav-item{height:52px;border:0;border-radius:14px;background:transparent;color:#6f7a8e;font-size:11px;font-weight:800}
+.nav-item span{display:block;font-size:21px;margin-bottom:3px}.nav-item.active{color:#a98cff}
+.modal-mask{display:none;position:absolute;inset:0;background:rgba(0,0,0,.62);z-index:30;align-items:flex-end}
+.modal-mask.show{display:flex}
+.sheet{width:100%;max-height:88vh;overflow:auto;background:#0d1624;border-radius:26px 26px 0 0;padding:18px 16px calc(18px + var(--safe-bottom));border:1px solid rgba(255,255,255,.08)}
+.empty{color:var(--muted);text-align:center;padding:28px 10px}
+.toast{position:absolute;left:18px;right:18px;top:48px;z-index:50;display:none;background:rgba(17,27,42,.96);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;color:#fff;box-shadow:0 16px 50px rgba(0,0,0,.35);font-size:13px}
+.toast.show{display:block}
+@media(min-width:431px){
+  .phone{margin:16px 0;border-radius:34px;min-height:860px;height:calc(100vh - 32px)}
+  .login-shell{min-height:100%}
+}
+
+/* v10.23: H5 list adaptation and persistent mini-player */
+.song-row{
+  min-height:68px;
+  align-items:center;
+  padding:10px 9px;
+}
+.song-row .cover{
+  width:50px;
+  height:50px;
+}
+.song-info{
+  overflow:hidden;
+  min-width:0;
+}
+.song-row .name{
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.song-row .meta{
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.row-actions{
+  flex:0 0 auto;
+  max-width:92px;
+  justify-content:flex-end;
+}
+.row-actions .small-btn{
+  min-width:30px;
+  width:30px;
+  height:30px;
+  padding:0;
+  font-size:13px;
+}
+.home-list .song-row{
+  display:grid;
+  grid-template-columns:50px minmax(0,1fr) 34px;
+  gap:10px;
+}
+.home-list .song-row .row-actions{
+  max-width:34px;
+}
+.home-list .song-row .row-actions .small-btn:not(.primary){
+  display:none;
+}
+.admin-list .song-row{
+  display:grid;
+  grid-template-columns:50px minmax(0,1fr) 96px;
+  gap:10px;
+}
+.mini-player{
+  display:none;
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:calc(64px + var(--safe-bottom));
+  height:58px;
+  border-radius:18px;
+  background:rgba(13,22,36,.96);
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 16px 46px rgba(0,0,0,.42);
+  backdrop-filter:blur(18px);
+  z-index:18;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+}
+.mini-player.show{
+  display:flex;
+}
+.mini-cover{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#24415c,#8a5cff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex:0 0 auto;
+}
+.mini-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.mini-info{
+  flex:1;
+  min-width:0;
+}
+.mini-title{
+  font-size:13px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mini-artist{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mini-actions{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.mini-actions button{
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:11px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-weight:900;
+}
+.mini-actions button.primary{
+  background:linear-gradient(135deg,#6d58ff,#9b55ff);
+}
+@media(max-width:360px){
+  .row-actions{
+    max-width:68px;
+  }
+  .row-actions .small-btn{
+    width:28px;
+    min-width:28px;
+  }
+  .quick-grid{
+    gap:6px;
+  }
+  .quick{
+    font-size:11px;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast" id="toast"></div>
+  <div class="login-shell" id="loginShell">
+    <div class="statusbar"><b>9:41</b><span class="status-icons">▮▮▮ WiFi ▰</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="login-logo">♪</div>
+      <h1 class="login-title">MyTools</h1>
+      <div class="login-card">
+        <div class="login-label">访问口令</div>
+        <input class="login-input" id="accessKey" placeholder="请输入访问口令" onkeydown="if(event.key==='Enter')saveKey()">
+        <button class="login-btn" type="button" onclick="saveKey()">登录</button>
+        <div class="login-msg" id="lockMsg"></div>
+      </div>
+    </div>
+    <div class="login-foot">© 2026 MyTools. All rights reserved</div>
+  </div>
+
+  <div class="app-shell" id="appShell">
+    <div class="statusbar"><b>9:41</b><span class="status-icons">▮▮▮ WiFi ▰</span></div>
+
+    <section class="page" id="page-music-home">
+      <div class="topbar"><button class="icon-btn" onclick="openMenu()">☰</button><h1 class="page-title" id="musicHomeTitle">我的音乐</h1><button class="icon-btn" onclick="logout()">⎋</button></div>
+      <input class="search" id="musicSearch" placeholder="搜索歌曲 / 歌手 / 专辑" oninput="debouncedLoadMusic()">
+      <div class="hero">
+        <div class="hero-content">
+          <h2>每日推荐</h2>
+          <p>上传、识别封面歌词、收藏和播放</p>
+        </div>
+        <button class="small-btn primary" style="position:absolute;right:16px;bottom:16px" onclick="playFirst()">▶</button>
+      </div>
+      <div class="quick-grid">
+        <div class="quick" onclick="openUploadSheet()"><span class="qicon">☁</span>上传</div>
+        <div class="quick" onclick="setMusicSection('favorites')"><span class="qicon">♡</span>收藏</div>
+        <div class="quick" onclick="identifyVisibleTracks()"><span class="qicon">◎</span>识别</div>
+        <div class="quick" onclick="testLyricsApiPrompt()"><span class="qicon">词</span>歌词</div>
+      </div>
+      <div class="section-head"><h3 id="musicSectionTitle">歌曲列表</h3><button onclick="goPage('music-list')">全部</button></div>
+      <div class="list" id="musicList"></div>
+    </section>
+
+    <section class="page" id="page-music-list">
+      <div class="topbar"><button class="icon-btn" onclick="goPage('music-home')">‹</button><h1 class="page-title">全部歌曲</h1><button class="icon-btn" onclick="loadMusic(true)">⟳</button></div>
+      <div class="segment">
+        <button class="seg active" id="seg-shared" onclick="setMusicSection('shared')">全部歌曲</button>
+        <button class="seg" id="seg-favorites" onclick="setMusicSection('favorites')">我喜欢</button>
+        <button class="seg" onclick="loadPlayHistory()">播放记录</button>
+      </div>
+      <input class="search" id="musicSearch2" placeholder="搜索歌曲" oninput="syncSearchAndLoad(this.value)">
+      <div class="list" id="musicListFull"></div>
+    </section>
+
+    <section class="page" id="page-player">
+      <div class="topbar"><button class="icon-btn" onclick="backFromPlayer()">⌄</button><h1 class="page-title">播放</h1><button class="icon-btn" onclick="identifyTrack(currentTrackId)">⟳</button></div>
+      <div style="display:flex;justify-content:center;margin-top:18px">
+        <div class="big-cover" id="nowCover">♪</div>
+      </div>
+      <div style="text-align:center;margin-top:24px">
+        <div class="player-name" id="nowTitle">请选择歌曲</div>
+        <div class="player-artist" id="nowArtist">共享音乐库</div>
+      </div>
+      <div class="progress"><span id="progressBar"></span></div>
+      <div class="time-line"><span id="timeNow">00:00</span><span id="timeTotal">00:00</span></div>
+      <div class="controls">
+        <button class="control-mini" onclick="cyclePlayMode()" id="modeBtn">↻</button>
+        <button class="control-mini" onclick="prevTrack()">◀</button>
+        <button class="play-big" onclick="toggleAudioPlay()" id="playBtn">▶</button>
+        <button class="control-mini" onclick="nextTrack()">▶</button>
+        <button class="control-mini" onclick="goPage('lyrics')">词</button>
+      </div>
+      <div class="meta" id="queueInfo" style="text-align:center;margin-top:12px">播放队列：暂无歌曲</div>
+      <audio id="audio" class="audio-hidden" controls></audio>
+      <div class="meta" id="playerError" style="white-space:normal;color:#ff9db1;margin-top:8px"></div>
+    </section>
+
+    <section class="page" id="page-lyrics">
+      <div class="topbar"><button class="icon-btn" onclick="goPage('player')">‹</button><h1 class="page-title">歌词</h1><button class="icon-btn" onclick="testLyricsApiFromCurrent()">测</button></div>
+      <div class="lyrics" id="lyricsPanel">暂无歌词。点击“自动识别”可以尝试补全歌词。</div>
+    </section>
+
+    <section class="page" id="page-profile">
+      <div class="topbar"><button class="icon-btn" onclick="openMenu()">☰</button><h1 class="page-title">我的</h1><button class="icon-btn" onclick="logout()">⎋</button></div>
+      <div class="panel" style="display:flex;align-items:center;gap:14px">
+        <div class="user-avatar" id="profileAvatar">U</div>
+        <div>
+          <div class="name" id="profileName">用户</div>
+          <div class="meta" id="profileRole">普通用户</div>
+        </div>
+      </div>
+      <div class="list">
+        <div class="setting-row" onclick="setMusicSection('favorites')"><span>♡</span><div class="song-info"><div class="name">我喜欢的</div></div><span>›</span></div>
+        <div class="setting-row" onclick="loadPlayHistory();toast('播放历史已刷新')"><span>◴</span><div class="song-info"><div class="name">最近播放</div></div><span>›</span></div>
+        <div class="setting-row" onclick="openUploadSheet()"><span>☁</span><div class="song-info"><div class="name">上传管理</div></div><span>›</span></div>
+        <div class="setting-row" onclick="logout()"><span>⎋</span><div class="song-info"><div class="name">退出登录</div></div><span>›</span></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-admin-users">
+      <div class="topbar"><button class="icon-btn" onclick="openMenu()">☰</button><h1 class="page-title">用户管理</h1><button class="text-btn" onclick="openUserSheet()">新建</button></div>
+      <div class="list" id="userList"></div>
+    </section>
+
+    <section class="page" id="page-admin-tasks">
+      <div class="topbar"><button class="icon-btn" onclick="openMenu()">☰</button><h1 class="page-title">任务管理</h1><button class="text-btn" onclick="openTaskSheet()">新建</button></div>
+      <div class="stats">
+        <div class="stat"><b id="taskCountAll">0</b><span>全部任务</span></div>
+        <div class="stat"><b id="taskCountPending">0</b><span>待处理</span></div>
+        <div class="stat"><b id="taskCountLogs">0</b><span>日志</span></div>
+      </div>
+      <div class="task-tabs">
+        <span class="tag active" onclick="renderTasks()">全部</span>
+        <span class="tag" onclick="renderTasks('high')">优先</span>
+        <span class="tag" onclick="loadTaskHistory()">执行日志</span>
+      </div>
+      <div class="list" id="taskList"></div>
+    </section>
+
+    <section class="page" id="page-admin-music">
+      <div class="topbar"><button class="icon-btn" onclick="openMenu()">☰</button><h1 class="page-title">音乐管理</h1><button class="text-btn" onclick="openUploadSheet()">上传</button></div>
+      <input class="search" id="adminMusicSearch" placeholder="搜索歌曲 / 歌手 / 专辑" oninput="syncSearchAndLoad(this.value)">
+      <div class="stats">
+        <div class="stat"><b id="musicCountAll">0</b><span>全部歌曲</span></div>
+        <div class="stat"><b id="musicCountFav">0</b><span>收藏</span></div>
+        <div class="stat"><b id="musicStorage">--</b><span>存储</span></div>
+      </div>
+      <div class="list" id="adminMusicList"></div>
+    </section>
+
+    <section class="page" id="page-admin-settings">
+      <div class="topbar"><button class="icon-btn" onclick="openMenu()">☰</button><h1 class="page-title">设置</h1><button class="icon-btn" onclick="logout()">⎋</button></div>
+      <div class="list">
+        <div class="setting-row"><div><div class="name">允许用户下载</div><div class="meta">普通用户可下载音乐文件</div></div><div class="switch on" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting-row"><div><div class="name">显示歌词</div><div class="meta">在播放页显示歌词</div></div><div class="switch on" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting-row"><div><div class="name">自动获取歌词</div><div class="meta">上传后自动补全封面和歌词</div></div><div class="switch on" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting-row" onclick="testLyricsApiPrompt()"><div><div class="name">测试歌词 API</div><div class="meta">测试多个公共歌词接口</div></div><span>›</span></div>
+        <div class="setting-row" onclick="logout()"><div><div class="name">退出登录</div><div class="meta">返回访问口令页面</div></div><span>›</span></div>
+      </div>
+    </section>
+
+    
+    <div class="mini-player" id="miniPlayer" onclick="goPage('player')">
+      <div class="mini-cover" id="miniCover">♪</div>
+      <div class="mini-info">
+        <div class="mini-title" id="miniTitle">未播放</div>
+        <div class="mini-artist" id="miniArtist">点击歌曲开始播放</div>
+      </div>
+      <div class="mini-actions" onclick="event.stopPropagation()">
+        <button onclick="prevTrack()">‹</button>
+        <button class="primary" id="miniPlayBtn" onclick="toggleAudioPlay()">▶</button>
+        <button onclick="nextTrack()">›</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav" id="bottomNav"></div>
+  </div>
+
+  <div class="modal-mask" id="sheetMask" onclick="if(event.target.id==='sheetMask')closeSheet()">
+    <div class="sheet" id="sheetContent"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const DEFAULT_API_BASE="https://music.yilunfan155.workers.dev";
+let clientId=localStorage.getItem("mytools_client_id")||("cli_"+crypto.randomUUID().replaceAll("-","").slice(0,16));
+localStorage.setItem("mytools_client_id",clientId);
+let currentUser={isAdmin:false,role:"guest",username:""};
+let activePage="";
+let currentMusicSection="shared";
+let tracks=[];
+let favorites=[];
+let playHistory=[];
+let tasks=[];
+let taskHistory=[];
+let users=[];
+let currentTrackId="";
+let playMode=localStorage.getItem("mytools_play_mode")||"sequence";
+let searchTimer=null;
+
+function key(){return localStorage.getItem("mytools_access_key")||""}
+function apiUrl(path){return DEFAULT_API_BASE+"/api"+path}
+function assetUrl(path){if(!path)return"";return path.startsWith("http")?path:DEFAULT_API_BASE+path}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
+function showLogin(msg=""){document.body.classList.remove("logged-in");if($("lockMsg"))$("lockMsg").textContent=msg||""}
+function showApp(){document.body.classList.add("logged-in");if($("lockMsg"))$("lockMsg").textContent=""}
+async function api(path,opt={}){
+  opt.headers=Object.assign({"X-Client-Id":clientId,"X-Access-Key":key()},opt.headers||{});
+  if(opt.body&&!(opt.body instanceof FormData)){opt.headers["Content-Type"]="application/json";opt.body=JSON.stringify(opt.body)}
+  const r=await fetch(apiUrl(path),opt);
+  const j=await r.json().catch(()=>({ok:false,error:{message:"接口异常"}}));
+  if(r.status===401){localStorage.removeItem("mytools_access_key");showLogin("访问口令错误或已失效");throw new Error("访问口令错误或已失效")}
+  if(r.status===403)throw new Error(j.error?.message||"权限不足");
+  if(!j.ok)throw new Error(j.error?.message||"请求失败");
+  return j.data;
+}
+async function saveKey(){
+  const k=($("accessKey").value||"").trim();
+  if(!k){$("lockMsg").textContent="请输入访问口令";return}
+  $("lockMsg").textContent="正在登录...";
+  localStorage.setItem("mytools_access_key",k);
+  try{await enterApp()}catch(e){localStorage.removeItem("mytools_access_key");$("lockMsg").textContent=e.message||"登录失败"}
+}
+async function enterApp(){
+  const cfg=await api("/app/config");
+  currentUser=cfg.user||{isAdmin:false,role:"user"};
+  showApp();
+  updateProfile();
+  renderBottomNav();
+  bindAudio();
+  if(currentUser.isAdmin){goPage("admin-users");loadAdminUsers();loadTasks();loadMusic(true)}
+  else{goPage("music-home");loadMusic(true)}
+}
+function logout(){
+  localStorage.removeItem("mytools_access_key");
+  currentUser={isAdmin:false,role:"guest",username:""};
+  try{$("audio").pause();$("audio").removeAttribute("src");$("audio").load();currentTrackId="";updateMiniPlayer()}catch(e){}
+  showLogin("已退出登录");
+}
+function updateProfile(){
+  const name=currentUser.displayName||currentUser.username||"用户";
+  const role=currentUser.isAdmin?"管理员":"音乐用户";
+  if($("profileName"))$("profileName").textContent=name;
+  if($("profileRole"))$("profileRole").textContent=role;
+  if($("profileAvatar"))$("profileAvatar").textContent=(name[0]||"U").toUpperCase();
+}
+function renderBottomNav(){
+  const nav=$("bottomNav");
+  if(currentUser.isAdmin){
+    nav.innerHTML=`
+      <button class="nav-item" data-nav="admin-music" onclick="goPage('admin-music')"><span>♫</span>音乐</button>
+      <button class="nav-item" data-nav="admin-tasks" onclick="goPage('admin-tasks')"><span>▣</span>任务</button>
+      <button class="nav-item" data-nav="admin-users" onclick="goPage('admin-users')"><span>♙</span>用户</button>
+      <button class="nav-item" data-nav="admin-settings" onclick="goPage('admin-settings')"><span>⚙</span>设置</button>`;
+  }else{
+    nav.innerHTML=`
+      <button class="nav-item" data-nav="music-home" onclick="goPage('music-home')"><span>⌂</span>首页</button>
+      <button class="nav-item" data-nav="music-list" onclick="goPage('music-list')"><span>◎</span>发现</button>
+      <button class="nav-item" data-nav="player" onclick="goPage('player')"><span>▤</span>播放器</button>
+      <button class="nav-item" data-nav="profile" onclick="goPage('profile')"><span>♙</span>我的</button>`;
+  }
+}
+function backFromPlayer(){
+  if(currentUser.isAdmin) goPage("admin-music");
+  else goPage("music-home");
+}
+function updateMiniPlayer(){
+  const box=$("miniPlayer");
+  if(!box)return;
+  const t=findTrack(currentTrackId);
+  if(!t){
+    box.classList.remove("show");
+    return;
+  }
+  box.classList.add("show");
+  $("miniTitle").textContent=t.title||"未知歌曲";
+  $("miniArtist").textContent=t.artist||"未知歌手";
+  $("miniCover").innerHTML=t.coverUrl?`<img src="${assetUrl(t.coverUrl)}&access_key=${encodeURIComponent(key())}">`:"♪";
+  const a=$("audio");
+  if($("miniPlayBtn"))$("miniPlayBtn").textContent=a&&a.paused?"▶":"Ⅱ";
+}
+function goPage(name){
+  activePage=name;
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+name));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.nav===name));
+  if(name==="music-list"||name==="music-home"||name==="admin-music"){loadMusic(false)}
+  if(name==="admin-users")loadAdminUsers();
+  if(name==="admin-tasks")loadTasks();
+  if(name==="profile")updateProfile();
+}
+function openMenu(){toast(currentUser.isAdmin?"管理员模式":"音乐模式")}
+function toggleSwitch(el){el.classList.toggle("on")}
+
+function syncSearchAndLoad(v){if($("musicSearch"))$("musicSearch").value=v;if($("musicSearch2"))$("musicSearch2").value=v;if($("adminMusicSearch"))$("adminMusicSearch").value=v;debouncedLoadMusic()}
+function debouncedLoadMusic(){clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMusic(true),300)}
+function setMusicSection(s){currentMusicSection=s==="favorites"?"favorites":"shared";$("seg-shared")?.classList.toggle("active",currentMusicSection==="shared");$("seg-favorites")?.classList.toggle("active",currentMusicSection==="favorites");loadMusic(true);goPage("music-list")}
+async function loadMusic(force=true){
+  try{
+    const q=encodeURIComponent(($("musicSearch")?.value||$("musicSearch2")?.value||$("adminMusicSearch")?.value||"").trim());
+    const endpoint=currentMusicSection==="favorites"?"/music/favorites?q="+q:"/music/tracks?q="+q;
+    const d=await api(endpoint);
+    tracks=d.items||[];
+    renderMusicLists();
+    if(currentUser.isAdmin){
+      $("musicCountAll").textContent=tracks.length;
+      $("musicCountFav").textContent=tracks.filter(x=>x.isFavorite).length;
+      $("musicStorage").textContent=formatStorage(tracks.reduce((s,x)=>s+(x.sizeBytes||0),0));
+    }
+    loadPlayHistory();
+  }catch(e){toast("音乐加载失败："+e.message)}
+}
+async function loadPlayHistory(){
+  try{
+    const h=await api("/music/history");
+    playHistory=h.items||[];
+  }catch(e){}
+}
+function renderMusicLists(){
+  const homeHtml=tracks.slice(0,8).map(t=>songRow(t,false,true)).join("")||`<div class="empty">暂无歌曲，请先上传 MP3</div>`;
+  const fullHtml=tracks.map(t=>songRow(t,false,false)).join("")||`<div class="empty">暂无歌曲</div>`;
+  if($("musicList"))$("musicList").innerHTML=`<div class="home-list">${homeHtml}</div>`;
+  if($("musicListFull"))$("musicListFull").innerHTML=fullHtml;
+  if($("adminMusicList"))$("adminMusicList").innerHTML=`<div class="admin-list">${tracks.map(t=>songRow(t,true,false)).join("")||`<div class="empty">暂无歌曲</div>`}</div>`;
+  updateMiniPlayer();
+}
+function songRow(t,admin=false,compact=false){
+  const cover=t.coverUrl?`<img src="${assetUrl(t.coverUrl)}&access_key=${encodeURIComponent(key())}">`:"♪";
+  const status=t.metadataStatus==="matched"?"已识别":t.metadataStatus==="partial"?"部分识别":t.metadataStatus==="manual"?"手动":"待识别";
+  const moreBtn=`<button class="small-btn" onclick="openTrackSheet('${t.id}')">⋯</button>`;
+  const favBtn=compact?"":`<button class="small-btn" onclick="fav('${t.id}',${!t.isFavorite})">${t.isFavorite?"♥":"♡"}</button>`;
+  return `<div class="song-row ${t.id===currentTrackId?'current':''}">
+    <div class="cover" onclick="play('${t.id}')">${cover}</div>
+    <div class="song-info" onclick="play('${t.id}')">
+      <div class="name">${esc(t.title||"未知歌曲")}</div>
+      <div class="meta">${esc(t.artist||"未知歌手")} · ${esc(t.sizeText||"")} · ${status}</div>
+    </div>
+    <div class="row-actions">
+      <button class="small-btn primary" onclick="play('${t.id}')">▶</button>
+      ${favBtn}
+      ${compact?"":moreBtn}
+    </div>
+  </div>`
+}
+function playFirst(){if(tracks[0])play(tracks[0].id);else toast("暂无歌曲")}
+function findTrack(id){return tracks.find(x=>x.id===id)}
+async function play(id){
+  const t=findTrack(id);if(!t)return toast("歌曲不存在");
+  currentTrackId=id;
+  $("nowTitle").textContent=t.title||"未知歌曲";$("nowArtist").textContent=t.artist||"未知歌手";
+  $("nowCover").innerHTML=t.coverUrl?`<img src="${assetUrl(t.coverUrl)}&access_key=${encodeURIComponent(key())}">`:"♪";
+  $("lyricsPanel").textContent=t.lyrics||"暂无歌词。点击自动识别可以尝试补全。";
+  const url=apiUrl(`/music/tracks/${encodeURIComponent(id)}/stream`)+`?client_id=${encodeURIComponent(clientId)}&access_key=${encodeURIComponent(key())}&_=${Date.now()}`;
+  const a=$("audio");a.src=url;a.load();
+  try{await a.play();$("playBtn").textContent="Ⅱ"}catch(e){$("playerError").textContent="请点击播放器播放按钮"}
+  try{await api(`/music/tracks/${id}/play`,{method:"POST"})}catch(e){}
+  renderMusicLists();updateQueueInfo();updateMiniPlayer();goPage("player");
+}
+function toggleAudioPlay(){const a=$("audio");if(!a.src)return toast("请先选择歌曲");if(a.paused){a.play();$("playBtn").textContent="Ⅱ"}else{a.pause();$("playBtn").textContent="▶"}updateMiniPlayer()}
+function prevTrack(){const i=tracks.findIndex(x=>x.id===currentTrackId);if(!tracks.length)return;if(i<=0)play(tracks[tracks.length-1].id);else play(tracks[i-1].id)}
+function nextTrack(){const i=tracks.findIndex(x=>x.id===currentTrackId);if(!tracks.length)return;if(playMode==="random"){play(tracks[Math.floor(Math.random()*tracks.length)].id);return}if(i<0||i>=tracks.length-1)play(tracks[0].id);else play(tracks[i+1].id)}
+function cyclePlayMode(){playMode=playMode==="sequence"?"single":playMode==="single"?"random":"sequence";localStorage.setItem("mytools_play_mode",playMode);toast(playMode==="single"?"单曲循环":playMode==="random"?"随机播放":"顺序播放");updateQueueInfo()}
+function updateQueueInfo(){const i=tracks.findIndex(x=>x.id===currentTrackId);$("queueInfo").textContent=i>=0?`播放队列：${i+1}/${tracks.length}`:`播放队列：${tracks.length}首`}
+function bindAudio(){
+  const a=$("audio");
+  a.ontimeupdate=()=>{if(a.duration){$("progressBar").style.width=(a.currentTime/a.duration*100)+"%";$("timeNow").textContent=fmtTime(a.currentTime);$("timeTotal").textContent=fmtTime(a.duration)}updateMiniPlayer()};
+  a.onended=()=>{if(playMode==="single")play(currentTrackId);else nextTrack()};
+  a.onerror=()=>{$("playerError").textContent="音频加载失败，请检查文件是否存在"};
+}
+async function fav(id,on){try{await api(`/music/tracks/${id}/favorite`,{method:on?"PUT":"DELETE"});await loadMusic(true)}catch(e){toast(e.message)}}
+
+function openSheet(html){$("sheetContent").innerHTML=html;$("sheetMask").classList.add("show")}
+function closeSheet(){$("sheetMask").classList.remove("show")}
+function openUploadSheet(){
+  openSheet(`<div class="topbar"><button class="icon-btn" onclick="closeSheet()">‹</button><h1 class="page-title">上传音乐</h1><span style="width:36px"></span></div>
+    <label class="file-box"><input type="file" id="uploadFiles" accept=".mp3,audio/mpeg" multiple onchange="previewUploadFiles()"><div style="font-size:36px">☁</div><div>点击选择 MP3 文件</div><div class="meta">支持批量上传</div></label>
+    <div id="uploadPreview"></div>
+    <button class="btn full" style="margin-top:16px" onclick="uploadSelectedFiles()">开始上传</button>`);
+}
+function previewUploadFiles(){
+  const files=[...($("uploadFiles").files||[])];
+  $("uploadPreview").innerHTML=files.map(f=>`<div class="upload-item">${esc(f.name)} · ${formatStorage(f.size)}</div>`).join("");
+}
+async function uploadSelectedFiles(){
+  const files=[...($("uploadFiles").files||[])];if(!files.length)return toast("请选择 MP3 文件");
+  let ok=0,fail=0;
+  for(const f of files){
+    if(!f.name.toLowerCase().endsWith(".mp3")){fail++;continue}
+    const fd=new FormData();fd.append("file",f);
+    try{
+      toast("正在上传："+f.name);
+      const r=await uploadWithProgress(apiUrl("/music/tracks/upload"),fd);
+      ok++;
+      if(r.track?.id)await identifyTrack(r.track.id,true);
+    }catch(e){fail++}
+  }
+  closeSheet();toast(`上传完成：成功${ok}，失败${fail}`);await loadMusic(true);
+}
+function uploadWithProgress(url,formData){
+  return new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();xhr.open("POST",url,true);xhr.setRequestHeader("X-Client-Id",clientId);xhr.setRequestHeader("X-Access-Key",key());
+    xhr.onload=()=>{let j={};try{j=JSON.parse(xhr.responseText||"{}")}catch(e){};if(xhr.status<200||xhr.status>=300||!j.ok)reject(new Error(j.error?.message||"上传失败"));else resolve(j.data||{})};
+    xhr.onerror=()=>reject(new Error("网络错误"));xhr.send(formData);
+  })
+}
+function openTrackSheet(id){
+  const t=findTrack(id);if(!t)return;
+  openSheet(`<div class="topbar"><button class="icon-btn" onclick="closeSheet()">‹</button><h1 class="page-title">音乐详情</h1><span style="width:36px"></span></div>
+    <div style="display:flex;gap:14px;margin:12px 0"><div class="big-cover" style="width:86px;height:86px">${t.coverUrl?`<img src="${assetUrl(t.coverUrl)}&access_key=${encodeURIComponent(key())}">`:"♪"}</div><div><div class="name">${esc(t.title)}</div><div class="meta">${esc(t.artist||"未知歌手")}</div></div></div>
+    <div class="quick-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="quick" onclick="play('${id}');closeSheet()"><span class="qicon">▶</span>播放</div>
+      <div class="quick" onclick="identifyTrack('${id}')"><span class="qicon">◎</span>识别</div>
+      <div class="quick" onclick="testLyricsApi('${esc(t.title)}','${esc(t.artist||"")}','${esc(t.album||"")}')"><span class="qicon">词</span>歌词</div>
+      <div class="quick" onclick="removeTrack('${id}')"><span class="qicon">×</span>移除</div>
+    </div>
+    ${currentUser.isAdmin?`<button class="btn danger full" onclick="adminDeleteTrack('${id}')">管理员彻底删除</button>`:""}`);
+}
+async function identifyTrack(id,silent=false){
+  try{if(!silent)toast("正在自动识别");const r=await api(`/music/tracks/${id}/identify`,{method:"POST"});if(!silent)toast(r.message||"识别完成");await loadMusic(true);return r}catch(e){if(!silent)toast("识别失败："+e.message);return null}
+}
+async function identifyVisibleTracks(){if(!tracks.length)return toast("当前没有歌曲");for(const t of tracks){await identifyTrack(t.id,true);await sleep(900)}toast("当前列表自动识别完成");await loadMusic(true)}
+async function testLyricsApi(title,artist,album){
+  try{const r=await api("/music/lyrics/test",{method:"POST",body:{title,artist,album}});alert((r.attempts||[]).map(x=>`${x.label||x.provider}：${x.found?"命中":x.status==="error"?"失败":"未命中"}${x.message?"，"+x.message:""}`).join("\\n")||"无结果")}catch(e){toast(e.message)}
+}
+function testLyricsApiPrompt(){const title=prompt("歌曲名");if(!title)return;const artist=prompt("歌手，可留空")||"";testLyricsApi(title,artist,"")}
+function testLyricsApiFromCurrent(){const t=findTrack(currentTrackId);if(t)testLyricsApi(t.title,t.artist,t.album);else testLyricsApiPrompt()}
+async function removeTrack(id){if(!confirm("从我的列表移除？"))return;await api(`/music/tracks/${id}`,{method:"DELETE"});closeSheet();await loadMusic(true)}
+async function adminDeleteTrack(id){if(!confirm("管理员彻底删除会影响所有用户，确定继续？"))return;await api(`/admin/music/tracks/${id}`,{method:"DELETE"});closeSheet();await loadMusic(true)}
+
+async function loadTasks(){
+  if(!currentUser.isAdmin)return;
+  try{
+    const d=await api("/tasks");tasks=d.items||[];
+    const h=await api("/tasks/history");taskHistory=h.items||[];
+    renderTasks();$("taskCountAll").textContent=tasks.length;$("taskCountPending").textContent=tasks.length;$("taskCountLogs").textContent=taskHistory.length;
+  }catch(e){toast("任务加载失败："+e.message)}
+}
+function renderTasks(priority){
+  const arr=priority?tasks.filter(t=>t.priority===priority):tasks;
+  $("taskList").innerHTML=arr.map(t=>`<div class="task-row" onclick="openTaskDetail('${t.id}')"><div class="task-info"><div class="name">${esc(t.title)}</div><div class="meta">${esc(t.due_date)} ${esc(t.due_time)} · ${esc(t.category)} · ${esc(t.priority)}</div></div><span class="tag ${t.priority==='high'?'red':'orange'}">${t.repeat_rule||"none"}</span></div>`).join("")||`<div class="empty">暂无任务</div>`;
+}
+function openTaskDetail(id){
+  const t=tasks.find(x=>x.id===id);if(!t)return;
+  openSheet(`<div class="topbar"><button class="icon-btn" onclick="closeSheet()">‹</button><h1 class="page-title">任务详情</h1><span style="width:36px"></span></div>
+    <div class="panel"><div class="name">${esc(t.title)}</div><div class="meta">${esc(t.due_date)} ${esc(t.due_time)}</div><div class="meta">类型：${esc(t.category)}｜优先级：${esc(t.priority)}｜重复：${esc(t.repeat_rule)}</div></div>
+    <button class="btn full" onclick="completeTask('${id}')">立即执行</button>
+    <button class="btn secondary full" style="margin-top:10px" onclick="snoozeTask('${id}')">延后 10 分钟</button>
+    <button class="btn danger full" style="margin-top:10px" onclick="deleteTask('${id}')">删除任务</button>`)
+}
+function openTaskSheet(){
+  const d=new Date();const date=d.toISOString().slice(0,10);
+  openSheet(`<div class="topbar"><button class="icon-btn" onclick="closeSheet()">‹</button><h1 class="page-title">新建任务</h1><span style="width:36px"></span></div>
+    <div class="field"><label>任务类型</label><select class="select" id="taskCategory"><option>备份</option><option>音乐</option><option>系统</option><option>其他</option></select></div>
+    <div class="field"><label>任务名称</label><input class="input" id="taskTitle" placeholder="请输入任务名称"></div>
+    <div class="field"><label>执行日期</label><input class="input" id="taskDate" type="date" value="${date}"></div>
+    <div class="field"><label>执行时间</label><input class="input" id="taskTime" type="time" value="09:00"></div>
+    <div class="field"><label>重复执行</label><select class="select" id="taskRepeat"><option value="none">不重复</option><option value="daily">每天</option><option value="weekly">每周</option><option value="monthly">每月</option></select></div>
+    <button class="btn full" onclick="createTask()">创建任务</button>`)
+}
+async function createTask(){
+  const body={title:$("taskTitle").value.trim(),date:$("taskDate").value,time:$("taskTime").value,category:$("taskCategory").value,priority:"high",repeat:$("taskRepeat").value};
+  if(!body.title)return toast("请输入任务名称");
+  await api("/tasks",{method:"POST",body});closeSheet();await loadTasks();toast("任务已创建");
+}
+async function completeTask(id){await api(`/tasks/${id}/complete`,{method:"POST"});closeSheet();await loadTasks();toast("任务已完成")}
+async function snoozeTask(id){await api(`/tasks/${id}/snooze`,{method:"POST",body:{minutes:10}});closeSheet();await loadTasks();toast("已延后")}
+async function deleteTask(id){if(!confirm("确定删除？"))return;await api(`/tasks/${id}`,{method:"DELETE"});closeSheet();await loadTasks();toast("已删除")}
+function loadTaskHistory(){
+  $("taskList").innerHTML=taskHistory.map(x=>`<div class="log-row"><div class="task-info"><div class="name">${esc(x.title)}</div><div class="meta">${esc(x.type)} · ${esc(x.created_at)}</div></div><span>›</span></div>`).join("")||`<div class="empty">暂无日志</div>`;
+}
+
+async function loadAdminUsers(){
+  if(!currentUser.isAdmin)return;
+  try{const d=await api("/admin/users");users=d.items||[];renderUsers()}catch(e){toast("用户加载失败："+e.message)}
+}
+function renderUsers(){
+  $("userList").innerHTML=users.map(u=>`<div class="user-row"><div class="user-avatar">${esc((u.username||"U")[0].toUpperCase())}</div><div class="user-info"><div class="name">${esc(u.username)}</div><div class="meta">${esc(u.role)} · ${esc(u.displayName||"")}</div><div class="copy-key">${esc(u.accessKey||u.access_key||"")}</div></div><span class="tag ${u.status==='active'?'green':'red'}">${u.status==='active'?'启用':'禁用'}</span><button class="small-btn" onclick="copyText('${esc(u.accessKey||u.access_key||"")}')">⧉</button><button class="small-btn" onclick="openUserAction('${u.id}')">⋯</button></div>`).join("")||`<div class="empty">暂无用户</div>`;
+}
+function openUserSheet(){
+  openSheet(`<div class="topbar"><button class="icon-btn" onclick="closeSheet()">‹</button><h1 class="page-title">新建用户</h1><span style="width:36px"></span></div>
+    <div class="field"><label>用户名</label><input class="input" id="newUsername" placeholder="user01"></div>
+    <div class="field"><label>显示名称</label><input class="input" id="newDisplayName" placeholder="可不填"></div>
+    <div class="field"><label>用户口令</label><input class="input" id="newAccessKey" placeholder="留空自动生成"></div>
+    <div class="field"><label>角色</label><select class="select" id="newRole"><option value="user">普通用户</option><option value="admin">管理员</option></select></div>
+    <button class="btn full" onclick="createUser()">创建用户</button>`)
+}
+async function createUser(){
+  const body={username:$("newUsername").value.trim(),displayName:$("newDisplayName").value.trim(),accessKey:$("newAccessKey").value.trim(),role:$("newRole").value};
+  if(!body.username)return toast("请输入用户名");
+  const d=await api("/admin/users",{method:"POST",body});closeSheet();await loadAdminUsers();alert("用户口令：\\n"+d.accessKey);
+}
+function openUserAction(id){
+  const u=users.find(x=>x.id===id);if(!u)return;
+  openSheet(`<div class="topbar"><button class="icon-btn" onclick="closeSheet()">‹</button><h1 class="page-title">用户操作</h1><span style="width:36px"></span></div>
+    <div class="panel"><div class="name">${esc(u.username)}</div><div class="meta">口令：${esc(u.accessKey||u.access_key||"")}</div></div>
+    <button class="btn secondary full" onclick="copyText('${esc(u.accessKey||u.access_key||"")}')">复制口令</button>
+    <button class="btn full" style="margin-top:10px" onclick="resetUserKey('${id}')">重置口令</button>
+    <button class="btn secondary full" style="margin-top:10px" onclick="toggleUserStatus('${id}','${u.status==='active'?'disabled':'active'}')">${u.status==='active'?'禁用用户':'启用用户'}</button>
+    <button class="btn danger full" style="margin-top:10px" onclick="deleteUser('${id}')">删除用户</button>`)
+}
+async function toggleUserStatus(id,status){await api(`/admin/users/${id}`,{method:"PATCH",body:{status}});closeSheet();await loadAdminUsers()}
+async function resetUserKey(id){const d=await api(`/admin/users/${id}/reset-key`,{method:"POST"});closeSheet();await loadAdminUsers();alert("新口令：\\n"+d.accessKey)}
+async function deleteUser(id){if(!confirm("确定删除用户？"))return;await api(`/admin/users/${id}`,{method:"DELETE"});closeSheet();await loadAdminUsers()}
+async function copyText(text){try{await navigator.clipboard.writeText(text);toast("已复制")}catch(e){prompt("复制口令",text)}}
+
+function formatStorage(n){if(!n)return"0B";if(n<1024)return n+"B";if(n<1024*1024)return(n/1024).toFixed(1)+"K";if(n<1024*1024*1024)return(n/1024/1024).toFixed(1)+"M";return(n/1024/1024/1024).toFixed(1)+"G"}
+function fmtTime(s){s=Number(s)||0;return String(Math.floor(s/60)).padStart(2,"0")+":"+String(Math.floor(s%60)).padStart(2,"0")}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+async function init(){
+  if($("accessKey"))$("accessKey").value=key();
+  if(!key()){showLogin("");return}
+  try{await enterApp()}catch(e){showLogin("请重新登录")}
+}
+init();
+</script>
+</body>
+</html>

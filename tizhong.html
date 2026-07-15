@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Công cụ ghi cân nặng</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f5f8ff 0%, #eef3ff 100%);
+      color: #1f2937;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 18px 14px 28px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4f7cff, #7c5cff);
+      color: #fff;
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: 0 16px 32px rgba(79, 124, 255, 0.25);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+      padding: 16px;
+      margin-top: 14px;
+      box-shadow: 0 10px 28px rgba(31, 41, 55, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 17px;
+      color: #111827;
+    }
+
+    .muted {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      background: #f7f9ff;
+      border-radius: 18px;
+      padding: 14px 12px;
+      min-height: 82px;
+    }
+
+    .stat .label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .stat .sub {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #d9e1f2;
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      outline: none;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #5b7cff;
+      box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.14);
+    }
+
+    textarea {
+      resize: none;
+      min-height: 72px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .form-row.single {
+      grid-template-columns: 1fr;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #4f7cff, #7c5cff);
+      box-shadow: 0 10px 18px rgba(79, 124, 255, 0.2);
+    }
+
+    .btn.secondary {
+      background: #eef2ff;
+      color: #4f46e5;
+      box-shadow: none;
+    }
+
+    .btn.danger {
+      background: #fff1f2;
+      color: #e11d48;
+      box-shadow: none;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 190px;
+      background: #f8faff;
+      border-radius: 18px;
+      display: block;
+    }
+
+    .analysis-box {
+      background: #f8faff;
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.65;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    .record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .record {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8faff;
+      border-radius: 16px;
+      padding: 12px;
+      gap: 10px;
+    }
+
+    .record strong {
+      font-size: 16px;
+      color: #111827;
+    }
+
+    .record .date {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    .record .note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+      max-width: 260px;
+      word-break: break-word;
+    }
+
+    .delete {
+      border: none;
+      background: #fff1f2;
+      color: #e11d48;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      text-align: center;
+      color: #9ca3af;
+      padding: 20px 10px;
+      font-size: 14px;
+    }
+
+    .notice {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 360px) {
+      .grid, .form-row, .btn-row {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="header">
+      <h1>Ghi cân nặng</h1>
+      <p>Theo dõi cân nặng hằng ngày, tự động tạo biểu đồ xu hướng, BMI và phân tích thay đổi. Dữ liệu chỉ lưu trên thiết bị của bạn.</p>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Thiết lập cơ bản</h2>
+        <span class="muted">Dùng để tính BMI và mục tiêu</span>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="heightInput">Chiều cao cm</label>
+          <input id="heightInput" type="number" inputmode="decimal" placeholder="Ví dụ: 170" />
+        </div>
+        <div>
+          <label for="targetInput">Cân nặng mục tiêu kg</label>
+          <input id="targetInput" type="number" inputmode="decimal" placeholder="Ví dụ: 65" />
+        </div>
+      </div>
+
+      <button class="btn secondary" onclick="saveSettings()">Lưu thiết lập</button>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Thêm ghi chép</h2>
+        <span class="muted">Nên ghi mỗi ngày một lần</span>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="dateInput">Ngày</label>
+          <input id="dateInput" type="date" />
+        </div>
+        <div>
+          <label for="weightInput">Cân nặng kg</label>
+          <input id="weightInput" type="number" inputmode="decimal" placeholder="Ví dụ: 68.5" />
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div>
+          <label for="noteInput">Ghi chú</label>
+          <textarea id="noteInput" placeholder="Ví dụ: cân sau bữa tối, sau khi tập luyện, tình trạng cơ thể..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn" onclick="addRecord()">Lưu ghi chép</button>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Tổng quan hiện tại</h2>
+        <span class="muted" id="summaryDate">Chưa có dữ liệu</span>
+      </div>
+
+      <div class="grid">
+        <div class="stat">
+          <div class="label">Cân nặng mới nhất</div>
+          <div class="value" id="latestWeight">--</div>
+          <div class="sub">kg</div>
+        </div>
+
+        <div class="stat">
+          <div class="label">BMI</div>
+          <div class="value" id="bmiValue">--</div>
+          <div class="sub" id="bmiStatus">Vui lòng nhập chiều cao</div>
+        </div>
+
+        <div class="stat">
+          <div class="label">Thay đổi so với lần trước</div>
+          <div class="value" id="lastChange">--</div>
+          <div class="sub">kg</div>
+        </div>
+
+        <div class="stat">
+          <div class="label">Chênh lệch với mục tiêu</div>
+          <div class="value" id="targetGap">--</div>
+          <div class="sub">kg</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Xu hướng cân nặng</h2>
+        <span class="muted">30 ghi chép gần nhất</span>
+      </div>
+      <canvas id="weightChart" width="420" height="190"></canvas>
+      <div class="notice">Gợi ý: Nên cân vào cùng một thời điểm mỗi ngày, ví dụ buổi sáng sau khi thức dậy.</div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Phân tích cân nặng</h2>
+        <span class="muted">Tự động tạo</span>
+      </div>
+      <div class="analysis-box" id="analysisBox">Chưa có ghi chép. Vui lòng thêm dữ liệu cân nặng trước.</div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Lịch sử ghi chép</h2>
+        <span class="muted" id="recordCount">0 mục</span>
+      </div>
+
+      <div class="record-list" id="recordList"></div>
+
+      <div class="btn-row">
+        <button class="btn secondary" onclick="exportCSV()">Xuất CSV</button>
+        <button class="btn danger" onclick="clearAll()">Xóa tất cả</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "weight_tool_records_v1";
+    const SETTINGS_KEY = "weight_tool_settings_v1";
+
+    let records = [];
+    let settings = {
+      height: "",
+      target: ""
+    };
+
+    const dateInput = document.getElementById("dateInput");
+    const weightInput = document.getElementById("weightInput");
+    const noteInput = document.getElementById("noteInput");
+    const heightInput = document.getElementById("heightInput");
+    const targetInput = document.getElementById("targetInput");
+
+    init();
+
+    function init() {
+      dateInput.value = getToday();
+      loadData();
+      render();
+    }
+
+    function getToday() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function loadData() {
+      try {
+        records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        settings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || settings;
+      } catch (e) {
+        records = [];
+      }
+
+      heightInput.value = settings.height || "";
+      targetInput.value = settings.target || "";
+
+      sortRecords();
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+
+    function saveSettings() {
+      const height = parseFloat(heightInput.value);
+      const target = parseFloat(targetInput.value);
+
+      if (heightInput.value && (isNaN(height) || height <= 50 || height > 250)) {
+        alert("Vui lòng nhập chiều cao hợp lệ, đơn vị là cm.");
+        return;
+      }
+
+      if (targetInput.value && (isNaN(target) || target <= 20 || target > 300)) {
+        alert("Vui lòng nhập cân nặng mục tiêu hợp lệ, đơn vị là kg.");
+        return;
+      }
+
+      settings.height = heightInput.value ? Number(height.toFixed(1)) : "";
+      settings.target = targetInput.value ? Number(target.toFixed(1)) : "";
+
+      saveData();
+      render();
+      alert("Đã lưu thiết lập.");
+    }
+
+    function addRecord() {
+      const date = dateInput.value;
+      const weight = parseFloat(weightInput.value);
+      const note = noteInput.value.trim();
+
+      if (!date) {
+        alert("Vui lòng chọn ngày.");
+        return;
+      }
+
+      if (isNaN(weight) || weight <= 20 || weight > 300) {
+        alert("Vui lòng nhập cân nặng hợp lệ, đơn vị là kg.");
+        return;
+      }
+
+      const oldIndex = records.findIndex(item => item.date === date);
+
+      const record = {
+        id: oldIndex >= 0 ? records[oldIndex].id : Date.now(),
+        date,
+        weight: Number(weight.toFixed(1)),
+        note
+      };
+
+      if (oldIndex >= 0) {
+        if (!confirm("Ngày này đã có ghi chép. Bạn có muốn ghi đè không?")) return;
+        records[oldIndex] = record;
+      } else {
+        records.push(record);
+      }
+
+      sortRecords();
+      saveData();
+
+      weightInput.value = "";
+      noteInput.value = "";
+
+      render();
+    }
+
+    function sortRecords() {
+      records.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    function render() {
+      renderSummary();
+      renderChart();
+      renderAnalysis();
+      renderList();
+    }
+
+    function renderSummary() {
+      const latestWeightEl = document.getElementById("latestWeight");
+      const bmiValueEl = document.getElementById("bmiValue");
+      const bmiStatusEl = document.getElementById("bmiStatus");
+      const lastChangeEl = document.getElementById("lastChange");
+      const targetGapEl = document.getElementById("targetGap");
+      const summaryDateEl = document.getElementById("summaryDate");
+
+      if (records.length === 0) {
+        latestWeightEl.textContent = "--";
+        bmiValueEl.textContent = "--";
+        bmiStatusEl.textContent = "Vui lòng nhập chiều cao";
+        lastChangeEl.textContent = "--";
+        targetGapEl.textContent = "--";
+        summaryDateEl.textContent = "Chưa có dữ liệu";
+        return;
+      }
+
+      const latest = records[records.length - 1];
+      latestWeightEl.textContent = latest.weight.toFixed(1);
+      summaryDateEl.textContent = latest.date;
+
+      if (records.length >= 2) {
+        const prev = records[records.length - 2];
+        const diff = latest.weight - prev.weight;
+        lastChangeEl.textContent = formatSigned(diff);
+      } else {
+        lastChangeEl.textContent = "0.0";
+      }
+
+      if (settings.height) {
+        const bmi = calcBMI(latest.weight, settings.height);
+        bmiValueEl.textContent = bmi.toFixed(1);
+        bmiStatusEl.innerHTML = getBMIStatus(bmi);
+      } else {
+        bmiValueEl.textContent = "--";
+        bmiStatusEl.textContent = "Vui lòng nhập chiều cao";
+      }
+
+      if (settings.target) {
+        const gap = latest.weight - Number(settings.target);
+        targetGapEl.textContent = formatSigned(gap);
+      } else {
+        targetGapEl.textContent = "--";
+      }
+    }
+
+    function calcBMI(weight, heightCm) {
+      const h = heightCm / 100;
+      return weight / (h * h);
+    }
+
+    function getBMIStatus(bmi) {
+      if (bmi < 18.5) return `Thiếu cân <span class="tag">Cần chú ý</span>`;
+      if (bmi < 25) return `Bình thường <span class="tag">Tốt</span>`;
+      if (bmi < 30) return `Thừa cân <span class="tag">Nên kiểm soát</span>`;
+      return `Béo phì <span class="tag">Nên tham khảo chuyên gia</span>`;
+    }
+
+    function formatSigned(num) {
+      const fixed = Math.abs(num).toFixed(1);
+      if (num > 0) return "+" + fixed;
+      if (num < 0) return "-" + fixed;
+      return "0.0";
+    }
+
+    function renderChart() {
+      const canvas = document.getElementById("weightChart");
+      const ctx = canvas.getContext("2d");
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.fillStyle = "#f8faff";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#dbe4ff";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 4; i++) {
+        const y = 20 + i * 36;
+        ctx.beginPath();
+        ctx.moveTo(28, y);
+        ctx.lineTo(width - 16, y);
+        ctx.stroke();
+      }
+
+      if (records.length === 0) {
+        ctx.fillStyle = "#9ca3af";
+        ctx.font = "14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Chưa có dữ liệu cân nặng", width / 2, height / 2);
+        return;
+      }
+
+      const data = records.slice(-30);
+      const weights = data.map(item => item.weight);
+      let min = Math.min(...weights);
+      let max = Math.max(...weights);
+
+      if (min === max) {
+        min -= 1;
+        max += 1;
+      }
+
+      const paddingLeft = 34;
+      const paddingRight = 18;
+      const paddingTop = 18;
+      const paddingBottom = 30;
+      const chartW = width - paddingLeft - paddingRight;
+      const chartH = height - paddingTop - paddingBottom;
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(max.toFixed(1), paddingLeft - 6, paddingTop + 4);
+      ctx.fillText(min.toFixed(1), paddingLeft - 6, paddingTop + chartH);
+
+      const points = data.map((item, index) => {
+        const x = paddingLeft + (data.length === 1 ? chartW / 2 : index * chartW / (data.length - 1));
+        const y = paddingTop + (max - item.weight) * chartH / (max - min);
+        return { x, y, item };
+      });
+
+      ctx.strokeStyle = "#5b7cff";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      points.forEach((p, index) => {
+        if (index === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+
+      ctx.stroke();
+
+      points.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = "#5b7cff";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+      });
+
+      const first = data[0];
+      const last = data[data.length - 1];
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(first.date.slice(5), paddingLeft, height - 10);
+
+      ctx.textAlign = "right";
+      ctx.fillText(last.date.slice(5), width - paddingRight, height - 10);
+    }
+
+    function renderAnalysis() {
+      const box = document.getElementById("analysisBox");
+
+      if (records.length === 0) {
+        box.textContent = "Chưa có ghi chép. Vui lòng thêm dữ liệu cân nặng trước.";
+        return;
+      }
+
+      const latest = records[records.length - 1];
+      const first = records[0];
+      const totalDiff = latest.weight - first.weight;
+
+      const recent7 = getRecentDaysRecords(7);
+      const recent30 = getRecentDaysRecords(30);
+
+      const avg7 = averageWeight(recent7);
+      const avg30 = averageWeight(recent30);
+
+      const trend = getTrendText();
+      const bmiText = settings.height ? getBMIText(calcBMI(latest.weight, settings.height)) : "Bạn chưa nhập chiều cao nên chưa thể tính BMI.";
+
+      let targetText = "Bạn chưa đặt cân nặng mục tiêu.";
+      if (settings.target) {
+        const gap = latest.weight - Number(settings.target);
+        if (Math.abs(gap) < 0.3) {
+          targetText = "Cân nặng hiện tại đã rất gần với mục tiêu.";
+        } else if (gap > 0) {
+          targetText = `Bạn cần giảm khoảng ${gap.toFixed(1)} kg để đạt mục tiêu.`;
+        } else {
+          targetText = `Cân nặng hiện tại thấp hơn mục tiêu khoảng ${Math.abs(gap).toFixed(1)} kg.`;
+        }
+      }
+
+      let suggestion = "";
+
+      if (records.length < 3) {
+        suggestion = "Số lượng ghi chép còn ít. Nên ghi liên tục ít nhất 7 ngày để đánh giá xu hướng chính xác hơn.";
+      } else if (trend.type === "up") {
+        suggestion = "Cân nặng gần đây có xu hướng tăng. Nên chú ý chế độ ăn uống, giấc ngủ, vận động và thời điểm cân.";
+      } else if (trend.type === "down") {
+        suggestion = "Cân nặng gần đây có xu hướng giảm. Nên tiếp tục theo dõi đều đặn và tránh thay đổi quá nhanh trong thời gian ngắn.";
+      } else {
+        suggestion = "Cân nặng gần đây tương đối ổn định. Bạn có thể tiếp tục theo dõi xu hướng dài hạn.";
+      }
+
+      box.innerHTML = `
+        <div>Cân nặng mới nhất là <strong>${latest.weight.toFixed(1)} kg</strong>, so với ghi chép đầu tiên thay đổi ${formatSigned(totalDiff)} kg.</div>
+        <div>Cân nặng trung bình 7 ngày gần đây: <strong>${avg7 || "--"} kg</strong>; trung bình 30 ngày gần đây: <strong>${avg30 || "--"} kg</strong>.</div>
+        <div>Đánh giá xu hướng: <strong>${trend.text}</strong></div>
+        <div>Phân tích BMI: ${bmiText}</div>
+        <div>Phân tích mục tiêu: ${targetText}</div>
+        <div>Gợi ý: ${suggestion}</div>
+      `;
+    }
+
+    function getRecentDaysRecords(days) {
+      if (records.length === 0) return [];
+
+      const latestDate = new Date(records[records.length - 1].date);
+      const startDate = new Date(latestDate);
+      startDate.setDate(startDate.getDate() - days + 1);
+
+      return records.filter(item => {
+        const d = new Date(item.date);
+        return d >= startDate && d <= latestDate;
+      });
+    }
+
+    function averageWeight(list) {
+      if (!list.length) return "";
+      const sum = list.reduce((acc, item) => acc + item.weight, 0);
+      return (sum / list.length).toFixed(1);
+    }
+
+    function getTrendText() {
+      if (records.length < 2) {
+        return { type: "flat", text: "Chưa đủ dữ liệu để đánh giá xu hướng" };
+      }
+
+      const recent = records.slice(-7);
+      const first = recent[0];
+      const last = recent[recent.length - 1];
+      const diff = last.weight - first.weight;
+
+      if (diff > 0.5) {
+        return { type: "up", text: `Tăng khoảng ${diff.toFixed(1)} kg trong các ghi chép gần đây` };
+      }
+
+      if (diff < -0.5) {
+        return { type: "down", text: `Giảm khoảng ${Math.abs(diff).toFixed(1)} kg trong các ghi chép gần đây` };
+      }
+
+      return { type: "flat", text: "Các ghi chép gần đây tương đối ổn định" };
+    }
+
+    function getBMIText(bmi) {
+      const value = bmi.toFixed(1);
+
+      if (bmi < 18.5) {
+        return `BMI hiện tại là <strong>${value}</strong>, thuộc nhóm thiếu cân.`;
+      }
+
+      if (bmi < 25) {
+        return `BMI hiện tại là <strong>${value}</strong>, thuộc nhóm bình thường.`;
+      }
+
+      if (bmi < 30) {
+        return `BMI hiện tại là <strong>${value}</strong>, thuộc nhóm thừa cân.`;
+      }
+
+      return `BMI hiện tại là <strong>${value}</strong>, thuộc nhóm béo phì. Nên tham khảo ý kiến chuyên gia nếu cần.`;
+    }
+
+    function renderList() {
+      const list = document.getElementById("recordList");
+      const count = document.getElementById("recordCount");
+
+      count.textContent = `${records.length} mục`;
+
+      if (records.length === 0) {
+        list.innerHTML = `<div class="empty">Chưa có ghi chép</div>`;
+        return;
+      }
+
+      const html = records
+        .slice()
+        .reverse()
+        .map(item => {
+          return `
+            <div class="record">
+              <div>
+                <strong>${item.weight.toFixed(1)} kg</strong>
+                <div class="date">${item.date}</div>
+                ${item.note ? `<div class="note">${escapeHTML(item.note)}</div>` : ""}
+              </div>
+              <button class="delete" onclick="deleteRecord(${item.id})">Xóa</button>
+            </div>
+          `;
+        })
+        .join("");
+
+      list.innerHTML = html;
+    }
+
+    function deleteRecord(id) {
+      if (!confirm("Bạn có chắc muốn xóa ghi chép này không?")) return;
+
+      records = records.filter(item => item.id !== id);
+      saveData();
+      render();
+    }
+
+    function clearAll() {
+      if (!confirm("Bạn có chắc muốn xóa tất cả dữ liệu không? Thao tác này không thể khôi phục.")) return;
+
+      records = [];
+      saveData();
+      render();
+    }
+
+    function exportCSV() {
+      if (records.length === 0) {
+        alert("Chưa có dữ liệu để xuất.");
+        return;
+      }
+
+      const rows = [
+        ["Ngày", "Cân nặng kg", "Ghi chú"],
+        ...records.map(item => [item.date, item.weight, item.note || ""])
+      ];
+
+      const csv = rows
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ghi-chep-can-nang.csv";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, function (char) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+        return map[char];
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0877f9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Máy tính khoa học</title>
+
+  <style>
+    :root {
+      --blue-700: #0758d8;
+      --blue-600: #0877f9;
+      --blue-500: #2088ff;
+      --blue-100: #eaf4ff;
+      --blue-050: #f4f9ff;
+      --navy: #071b3a;
+      --text: #10213f;
+      --muted: #74849e;
+      --line: #dce8f6;
+      --surface: #ffffff;
+      --danger: #f11d2d;
+      --page: #f3f7fc;
+      --shadow: 0 12px 32px rgba(15, 61, 120, 0.12);
+      --soft-shadow: 0 4px 12px rgba(15, 61, 120, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--page);
+      color: var(--text);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    body {
+      min-height: 100dvh;
+      overscroll-behavior: none;
+    }
+
+    .app {
+      width: 100%;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background:
+        linear-gradient(180deg, #0877f9 0, #0877f9 132px, var(--page) 132px);
+    }
+
+    .app-header {
+      position: relative;
+      z-index: 2;
+      height: calc(86px + env(safe-area-inset-top));
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        18px
+        12px;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #1186ff 0%, #0065e6 100%);
+    }
+
+    .header-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 750;
+      text-align: center;
+      letter-spacing: -0.3px;
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .icon-button:active {
+      background: rgba(255, 255, 255, 0.18);
+      transform: scale(0.96);
+    }
+
+    .back-icon {
+      width: 15px;
+      height: 15px;
+      border-left: 3px solid currentColor;
+      border-bottom: 3px solid currentColor;
+      transform: rotate(45deg);
+      margin-left: 5px;
+    }
+
+    .menu-icon {
+      display: flex;
+      gap: 4px;
+    }
+
+    .menu-icon span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .calculator-shell {
+      position: relative;
+      z-index: 3;
+      flex: 1;
+      width: min(100%, 560px);
+      margin: 0 auto;
+      padding: 0 14px calc(16px + env(safe-area-inset-bottom));
+    }
+
+    .calculator-card {
+      min-height: calc(100dvh - 72px - env(safe-area-inset-top));
+      margin-top: -1px;
+      padding: 20px 14px 18px;
+      border-radius: 34px 34px 0 0;
+      background: var(--surface);
+      box-shadow: 0 -8px 30px rgba(8, 75, 164, 0.10);
+    }
+
+    .display-card {
+      position: relative;
+      min-height: 182px;
+      padding: 24px 20px 22px;
+      border: 1px solid #cfe2fa;
+      border-radius: 26px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.96), rgba(240,247,255,0.92)),
+        radial-gradient(circle at 90% 10%, rgba(43,135,255,0.10), transparent 38%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .display-top {
+      min-height: 50px;
+      padding-right: 118px;
+    }
+
+    .expression {
+      max-height: 50px;
+      overflow: auto;
+      color: var(--muted);
+      font-size: clamp(17px, 4.2vw, 23px);
+      font-weight: 500;
+      line-height: 1.45;
+      text-align: left;
+      word-break: break-word;
+      scrollbar-width: none;
+    }
+
+    .expression::-webkit-scrollbar,
+    .result::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mode-switch {
+      position: absolute;
+      top: 22px;
+      right: 18px;
+      display: flex;
+      padding: 3px;
+      border: 1px solid #c8d9ee;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.82);
+    }
+
+    .mode-switch button {
+      min-width: 53px;
+      height: 38px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: #6f7e98;
+      font-size: 14px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .mode-switch button.active {
+      color: #fff;
+      background: linear-gradient(180deg, #1590ff, #0069e9);
+      box-shadow: 0 4px 10px rgba(0, 105, 233, 0.28);
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+    }
+
+    .equals-mark {
+      color: #72829a;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .result {
+      width: 100%;
+      overflow-x: auto;
+      color: var(--navy);
+      font-size: clamp(38px, 10vw, 60px);
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: -1.8px;
+      text-align: right;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .key {
+      min-width: 0;
+      min-height: 58px;
+      padding: 8px 4px;
+      border: 1px solid #dce7f3;
+      border-radius: 17px;
+      color: var(--navy);
+      background: #fff;
+      box-shadow: var(--soft-shadow);
+      font-size: 20px;
+      font-weight: 680;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        transform 90ms ease,
+        box-shadow 120ms ease,
+        background 120ms ease;
+    }
+
+    .key:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 6px rgba(15, 61, 120, 0.08);
+    }
+
+    .key.function {
+      color: #0d58ba;
+      background: linear-gradient(180deg, #f4f9ff, #eaf4ff);
+      border-color: #d5e7fb;
+      font-size: 18px;
+    }
+
+    .key.operator {
+      color: #0866db;
+      background: linear-gradient(180deg, #edf6ff, #deedff);
+      border-color: #cfe2f8;
+      font-size: 27px;
+    }
+
+    .key.danger {
+      color: var(--danger);
+      background: #fff;
+      font-weight: 780;
+    }
+
+    .key.equals {
+      grid-row: span 2;
+      color: #fff;
+      background: linear-gradient(180deg, #258cff, #0669e8);
+      border-color: transparent;
+      box-shadow: 0 10px 22px rgba(6, 105, 232, 0.30);
+      font-size: 33px;
+    }
+
+    .key.zero {
+      grid-column: span 2;
+    }
+
+    .delete-symbol {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 29px;
+      height: 21px;
+      border: 2px solid currentColor;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .delete-symbol::before,
+    .delete-symbol::after {
+      content: "";
+      position: absolute;
+      width: 11px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
+    .delete-symbol::before {
+      transform: rotate(45deg);
+    }
+
+    .delete-symbol::after {
+      transform: rotate(-45deg);
+    }
+
+    .delete-symbol .tip {
+      position: absolute;
+      left: -8px;
+      width: 14px;
+      height: 14px;
+      border-left: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      background: #fff;
+    }
+
+    .error .result {
+      color: var(--danger);
+      font-size: clamp(26px, 7vw, 38px);
+      letter-spacing: -0.6px;
+    }
+
+    @media (min-width: 520px) {
+      .calculator-shell {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .calculator-card {
+        border-radius: 38px 38px 20px 20px;
+        margin-bottom: 20px;
+      }
+
+      .key {
+        min-height: 64px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .calculator-shell {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .calculator-card {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .keypad {
+        gap: 8px;
+      }
+
+      .key {
+        min-height: 54px;
+        border-radius: 15px;
+        font-size: 18px;
+      }
+
+      .key.function {
+        font-size: 16px;
+      }
+
+      .display-card {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="app-header">
+      <button class="icon-button" id="backButton" type="button" aria-label="Quay lại">
+        <span class="back-icon"></span>
+      </button>
+
+      <h1 class="header-title">Máy tính khoa học</h1>
+
+      <button class="icon-button" id="menuButton" type="button" aria-label="Thêm tùy chọn">
+        <span class="menu-icon"><span></span><span></span><span></span></span>
+      </button>
+    </header>
+
+    <section class="calculator-shell">
+      <div class="calculator-card">
+        <section class="display-card" id="displayCard" aria-live="polite">
+          <div class="display-top">
+            <div class="expression" id="expression">0</div>
+          </div>
+
+          <div class="mode-switch" aria-label="Chế độ góc">
+            <button id="degButton" class="active" type="button">DEG</button>
+            <button id="radButton" type="button">RAD</button>
+          </div>
+
+          <div class="result-row">
+            <span class="equals-mark">=</span>
+            <div class="result" id="result">0</div>
+          </div>
+        </section>
+
+        <section class="keypad" id="keypad">
+          <button class="key danger" data-action="clear">AC</button>
+          <button class="key danger" data-action="delete" aria-label="Xóa">
+            <span class="delete-symbol"><span class="tip"></span></span>
+          </button>
+          <button class="key function" data-value="(">(</button>
+          <button class="key function" data-value=")">)</button>
+          <button class="key operator" data-value="/">÷</button>
+
+          <button class="key function" data-function="sin">sin</button>
+          <button class="key function" data-function="cos">cos</button>
+          <button class="key function" data-function="tan">tan</button>
+          <button class="key function" data-function="log">log</button>
+          <button class="key operator" data-value="*">×</button>
+
+          <button class="key function" data-function="asin">asin</button>
+          <button class="key function" data-function="acos">acos</button>
+          <button class="key function" data-function="atan">atan</button>
+          <button class="key function" data-function="ln">ln</button>
+          <button class="key operator" data-value="-">−</button>
+
+          <button class="key function" data-function="sqrt">√x</button>
+          <button class="key function" data-function="square">x²</button>
+          <button class="key function" data-value="^">xʸ</button>
+          <button class="key function" data-function="factorial">x!</button>
+          <button class="key operator" data-value="+">+</button>
+
+          <button class="key function" data-value="pi">π</button>
+          <button class="key function" data-value="e">e</button>
+          <button class="key" data-value="7">7</button>
+          <button class="key" data-value="8">8</button>
+          <button class="key" data-value="9">9</button>
+
+          <button class="key function" data-function="percent">%</button>
+          <button class="key function" data-function="reciprocal">1/x</button>
+          <button class="key" data-value="4">4</button>
+          <button class="key" data-value="5">5</button>
+          <button class="key" data-value="6">6</button>
+
+          <button class="key function" data-function="abs">|x|</button>
+          <button class="key function" data-function="exp">eˣ</button>
+          <button class="key" data-value="1">1</button>
+          <button class="key" data-value="2">2</button>
+          <button class="key equals" data-action="calculate">=</button>
+
+          <button class="key function" data-action="toggle-sign">±</button>
+          <button class="key zero" data-value="0">0</button>
+          <button class="key" data-value=".">.</button>
+          <button class="key" data-value="3">3</button>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const expressionElement = document.getElementById("expression");
+      const resultElement = document.getElementById("result");
+      const displayCard = document.getElementById("displayCard");
+      const keypad = document.getElementById("keypad");
+      const degButton = document.getElementById("degButton");
+      const radButton = document.getElementById("radButton");
+      const backButton = document.getElementById("backButton");
+      const menuButton = document.getElementById("menuButton");
+
+      let expression = "";
+      let angleMode = "DEG";
+      let justCalculated = false;
+
+      const FUNCTION_NAMES = [
+        "factorial", "sqrt", "asin", "acos", "atan",
+        "sin", "cos", "tan", "log", "ln", "abs", "exp"
+      ];
+
+      class Tokenizer {
+        constructor(input) {
+          this.input = input;
+          this.index = 0;
+          this.current = null;
+          this.next();
+        }
+
+        next() {
+          this.skipSpaces();
+
+          if (this.index >= this.input.length) {
+            this.current = { type: "eof" };
+            return this.current;
+          }
+
+          const char = this.input[this.index];
+
+          if (/[0-9.]/.test(char)) {
+            const start = this.index;
+            let dotCount = 0;
+
+            while (this.index < this.input.length &&
+                   /[0-9.]/.test(this.input[this.index])) {
+              if (this.input[this.index] === ".") dotCount += 1;
+              if (dotCount > 1) throw new Error("Số không hợp lệ");
+              this.index += 1;
+            }
+
+            const raw = this.input.slice(start, this.index);
+            const value = Number(raw);
+
+            if (!Number.isFinite(value)) throw new Error("Số không hợp lệ");
+            this.current = { type: "number", value };
+            return this.current;
+          }
+
+          if (/[A-Za-z]/.test(char)) {
+            const start = this.index;
+
+            while (this.index < this.input.length &&
+                   /[A-Za-z]/.test(this.input[this.index])) {
+              this.index += 1;
+            }
+
+            this.current = {
+              type: "identifier",
+              value: this.input.slice(start, this.index)
+            };
+            return this.current;
+          }
+
+          if ("+-*/^(),".includes(char)) {
+            this.index += 1;
+            this.current = { type: char, value: char };
+            return this.current;
+          }
+
+          throw new Error("Ký tự không được hỗ trợ");
+        }
+
+        skipSpaces() {
+          while (this.index < this.input.length &&
+                 /\s/.test(this.input[this.index])) {
+            this.index += 1;
+          }
+        }
+      }
+
+      class Parser {
+        constructor(input) {
+          this.tokens = new Tokenizer(input);
+        }
+
+        parse() {
+          const value = this.parseExpression();
+
+          if (this.tokens.current.type !== "eof") {
+            throw new Error("Biểu thức chưa hoàn chỉnh");
+          }
+
+          if (!Number.isFinite(value)) {
+            throw new Error("Kết quả không hợp lệ");
+          }
+
+          return value;
+        }
+
+        parseExpression() {
+          let value = this.parseTerm();
+
+          while (this.tokens.current.type === "+" ||
+                 this.tokens.current.type === "-") {
+            const operator = this.tokens.current.type;
+            this.tokens.next();
+            const right = this.parseTerm();
+            value = operator === "+" ? value + right : value - right;
+          }
+
+          return value;
+        }
+
+        parseTerm() {
+          let value = this.parsePower();
+
+          while (this.tokens.current.type === "*" ||
+                 this.tokens.current.type === "/") {
+            const operator = this.tokens.current.type;
+            this.tokens.next();
+            const right = this.parsePower();
+
+            if (operator === "/" && right === 0) {
+              throw new Error("Không thể chia cho 0");
+            }
+
+            value = operator === "*" ? value * right : value / right;
+          }
+
+          return value;
+        }
+
+        parsePower() {
+          let value = this.parseUnary();
+
+          if (this.tokens.current.type === "^") {
+            this.tokens.next();
+            const exponent = this.parsePower();
+            value = Math.pow(value, exponent);
+          }
+
+          return value;
+        }
+
+        parseUnary() {
+          if (this.tokens.current.type === "+") {
+            this.tokens.next();
+            return this.parseUnary();
+          }
+
+          if (this.tokens.current.type === "-") {
+            this.tokens.next();
+            return -this.parseUnary();
+          }
+
+          return this.parsePrimary();
+        }
+
+        parsePrimary() {
+          const token = this.tokens.current;
+
+          if (token.type === "number") {
+            this.tokens.next();
+            return token.value;
+          }
+
+          if (token.type === "(") {
+            this.tokens.next();
+            const value = this.parseExpression();
+
+            if (this.tokens.current.type !== ")") {
+              throw new Error("Thiếu dấu ngoặc đóng");
+            }
+
+            this.tokens.next();
+            return value;
+          }
+
+          if (token.type === "identifier") {
+            const name = token.value.toLowerCase();
+            this.tokens.next();
+
+            if (name === "pi") return Math.PI;
+            if (name === "e") return Math.E;
+
+            if (this.tokens.current.type !== "(") {
+              throw new Error("Hàm chưa hoàn chỉnh");
+            }
+
+            this.tokens.next();
+            const argument = this.parseExpression();
+
+            if (this.tokens.current.type !== ")") {
+              throw new Error("Thiếu dấu ngoặc đóng");
+            }
+
+            this.tokens.next();
+            return this.applyFunction(name, argument);
+          }
+
+          throw new Error("Biểu thức chưa hoàn chỉnh");
+        }
+
+        applyFunction(name, value) {
+          const toRadians = number =>
+            angleMode === "DEG" ? number * Math.PI / 180 : number;
+
+          const fromRadians = number =>
+            angleMode === "DEG" ? number * 180 / Math.PI : number;
+
+          switch (name) {
+            case "sin": return Math.sin(toRadians(value));
+            case "cos": return Math.cos(toRadians(value));
+            case "tan": return Math.tan(toRadians(value));
+            case "asin": return fromRadians(Math.asin(value));
+            case "acos": return fromRadians(Math.acos(value));
+            case "atan": return fromRadians(Math.atan(value));
+            case "log":
+              if (value <= 0) throw new Error("log chỉ nhận số dương");
+              return Math.log10(value);
+            case "ln":
+              if (value <= 0) throw new Error("ln chỉ nhận số dương");
+              return Math.log(value);
+            case "sqrt":
+              if (value < 0) throw new Error("Không thể căn số âm");
+              return Math.sqrt(value);
+            case "abs": return Math.abs(value);
+            case "exp": return Math.exp(value);
+            case "factorial": return factorial(value);
+            default: throw new Error("Hàm không được hỗ trợ");
+          }
+        }
+      }
+
+      function factorial(value) {
+        if (!Number.isInteger(value) || value < 0 || value > 170) {
+          throw new Error("Giai thừa chỉ hỗ trợ số nguyên từ 0 đến 170");
+        }
+
+        let result = 1;
+        for (let i = 2; i <= value; i += 1) result *= i;
+        return result;
+      }
+
+      function evaluate(input) {
+        if (!input.trim()) return 0;
+        return new Parser(input).parse();
+      }
+
+      function formatExpression(value) {
+        return (value || "0")
+          .replaceAll("factorial", "")
+          .replaceAll("sqrt", "√")
+          .replaceAll("asin", "sin⁻¹")
+          .replaceAll("acos", "cos⁻¹")
+          .replaceAll("atan", "tan⁻¹")
+          .replaceAll("pi", "π")
+          .replaceAll("*", "×")
+          .replaceAll("/", "÷");
+      }
+
+      function formatNumber(value) {
+        if (!Number.isFinite(value)) {
+          throw new Error("Kết quả không hợp lệ");
+        }
+
+        if (Object.is(value, -0)) value = 0;
+
+        const absolute = Math.abs(value);
+
+        if ((absolute > 0 && absolute < 1e-9) || absolute >= 1e12) {
+          return value
+            .toExponential(10)
+            .replace(/(\.\d*?[1-9])0+e/, "$1e")
+            .replace(/\.0+e/, "e");
+        }
+
+        return Number(value.toPrecision(12)).toString();
+      }
+
+      function showError(message) {
+        displayCard.classList.add("error");
+        resultElement.textContent = message || "Lỗi tính toán";
+      }
+
+      function clearError() {
+        displayCard.classList.remove("error");
+      }
+
+      function refreshDisplay(preview = true) {
+        expressionElement.textContent = formatExpression(expression);
+        clearError();
+
+        if (!expression) {
+          resultElement.textContent = "0";
+          return;
+        }
+
+        if (!preview) return;
+
+        try {
+          resultElement.textContent = formatNumber(evaluate(expression));
+        } catch {
+          resultElement.textContent = "…";
+        }
+      }
+
+      function appendValue(value) {
+        const lastCharacter = expression.slice(-1);
+
+        if (justCalculated && (/^[0-9.(]$/.test(value) || value === "pi" || value === "e")) {
+          expression = "";
+        }
+
+        justCalculated = false;
+        clearError();
+
+        if (value === ".") {
+          const currentNumber = expression.split(/[+\-*/^()]/).pop();
+
+          if (currentNumber.includes(".")) return;
+          if (!currentNumber) expression += "0";
+        }
+
+        if (["+", "-", "*", "/", "^"].includes(value) &&
+            ["+", "-", "*", "/", "^"].includes(lastCharacter)) {
+          expression = expression.slice(0, -1);
+        }
+
+        const previousLooksLikeValue =
+          /[0-9)]/.test(lastCharacter) ||
+          expression.endsWith("pi") ||
+          lastCharacter === "e";
+
+        const nextStartsValue =
+          value === "(" ||
+          value === "pi" ||
+          value === "e";
+
+        if (previousLooksLikeValue && nextStartsValue) {
+          expression += "*";
+        }
+
+        if (/^[0-9]$/.test(value) &&
+            (lastCharacter === ")" || expression.endsWith("pi") || lastCharacter === "e")) {
+          expression += "*";
+        }
+
+        expression += value;
+        refreshDisplay();
+      }
+
+      function wrapExpression(functionName) {
+        justCalculated = false;
+        clearError();
+
+        if (!expression) {
+          expression = functionName + "(";
+        } else {
+          expression = functionName + "(" + expression + ")";
+        }
+
+        refreshDisplay();
+      }
+
+      function applyScientificFunction(name) {
+        switch (name) {
+          case "sin":
+          case "cos":
+          case "tan":
+          case "asin":
+          case "acos":
+          case "atan":
+          case "log":
+          case "ln":
+          case "sqrt":
+          case "abs":
+          case "exp":
+            wrapExpression(name);
+            break;
+
+          case "square":
+            if (expression) expression = "(" + expression + ")^2";
+            justCalculated = false;
+            refreshDisplay();
+            break;
+
+          case "factorial":
+            if (expression) expression = "factorial(" + expression + ")";
+            justCalculated = false;
+            refreshDisplay();
+            break;
+
+          case "percent":
+            if (expression) expression = "(" + expression + ")/100";
+            justCalculated = false;
+            refreshDisplay();
+            break;
+
+          case "reciprocal":
+            if (expression) expression = "1/(" + expression + ")";
+            justCalculated = false;
+            refreshDisplay();
+            break;
+        }
+      }
+
+      function clearAll() {
+        expression = "";
+        justCalculated = false;
+        refreshDisplay();
+      }
+
+      function deleteLast() {
+        if (justCalculated) {
+          clearAll();
+          return;
+        }
+
+        const matchedName = FUNCTION_NAMES
+          .map(name => name + "(")
+          .find(name => expression.endsWith(name));
+
+        if (matchedName) {
+          expression = expression.slice(0, -matchedName.length);
+        } else if (expression.endsWith("pi")) {
+          expression = expression.slice(0, -2);
+        } else {
+          expression = expression.slice(0, -1);
+        }
+
+        refreshDisplay();
+      }
+
+      function calculate() {
+        try {
+          const value = evaluate(expression);
+          const formatted = formatNumber(value);
+
+          expressionElement.textContent = formatExpression(expression) + " =";
+          resultElement.textContent = formatted;
+          expression = formatted;
+          justCalculated = true;
+          clearError();
+        } catch (error) {
+          expressionElement.textContent = formatExpression(expression);
+          showError(error.message);
+          justCalculated = false;
+        }
+      }
+
+      function toggleSign() {
+        clearError();
+
+        if (!expression) {
+          expression = "-";
+        } else {
+          expression = "-(" + expression + ")";
+        }
+
+        justCalculated = false;
+        refreshDisplay();
+      }
+
+      function setAngleMode(mode) {
+        angleMode = mode;
+        degButton.classList.toggle("active", mode === "DEG");
+        radButton.classList.toggle("active", mode === "RAD");
+        refreshDisplay();
+      }
+
+      keypad.addEventListener("click", event => {
+        const button = event.target.closest("button");
+        if (!button) return;
+
+        if (button.dataset.value) {
+          appendValue(button.dataset.value);
+        }
+
+        if (button.dataset.function) {
+          applyScientificFunction(button.dataset.function);
+        }
+
+        switch (button.dataset.action) {
+          case "clear":
+            clearAll();
+            break;
+          case "delete":
+            deleteLast();
+            break;
+          case "calculate":
+            calculate();
+            break;
+          case "toggle-sign":
+            toggleSign();
+            break;
+        }
+      });
+
+      degButton.addEventListener("click", () => setAngleMode("DEG"));
+      radButton.addEventListener("click", () => setAngleMode("RAD"));
+
+      backButton.addEventListener("click", () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        }
+      });
+
+      menuButton.addEventListener("click", () => {
+        clearAll();
+      });
+
+      window.addEventListener("keydown", event => {
+        const key = event.key;
+
+        if (/^[0-9.+\-*/^()]$/.test(key)) {
+          event.preventDefault();
+          appendValue(key);
+          return;
+        }
+
+        if (key === "Enter" || key === "=") {
+          event.preventDefault();
+          calculate();
+          return;
+        }
+
+        if (key === "Backspace") {
+          event.preventDefault();
+          deleteLast();
+          return;
+        }
+
+        if (key === "Escape" || key === "Delete") {
+          event.preventDefault();
+          clearAll();
+        }
+      });
+
+      refreshDisplay();
+    })();
+  </script>
+</body>
+</html>

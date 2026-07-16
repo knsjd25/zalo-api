@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>MyTools H5 v10.59</title>
+<title>MyTools H5 v10.60</title>
 <style>
 :root{
   --bg:#07101b;
@@ -79,6 +79,19 @@ body.logged-in .login-shell{display:none}
   color:#fff;font-weight:900;font-size:16px;background:linear-gradient(135deg,#6555ff,#8e55ff);
   box-shadow:0 16px 34px rgba(112,85,255,.32);
 }
+.login-btn:disabled{
+  opacity:.68;
+  cursor:wait;
+  box-shadow:none;
+}
+.login-network-help{
+  margin-top:10px;
+  color:#7a8394;
+  font-size:12px;
+  line-height:1.55;
+  text-align:center;
+}
+
 .login-msg{min-height:20px;text-align:center;color:#e11d48;font-size:13px;margin:12px 0 0}
 .login-foot{position:absolute;left:0;right:0;bottom:22px;text-align:center;color:#758195;font-size:12px}
 .version-code{
@@ -1738,8 +1751,9 @@ audio#audio {
       <div class="login-card">
         <div class="login-label">访问口令</div>
         <input class="login-input" id="accessKey" placeholder="请输入访问口令" onkeydown="if(event.key==='Enter')saveKey()">
-        <button class="login-btn" type="button" onclick="saveKey()">登录</button>
+        <button class="login-btn" id="loginBtn" type="button" onclick="saveKey()">登录</button>
         <div class="login-msg" id="lockMsg"></div>
+        <div class="login-network-help" id="loginNetworkHelp">手机登录会自动使用兼容连接模式</div>
       </div>
     </div>
     <div class="login-foot">© 2026 MyTools · <span class="version-code" id="loginVersion">v10.59</span></div>
@@ -1940,7 +1954,7 @@ audio#audio {
 
 <script>
 const $=id=>document.getElementById(id);
-const APP_VERSION="v10.59";
+const APP_VERSION="v10.60";
 const APP_BUILD_DATE="2026-07-16";
 let detectedApiVersion="检测中";
 const DEFAULT_API_BASE="https://music.yilunfan155.workers.dev";
@@ -1956,8 +1970,18 @@ if(location.protocol==="file:"){
     },500);
   });
 }
-let clientId=localStorage.getItem("mytools_client_id")||("cli_"+crypto.randomUUID().replaceAll("-","").slice(0,16));
-localStorage.setItem("mytools_client_id",clientId);
+function createClientId(){
+  try{
+    if(globalThis.crypto&&typeof globalThis.crypto.randomUUID==="function"){
+      return "cli_"+globalThis.crypto.randomUUID().replace(/-/g,"").slice(0,16);
+    }
+  }catch(error){}
+  return "cli_"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+}
+let clientId="";
+try{clientId=localStorage.getItem("mytools_client_id")||""}catch(error){}
+if(!clientId)clientId=createClientId();
+safeStorageSet("mytools_client_id",clientId);
 let currentUser={isAdmin:false,role:"guest",username:""};
 let activePage="";
 let currentMusicSection="shared";
@@ -1987,7 +2011,10 @@ let pendingSeekTime=null;
 let audioWasPlayingBeforeSeek=false;
 let searchTimer=null;
 
-function key(){return localStorage.getItem("mytools_access_key")||""}
+function key(){
+  try{return localStorage.getItem("mytools_access_key")||""}
+  catch(error){return""}
+}
 function apiUrl(path){return DEFAULT_API_BASE+"/api"+path}
 function assetUrl(path){if(!path)return"";return path.startsWith("http")?path:DEFAULT_API_BASE+path}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
@@ -2026,7 +2053,7 @@ function applyVersionLabels(){
 async function loadVersionInfo(){
   applyVersionLabels();
   try{
-    const r=await fetch(DEFAULT_API_BASE+"/api/runtime-check",{cache:"no-store"});
+    const r=await fetchWithTimeout(DEFAULT_API_BASE+"/api/runtime-check",{cache:"no-store"},8000);
     const j=await r.json();
     detectedApiVersion=normalizeVersion(j?.data?.version||j?.version)||"未知";
   }catch(e){
@@ -2064,15 +2091,102 @@ function showVersionInfo(){
     <button class="btn secondary full" onclick="loadVersionInfo().then(()=>{closeSheet();showVersionInfo()})">重新检测</button>
   `);
 }
+function createTimeoutSignal(timeoutMs){
+  if(typeof AbortSignal!=="undefined"&&typeof AbortSignal.timeout==="function"){
+    return {signal:AbortSignal.timeout(timeoutMs),cancel(){}};
+  }
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  return {signal:controller.signal,cancel(){clearTimeout(timer)}};
+}
+async function fetchWithTimeout(url,options={},timeoutMs=12000){
+  const timer=createTimeoutSignal(timeoutMs);
+  try{
+    return await fetch(url,Object.assign({},options,{signal:timer.signal,cache:options.cache||"no-store"}));
+  }catch(error){
+    if(error&&error.name==="AbortError"){
+      throw new Error("连接服务器超时，请检查手机网络后重试");
+    }
+    throw error;
+  }finally{
+    timer.cancel();
+  }
+}
+function safeStorageSet(name,value){
+  try{
+    localStorage.setItem(name,value);
+    return true;
+  }catch(error){
+    return false;
+  }
+}
+function safeStorageRemove(name){
+  try{localStorage.removeItem(name)}catch(error){}
+}
+function mobileBridgeUrl(){
+  return DEFAULT_API_BASE+"/api/mobile-bridge";
+}
+async function apiThroughBridge(path,opt={}){
+  const method=String(opt.method||"GET").toUpperCase();
+  const envelope={
+    path:"/api"+path,
+    method,
+    accessKey:key(),
+    clientId,
+    body:opt.body instanceof FormData?null:(opt.body??null)
+  };
+  const response=await fetchWithTimeout(
+    mobileBridgeUrl(),
+    {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=UTF-8"},
+      body:JSON.stringify(envelope)
+    },
+    12000
+  );
+  const data=await response.json().catch(()=>({ok:false,error:{message:"服务器返回内容异常"}}));
+  return {response,data};
+}
+async function apiUploadWithoutPreflight(path,opt={}){
+  const url=new URL(apiUrl(path));
+  url.searchParams.set("access_key",key());
+  url.searchParams.set("client_id",clientId);
+  const response=await fetchWithTimeout(
+    url.toString(),
+    Object.assign({},opt,{headers:{}}),
+    30000
+  );
+  const data=await response.json().catch(()=>({ok:false,error:{message:"上传接口返回异常"}}));
+  return {response,data};
+}
 async function api(path,opt={}){
-  opt.headers=Object.assign({"X-Client-Id":clientId,"X-Access-Key":key()},opt.headers||{});
-  if(opt.body&&!(opt.body instanceof FormData)){opt.headers["Content-Type"]="application/json";opt.body=JSON.stringify(opt.body)}
-  const r=await fetch(apiUrl(path),opt);
-  const j=await r.json().catch(()=>({ok:false,error:{message:"接口异常"}}));
-  if(r.status===401){localStorage.removeItem("mytools_access_key");showLogin("访问口令错误或已失效");throw new Error("访问口令错误或已失效")}
-  if(r.status===403)throw new Error(j.error?.message||"权限不足");
-  if(!j.ok)throw new Error(j.error?.message||"请求失败");
-  return j.data;
+  let response;
+  let result;
+
+  try{
+    if(opt.body instanceof FormData){
+      const upload=await apiUploadWithoutPreflight(path,opt);
+      response=upload.response;
+      result=upload.data;
+    }else{
+      const bridge=await apiThroughBridge(path,opt);
+      response=bridge.response;
+      result=bridge.data;
+    }
+  }catch(error){
+    const message=String(error?.message||error||"").trim();
+    if(message.includes("超时"))throw error;
+    throw new Error("手机无法连接音乐服务器，请切换网络或稍后重试");
+  }
+
+  if(response.status===401){
+    safeStorageRemove("mytools_access_key");
+    showLogin("访问口令错误或已失效");
+    throw new Error("访问口令错误或已失效");
+  }
+  if(response.status===403)throw new Error(result?.error?.message||"权限不足");
+  if(!result?.ok)throw new Error(result?.error?.message||"请求失败");
+  return result.data;
 }
 function normalizeCurrentUser(user){
   const raw=user&&typeof user==="object"?user:{};
@@ -2085,11 +2199,45 @@ function normalizeCurrentUser(user){
   });
 }
 async function saveKey(){
-  const k=($("accessKey").value||"").trim();
-  if(!k){$("lockMsg").textContent="请输入访问口令";return}
-  $("lockMsg").textContent="正在登录...";
-  localStorage.setItem("mytools_access_key",k);
-  try{await enterApp()}catch(e){localStorage.removeItem("mytools_access_key");$("lockMsg").textContent=e.message||"登录失败"}
+  const input=$("accessKey");
+  const button=$("loginBtn");
+  const help=$("loginNetworkHelp");
+  const k=(input?.value||"").trim();
+
+  if(!k){
+    $("lockMsg").textContent="请输入访问口令";
+    input?.focus();
+    return;
+  }
+
+  if(button){
+    button.disabled=true;
+    button.textContent="登录中";
+  }
+  $("lockMsg").textContent="正在连接服务器…";
+  if(help)help.textContent="正在使用手机兼容连接模式";
+
+  try{
+    if(!safeStorageSet("mytools_access_key",k)){
+      throw new Error("浏览器禁止保存登录信息，请关闭无痕模式后重试");
+    }
+    await enterApp();
+    if(help)help.textContent=`已连接 · ${APP_VERSION}`;
+  }catch(error){
+    safeStorageRemove("mytools_access_key");
+    const message=String(error?.message||"登录失败");
+    $("lockMsg").textContent=message;
+    if(help){
+      help.textContent=message.includes("超时")||message.includes("无法连接")
+        ?"请尝试关闭手机代理、切换 Wi-Fi/移动网络，或使用系统浏览器"
+        :"请确认口令后重新登录";
+    }
+  }finally{
+    if(button){
+      button.disabled=false;
+      button.textContent="登录";
+    }
+  }
 }
 async function enterApp(){
   const cfg=await api("/app/config");
@@ -2103,7 +2251,7 @@ async function enterApp(){
   else{goPage("music-home");loadMusic(true)}
 }
 function logout(){
-  localStorage.removeItem("mytools_access_key");
+  safeStorageRemove("mytools_access_key");
   currentUser={isAdmin:false,role:"guest",username:""};
   try{$("audio").pause();$("audio").removeAttribute("src");$("audio").load();currentTrackId="";updateMiniPlayer()}catch(e){}
   showLogin("已退出登录");
@@ -3735,7 +3883,7 @@ async function init(){
   loadVersionInfo();
   if($("accessKey"))$("accessKey").value=key();
   if(!key()){showLogin("");return}
-  try{await enterApp()}catch(e){showLogin("请重新登录")}
+  try{await enterApp()}catch(e){safeStorageRemove("mytools_access_key");showLogin(e?.message||"请重新登录")}
 }
 init();
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>MyTools H5 v10.58</title>
+<title>MyTools H5 v10.59</title>
 <style>
 :root{
   --bg:#07101b;
@@ -81,6 +81,25 @@ body.logged-in .login-shell{display:none}
 }
 .login-msg{min-height:20px;text-align:center;color:#e11d48;font-size:13px;margin:12px 0 0}
 .login-foot{position:absolute;left:0;right:0;bottom:22px;text-align:center;color:#758195;font-size:12px}
+.version-code{
+  font-variant-numeric:tabular-nums;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.01em;
+}
+.version-value{
+  margin-left:auto;
+  color:#cfd6e3;
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.version-value.mismatch{color:#ff9b9b}
+.version-value.ok{color:#8fd8ad}
+.version-helper{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
 .topbar{height:50px;display:flex;align-items:center;justify-content:space-between}
 .icon-btn{
   width:36px;height:36px;border:0;border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);
@@ -1723,7 +1742,7 @@ audio#audio {
         <div class="login-msg" id="lockMsg"></div>
       </div>
     </div>
-    <div class="login-foot">© 2026 MyTools. All rights reserved</div>
+    <div class="login-foot">© 2026 MyTools · <span class="version-code" id="loginVersion">v10.59</span></div>
   </div>
 
   <div class="app-shell" id="appShell">
@@ -1844,6 +1863,7 @@ audio#audio {
         <div class="setting-row" onclick="setMusicSection('favorites')"><span>♡</span><div class="song-info"><div class="name">我喜欢的</div></div><span>›</span></div>
         <div class="setting-row" onclick="setMusicSection('history')"><span>◴</span><div class="song-info"><div class="name">最近播放</div></div><span>›</span></div>
         <div class="setting-row" onclick="openUploadSheet()"><span>☁</span><div class="song-info"><div class="name">上传管理</div></div><span>›</span></div>
+        <div class="setting-row" onclick="showVersionInfo()"><span>ⓘ</span><div class="song-info"><div class="name">当前版本</div><div class="version-helper" id="profileVersionDetail">正在检测 API 版本</div></div><span class="version-value version-code" id="profileVersion">v10.59</span></div>
         <div class="setting-row" onclick="logout()"><span>⎋</span><div class="song-info"><div class="name">退出登录</div></div><span>›</span></div>
       </div>
     </section>
@@ -1891,6 +1911,7 @@ audio#audio {
         <div class="setting-row"><div><div class="name">显示歌词</div><div class="meta">在播放页显示歌词</div></div><div class="switch on" onclick="toggleSwitch(this)"></div></div>
         <div class="setting-row"><div><div class="name">自动获取歌词</div><div class="meta">上传后自动补全封面和歌词</div></div><div class="switch on" onclick="toggleSwitch(this)"></div></div>
         <div class="setting-row" onclick="testLyricsApiPrompt()"><div><div class="name">测试歌词 API</div><div class="meta">测试多个公共歌词接口</div></div><span>›</span></div>
+        <div class="setting-row" onclick="showVersionInfo()"><div><div class="name">系统版本</div><div class="meta" id="settingsVersionDetail">正在检测 API 版本</div></div><span class="version-value version-code" id="settingsVersion">v10.59</span></div>
         <div class="setting-row" onclick="logout()"><div><div class="name">退出登录</div><div class="meta">返回访问口令页面</div></div><span>›</span></div>
       </div>
     </section>
@@ -1919,6 +1940,9 @@ audio#audio {
 
 <script>
 const $=id=>document.getElementById(id);
+const APP_VERSION="v10.59";
+const APP_BUILD_DATE="2026-07-16";
+let detectedApiVersion="检测中";
 const DEFAULT_API_BASE="https://music.yilunfan155.workers.dev";
 if(location.protocol==="file:"){
   window.addEventListener("DOMContentLoaded",()=>{
@@ -1970,6 +1994,76 @@ function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
 function showLogin(msg=""){document.body.classList.remove("logged-in");if($("lockMsg"))$("lockMsg").textContent=msg||""}
 function showApp(){document.body.classList.add("logged-in");if($("lockMsg"))$("lockMsg").textContent=""}
+function normalizeVersion(value){
+  return String(value||"").trim();
+}
+function versionMatches(frontend,apiVersion){
+  const front=normalizeVersion(frontend).replace(/^v/i,"").split(/[-+]/)[0];
+  const api=normalizeVersion(apiVersion).replace(/^v/i,"").split(/[-+]/)[0];
+  return !!front&&front===api;
+}
+function applyVersionLabels(){
+  const apiText=normalizeVersion(detectedApiVersion)||"未检测";
+  const matches=versionMatches(APP_VERSION,apiText);
+  const statusText=apiText==="检测中"
+    ?"正在检测 API 版本"
+    :apiText==="连接失败"
+      ?"API 版本检测失败"
+      :matches
+        ?`前端与 API 一致 · ${apiText}`
+        :`版本不一致 · API ${apiText}`;
+
+  for(const id of ["loginVersion","profileVersion","settingsVersion"]){
+    const el=$(id);
+    if(!el)continue;
+    el.textContent=APP_VERSION;
+    el.classList.toggle("ok",matches);
+    el.classList.toggle("mismatch",apiText!=="检测中"&&apiText!=="连接失败"&&!matches);
+  }
+  if($("profileVersionDetail"))$("profileVersionDetail").textContent=statusText;
+  if($("settingsVersionDetail"))$("settingsVersionDetail").textContent=statusText;
+}
+async function loadVersionInfo(){
+  applyVersionLabels();
+  try{
+    const r=await fetch(DEFAULT_API_BASE+"/api/runtime-check",{cache:"no-store"});
+    const j=await r.json();
+    detectedApiVersion=normalizeVersion(j?.data?.version||j?.version)||"未知";
+  }catch(e){
+    detectedApiVersion="连接失败";
+  }
+  applyVersionLabels();
+}
+function showVersionInfo(){
+  const apiText=normalizeVersion(detectedApiVersion)||"未检测";
+  const matches=versionMatches(APP_VERSION,apiText);
+  openSheet(`
+    <div class="topbar">
+      <button class="icon-btn" onclick="closeSheet()">‹</button>
+      <h1 class="page-title">版本信息</h1>
+      <span style="width:36px"></span>
+    </div>
+    <div class="panel">
+      <div class="setting-row">
+        <div><div class="name">前端版本</div><div class="meta">当前页面文件版本</div></div>
+        <span class="version-value version-code">${esc(APP_VERSION)}</span>
+      </div>
+      <div class="setting-row">
+        <div><div class="name">API 版本</div><div class="meta">Cloudflare Worker 运行版本</div></div>
+        <span class="version-value version-code ${matches?"ok":"mismatch"}">${esc(apiText)}</span>
+      </div>
+      <div class="setting-row">
+        <div><div class="name">版本状态</div><div class="meta">${matches?"前端与后端已经同步":"前端与后端版本不一致，请同时部署两个文件"}</div></div>
+        <span class="tag ${matches?"green":"red"}">${matches?"一致":"不一致"}</span>
+      </div>
+      <div class="setting-row">
+        <div><div class="name">构建日期</div><div class="meta">本版本生成日期</div></div>
+        <span class="version-value version-code">${APP_BUILD_DATE}</span>
+      </div>
+    </div>
+    <button class="btn secondary full" onclick="loadVersionInfo().then(()=>{closeSheet();showVersionInfo()})">重新检测</button>
+  `);
+}
 async function api(path,opt={}){
   opt.headers=Object.assign({"X-Client-Id":clientId,"X-Access-Key":key()},opt.headers||{});
   if(opt.body&&!(opt.body instanceof FormData)){opt.headers["Content-Type"]="application/json";opt.body=JSON.stringify(opt.body)}
@@ -3638,6 +3732,7 @@ function fmtTime(s){s=Number(s)||0;return String(Math.floor(s/60)).padStart(2,"0
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
 async function init(){
+  loadVersionInfo();
   if($("accessKey"))$("accessKey").value=key();
   if(!key()){showLogin("");return}
   try{await enterApp()}catch(e){showLogin("请重新登录")}

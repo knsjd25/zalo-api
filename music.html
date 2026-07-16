@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>MyTools H5 v10.60</title>
+<title>MyTools H5 v10.61</title>
 <style>
 :root{
   --bg:#07101b;
@@ -1954,10 +1954,10 @@ audio#audio {
 
 <script>
 const $=id=>document.getElementById(id);
-const APP_VERSION="v10.60";
+const APP_VERSION="v10.61";
 const APP_BUILD_DATE="2026-07-16";
 let detectedApiVersion="检测中";
-const DEFAULT_API_BASE="https://music.yilunfan155.workers.dev";
+const DEFAULT_API_BASE="https://music-api.zalo-api.com";
 if(location.protocol==="file:"){
   window.addEventListener("DOMContentLoaded",()=>{
     setTimeout(()=>{
@@ -2078,6 +2078,10 @@ function showVersionInfo(){
       <div class="setting-row">
         <div><div class="name">API 版本</div><div class="meta">Cloudflare Worker 运行版本</div></div>
         <span class="version-value version-code ${matches?"ok":"mismatch"}">${esc(apiText)}</span>
+      </div>
+      <div class="setting-row">
+        <div><div class="name">API 地址</div><div class="meta">当前前端实际连接的服务器</div></div>
+        <span class="version-value version-code" style="font-size:10px;max-width:58%;overflow:hidden;text-overflow:ellipsis">$https://music-api.zalo-api.com</span>
       </div>
       <div class="setting-row">
         <div><div class="name">版本状态</div><div class="meta">${matches?"前端与后端已经同步":"前端与后端版本不一致，请同时部署两个文件"}</div></div>

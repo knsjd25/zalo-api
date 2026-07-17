@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#6C63FF" />
+  <title>Trình tạo mật khẩu an toàn</title>
+  <style>
+    :root {
+      --primary: #6c63ff;
+      --primary-dark: #5148e5;
+      --bg: #f5f6fb;
+      --card: #ffffff;
+      --text: #1f2430;
+      --muted: #7a8190;
+      --border: #e7e9f1;
+      --success: #20b26b;
+      --warning: #f3a72f;
+      --danger: #ef5350;
+      --shadow: 0 14px 40px rgba(43, 48, 73, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(108, 99, 255, 0.16), transparent 36%),
+        linear-gradient(180deg, #f8f8ff 0%, var(--bg) 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(100%, 520px);
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 20px 16px 32px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 2px 22px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #8b83ff);
+      box-shadow: 0 10px 26px rgba(108, 99, 255, 0.30);
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(231, 233, 241, 0.9);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .password-box {
+      position: relative;
+      padding: 18px;
+      border-radius: 18px;
+      background: #f7f7fc;
+      border: 1px solid var(--border);
+    }
+
+    #passwordOutput {
+      width: 100%;
+      min-height: 74px;
+      padding: 0 48px 0 0;
+      border: 0;
+      outline: 0;
+      resize: none;
+      background: transparent;
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.45;
+      word-break: break-all;
+    }
+
+    .eye-btn {
+      position: absolute;
+      right: 12px;
+      top: 13px;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      color: var(--muted);
+      background: #fff;
+      border: 1px solid var(--border);
+      font-size: 17px;
+    }
+
+    .strength-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      gap: 12px;
+    }
+
+    .strength-bars {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .strength-bar {
+      height: 7px;
+      border-radius: 99px;
+      background: #e9ebf2;
+      transition: 0.2s ease;
+    }
+
+    .strength-text {
+      min-width: 52px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      min-height: 50px;
+      border-radius: 16px;
+      font-weight: 700;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 10px 22px rgba(108, 99, 255, 0.24);
+    }
+
+    .btn-secondary {
+      color: var(--primary);
+      background: #f0efff;
+      border: 1px solid #dcd9ff;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .length-value {
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    .range-note {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .option {
+      min-height: 50px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 15px;
+      background: #fafafe;
+      border: 1px solid var(--border);
+    }
+
+    .option-text strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .option-text span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 30px;
+      background: #dfe2eb;
+      transition: 0.2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      transition: 0.2s;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--primary);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .history-header h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .clear-btn {
+      color: var(--danger);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fafafe;
+      border: 1px solid var(--border);
+    }
+
+    .history-password {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mini-copy {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      color: var(--primary);
+      background: #efeeff;
+      font-size: 15px;
+    }
+
+    .empty {
+      padding: 18px 0 8px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .privacy {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.7;
+      padding: 6px 20px 0;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translate(-50%, 20px);
+      z-index: 20;
+      padding: 11px 18px;
+      border-radius: 99px;
+      color: #fff;
+      background: rgba(31, 36, 48, 0.92);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 360px) {
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      #passwordOutput {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="logo">✦</div>
+      <div>
+        <h1>Trình tạo mật khẩu an toàn</h1>
+        <p>Tạo mật khẩu ngẫu nhiên, an toàn và khó đoán</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="password-box">
+        <textarea id="passwordOutput" rows="2" readonly aria-label="Mật khẩu đã tạo"></textarea>
+        <button class="eye-btn" id="visibilityBtn" aria-label="Hiện hoặc ẩn mật khẩu">◉</button>
+      </div>
+
+      <div class="strength-row">
+        <div class="strength-bars">
+          <span class="strength-bar"></span>
+          <span class="strength-bar"></span>
+          <span class="strength-bar"></span>
+          <span class="strength-bar"></span>
+        </div>
+        <div class="strength-text" id="strengthText">Mạnh</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="generateBtn">Tạo lại</button>
+        <button class="btn btn-secondary" id="copyBtn">Sao chép</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <span>Độ dài mật khẩu</span>
+        <span class="length-value"><span id="lengthValue">16</span> ký tự</span>
+      </div>
+
+      <input id="lengthRange" type="range" min="6" max="64" value="16" />
+      <div class="range-note">
+        <span>6</span>
+        <span>64</span>
+      </div>
+
+      <div class="options">
+        <label class="option">
+          <span class="option-text">
+            <strong>Chữ hoa</strong>
+            <span>A B C</span>
+          </span>
+          <span class="switch">
+            <input id="uppercase" type="checkbox" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+
+        <label class="option">
+          <span class="option-text">
+            <strong>Chữ thường</strong>
+            <span>a b c</span>
+          </span>
+          <span class="switch">
+            <input id="lowercase" type="checkbox" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+
+        <label class="option">
+          <span class="option-text">
+            <strong>Chữ số</strong>
+            <span>0 1 2 3</span>
+          </span>
+          <span class="switch">
+            <input id="numbers" type="checkbox" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+
+        <label class="option">
+          <span class="option-text">
+            <strong>Ký tự đặc biệt</strong>
+            <span>! @ # $ %</span>
+          </span>
+          <span class="switch">
+            <input id="symbols" type="checkbox" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+
+        <label class="option">
+          <span class="option-text">
+            <strong>Loại bỏ ký tự dễ nhầm</strong>
+            <span>Không dùng 0 O o 1 I l</span>
+          </span>
+          <span class="switch">
+            <input id="excludeAmbiguous" type="checkbox" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="history-header">
+        <h2>Mật khẩu gần đây</h2>
+        <button class="clear-btn" id="clearHistoryBtn">Xóa lịch sử</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </section>
+
+    <p class="privacy">
+      Tất cả mật khẩu được tạo trực tiếp trên thiết bị và không được tải lên máy chủ.<br />
+      Không nên lưu mật khẩu quan trọng lâu dài trên thiết bị công cộng.
+    </p>
+  </main>
+
+  <div class="toast" id="toast">Đã sao chép</div>
+
+  <script>
+    const sets = {
+      uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      lowercase: "abcdefghijklmnopqrstuvwxyz",
+      numbers: "0123456789",
+      symbols: "!@#$%^&*()-_=+[]{};:,.?"
+    };
+
+    const ambiguousCharacters = new Set(["0", "O", "o", "1", "I", "l"]);
+
+    const els = {
+      passwordOutput: document.getElementById("passwordOutput"),
+      visibilityBtn: document.getElementById("visibilityBtn"),
+      generateBtn: document.getElementById("generateBtn"),
+      copyBtn: document.getElementById("copyBtn"),
+      lengthRange: document.getElementById("lengthRange"),
+      lengthValue: document.getElementById("lengthValue"),
+      uppercase: document.getElementById("uppercase"),
+      lowercase: document.getElementById("lowercase"),
+      numbers: document.getElementById("numbers"),
+      symbols: document.getElementById("symbols"),
+      excludeAmbiguous: document.getElementById("excludeAmbiguous"),
+      strengthText: document.getElementById("strengthText"),
+      strengthBars: [...document.querySelectorAll(".strength-bar")],
+      historyList: document.getElementById("historyList"),
+      clearHistoryBtn: document.getElementById("clearHistoryBtn"),
+      toast: document.getElementById("toast")
+    };
+
+    let passwordVisible = true;
+    let history = loadHistory();
+
+    function secureRandomInt(max) {
+      if (!Number.isInteger(max) || max <= 0) {
+        throw new Error("Phạm vi ngẫu nhiên phải lớn hơn 0");
+      }
+
+      const maxUint32 = 0x100000000;
+      const limit = maxUint32 - (maxUint32 % max);
+      const random = new Uint32Array(1);
+
+      do {
+        crypto.getRandomValues(random);
+      } while (random[0] >= limit);
+
+      return random[0] % max;
+    }
+
+    function secureShuffle(items) {
+      const result = [...items];
+
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = secureRandomInt(i + 1);
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+
+      return result;
+    }
+
+    function cleanSet(characterSet) {
+      if (!els.excludeAmbiguous.checked) return characterSet;
+
+      return [...characterSet]
+        .filter(char => !ambiguousCharacters.has(char))
+        .join("");
+    }
+
+    function getSelectedSets() {
+      const selected = [];
+
+      if (els.uppercase.checked) selected.push(cleanSet(sets.uppercase));
+      if (els.lowercase.checked) selected.push(cleanSet(sets.lowercase));
+      if (els.numbers.checked) selected.push(cleanSet(sets.numbers));
+      if (els.symbols.checked) selected.push(cleanSet(sets.symbols));
+
+      return selected.filter(Boolean);
+    }
+
+    function generatePassword(saveToHistory = true) {
+      const selectedSets = getSelectedSets();
+      const length = Number(els.lengthRange.value);
+
+      if (selectedSets.length === 0) {
+        els.lowercase.checked = true;
+        showToast("Vui lòng chọn ít nhất một loại ký tự");
+        return generatePassword(saveToHistory);
+      }
+
+      const allCharacters = selectedSets.join("");
+      const result = [];
+
+      selectedSets.forEach(characterSet => {
+        result.push(characterSet[secureRandomInt(characterSet.length)]);
+      });
+
+      while (result.length < length) {
+        result.push(allCharacters[secureRandomInt(allCharacters.length)]);
+      }
+
+      const password = secureShuffle(result).join("");
+      els.passwordOutput.value = password;
+      updateStrength(password);
+
+      if (saveToHistory) {
+        addToHistory(password);
+      }
+    }
+
+    function calculateStrength(password) {
+      let score = 0;
+      const length = password.length;
+      const types = [
+        /[a-z]/.test(password),
+        /[A-Z]/.test(password),
+        /\d/.test(password),
+        /[^A-Za-z0-9]/.test(password)
+      ].filter(Boolean).length;
+
+      if (length >= 8) score++;
+      if (length >= 12) score++;
+      if (length >= 16) score++;
+      if (types >= 3) score++;
+      if (types === 4 && length >= 20) score++;
+
+      return Math.max(1, Math.min(4, score));
+    }
+
+    function updateStrength(password) {
+      const score = calculateStrength(password);
+      const labels = ["Yếu", "Trung bình", "Mạnh", "Rất mạnh"];
+      const colors = ["#ef5350", "#f3a72f", "#20b26b", "#6c63ff"];
+
+      els.strengthText.textContent = labels[score - 1];
+      els.strengthText.style.color = colors[score - 1];
+
+      els.strengthBars.forEach((bar, index) => {
+        bar.style.background = index < score ? colors[score - 1] : "#e9ebf2";
+      });
+    }
+
+    async function copyText(text) {
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.style.position = "fixed";
+        temp.style.opacity = "0";
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        temp.remove();
+      }
+
+      showToast("Đã sao chép mật khẩu");
+    }
+
+    function addToHistory(password) {
+      history = [password, ...history.filter(item => item !== password)].slice(0, 8);
+      localStorage.setItem("passwordGeneratorHistory", JSON.stringify(history));
+      renderHistory();
+    }
+
+    function loadHistory() {
+      try {
+        const data = JSON.parse(localStorage.getItem("passwordGeneratorHistory"));
+        return Array.isArray(data) ? data.slice(0, 8) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function renderHistory() {
+      els.historyList.innerHTML = "";
+
+      if (history.length === 0) {
+        els.historyList.innerHTML = '<div class="empty">Chưa có lịch sử tạo mật khẩu</div>';
+        return;
+      }
+
+      history.forEach(password => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const text = document.createElement("div");
+        text.className = "history-password";
+        text.textContent = password;
+
+        const button = document.createElement("button");
+        button.className = "mini-copy";
+        button.textContent = "⧉";
+        button.setAttribute("aria-label", "Sao chép mật khẩu này");
+        button.addEventListener("click", () => copyText(password));
+
+        item.append(text, button);
+        els.historyList.appendChild(item);
+      });
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => {
+        els.toast.classList.remove("show");
+      }, 1600);
+    }
+
+    function refreshPassword() {
+      els.lengthValue.textContent = els.lengthRange.value;
+      generatePassword();
+    }
+
+    els.generateBtn.addEventListener("click", () => generatePassword());
+    els.copyBtn.addEventListener("click", () => copyText(els.passwordOutput.value));
+
+    els.visibilityBtn.addEventListener("click", () => {
+      passwordVisible = !passwordVisible;
+      els.passwordOutput.style.webkitTextSecurity = passwordVisible ? "none" : "disc";
+      els.visibilityBtn.textContent = passwordVisible ? "◉" : "◎";
+      els.visibilityBtn.setAttribute(
+        "aria-label",
+        passwordVisible ? "Ẩn mật khẩu" : "Hiện mật khẩu"
+      );
+    });
+
+    els.lengthRange.addEventListener("input", refreshPassword);
+
+    [
+      els.uppercase,
+      els.lowercase,
+      els.numbers,
+      els.symbols,
+      els.excludeAmbiguous
+    ].forEach(control => {
+      control.addEventListener("change", () => generatePassword());
+    });
+
+    els.clearHistoryBtn.addEventListener("click", () => {
+      history = [];
+      localStorage.removeItem("passwordGeneratorHistory");
+      renderHistory();
+      showToast("Đã xóa lịch sử");
+    });
+
+    renderHistory();
+    generatePassword(false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6C63FF" />
+  <title>Trình tạo số ngẫu nhiên</title>
+  <style>
+    :root {
+      --primary: #6c63ff;
+      --primary-dark: #564ee8;
+      --secondary: #eef0ff;
+      --text: #1f2430;
+      --muted: #7a8192;
+      --border: #e7e9f2;
+      --card: rgba(255, 255, 255, 0.94);
+      --danger: #e55353;
+      --shadow: 0 18px 45px rgba(67, 62, 140, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(108, 99, 255, 0.18), transparent 34%),
+        radial-gradient(circle at 90% 18%, rgba(83, 207, 174, 0.14), transparent 28%),
+        linear-gradient(160deg, #f8f8ff 0%, #f3f5fb 100%);
+      padding: 22px 14px calc(28px + env(safe-area-inset-bottom));
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      width: min(100%, 520px);
+      margin: 0 auto;
+    }
+
+    .header {
+      padding: 16px 4px 18px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(28px, 8vw, 38px);
+      letter-spacing: -1px;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .form {
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4e5566;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      padding: 0 14px;
+      transition: 0.2s ease;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.12);
+    }
+
+    .switch-row {
+      min-height: 52px;
+      padding: 0 2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-top: 1px solid #f0f1f6;
+    }
+
+    .switch-row span {
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background: #d9dce7;
+      border-radius: 99px;
+      transition: 0.22s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      transition: 0.22s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--primary);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    .generate-btn {
+      width: 100%;
+      height: 54px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--primary), #8b83ff);
+      box-shadow: 0 12px 24px rgba(108, 99, 255, 0.26);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .generate-btn:active {
+      transform: scale(0.985);
+      box-shadow: 0 8px 16px rgba(108, 99, 255, 0.2);
+    }
+
+    .result-wrap {
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      background: linear-gradient(180deg, rgba(245, 246, 255, 0.58), #fff);
+    }
+
+    .result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .result-title {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #555d6e;
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .small-btn:active {
+      transform: scale(0.97);
+    }
+
+    .result {
+      min-height: 118px;
+      border: 1px dashed #cfd3e6;
+      border-radius: 18px;
+      background: #fafaff;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .placeholder {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .numbers {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .number {
+      min-width: 64px;
+      min-height: 54px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid #e4e5f2;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 850;
+      color: var(--primary-dark);
+      box-shadow: 0 6px 16px rgba(73, 67, 140, 0.08);
+      word-break: break-all;
+    }
+
+    .message {
+      min-height: 22px;
+      margin: 10px 2px 0;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .history {
+      margin-top: 16px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(231, 233, 242, 0.95);
+      border-radius: 20px;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .history-header h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .history-item {
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: #f7f8fc;
+      font-size: 13px;
+      color: #4f5666;
+      line-height: 1.5;
+      word-break: break-all;
+    }
+
+    .empty-history {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 8px;
+    }
+
+    @media (max-width: 420px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .form,
+      .result-wrap {
+        padding: 17px;
+      }
+
+      .number {
+        min-width: 58px;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>Trình tạo số ngẫu nhiên</h1>
+      <p>Thiết lập phạm vi và số lượng để tạo kết quả ngẫu nhiên chỉ với một lần chạm.</p>
+    </header>
+
+    <section class="card">
+      <div class="form">
+        <div class="grid">
+          <div class="field">
+            <label for="minValue">Giá trị nhỏ nhất</label>
+            <input id="minValue" type="number" value="1" inputmode="decimal" />
+          </div>
+
+          <div class="field">
+            <label for="maxValue">Giá trị lớn nhất</label>
+            <input id="maxValue" type="number" value="100" inputmode="decimal" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="count">Số lượng cần tạo</label>
+            <input id="count" type="number" min="1" max="100" value="1" inputmode="numeric" />
+          </div>
+
+          <div class="field">
+            <label for="decimalPlaces">Số chữ số thập phân</label>
+            <select id="decimalPlaces">
+              <option value="0">Số nguyên</option>
+              <option value="1">1 chữ số thập phân</option>
+              <option value="2">2 chữ số thập phân</option>
+              <option value="3">3 chữ số thập phân</option>
+              <option value="4">4 chữ số thập phân</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="switch-row">
+          <span>Không lặp lại kết quả</span>
+          <label class="switch">
+            <input id="unique" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-row">
+          <span>Tự động sắp xếp</span>
+          <label class="switch">
+            <input id="sortResult" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <button class="generate-btn" id="generateBtn" type="button">Tạo số ngẫu nhiên</button>
+        <div class="message" id="message" aria-live="polite"></div>
+      </div>
+
+      <div class="result-wrap">
+        <div class="result-head">
+          <div class="result-title">Kết quả</div>
+          <div class="actions">
+            <button class="small-btn" id="copyBtn" type="button">Sao chép</button>
+            <button class="small-btn" id="clearBtn" type="button">Xóa</button>
+          </div>
+        </div>
+
+        <div class="result" id="result">
+          <div class="placeholder">Nhấn “Tạo số ngẫu nhiên” để xem kết quả</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="history">
+      <div class="history-header">
+        <h2>Lịch sử gần đây</h2>
+        <button class="small-btn" id="clearHistoryBtn" type="button">Xóa lịch sử</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </section>
+  </main>
+
+  <script>
+    const minInput = document.getElementById("minValue");
+    const maxInput = document.getElementById("maxValue");
+    const countInput = document.getElementById("count");
+    const decimalSelect = document.getElementById("decimalPlaces");
+    const uniqueInput = document.getElementById("unique");
+    const sortInput = document.getElementById("sortResult");
+    const resultEl = document.getElementById("result");
+    const messageEl = document.getElementById("message");
+    const historyListEl = document.getElementById("historyList");
+
+    let currentNumbers = [];
+    let history = loadHistory();
+
+    function secureRandom() {
+      if (window.crypto && window.crypto.getRandomValues) {
+        const array = new Uint32Array(1);
+        window.crypto.getRandomValues(array);
+        return array[0] / 4294967296;
+      }
+      return Math.random();
+    }
+
+    function randomInteger(min, max) {
+      return Math.floor(secureRandom() * (max - min + 1)) + min;
+    }
+
+    function randomDecimal(min, max, decimals) {
+      const factor = 10 ** decimals;
+      const minScaled = Math.ceil(min * factor);
+      const maxScaled = Math.floor(max * factor);
+      return randomInteger(minScaled, maxScaled) / factor;
+    }
+
+    function generateNumbers() {
+      messageEl.textContent = "";
+
+      const min = Number(minInput.value);
+      const max = Number(maxInput.value);
+      const count = Number.parseInt(countInput.value, 10);
+      const decimals = Number.parseInt(decimalSelect.value, 10);
+      const unique = uniqueInput.checked;
+      const shouldSort = sortInput.checked;
+
+      if (!Number.isFinite(min) || !Number.isFinite(max)) {
+        showError("Vui lòng nhập giá trị nhỏ nhất và lớn nhất hợp lệ.");
+        return;
+      }
+
+      if (min > max) {
+        showError("Giá trị nhỏ nhất không được lớn hơn giá trị lớn nhất.");
+        return;
+      }
+
+      if (!Number.isInteger(count) || count < 1 || count > 100) {
+        showError("Số lượng phải là số nguyên từ 1 đến 100.");
+        return;
+      }
+
+      const factor = 10 ** decimals;
+      const availableCount =
+        Math.floor(max * factor) - Math.ceil(min * factor) + 1;
+
+      if (availableCount <= 0) {
+        showError("Phạm vi hiện tại không thể tạo số với số chữ số thập phân đã chọn.");
+        return;
+      }
+
+      if (unique && count > availableCount) {
+        showError(`Phạm vi hiện tại chỉ có thể tạo tối đa ${availableCount} số không trùng lặp.`);
+        return;
+      }
+
+      const values = [];
+      const used = new Set();
+
+      while (values.length < count) {
+        const value =
+          decimals === 0
+            ? randomInteger(Math.ceil(min), Math.floor(max))
+            : randomDecimal(min, max, decimals);
+
+        const key = value.toFixed(decimals);
+
+        if (!unique || !used.has(key)) {
+          used.add(key);
+          values.push(decimals === 0 ? String(value) : key);
+        }
+      }
+
+      if (shouldSort) {
+        values.sort((a, b) => Number(a) - Number(b));
+      }
+
+      currentNumbers = values;
+      renderResult(values);
+      addHistory(values);
+    }
+
+    function renderResult(values) {
+      resultEl.innerHTML = "";
+      const container = document.createElement("div");
+      container.className = "numbers";
+
+      values.forEach((value) => {
+        const item = document.createElement("div");
+        item.className = "number";
+        item.textContent = value;
+        container.appendChild(item);
+      });
+
+      resultEl.appendChild(container);
+    }
+
+    function clearResult() {
+      currentNumbers = [];
+      messageEl.textContent = "";
+      resultEl.innerHTML =
+        '<div class="placeholder">Nhấn “Tạo số ngẫu nhiên” để xem kết quả</div>';
+    }
+
+    async function copyResult() {
+      if (!currentNumbers.length) {
+        showError("Hiện không có kết quả để sao chép.");
+        return;
+      }
+
+      const text = currentNumbers.join(", ");
+
+      try {
+        await navigator.clipboard.writeText(text);
+        messageEl.style.color = "#26a269";
+        messageEl.textContent = "Đã sao chép kết quả.";
+      } catch (error) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+        messageEl.style.color = "#26a269";
+        messageEl.textContent = "Đã sao chép kết quả.";
+      }
+
+      window.setTimeout(() => {
+        messageEl.textContent = "";
+        messageEl.style.color = "";
+      }, 1800);
+    }
+
+    function showError(text) {
+      messageEl.style.color = "";
+      messageEl.textContent = text;
+    }
+
+    function loadHistory() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("randomNumberHistory"));
+        return Array.isArray(saved) ? saved : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function addHistory(values) {
+      const record = {
+        time: new Date().toLocaleString("vi-VN", { hour12: false }),
+        values: values.join(", ")
+      };
+
+      history.unshift(record);
+      history = history.slice(0, 8);
+      localStorage.setItem("randomNumberHistory", JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      historyListEl.innerHTML = "";
+
+      if (!history.length) {
+        historyListEl.innerHTML =
+          '<div class="empty-history">Chưa có lịch sử tạo số</div>';
+        return;
+      }
+
+      history.forEach((record) => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+        item.textContent = `${record.time}  ·  ${record.values}`;
+        historyListEl.appendChild(item);
+      });
+    }
+
+    function clearHistory() {
+      history = [];
+      localStorage.removeItem("randomNumberHistory");
+      renderHistory();
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", generateNumbers);
+    document.getElementById("copyBtn").addEventListener("click", copyResult);
+    document.getElementById("clearBtn").addEventListener("click", clearResult);
+    document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
+
+    [minInput, maxInput, countInput].forEach((input) => {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          generateNumbers();
+        }
+      });
+    });
+
+    renderHistory();
+  </script>
+</body>
+</html>

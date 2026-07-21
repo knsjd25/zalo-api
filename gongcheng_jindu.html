@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>Theo dõi tiến độ công trình</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --text: #172033;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      width: min(100%, 720px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-bottom: 92px;
+    }
+
+    .header {
+      padding: 24px 18px 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(255,255,255,.2), transparent 30%),
+        linear-gradient(135deg, #2563eb, #1e40af);
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, .22);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.22);
+      font-size: 25px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      opacity: .82;
+    }
+
+    .today {
+      white-space: nowrap;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.15);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: -3px 14px 0;
+      transform: translateY(18px);
+    }
+
+    .stat-card {
+      min-width: 0;
+      padding: 14px 10px;
+      text-align: center;
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-value {
+      font-size: 23px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .content {
+      padding: 38px 14px 20px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-wrap span {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search,
+    .filter {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      outline: none;
+    }
+
+    .search {
+      padding: 0 12px 0 38px;
+    }
+
+    .filter {
+      width: 128px;
+      padding: 0 10px;
+      color: var(--text);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 18px 2px 10px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .link-button {
+      padding: 7px 10px;
+      border-radius: 10px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .record-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .record-card {
+      padding: 15px;
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 7px 22px rgba(15, 23, 42, .06);
+      border: 1px solid rgba(229, 231, 235, .8);
+    }
+
+    .record-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .record-title {
+      min-width: 0;
+    }
+
+    .record-title h3 {
+      margin: 0;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .record-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      flex: none;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status.todo { color: #475569; background: #f1f5f9; }
+    .status.doing { color: #1d4ed8; background: #dbeafe; }
+    .status.paused { color: #b45309; background: #fef3c7; }
+    .status.done { color: #15803d; background: #dcfce7; }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #eaf0f8;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #60a5fa, #2563eb);
+    }
+
+    .progress-text {
+      min-width: 39px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .record-detail {
+      display: grid;
+      gap: 7px;
+      padding: 12px;
+      border-radius: 13px;
+      background: #f8fafc;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .record-detail div {
+      overflow-wrap: anywhere;
+    }
+
+    .record-detail strong {
+      color: #334155;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .action-btn {
+      min-width: 64px;
+      padding: 8px 11px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .edit-btn { color: var(--primary); background: var(--primary-soft); }
+    .delete-btn { color: var(--danger); background: #fef2f2; }
+
+    .empty {
+      padding: 42px 20px;
+      text-align: center;
+      color: var(--muted);
+      border-radius: var(--radius);
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .empty-icon {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .fab {
+      position: fixed;
+      z-index: 30;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      width: min(calc(100% - 28px), 692px);
+      height: 56px;
+      color: #fff;
+      border-radius: 17px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 13px 30px rgba(37, 99, 235, .32);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(15, 23, 42, .48);
+      backdrop-filter: blur(3px);
+    }
+
+    .modal.open { display: flex; }
+
+    .sheet {
+      width: min(100%, 720px);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 14px 16px 24px;
+      border-radius: 24px 24px 0 0;
+      background: #fff;
+      animation: slideUp .22s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(35px); opacity: .6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .sheet-handle {
+      width: 42px;
+      height: 5px;
+      margin: 0 auto 13px;
+      border-radius: 999px;
+      background: #d1d5db;
+    }
+
+    .sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .sheet-head h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .close-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      color: #334155;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--danger);
+    }
+
+    .input,
+    .textarea,
+    .select {
+      width: 100%;
+      border: 1px solid #dbe1ea;
+      border-radius: 12px;
+      background: #fff;
+      outline: none;
+      transition: .15s;
+    }
+
+    .input,
+    .select {
+      height: 45px;
+      padding: 0 12px;
+    }
+
+    .textarea {
+      min-height: 82px;
+      padding: 11px 12px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .input:focus,
+    .textarea:focus,
+    .select:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,.18);
+    }
+
+    .range-box {
+      display: grid;
+      grid-template-columns: 1fr 58px;
+      align-items: center;
+      gap: 10px;
+      height: 45px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    .range-value {
+      padding: 7px 6px;
+      text-align: center;
+      border-radius: 9px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 50px;
+      margin-top: 4px;
+      color: #fff;
+      border-radius: 14px;
+      background: var(--primary);
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(37,99,235,.22);
+    }
+
+    .tools-menu {
+      position: fixed;
+      z-index: 110;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, .45);
+    }
+
+    .tools-menu.open { display: grid; }
+
+    .tools-card {
+      width: min(100%, 380px);
+      padding: 18px;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .tools-card h3 {
+      margin: 0 0 14px;
+    }
+
+    .tool-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 9px;
+      text-align: left;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .tool-btn.danger {
+      color: var(--danger);
+      background: #fef2f2;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      left: 50%;
+      bottom: 92px;
+      transform: translate(-50%, 20px);
+      max-width: calc(100% - 40px);
+      padding: 11px 15px;
+      color: #fff;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, .92);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 520px) {
+      .header { padding-top: 20px; }
+      .today { display: none; }
+      .dashboard { grid-template-columns: repeat(3, 1fr); }
+      .stat-card { padding-inline: 5px; }
+      .stat-value { font-size: 20px; }
+      .toolbar { flex-direction: column; }
+      .filter { width: 100%; }
+      .form-grid { grid-template-columns: 1fr; gap: 0; }
+      .field.full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="header-row">
+        <div class="brand">
+          <div class="brand-icon">🏗️</div>
+          <div>
+            <h1>Theo dõi tiến độ công trình</h1>
+            <p>Ghi chép công việc nhanh chóng và rõ ràng</p>
+          </div>
+        </div>
+        <div class="today" id="todayText"></div>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <article class="stat-card">
+        <div class="stat-value" id="totalCount">0</div>
+        <div class="stat-label">Tổng bản ghi</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-value" id="doingCount">0</div>
+        <div class="stat-label">Đang thực hiện</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-value" id="avgProgress">0%</div>
+        <div class="stat-label">Tiến độ TB</div>
+      </article>
+    </section>
+
+    <section class="content">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span>⌕</span>
+          <input id="searchInput" class="search" type="search" placeholder="Tìm dự án, hạng mục, người phụ trách..." />
+        </div>
+        <select id="statusFilter" class="filter">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="todo">Chưa bắt đầu</option>
+          <option value="doing">Đang thực hiện</option>
+          <option value="paused">Tạm dừng</option>
+          <option value="done">Đã hoàn thành</option>
+        </select>
+      </div>
+
+      <div class="section-title">
+        <h2>Nhật ký tiến độ</h2>
+        <button id="toolsBtn" class="link-button" type="button">Quản lý dữ liệu</button>
+      </div>
+
+      <div id="recordList" class="record-list"></div>
+    </section>
+  </main>
+
+  <button id="addBtn" class="fab" type="button">＋ Thêm bản ghi tiến độ</button>
+
+  <div id="recordModal" class="modal" aria-hidden="true">
+    <section class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <h2 id="formTitle">Thêm bản ghi mới</h2>
+        <button id="closeModalBtn" class="close-btn" type="button">×</button>
+      </div>
+
+      <form id="recordForm">
+        <input id="recordId" type="hidden" />
+
+        <div class="form-grid">
+          <div class="field full">
+            <label class="required" for="projectName">Tên công trình / dự án</label>
+            <input id="projectName" class="input" type="text" maxlength="80" placeholder="Ví dụ: Công trình nhà xưởng A" required />
+          </div>
+
+          <div class="field">
+            <label class="required" for="workItem">Hạng mục công việc</label>
+            <input id="workItem" class="input" type="text" maxlength="80" placeholder="Ví dụ: Thi công phần móng" required />
+          </div>
+
+          <div class="field">
+            <label class="required" for="recordDate">Ngày ghi nhận</label>
+            <input id="recordDate" class="input" type="date" required />
+          </div>
+
+          <div class="field">
+            <label for="responsible">Người phụ trách</label>
+            <input id="responsible" class="input" type="text" maxlength="40" placeholder="Họ và tên" />
+          </div>
+
+          <div class="field">
+            <label for="status">Trạng thái</label>
+            <select id="status" class="select">
+              <option value="todo">Chưa bắt đầu</option>
+              <option value="doing" selected>Đang thực hiện</option>
+              <option value="paused">Tạm dừng</option>
+              <option value="done">Đã hoàn thành</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="progress">Tiến độ hoàn thành</label>
+            <div class="range-box">
+              <input id="progress" type="range" min="0" max="100" step="1" value="0" />
+              <div id="progressValue" class="range-value">0%</div>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label class="required" for="completedWork">Công việc đã thực hiện</label>
+            <textarea id="completedWork" class="textarea" maxlength="500" placeholder="Mô tả nội dung và khối lượng công việc đã hoàn thành..." required></textarea>
+          </div>
+
+          <div class="field full">
+            <label for="issues">Vấn đề / khó khăn</label>
+            <textarea id="issues" class="textarea" maxlength="300" placeholder="Ghi lại vấn đề phát sinh, nguyên nhân hoặc nội dung cần xử lý..."></textarea>
+          </div>
+
+          <div class="field full">
+            <label for="nextPlan">Kế hoạch tiếp theo</label>
+            <textarea id="nextPlan" class="textarea" maxlength="300" placeholder="Nội dung dự kiến thực hiện trong giai đoạn tiếp theo..."></textarea>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="submit">Lưu bản ghi</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="toolsMenu" class="tools-menu">
+    <div class="tools-card">
+      <h3>Quản lý dữ liệu</h3>
+      <button id="exportBtn" class="tool-btn" type="button">⬇ Xuất dữ liệu JSON</button>
+      <button id="importBtn" class="tool-btn" type="button">⬆ Nhập dữ liệu JSON</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden />
+      <button id="clearBtn" class="tool-btn danger" type="button">🗑 Xóa toàn bộ dữ liệu</button>
+      <button id="closeToolsBtn" class="tool-btn" type="button">Đóng</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "construction_progress_records_v1";
+
+      const $ = (id) => document.getElementById(id);
+      const elements = {
+        todayText: $("todayText"),
+        totalCount: $("totalCount"),
+        doingCount: $("doingCount"),
+        avgProgress: $("avgProgress"),
+        searchInput: $("searchInput"),
+        statusFilter: $("statusFilter"),
+        recordList: $("recordList"),
+        addBtn: $("addBtn"),
+        toolsBtn: $("toolsBtn"),
+        recordModal: $("recordModal"),
+        closeModalBtn: $("closeModalBtn"),
+        formTitle: $("formTitle"),
+        recordForm: $("recordForm"),
+        recordId: $("recordId"),
+        projectName: $("projectName"),
+        workItem: $("workItem"),
+        recordDate: $("recordDate"),
+        responsible: $("responsible"),
+        status: $("status"),
+        progress: $("progress"),
+        progressValue: $("progressValue"),
+        completedWork: $("completedWork"),
+        issues: $("issues"),
+        nextPlan: $("nextPlan"),
+        toolsMenu: $("toolsMenu"),
+        exportBtn: $("exportBtn"),
+        importBtn: $("importBtn"),
+        importFile: $("importFile"),
+        clearBtn: $("clearBtn"),
+        closeToolsBtn: $("closeToolsBtn"),
+        toast: $("toast")
+      };
+
+      let records = loadRecords();
+
+      const statusMap = {
+        todo: { label: "Chưa bắt đầu", className: "todo" },
+        doing: { label: "Đang thực hiện", className: "doing" },
+        paused: { label: "Tạm dừng", className: "paused" },
+        done: { label: "Đã hoàn thành", className: "done" }
+      };
+
+      function loadRecords() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(data) ? data : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveRecords() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      }
+
+      function escapeHtml(value = "") {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatDate(dateString) {
+        if (!dateString) return "—";
+        const date = new Date(dateString + "T00:00:00");
+        return new Intl.DateTimeFormat("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric"
+        }).format(date);
+      }
+
+      function todayValue() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+      }
+
+      function updateToday() {
+        elements.todayText.textContent = new Intl.DateTimeFormat("vi-VN", {
+          weekday: "short",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric"
+        }).format(new Date());
+      }
+
+      function updateStats() {
+        elements.totalCount.textContent = records.length;
+        elements.doingCount.textContent = records.filter(r => r.status === "doing").length;
+        const avg = records.length
+          ? Math.round(records.reduce((sum, r) => sum + Number(r.progress || 0), 0) / records.length)
+          : 0;
+        elements.avgProgress.textContent = avg + "%";
+      }
+
+      function renderRecords() {
+        const keyword = elements.searchInput.value.trim().toLowerCase();
+        const selectedStatus = elements.statusFilter.value;
+
+        const filtered = records
+          .filter(record => {
+            const text = [
+              record.projectName,
+              record.workItem,
+              record.responsible,
+              record.completedWork,
+              record.issues,
+              record.nextPlan
+            ].join(" ").toLowerCase();
+
+            const matchKeyword = !keyword || text.includes(keyword);
+            const matchStatus = selectedStatus === "all" || record.status === selectedStatus;
+            return matchKeyword && matchStatus;
+          })
+          .sort((a, b) => {
+            const dateCompare = String(b.recordDate).localeCompare(String(a.recordDate));
+            return dateCompare || Number(b.updatedAt || b.createdAt) - Number(a.updatedAt || a.createdAt);
+          });
+
+        if (!filtered.length) {
+          elements.recordList.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">📝</div>
+              <strong>Chưa có bản ghi phù hợp</strong>
+              <div style="margin-top:6px;font-size:13px;">Nhấn “Thêm bản ghi tiến độ” để bắt đầu.</div>
+            </div>
+          `;
+          updateStats();
+          return;
+        }
+
+        elements.recordList.innerHTML = filtered.map(record => {
+          const status = statusMap[record.status] || statusMap.todo;
+          const issues = record.issues
+            ? `<div><strong>Vấn đề:</strong> ${escapeHtml(record.issues)}</div>`
+            : "";
+          const nextPlan = record.nextPlan
+            ? `<div><strong>Kế hoạch tiếp theo:</strong> ${escapeHtml(record.nextPlan)}</div>`
+            : "";
+          const responsible = record.responsible
+            ? ` · ${escapeHtml(record.responsible)}`
+            : "";
+
+          return `
+            <article class="record-card">
+              <div class="record-top">
+                <div class="record-title">
+                  <h3>${escapeHtml(record.projectName)}</h3>
+                  <p>${escapeHtml(record.workItem)} · ${formatDate(record.recordDate)}${responsible}</p>
+                </div>
+                <span class="status ${status.className}">${status.label}</span>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-track">
+                  <div class="progress-bar" style="width:${Math.min(100, Math.max(0, Number(record.progress) || 0))}%"></div>
+                </div>
+                <div class="progress-text">${Number(record.progress) || 0}%</div>
+              </div>
+
+              <div class="record-detail">
+                <div><strong>Đã thực hiện:</strong> ${escapeHtml(record.completedWork)}</div>
+                ${issues}
+                ${nextPlan}
+              </div>
+
+              <div class="card-actions">
+                <button class="action-btn edit-btn" type="button" data-action="edit" data-id="${record.id}">Sửa</button>
+                <button class="action-btn delete-btn" type="button" data-action="delete" data-id="${record.id}">Xóa</button>
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        updateStats();
+      }
+
+      function openModal(record = null) {
+        elements.recordForm.reset();
+        elements.recordId.value = "";
+        elements.formTitle.textContent = record ? "Chỉnh sửa bản ghi" : "Thêm bản ghi mới";
+
+        if (record) {
+          elements.recordId.value = record.id;
+          elements.projectName.value = record.projectName || "";
+          elements.workItem.value = record.workItem || "";
+          elements.recordDate.value = record.recordDate || todayValue();
+          elements.responsible.value = record.responsible || "";
+          elements.status.value = record.status || "doing";
+          elements.progress.value = Number(record.progress) || 0;
+          elements.completedWork.value = record.completedWork || "";
+          elements.issues.value = record.issues || "";
+          elements.nextPlan.value = record.nextPlan || "";
+        } else {
+          elements.recordDate.value = todayValue();
+          elements.status.value = "doing";
+          elements.progress.value = 0;
+        }
+
+        updateRange();
+        elements.recordModal.classList.add("open");
+        elements.recordModal.setAttribute("aria-hidden", "false");
+        setTimeout(() => elements.projectName.focus(), 180);
+      }
+
+      function closeModal() {
+        elements.recordModal.classList.remove("open");
+        elements.recordModal.setAttribute("aria-hidden", "true");
+      }
+
+      function updateRange() {
+        elements.progressValue.textContent = elements.progress.value + "%";
+      }
+
+      function showToast(message) {
+        elements.toast.textContent = message;
+        elements.toast.classList.add("show");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => elements.toast.classList.remove("show"), 1800);
+      }
+
+      function handleSubmit(event) {
+        event.preventDefault();
+
+        const id = elements.recordId.value;
+        const oldRecord = records.find(r => r.id === id);
+        const now = Date.now();
+
+        const record = {
+          id: id || (crypto.randomUUID ? crypto.randomUUID() : String(now) + Math.random().toString(16).slice(2)),
+          projectName: elements.projectName.value.trim(),
+          workItem: elements.workItem.value.trim(),
+          recordDate: elements.recordDate.value,
+          responsible: elements.responsible.value.trim(),
+          status: elements.status.value,
+          progress: Number(elements.progress.value),
+          completedWork: elements.completedWork.value.trim(),
+          issues: elements.issues.value.trim(),
+          nextPlan: elements.nextPlan.value.trim(),
+          createdAt: oldRecord?.createdAt || now,
+          updatedAt: now
+        };
+
+        if (!record.projectName || !record.workItem || !record.recordDate || !record.completedWork) {
+          showToast("Vui lòng điền đầy đủ các mục bắt buộc.");
+          return;
+        }
+
+        if (record.status === "done" && record.progress < 100) {
+          record.progress = 100;
+        }
+
+        if (id) {
+          records = records.map(item => item.id === id ? record : item);
+          showToast("Đã cập nhật bản ghi.");
+        } else {
+          records.push(record);
+          showToast("Đã thêm bản ghi mới.");
+        }
+
+        saveRecords();
+        closeModal();
+        renderRecords();
+      }
+
+      function deleteRecord(id) {
+        const record = records.find(item => item.id === id);
+        if (!record) return;
+
+        const ok = confirm(`Bạn có chắc muốn xóa bản ghi “${record.projectName} - ${record.workItem}”?`);
+        if (!ok) return;
+
+        records = records.filter(item => item.id !== id);
+        saveRecords();
+        renderRecords();
+        showToast("Đã xóa bản ghi.");
+      }
+
+      function exportData() {
+        if (!records.length) {
+          showToast("Chưa có dữ liệu để xuất.");
+          return;
+        }
+
+        const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `tien-do-cong-trinh-${todayValue()}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast("Đã xuất dữ liệu.");
+      }
+
+      function importData(file) {
+        if (!file) return;
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          try {
+            const imported = JSON.parse(reader.result);
+            if (!Array.isArray(imported)) throw new Error("invalid");
+
+            const valid = imported.filter(item =>
+              item &&
+              typeof item === "object" &&
+              item.projectName &&
+              item.workItem &&
+              item.recordDate
+            );
+
+            if (!valid.length) throw new Error("empty");
+
+            const ok = confirm(`Tìm thấy ${valid.length} bản ghi. Bạn có muốn thay thế dữ liệu hiện tại không?`);
+            if (!ok) return;
+
+            records = valid.map((item, index) => ({
+              ...item,
+              id: item.id || `${Date.now()}-${index}`,
+              progress: Math.min(100, Math.max(0, Number(item.progress) || 0)),
+              status: statusMap[item.status] ? item.status : "todo"
+            }));
+
+            saveRecords();
+            renderRecords();
+            elements.toolsMenu.classList.remove("open");
+            showToast("Đã nhập dữ liệu thành công.");
+          } catch {
+            alert("Tệp dữ liệu không hợp lệ. Vui lòng chọn đúng tệp JSON đã xuất từ ứng dụng.");
+          } finally {
+            elements.importFile.value = "";
+          }
+        };
+
+        reader.readAsText(file, "UTF-8");
+      }
+
+      elements.addBtn.addEventListener("click", () => openModal());
+      elements.closeModalBtn.addEventListener("click", closeModal);
+      elements.recordForm.addEventListener("submit", handleSubmit);
+      elements.progress.addEventListener("input", updateRange);
+
+      elements.status.addEventListener("change", () => {
+        if (elements.status.value === "done") {
+          elements.progress.value = 100;
+          updateRange();
+        }
+      });
+
+      elements.searchInput.addEventListener("input", renderRecords);
+      elements.statusFilter.addEventListener("change", renderRecords);
+
+      elements.recordList.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) return;
+
+        const id = button.dataset.id;
+        if (button.dataset.action === "edit") {
+          const record = records.find(item => item.id === id);
+          if (record) openModal(record);
+        }
+
+        if (button.dataset.action === "delete") {
+          deleteRecord(id);
+        }
+      });
+
+      elements.recordModal.addEventListener("click", (event) => {
+        if (event.target === elements.recordModal) closeModal();
+      });
+
+      elements.toolsBtn.addEventListener("click", () => elements.toolsMenu.classList.add("open"));
+      elements.closeToolsBtn.addEventListener("click", () => elements.toolsMenu.classList.remove("open"));
+      elements.toolsMenu.addEventListener("click", (event) => {
+        if (event.target === elements.toolsMenu) elements.toolsMenu.classList.remove("open");
+      });
+
+      elements.exportBtn.addEventListener("click", exportData);
+      elements.importBtn.addEventListener("click", () => elements.importFile.click());
+      elements.importFile.addEventListener("change", () => importData(elements.importFile.files[0]));
+
+      elements.clearBtn.addEventListener("click", () => {
+        if (!records.length) {
+          showToast("Không có dữ liệu để xóa.");
+          return;
+        }
+
+        const ok = confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu? Thao tác này không thể hoàn tác.");
+        if (!ok) return;
+
+        records = [];
+        saveRecords();
+        renderRecords();
+        elements.toolsMenu.classList.remove("open");
+        showToast("Đã xóa toàn bộ dữ liệu.");
+      });
+
+      updateToday();
+      renderRecords();
+    })();
+  </script>
+</body>
+</html>

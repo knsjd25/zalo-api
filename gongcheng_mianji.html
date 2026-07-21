@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f47b45" />
+  <title>Máy tính diện tích xây dựng</title>
+  <style>
+    :root {
+      --primary: #f47b45;
+      --primary-dark: #dc6230;
+      --primary-soft: #fff2eb;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #22252b;
+      --muted: #7d8592;
+      --line: #e9edf3;
+      --danger: #e55252;
+      --success: #2d9b6f;
+      --shadow: 0 12px 30px rgba(35, 47, 63, 0.08);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(244, 123, 69, 0.16), transparent 32%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(100%, 520px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 0 16px calc(32px + env(safe-area-inset-bottom));
+    }
+
+    .hero {
+      margin: 0 -16px;
+      padding: calc(22px + env(safe-area-inset-top)) 22px 28px;
+      color: #fff;
+      background: linear-gradient(135deg, #f47b45 0%, #ff9e67 100%);
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 12px 28px rgba(244, 123, 69, 0.24);
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      font-size: 25px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity: 0.88;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 12px;
+      margin-top: -18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .summary-card {
+      min-height: 104px;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-value {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      margin-top: 8px;
+      color: var(--primary-dark);
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+    }
+
+    .summary-value small {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .summary-card.secondary .summary-value {
+      color: var(--text);
+      font-size: 25px;
+    }
+
+    .card {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .shape-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+
+    .shape-tab {
+      min-height: 42px;
+      padding: 8px 6px;
+      border-radius: 13px;
+      color: #656d78;
+      background: #f4f6f9;
+      font-size: 13px;
+      font-weight: 650;
+      transition: 0.2s ease;
+    }
+
+    .shape-tab.active {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      box-shadow: inset 0 0 0 1px rgba(244, 123, 69, 0.25);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: #555d68;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap input,
+    .field select {
+      width: 100%;
+      height: 47px;
+      padding: 0 42px 0 13px;
+      outline: none;
+      color: var(--text);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      transition: 0.2s ease;
+    }
+
+    .field select {
+      padding-right: 12px;
+    }
+
+    .input-wrap input:focus,
+    .field select:focus {
+      border-color: rgba(244, 123, 69, 0.75);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(244, 123, 69, 0.09);
+    }
+
+    .unit {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .preview {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #fff7f2, #fff);
+      border: 1px solid #ffe1d1;
+    }
+
+    .preview-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .preview-value {
+      margin-top: 4px;
+      color: var(--primary-dark);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .preview-note {
+      max-width: 46%;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: right;
+    }
+
+    .primary-btn {
+      width: 100%;
+      height: 50px;
+      margin-top: 14px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #ff965e);
+      border-radius: 15px;
+      font-weight: 750;
+      box-shadow: 0 10px 22px rgba(244, 123, 69, 0.22);
+    }
+
+    .primary-btn:active {
+      transform: translateY(1px);
+    }
+
+    .text-btn {
+      padding: 7px 10px;
+      color: var(--danger);
+      background: #fff2f2;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .empty {
+      padding: 26px 12px 18px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .empty-icon {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 31px;
+      opacity: 0.55;
+    }
+
+    .record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .record-item {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      align-items: center;
+      gap: 11px;
+      padding: 12px;
+      border-radius: 15px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .record-icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      border-radius: 12px;
+      font-size: 18px;
+    }
+
+    .record-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .record-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .record-right {
+      text-align: right;
+    }
+
+    .record-area {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .delete-btn {
+      margin-top: 6px;
+      padding: 4px 7px;
+      color: var(--danger);
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .tips {
+      margin: 16px 2px 0;
+      padding: 14px 15px;
+      color: #686f79;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px dashed #d9dee7;
+      border-radius: 16px;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(28px + env(safe-area-inset-bottom));
+      z-index: 20;
+      max-width: calc(100% - 40px);
+      padding: 10px 16px;
+      color: #fff;
+      background: rgba(28, 31, 36, 0.92);
+      border-radius: 12px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translate(-50%, 16px);
+      pointer-events: none;
+      transition: 0.22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 360px) {
+      .summary-value {
+        font-size: 26px;
+      }
+
+      .shape-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="hero-icon">▦</div>
+        <div>
+          <h1>Máy tính diện tích xây dựng</h1>
+          <p>Tính nhanh và tổng hợp diện tích của từng khu vực</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Diện tích được tính</div>
+        <div class="summary-value">
+          <span id="totalArea">0.00</span>
+          <small>m²</small>
+        </div>
+      </div>
+      <div class="summary-card secondary">
+        <div class="summary-label">Khu vực đã thêm</div>
+        <div class="summary-value">
+          <span id="recordCount">0</span>
+          <small>mục</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Thêm khu vực tính toán</h2>
+          <div class="section-subtitle">Chọn hình dạng và nhập kích thước</div>
+        </div>
+      </div>
+
+      <div class="shape-tabs" id="shapeTabs">
+        <button class="shape-tab active" data-shape="rectangle">Hình chữ nhật</button>
+        <button class="shape-tab" data-shape="triangle">Hình tam giác</button>
+        <button class="shape-tab" data-shape="trapezoid">Hình thang</button>
+        <button class="shape-tab" data-shape="circle">Hình tròn</button>
+        <button class="shape-tab" data-shape="custom">Nhập trực tiếp</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label for="areaName">Tên khu vực</label>
+          <div class="input-wrap">
+            <input id="areaName" type="text" maxlength="30" placeholder="Ví dụ: phòng khách tầng 1, ban công, nhà kho" />
+          </div>
+        </div>
+
+        <div id="dynamicFields" class="field full">
+          <div class="form-grid" id="dimensionFields"></div>
+        </div>
+
+        <div class="field">
+          <label for="quantity">Số lượng</label>
+          <div class="input-wrap">
+            <input id="quantity" type="number" min="1" step="1" value="1" inputmode="numeric" />
+            <span class="unit">mục</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="coefficient">Tỷ lệ tính</label>
+          <select id="coefficient">
+            <option value="1">100% Tính toàn bộ</option>
+            <option value="0.5">50% Tính một nửa</option>
+            <option value="0">0% Không tính</option>
+            <option value="custom">Tùy chỉnh tỷ lệ</option>
+          </select>
+        </div>
+
+        <div class="field full" id="customCoefficientField" style="display:none;">
+          <label for="customCoefficient">Tỷ lệ tính tùy chỉnh</label>
+          <div class="input-wrap">
+            <input id="customCoefficient" type="number" min="0" max="100" step="1" value="100" inputmode="decimal" />
+            <span class="unit">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div>
+          <div class="preview-label">Diện tích hiện tại</div>
+          <div class="preview-value"><span id="previewArea">0.00</span> m²</div>
+        </div>
+        <div class="preview-note" id="formulaText">Diện tích = Dài × Rộng</div>
+      </div>
+
+      <button class="primary-btn" id="addBtn">Thêm vào danh sách diện tích</button>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Chi tiết diện tích</h2>
+          <div class="section-subtitle">Dữ liệu được tự động lưu trên thiết bị này</div>
+        </div>
+        <button class="text-btn" id="clearBtn">Xóa tất cả</button>
+      </div>
+
+      <div id="emptyState" class="empty">
+        <span class="empty-icon">⌂</span>
+        Chưa có dữ liệu tính toán<br />Diện tích sẽ được tự động tổng hợp sau khi thêm khu vực
+      </div>
+
+      <div id="recordList" class="record-list"></div>
+    </section>
+
+    <div class="tips">
+      Lưu ý: Công cụ này chỉ dùng để ước tính nhanh diện tích. Diện tích dùng cho hồ sơ xây dựng, đo đạc hoặc quyền sở hữu phải căn cứ vào quy định địa phương, bản vẽ thiết kế và kết quả đo đạc chuyên nghiệp.
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "building-area-calculator-records-v1";
+
+      const shapeConfig = {
+        rectangle: {
+          label: "Hình chữ nhật",
+          icon: "▭",
+          formula: "Diện tích = Dài × Rộng",
+          fields: [
+            { key: "length", label: "Chiều dài", placeholder: "Nhập chiều dài" },
+            { key: "width", label: "Chiều rộng", placeholder: "Nhập chiều rộng" }
+          ],
+          calculate: ({ length, width }) => length * width,
+          detail: ({ length, width }) => `${format(length)}m × ${format(width)}m`
+        },
+        triangle: {
+          label: "Hình tam giác",
+          icon: "△",
+          formula: "Diện tích = Đáy × Cao ÷ 2",
+          fields: [
+            { key: "base", label: "Cạnh đáy", placeholder: "Nhập chiều dài cạnh đáy" },
+            { key: "height", label: "Chiều cao", placeholder: "Nhập chiều cao" }
+          ],
+          calculate: ({ base, height }) => base * height / 2,
+          detail: ({ base, height }) => `Đáy ${format(base)}m, cao ${format(height)}m`
+        },
+        trapezoid: {
+          label: "Hình thang",
+          icon: "⏢",
+          formula: "Diện tích = (Đáy trên + Đáy dưới) × Cao ÷ 2",
+          fields: [
+            { key: "topBase", label: "Đáy trên", placeholder: "Nhập chiều dài đáy trên" },
+            { key: "bottomBase", label: "Đáy dưới", placeholder: "Nhập chiều dài đáy dưới" },
+            { key: "height", label: "Chiều cao", placeholder: "Nhập chiều cao" }
+          ],
+          calculate: ({ topBase, bottomBase, height }) => (topBase + bottomBase) * height / 2,
+          detail: ({ topBase, bottomBase, height }) =>
+            `Đáy trên ${format(topBase)}m, đáy dưới ${format(bottomBase)}m, cao ${format(height)}m`
+        },
+        circle: {
+          label: "Hình tròn",
+          icon: "○",
+          formula: "Diện tích = π × Bán kính²",
+          fields: [
+            { key: "radius", label: "Bán kính", placeholder: "Nhập bán kính" }
+          ],
+          calculate: ({ radius }) => Math.PI * radius * radius,
+          detail: ({ radius }) => `Bán kính ${format(radius)}m`
+        },
+        custom: {
+          label: "Nhập trực tiếp",
+          icon: "⌗",
+          formula: "Diện tích = Giá trị nhập",
+          fields: [
+            { key: "area", label: "Diện tích mỗi mục", placeholder: "Nhập diện tích", unit: "m²" }
+          ],
+          calculate: ({ area }) => area,
+          detail: ({ area }) => `Diện tích mỗi mục ${format(area)}m²`
+        }
+      };
+
+      let currentShape = "rectangle";
+      let records = loadRecords();
+
+      const els = {
+        shapeTabs: document.getElementById("shapeTabs"),
+        dimensionFields: document.getElementById("dimensionFields"),
+        areaName: document.getElementById("areaName"),
+        quantity: document.getElementById("quantity"),
+        coefficient: document.getElementById("coefficient"),
+        customCoefficientField: document.getElementById("customCoefficientField"),
+        customCoefficient: document.getElementById("customCoefficient"),
+        previewArea: document.getElementById("previewArea"),
+        formulaText: document.getElementById("formulaText"),
+        addBtn: document.getElementById("addBtn"),
+        clearBtn: document.getElementById("clearBtn"),
+        recordList: document.getElementById("recordList"),
+        emptyState: document.getElementById("emptyState"),
+        totalArea: document.getElementById("totalArea"),
+        recordCount: document.getElementById("recordCount"),
+        toast: document.getElementById("toast")
+      };
+
+      function format(value, digits = 2) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return "0";
+        return number.toFixed(digits).replace(/\.?0+$/, "");
+      }
+
+      function loadRecords() {
+        try {
+          const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(value) ? value : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveRecords() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      }
+
+      function renderFields() {
+        const config = shapeConfig[currentShape];
+        els.dimensionFields.innerHTML = config.fields.map((field) => `
+          <div class="field ${config.fields.length === 1 ? "full" : ""}">
+            <label for="field-${field.key}">${field.label}</label>
+            <div class="input-wrap">
+              <input
+                id="field-${field.key}"
+                data-dimension="${field.key}"
+                type="number"
+                min="0"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="${field.placeholder}"
+              />
+              <span class="unit">${field.unit || "m"}</span>
+            </div>
+          </div>
+        `).join("");
+
+        els.formulaText.textContent = config.formula;
+        els.dimensionFields.querySelectorAll("input").forEach((input) => {
+          input.addEventListener("input", updatePreview);
+        });
+        updatePreview();
+      }
+
+      function getDimensions() {
+        const values = {};
+        els.dimensionFields.querySelectorAll("[data-dimension]").forEach((input) => {
+          values[input.dataset.dimension] = Number(input.value) || 0;
+        });
+        return values;
+      }
+
+      function getCoefficient() {
+        if (els.coefficient.value === "custom") {
+          const value = Math.min(100, Math.max(0, Number(els.customCoefficient.value) || 0));
+          return value / 100;
+        }
+        return Number(els.coefficient.value);
+      }
+
+      function calculateCurrent() {
+        const config = shapeConfig[currentShape];
+        const baseArea = config.calculate(getDimensions());
+        const quantity = Math.max(1, parseInt(els.quantity.value, 10) || 1);
+        const coefficient = getCoefficient();
+        const finalArea = baseArea * quantity * coefficient;
+
+        return {
+          baseArea: Number.isFinite(baseArea) ? baseArea : 0,
+          quantity,
+          coefficient,
+          finalArea: Number.isFinite(finalArea) ? finalArea : 0
+        };
+      }
+
+      function updatePreview() {
+        const result = calculateCurrent();
+        els.previewArea.textContent = result.finalArea.toFixed(2);
+      }
+
+      function renderRecords() {
+        const total = records.reduce((sum, record) => sum + record.finalArea, 0);
+
+        els.totalArea.textContent = total.toFixed(2);
+        els.recordCount.textContent = records.length;
+        els.emptyState.style.display = records.length ? "none" : "block";
+
+        els.recordList.innerHTML = records.map((record) => `
+          <article class="record-item">
+            <div class="record-icon">${record.icon}</div>
+            <div>
+              <div class="record-name">${escapeHtml(record.name)}</div>
+              <div class="record-meta">
+                ${escapeHtml(record.detail)} · ${record.quantity} mục · Tính ${format(record.coefficient * 100)}%
+              </div>
+            </div>
+            <div class="record-right">
+              <div class="record-area">${record.finalArea.toFixed(2)} m²</div>
+              <button class="delete-btn" data-delete="${record.id}">Xóa</button>
+            </div>
+          </article>
+        `).join("");
+
+        els.recordList.querySelectorAll("[data-delete]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const id = button.dataset.delete;
+            records = records.filter((item) => item.id !== id);
+            saveRecords();
+            renderRecords();
+            showToast("Đã xóa mục này");
+          });
+        });
+      }
+
+      function escapeHtml(text) {
+        return String(text).replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[char]));
+      }
+
+      function addRecord() {
+        const config = shapeConfig[currentShape];
+        const dimensions = getDimensions();
+        const requiredValues = Object.values(dimensions);
+
+        if (requiredValues.some((value) => value <= 0)) {
+          showToast("Vui lòng nhập kích thước hợp lệ");
+          return;
+        }
+
+        const result = calculateCurrent();
+        if (result.baseArea <= 0) {
+          showToast("Diện tích phải lớn hơn 0");
+          return;
+        }
+
+        const defaultName = `${config.label} ${records.length + 1}`;
+        const name = els.areaName.value.trim() || defaultName;
+
+        records.unshift({
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          name,
+          shape: currentShape,
+          icon: config.icon,
+          detail: config.detail(dimensions),
+          dimensions,
+          quantity: result.quantity,
+          coefficient: result.coefficient,
+          baseArea: result.baseArea,
+          finalArea: result.finalArea,
+          createdAt: new Date().toISOString()
+        });
+
+        saveRecords();
+        renderRecords();
+        resetForm();
+        showToast("Đã thêm vào danh sách diện tích");
+      }
+
+      function resetForm() {
+        els.areaName.value = "";
+        els.quantity.value = "1";
+        els.dimensionFields.querySelectorAll("input").forEach((input) => {
+          input.value = "";
+        });
+        updatePreview();
+      }
+
+      function showToast(message) {
+        els.toast.textContent = message;
+        els.toast.classList.add("show");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => {
+          els.toast.classList.remove("show");
+        }, 1800);
+      }
+
+      els.shapeTabs.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-shape]");
+        if (!button) return;
+
+        currentShape = button.dataset.shape;
+        els.shapeTabs.querySelectorAll(".shape-tab").forEach((tab) => {
+          tab.classList.toggle("active", tab === button);
+        });
+        renderFields();
+      });
+
+      els.quantity.addEventListener("input", updatePreview);
+      els.coefficient.addEventListener("change", () => {
+        els.customCoefficientField.style.display =
+          els.coefficient.value === "custom" ? "flex" : "none";
+        updatePreview();
+      });
+      els.customCoefficient.addEventListener("input", updatePreview);
+      els.addBtn.addEventListener("click", addRecord);
+
+      els.clearBtn.addEventListener("click", () => {
+        if (!records.length) {
+          showToast("Không có dữ liệu để xóa");
+          return;
+        }
+
+        if (window.confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu diện tích không?")) {
+          records = [];
+          saveRecords();
+          renderRecords();
+          showToast("Đã xóa toàn bộ dữ liệu");
+        }
+      });
+
+      renderFields();
+      renderRecords();
+    })();
+  </script>
+</body>
+</html>

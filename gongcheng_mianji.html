@@ -1,851 +1,215 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#f47b45" />
-  <title>Máy tính diện tích xây dựng</title>
-  <style>
-    :root {
-      --primary: #f47b45;
-      --primary-dark: #dc6230;
-      --primary-soft: #fff2eb;
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #22252b;
-      --muted: #7d8592;
-      --line: #e9edf3;
-      --danger: #e55252;
-      --success: #2d9b6f;
-      --shadow: 0 12px 30px rgba(35, 47, 63, 0.08);
-      --radius: 20px;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-        "Microsoft YaHei", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top right, rgba(244, 123, 69, 0.16), transparent 32%),
-        var(--bg);
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    .app {
-      width: min(100%, 520px);
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 0 16px calc(32px + env(safe-area-inset-bottom));
-    }
-
-    .hero {
-      margin: 0 -16px;
-      padding: calc(22px + env(safe-area-inset-top)) 22px 28px;
-      color: #fff;
-      background: linear-gradient(135deg, #f47b45 0%, #ff9e67 100%);
-      border-radius: 0 0 30px 30px;
-      box-shadow: 0 12px 28px rgba(244, 123, 69, 0.24);
-    }
-
-    .hero-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .hero-icon {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(10px);
-      font-size: 25px;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      margin: 6px 0 0;
-      font-size: 13px;
-      opacity: 0.88;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 12px;
-      margin-top: -18px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .summary-card {
-      min-height: 104px;
-      padding: 18px;
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: var(--shadow);
-    }
-
-    .summary-label {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .summary-value {
-      display: flex;
-      align-items: baseline;
-      gap: 5px;
-      margin-top: 8px;
-      color: var(--primary-dark);
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.8px;
-    }
-
-    .summary-value small {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .summary-card.secondary .summary-value {
-      color: var(--text);
-      font-size: 25px;
-    }
-
-    .card {
-      margin-top: 16px;
-      padding: 18px;
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: var(--shadow);
-    }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .section-title {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 750;
-    }
-
-    .section-subtitle {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .shape-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 9px;
-      margin-bottom: 16px;
-    }
-
-    .shape-tab {
-      min-height: 42px;
-      padding: 8px 6px;
-      border-radius: 13px;
-      color: #656d78;
-      background: #f4f6f9;
-      font-size: 13px;
-      font-weight: 650;
-      transition: 0.2s ease;
-    }
-
-    .shape-tab.active {
-      color: var(--primary-dark);
-      background: var(--primary-soft);
-      box-shadow: inset 0 0 0 1px rgba(244, 123, 69, 0.25);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      color: #555d68;
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .input-wrap {
-      position: relative;
-    }
-
-    .input-wrap input,
-    .field select {
-      width: 100%;
-      height: 47px;
-      padding: 0 42px 0 13px;
-      outline: none;
-      color: var(--text);
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      transition: 0.2s ease;
-    }
-
-    .field select {
-      padding-right: 12px;
-    }
-
-    .input-wrap input:focus,
-    .field select:focus {
-      border-color: rgba(244, 123, 69, 0.75);
-      background: #fff;
-      box-shadow: 0 0 0 4px rgba(244, 123, 69, 0.09);
-    }
-
-    .unit {
-      position: absolute;
-      right: 13px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 12px;
-      pointer-events: none;
-    }
-
-    .preview {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 15px;
-      background: linear-gradient(135deg, #fff7f2, #fff);
-      border: 1px solid #ffe1d1;
-    }
-
-    .preview-label {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .preview-value {
-      margin-top: 4px;
-      color: var(--primary-dark);
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .preview-note {
-      max-width: 46%;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-      text-align: right;
-    }
-
-    .primary-btn {
-      width: 100%;
-      height: 50px;
-      margin-top: 14px;
-      color: #fff;
-      background: linear-gradient(135deg, var(--primary), #ff965e);
-      border-radius: 15px;
-      font-weight: 750;
-      box-shadow: 0 10px 22px rgba(244, 123, 69, 0.22);
-    }
-
-    .primary-btn:active {
-      transform: translateY(1px);
-    }
-
-    .text-btn {
-      padding: 7px 10px;
-      color: var(--danger);
-      background: #fff2f2;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .empty {
-      padding: 26px 12px 18px;
-      color: var(--muted);
-      text-align: center;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .empty-icon {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 31px;
-      opacity: 0.55;
-    }
-
-    .record-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .record-item {
-      display: grid;
-      grid-template-columns: 40px 1fr auto;
-      align-items: center;
-      gap: 11px;
-      padding: 12px;
-      border-radius: 15px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
-    }
-
-    .record-icon {
-      display: grid;
-      place-items: center;
-      width: 40px;
-      height: 40px;
-      color: var(--primary-dark);
-      background: var(--primary-soft);
-      border-radius: 12px;
-      font-size: 18px;
-    }
-
-    .record-name {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .record-meta {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.45;
-    }
-
-    .record-right {
-      text-align: right;
-    }
-
-    .record-area {
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .delete-btn {
-      margin-top: 6px;
-      padding: 4px 7px;
-      color: var(--danger);
-      background: transparent;
-      font-size: 11px;
-    }
-
-    .tips {
-      margin: 16px 2px 0;
-      padding: 14px 15px;
-      color: #686f79;
-      background: rgba(255, 255, 255, 0.65);
-      border: 1px dashed #d9dee7;
-      border-radius: 16px;
-      font-size: 11px;
-      line-height: 1.7;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: calc(28px + env(safe-area-inset-bottom));
-      z-index: 20;
-      max-width: calc(100% - 40px);
-      padding: 10px 16px;
-      color: #fff;
-      background: rgba(28, 31, 36, 0.92);
-      border-radius: 12px;
-      font-size: 13px;
-      opacity: 0;
-      transform: translate(-50%, 16px);
-      pointer-events: none;
-      transition: 0.22s ease;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    @media (max-width: 360px) {
-      .summary-value {
-        font-size: 26px;
-      }
-
-      .shape-tabs {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f47b45">
+<title>Máy tính diện tích xây dựng</title>
+<style>
+:root{--p:#f47b45;--pd:#d95d28;--ps:#fff1e9;--bg:#f5f7fb;--card:#fff;--txt:#23262c;--mut:#7b8490;--line:#e7ecf2;--red:#dc5353;--green:#27946c;--blue:#4276df;--shadow:0 10px 26px rgba(35,47,63,.08)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at top right,rgba(244,123,69,.16),transparent 30%),var(--bg)}
+button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}
+.app{width:min(100%,560px);min-height:100vh;margin:auto;padding:0 15px calc(88px + env(safe-area-inset-bottom))}
+.hero{margin:0 -15px;padding:calc(18px + env(safe-area-inset-top)) 20px 27px;color:#fff;background:linear-gradient(135deg,#f47b45,#ff9d62);border-radius:0 0 29px 29px;box-shadow:0 12px 28px rgba(244,123,69,.23)}
+.hero-row{display:flex;align-items:center;gap:12px}.hero-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:rgba(255,255,255,.2);font-size:24px}.hero h1{font-size:22px;margin:0}.hero p{font-size:12px;margin:5px 0 0;opacity:.9}
+.project{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px;padding:11px 12px;border-radius:14px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22)}
+.project strong{font-size:13px}.project span{display:block;margin-top:3px;font-size:10px;opacity:.85}.project button{padding:8px 10px;border-radius:10px;color:#fff;background:rgba(255,255,255,.18);font-size:11px;font-weight:700}
+.page{display:none}.page.active{display:block}
+.metrics{position:relative;z-index:2;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:-17px}
+.metric{min-height:92px;padding:14px;border-radius:18px;background:#fff;box-shadow:var(--shadow)}.metric label{font-size:10px;color:var(--mut)}.metric div{margin-top:7px;font-size:24px;font-weight:800}.metric small{font-size:11px;color:var(--mut)}
+.orange div{color:var(--pd)}.blue div{color:var(--blue)}.green div{color:var(--green)}
+.card{margin-top:14px;padding:16px;border-radius:19px;background:var(--card);box-shadow:var(--shadow)}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:13px}.head h2{margin:0;font-size:16px}.sub{margin-top:4px;color:var(--mut);font-size:10px;line-height:1.5}
+.chip,.link{display:inline-flex;padding:5px 8px;border-radius:999px;background:var(--ps);color:var(--pd);font-size:9px;font-weight:750}.link{border-radius:9px;font-size:10px}
+.floor-list,.records,.formulas,.info-list{display:flex;flex-direction:column;gap:9px}
+.floor{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:13px;background:#fafbfd}
+.floor-i,.record-i{width:40px;height:40px;display:grid;place-items:center;border-radius:11px;color:var(--pd);background:var(--ps);font-weight:800}
+.floor strong,.record strong{font-size:13px}.meta{margin-top:3px;color:var(--mut);font-size:10px;line-height:1.45}.area{font-size:14px;font-weight:800;text-align:right}
+.notice{display:flex;gap:9px;padding:12px;border-radius:13px;background:#edf4ff;color:#456089;font-size:10px;line-height:1.6}.notice strong{display:block;color:#3158a0}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.btn{min-height:46px;border-radius:13px;font-weight:750}.primary{color:#fff;background:linear-gradient(135deg,var(--p),#ff9860)}.secondary{color:var(--pd);background:var(--ps)}.danger{color:var(--red);background:#fff0f0}
+.shapes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.shape{min-height:40px;border-radius:11px;background:#f3f5f8;color:#68717c;font-size:11px;font-weight:700}.shape.active{color:var(--pd);background:var(--ps);box-shadow:inset 0 0 0 1px rgba(244,123,69,.25)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}.field label{font-size:10px;font-weight:700;color:#555d68}.wrap{position:relative}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:#f8fafc;color:var(--txt);outline:none}input,select{height:44px;padding:0 38px 0 11px}select{padding-right:9px}textarea{min-height:74px;padding:10px 11px;resize:vertical}.unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:10px}
+input:focus,select:focus,textarea:focus{border-color:rgba(244,123,69,.7);background:#fff;box-shadow:0 0 0 4px rgba(244,123,69,.08)}
+.preview{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:12px;border:1px solid #ffe0d0;border-radius:13px;background:#fff8f4}.preview label{font-size:10px;color:var(--mut)}.preview strong{display:block;margin-top:3px;color:var(--pd);font-size:20px}.formula-text{max-width:48%;font-size:9px;color:var(--mut);text-align:right;line-height:1.5}
+.toolbar{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:11px}.toolbar select{padding:0 9px}.small{min-width:82px;border-radius:11px;color:var(--pd);background:var(--ps);font-size:10px;font-weight:700}
+.record{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fafbfd}.record-top{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:9px}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.actions button{min-height:32px;border-radius:9px;font-size:9px;font-weight:700}.edit{color:var(--blue);background:#edf3ff}.copy{color:var(--green);background:#eaf8f2}.delete{color:var(--red);background:#fff0f0}
+.empty{padding:23px 10px;color:var(--mut);text-align:center;font-size:12px;line-height:1.65}.empty b{display:block;font-size:28px;opacity:.5}
+.formula,.info{padding:11px;border:1px solid var(--line);border-radius:12px;background:#fafbfd}.formula strong,.info strong{font-size:12px}.formula div,.info span{display:block;margin-top:3px;color:var(--mut);font-size:10px;line-height:1.55}
+.info{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left}.panel{display:none;padding:11px;border:1px solid var(--line);border-radius:12px;font-size:10px;line-height:1.7;color:#59616c}.panel.open{display:block}
+.nav{position:fixed;left:50%;bottom:0;z-index:30;width:min(100%,560px);transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 7px calc(7px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -10px 26px rgba(35,47,63,.08)}
+.nav button{min-height:49px;border-radius:12px;background:transparent;color:#7b838d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:700}.nav button b{font-size:18px}.nav button.active{color:var(--pd);background:var(--ps)}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;justify-content:center;padding:15px;background:rgba(20,24,30,.45)}.modal.open{display:flex}.modal-card{width:min(100%,560px);max-height:86vh;overflow:auto;padding:17px;border-radius:22px;background:#fff}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.modal-head h3{margin:0;font-size:16px}.close{width:33px;height:33px;border-radius:9px;background:#f2f4f7;color:#606873;font-size:18px}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));z-index:80;max-width:calc(100% - 36px);padding:9px 14px;border-radius:10px;color:#fff;background:rgba(27,30,35,.94);font-size:11px;opacity:0;transform:translate(-50%,10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:370px){.metrics div{font-size:21px}.shapes{grid-template-columns:repeat(2,1fr)}.btns{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <main class="app">
-    <header class="hero">
-      <div class="hero-top">
-        <div class="hero-icon">▦</div>
-        <div>
-          <h1>Máy tính diện tích xây dựng</h1>
-          <p>Tính nhanh và tổng hợp diện tích của từng khu vực</p>
-        </div>
-      </div>
-    </header>
+<main class="app">
+<header class="hero">
+  <div class="hero-row"><div class="hero-icon">▦</div><div><h1>Máy tính diện tích xây dựng</h1><p>Quản lý diện tích theo công trình, tầng và khu vực</p></div></div>
+  <div class="project"><div><strong id="projectTitle">Công trình mẫu</strong><span id="projectMeta">Hà Nội · Dữ liệu lưu trên thiết bị</span></div><button id="openProject" type="button">Thông tin</button></div>
+</header>
 
-    <section class="summary-grid">
-      <div class="summary-card">
-        <div class="summary-label">Diện tích được tính</div>
-        <div class="summary-value">
-          <span id="totalArea">0.00</span>
-          <small>m²</small>
-        </div>
-      </div>
-      <div class="summary-card secondary">
-        <div class="summary-label">Khu vực đã thêm</div>
-        <div class="summary-value">
-          <span id="recordCount">0</span>
-          <small>mục</small>
-        </div>
-      </div>
-    </section>
+<section id="home" class="page active">
+  <div class="metrics">
+    <div class="metric orange"><label>Tổng diện tích gốc</label><div><span id="rawTotal">0.00</span> <small>m²</small></div></div>
+    <div class="metric blue"><label>Diện tích được tính</label><div><span id="finalTotal">0.00</span> <small>m²</small></div></div>
+    <div class="metric green"><label>Số khu vực</label><div><span id="recordCount">0</span> <small>mục</small></div></div>
+    <div class="metric"><label>Số tầng</label><div><span id="floorCount">0</span> <small>tầng</small></div></div>
+  </div>
+  <div class="card">
+    <div class="head"><div><h2>Tổng hợp theo tầng</h2><div class="sub">Tự động cập nhật từ danh sách khu vực</div></div><button class="link" id="quickAdd" type="button">+ Thêm khu vực</button></div>
+    <div id="floorList" class="floor-list"></div>
+  </div>
+  <div class="card">
+    <div class="head"><div><h2>Dữ liệu mẫu</h2><div class="sub">Giúp kiểm tra ngay các chức năng của ứng dụng</div></div><span class="chip">Mẫu</span></div>
+    <div class="notice"><div>ⓘ</div><div><strong>Dữ liệu có thể chỉnh sửa</strong>Bạn có thể chỉnh sửa, sao chép, xóa hoặc khôi phục dữ liệu mẫu bất kỳ lúc nào.</div></div>
+    <div class="btns"><button class="btn secondary" id="restoreSample" type="button">Khôi phục dữ liệu mẫu</button><button class="btn danger" id="clearAll" type="button">Xóa toàn bộ dữ liệu</button></div>
+  </div>
+</section>
 
-    <section class="card">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Thêm khu vực tính toán</h2>
-          <div class="section-subtitle">Chọn hình dạng và nhập kích thước</div>
-        </div>
-      </div>
-
-      <div class="shape-tabs" id="shapeTabs">
-        <button class="shape-tab active" data-shape="rectangle">Hình chữ nhật</button>
-        <button class="shape-tab" data-shape="triangle">Hình tam giác</button>
-        <button class="shape-tab" data-shape="trapezoid">Hình thang</button>
-        <button class="shape-tab" data-shape="circle">Hình tròn</button>
-        <button class="shape-tab" data-shape="custom">Nhập trực tiếp</button>
-      </div>
-
-      <div class="form-grid">
-        <div class="field full">
-          <label for="areaName">Tên khu vực</label>
-          <div class="input-wrap">
-            <input id="areaName" type="text" maxlength="30" placeholder="Ví dụ: phòng khách tầng 1, ban công, nhà kho" />
-          </div>
-        </div>
-
-        <div id="dynamicFields" class="field full">
-          <div class="form-grid" id="dimensionFields"></div>
-        </div>
-
-        <div class="field">
-          <label for="quantity">Số lượng</label>
-          <div class="input-wrap">
-            <input id="quantity" type="number" min="1" step="1" value="1" inputmode="numeric" />
-            <span class="unit">mục</span>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="coefficient">Tỷ lệ tính</label>
-          <select id="coefficient">
-            <option value="1">100% Tính toàn bộ</option>
-            <option value="0.5">50% Tính một nửa</option>
-            <option value="0">0% Không tính</option>
-            <option value="custom">Tùy chỉnh tỷ lệ</option>
-          </select>
-        </div>
-
-        <div class="field full" id="customCoefficientField" style="display:none;">
-          <label for="customCoefficient">Tỷ lệ tính tùy chỉnh</label>
-          <div class="input-wrap">
-            <input id="customCoefficient" type="number" min="0" max="100" step="1" value="100" inputmode="decimal" />
-            <span class="unit">%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="preview">
-        <div>
-          <div class="preview-label">Diện tích hiện tại</div>
-          <div class="preview-value"><span id="previewArea">0.00</span> m²</div>
-        </div>
-        <div class="preview-note" id="formulaText">Diện tích = Dài × Rộng</div>
-      </div>
-
-      <button class="primary-btn" id="addBtn">Thêm vào danh sách diện tích</button>
-    </section>
-
-    <section class="card">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Chi tiết diện tích</h2>
-          <div class="section-subtitle">Dữ liệu được tự động lưu trên thiết bị này</div>
-        </div>
-        <button class="text-btn" id="clearBtn">Xóa tất cả</button>
-      </div>
-
-      <div id="emptyState" class="empty">
-        <span class="empty-icon">⌂</span>
-        Chưa có dữ liệu tính toán<br />Diện tích sẽ được tự động tổng hợp sau khi thêm khu vực
-      </div>
-
-      <div id="recordList" class="record-list"></div>
-    </section>
-
-    <div class="tips">
-      Lưu ý: Công cụ này chỉ dùng để ước tính nhanh diện tích. Diện tích dùng cho hồ sơ xây dựng, đo đạc hoặc quyền sở hữu phải căn cứ vào quy định địa phương, bản vẽ thiết kế và kết quả đo đạc chuyên nghiệp.
+<section id="calc" class="page">
+  <div class="card">
+    <div class="head"><div><h2 id="formTitle">Thêm khu vực tính toán</h2><div class="sub">Chọn tầng, hình dạng và nhập kích thước</div></div><span class="chip" id="editChip" style="display:none">Đang chỉnh sửa</span></div>
+    <div class="shapes" id="shapeTabs">
+      <button class="shape active" data-shape="rectangle" type="button">Chữ nhật</button>
+      <button class="shape" data-shape="triangle" type="button">Tam giác</button>
+      <button class="shape" data-shape="trapezoid" type="button">Hình thang</button>
+      <button class="shape" data-shape="circle" type="button">Hình tròn</button>
+      <button class="shape" data-shape="custom" type="button">Nhập trực tiếp</button>
     </div>
-  </main>
+    <div class="grid">
+      <div class="field full"><label for="floor">Tầng hoặc khu vực</label><select id="floor">
+        <option>Tầng 1</option><option>Tầng 2</option><option>Tầng 3</option><option>Tầng mái</option><option>Tầng hầm</option><option>Sân và cổng</option><option>Khu vực phụ trợ</option><option value="custom">Tên khác</option>
+      </select></div>
+      <div class="field full" id="customFloorBox" style="display:none"><label for="customFloor">Tên khác</label><input id="customFloor" maxlength="30" placeholder="Ví dụ: Kho phía sau"></div>
+      <div class="field full"><label for="name">Tên hạng mục</label><input id="name" maxlength="40" placeholder="Ví dụ: Phòng khách, ban công"></div>
+      <div class="field full"><div class="grid" id="dimensionFields"></div></div>
+      <div class="field"><label for="qty">Số lượng</label><div class="wrap"><input id="qty" type="number" min="1" step="1" value="1"><span class="unit">mục</span></div></div>
+      <div class="field"><label for="coef">Tỷ lệ tính</label><select id="coef"><option value="1">100% Toàn bộ</option><option value="0.5">50% Một nửa</option><option value="0">0% Không tính</option><option value="custom">Tùy chỉnh</option></select></div>
+      <div class="field full" id="customCoefBox" style="display:none"><label for="customCoef">Tỷ lệ tùy chỉnh</label><div class="wrap"><input id="customCoef" type="number" min="0" max="100" value="100"><span class="unit">%</span></div></div>
+      <div class="field full"><label for="note">Ghi chú</label><textarea id="note" maxlength="150" placeholder="Ví dụ: Ban công chỉ tính 50%"></textarea></div>
+    </div>
+    <div class="preview"><div><label>Diện tích được tính</label><strong><span id="preview">0.00</span> m²</strong></div><div class="formula-text" id="formulaText">Diện tích = Dài × Rộng</div></div>
+    <div class="btns"><button class="btn primary" id="saveRecord" type="button">Lưu khu vực</button><button class="btn secondary" id="resetForm" type="button">Đặt lại</button></div>
+  </div>
+</section>
 
-  <div class="toast" id="toast"></div>
+<section id="data" class="page">
+  <div class="card">
+    <div class="head"><div><h2>Danh sách khu vực</h2><div class="sub">Chỉnh sửa, sao chép hoặc xóa từng hạng mục</div></div><span class="chip" id="dataBadge">0 mục</span></div>
+    <div class="toolbar"><select id="filter"><option value="all">Tất cả tầng và khu vực</option></select><button class="small" id="sort" type="button">Sắp xếp A-Z</button></div>
+    <div id="empty" class="empty" style="display:none"><b>⌂</b>Chưa có dữ liệu phù hợp</div>
+    <div id="records" class="records"></div>
+  </div>
+</section>
 
-  <script>
-    (() => {
-      "use strict";
+<section id="info" class="page">
+  <div class="card">
+    <div class="head"><div><h2>Công thức tính diện tích</h2><div class="sub">Các công thức đang được sử dụng</div></div></div>
+    <div class="formulas">
+      <div class="formula"><strong>Hình chữ nhật</strong><div>Diện tích = Chiều dài × Chiều rộng</div></div>
+      <div class="formula"><strong>Hình tam giác</strong><div>Diện tích = Cạnh đáy × Chiều cao ÷ 2</div></div>
+      <div class="formula"><strong>Hình thang</strong><div>Diện tích = (Đáy trên + Đáy dưới) × Chiều cao ÷ 2</div></div>
+      <div class="formula"><strong>Hình tròn</strong><div>Diện tích = π × Bán kính²</div></div>
+      <div class="formula"><strong>Tỷ lệ tính</strong><div>Diện tích được tính = Diện tích gốc × Số lượng × Tỷ lệ</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="head"><div><h2>Trợ giúp và thông tin</h2><div class="sub">Hướng dẫn sử dụng và thông tin pháp lý</div></div></div>
+    <div class="info-list">
+      <button class="info" data-panel="guide" type="button"><div><strong>Hướng dẫn sử dụng</strong><span>Cách thêm và quản lý diện tích</span></div><b>›</b></button>
+      <div class="panel" id="guide">1. Chọn mục “Tính diện tích”.<br>2. Chọn tầng và hình dạng.<br>3. Nhập kích thước, số lượng và tỷ lệ.<br>4. Nhấn “Lưu khu vực”.<br>5. Mở “Dữ liệu” để chỉnh sửa, sao chép hoặc xóa.</div>
+      <button class="info" data-panel="terms" type="button"><div><strong>Điều khoản sử dụng</strong><span>Quy định khi sử dụng ứng dụng</span></div><b>›</b></button>
+      <div class="panel" id="terms">Ứng dụng hỗ trợ ước tính diện tích dựa trên dữ liệu người dùng nhập. Kết quả chỉ mang tính tham khảo và không thay thế bản vẽ thiết kế, hồ sơ xây dựng, kết quả đo đạc chuyên nghiệp hoặc xác nhận của cơ quan có thẩm quyền.</div>
+      <button class="info" data-panel="privacy" type="button"><div><strong>Chính sách quyền riêng tư</strong><span>Thông tin về lưu trữ dữ liệu</span></div><b>›</b></button>
+      <div class="panel" id="privacy">Dữ liệu công trình và diện tích được lưu cục bộ trên thiết bị bằng bộ nhớ trình duyệt. Ứng dụng không yêu cầu thông tin cá nhân nhạy cảm và không tự động gửi dữ liệu tính toán đến máy chủ bên ngoài.</div>
+      <button class="info" data-panel="about" type="button"><div><strong>Giới thiệu ứng dụng</strong><span>Phiên bản và đơn vị phát hành</span></div><b>›</b></button>
+      <div class="panel" id="about">Máy tính diện tích xây dựng giúp tính nhanh, lưu chi tiết và tổng hợp diện tích theo tầng hoặc khu vực.<br><br>Phiên bản: 1.1.0<br>Đơn vị phát hành: MTV TMDV Diệp Linh</div>
+    </div>
+  </div>
+  <div class="card"><div class="notice"><div>⚠</div><div><strong>Lưu ý quan trọng</strong>Công cụ chỉ dùng để ước tính nhanh. Hồ sơ chính thức phải căn cứ vào quy định địa phương, bản vẽ thiết kế và kết quả đo đạc chuyên nghiệp.</div></div></div>
+</section>
+</main>
 
-      const STORAGE_KEY = "building-area-calculator-records-v1";
+<nav class="nav">
+<button class="active" data-page="home" type="button"><b>⌂</b>Tổng hợp</button>
+<button data-page="calc" type="button"><b>＋</b>Tính diện tích</button>
+<button data-page="data" type="button"><b>☷</b>Dữ liệu</button>
+<button data-page="info" type="button"><b>ⓘ</b>Thông tin</button>
+</nav>
 
-      const shapeConfig = {
-        rectangle: {
-          label: "Hình chữ nhật",
-          icon: "▭",
-          formula: "Diện tích = Dài × Rộng",
-          fields: [
-            { key: "length", label: "Chiều dài", placeholder: "Nhập chiều dài" },
-            { key: "width", label: "Chiều rộng", placeholder: "Nhập chiều rộng" }
-          ],
-          calculate: ({ length, width }) => length * width,
-          detail: ({ length, width }) => `${format(length)}m × ${format(width)}m`
-        },
-        triangle: {
-          label: "Hình tam giác",
-          icon: "△",
-          formula: "Diện tích = Đáy × Cao ÷ 2",
-          fields: [
-            { key: "base", label: "Cạnh đáy", placeholder: "Nhập chiều dài cạnh đáy" },
-            { key: "height", label: "Chiều cao", placeholder: "Nhập chiều cao" }
-          ],
-          calculate: ({ base, height }) => base * height / 2,
-          detail: ({ base, height }) => `Đáy ${format(base)}m, cao ${format(height)}m`
-        },
-        trapezoid: {
-          label: "Hình thang",
-          icon: "⏢",
-          formula: "Diện tích = (Đáy trên + Đáy dưới) × Cao ÷ 2",
-          fields: [
-            { key: "topBase", label: "Đáy trên", placeholder: "Nhập chiều dài đáy trên" },
-            { key: "bottomBase", label: "Đáy dưới", placeholder: "Nhập chiều dài đáy dưới" },
-            { key: "height", label: "Chiều cao", placeholder: "Nhập chiều cao" }
-          ],
-          calculate: ({ topBase, bottomBase, height }) => (topBase + bottomBase) * height / 2,
-          detail: ({ topBase, bottomBase, height }) =>
-            `Đáy trên ${format(topBase)}m, đáy dưới ${format(bottomBase)}m, cao ${format(height)}m`
-        },
-        circle: {
-          label: "Hình tròn",
-          icon: "○",
-          formula: "Diện tích = π × Bán kính²",
-          fields: [
-            { key: "radius", label: "Bán kính", placeholder: "Nhập bán kính" }
-          ],
-          calculate: ({ radius }) => Math.PI * radius * radius,
-          detail: ({ radius }) => `Bán kính ${format(radius)}m`
-        },
-        custom: {
-          label: "Nhập trực tiếp",
-          icon: "⌗",
-          formula: "Diện tích = Giá trị nhập",
-          fields: [
-            { key: "area", label: "Diện tích mỗi mục", placeholder: "Nhập diện tích", unit: "m²" }
-          ],
-          calculate: ({ area }) => area,
-          detail: ({ area }) => `Diện tích mỗi mục ${format(area)}m²`
-        }
-      };
+<div class="modal" id="projectModal">
+<div class="modal-card">
+  <div class="modal-head"><h3>Thông tin công trình</h3><button class="close" id="closeProject" type="button">×</button></div>
+  <div class="grid">
+    <div class="field full"><label for="pName">Tên công trình</label><input id="pName" maxlength="50" placeholder="Ví dụ: Nhà ở gia đình"></div>
+    <div class="field full"><label for="pLocation">Địa điểm</label><input id="pLocation" maxlength="80" placeholder="Ví dụ: Hà Nội"></div>
+    <div class="field full"><label for="pManager">Người phụ trách</label><input id="pManager" maxlength="50" placeholder="Nhập tên người phụ trách"></div>
+    <div class="field full"><label for="pNote">Ghi chú</label><textarea id="pNote" maxlength="200" placeholder="Thông tin bổ sung"></textarea></div>
+  </div>
+  <div class="btns"><button class="btn primary" id="saveProject" type="button">Lưu thông tin</button><button class="btn secondary" id="cancelProject" type="button">Hủy</button></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
 
-      let currentShape = "rectangle";
-      let records = loadRecords();
-
-      const els = {
-        shapeTabs: document.getElementById("shapeTabs"),
-        dimensionFields: document.getElementById("dimensionFields"),
-        areaName: document.getElementById("areaName"),
-        quantity: document.getElementById("quantity"),
-        coefficient: document.getElementById("coefficient"),
-        customCoefficientField: document.getElementById("customCoefficientField"),
-        customCoefficient: document.getElementById("customCoefficient"),
-        previewArea: document.getElementById("previewArea"),
-        formulaText: document.getElementById("formulaText"),
-        addBtn: document.getElementById("addBtn"),
-        clearBtn: document.getElementById("clearBtn"),
-        recordList: document.getElementById("recordList"),
-        emptyState: document.getElementById("emptyState"),
-        totalArea: document.getElementById("totalArea"),
-        recordCount: document.getElementById("recordCount"),
-        toast: document.getElementById("toast")
-      };
-
-      function format(value, digits = 2) {
-        const number = Number(value);
-        if (!Number.isFinite(number)) return "0";
-        return number.toFixed(digits).replace(/\.?0+$/, "");
-      }
-
-      function loadRecords() {
-        try {
-          const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-          return Array.isArray(value) ? value : [];
-        } catch {
-          return [];
-        }
-      }
-
-      function saveRecords() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-      }
-
-      function renderFields() {
-        const config = shapeConfig[currentShape];
-        els.dimensionFields.innerHTML = config.fields.map((field) => `
-          <div class="field ${config.fields.length === 1 ? "full" : ""}">
-            <label for="field-${field.key}">${field.label}</label>
-            <div class="input-wrap">
-              <input
-                id="field-${field.key}"
-                data-dimension="${field.key}"
-                type="number"
-                min="0"
-                step="0.01"
-                inputmode="decimal"
-                placeholder="${field.placeholder}"
-              />
-              <span class="unit">${field.unit || "m"}</span>
-            </div>
-          </div>
-        `).join("");
-
-        els.formulaText.textContent = config.formula;
-        els.dimensionFields.querySelectorAll("input").forEach((input) => {
-          input.addEventListener("input", updatePreview);
-        });
-        updatePreview();
-      }
-
-      function getDimensions() {
-        const values = {};
-        els.dimensionFields.querySelectorAll("[data-dimension]").forEach((input) => {
-          values[input.dataset.dimension] = Number(input.value) || 0;
-        });
-        return values;
-      }
-
-      function getCoefficient() {
-        if (els.coefficient.value === "custom") {
-          const value = Math.min(100, Math.max(0, Number(els.customCoefficient.value) || 0));
-          return value / 100;
-        }
-        return Number(els.coefficient.value);
-      }
-
-      function calculateCurrent() {
-        const config = shapeConfig[currentShape];
-        const baseArea = config.calculate(getDimensions());
-        const quantity = Math.max(1, parseInt(els.quantity.value, 10) || 1);
-        const coefficient = getCoefficient();
-        const finalArea = baseArea * quantity * coefficient;
-
-        return {
-          baseArea: Number.isFinite(baseArea) ? baseArea : 0,
-          quantity,
-          coefficient,
-          finalArea: Number.isFinite(finalArea) ? finalArea : 0
-        };
-      }
-
-      function updatePreview() {
-        const result = calculateCurrent();
-        els.previewArea.textContent = result.finalArea.toFixed(2);
-      }
-
-      function renderRecords() {
-        const total = records.reduce((sum, record) => sum + record.finalArea, 0);
-
-        els.totalArea.textContent = total.toFixed(2);
-        els.recordCount.textContent = records.length;
-        els.emptyState.style.display = records.length ? "none" : "block";
-
-        els.recordList.innerHTML = records.map((record) => `
-          <article class="record-item">
-            <div class="record-icon">${record.icon}</div>
-            <div>
-              <div class="record-name">${escapeHtml(record.name)}</div>
-              <div class="record-meta">
-                ${escapeHtml(record.detail)} · ${record.quantity} mục · Tính ${format(record.coefficient * 100)}%
-              </div>
-            </div>
-            <div class="record-right">
-              <div class="record-area">${record.finalArea.toFixed(2)} m²</div>
-              <button class="delete-btn" data-delete="${record.id}">Xóa</button>
-            </div>
-          </article>
-        `).join("");
-
-        els.recordList.querySelectorAll("[data-delete]").forEach((button) => {
-          button.addEventListener("click", () => {
-            const id = button.dataset.delete;
-            records = records.filter((item) => item.id !== id);
-            saveRecords();
-            renderRecords();
-            showToast("Đã xóa mục này");
-          });
-        });
-      }
-
-      function escapeHtml(text) {
-        return String(text).replace(/[&<>"']/g, (char) => ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        }[char]));
-      }
-
-      function addRecord() {
-        const config = shapeConfig[currentShape];
-        const dimensions = getDimensions();
-        const requiredValues = Object.values(dimensions);
-
-        if (requiredValues.some((value) => value <= 0)) {
-          showToast("Vui lòng nhập kích thước hợp lệ");
-          return;
-        }
-
-        const result = calculateCurrent();
-        if (result.baseArea <= 0) {
-          showToast("Diện tích phải lớn hơn 0");
-          return;
-        }
-
-        const defaultName = `${config.label} ${records.length + 1}`;
-        const name = els.areaName.value.trim() || defaultName;
-
-        records.unshift({
-          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-          name,
-          shape: currentShape,
-          icon: config.icon,
-          detail: config.detail(dimensions),
-          dimensions,
-          quantity: result.quantity,
-          coefficient: result.coefficient,
-          baseArea: result.baseArea,
-          finalArea: result.finalArea,
-          createdAt: new Date().toISOString()
-        });
-
-        saveRecords();
-        renderRecords();
-        resetForm();
-        showToast("Đã thêm vào danh sách diện tích");
-      }
-
-      function resetForm() {
-        els.areaName.value = "";
-        els.quantity.value = "1";
-        els.dimensionFields.querySelectorAll("input").forEach((input) => {
-          input.value = "";
-        });
-        updatePreview();
-      }
-
-      function showToast(message) {
-        els.toast.textContent = message;
-        els.toast.classList.add("show");
-        clearTimeout(showToast.timer);
-        showToast.timer = setTimeout(() => {
-          els.toast.classList.remove("show");
-        }, 1800);
-      }
-
-      els.shapeTabs.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-shape]");
-        if (!button) return;
-
-        currentShape = button.dataset.shape;
-        els.shapeTabs.querySelectorAll(".shape-tab").forEach((tab) => {
-          tab.classList.toggle("active", tab === button);
-        });
-        renderFields();
-      });
-
-      els.quantity.addEventListener("input", updatePreview);
-      els.coefficient.addEventListener("change", () => {
-        els.customCoefficientField.style.display =
-          els.coefficient.value === "custom" ? "flex" : "none";
-        updatePreview();
-      });
-      els.customCoefficient.addEventListener("input", updatePreview);
-      els.addBtn.addEventListener("click", addRecord);
-
-      els.clearBtn.addEventListener("click", () => {
-        if (!records.length) {
-          showToast("Không có dữ liệu để xóa");
-          return;
-        }
-
-        if (window.confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu diện tích không?")) {
-          records = [];
-          saveRecords();
-          renderRecords();
-          showToast("Đã xóa toàn bộ dữ liệu");
-        }
-      });
-
-      renderFields();
-      renderRecords();
-    })();
-  </script>
+<script>
+(()=>{
+"use strict";
+const RK="building-area-records-v3",PK="building-area-project-v3";
+const sample=[
+{id:"s1",floor:"Tầng 1",name:"Phòng khách",shape:"rectangle",d:{length:5,width:4},qty:1,coef:1,note:"Khu vực sinh hoạt chung"},
+{id:"s2",floor:"Tầng 1",name:"Phòng ngủ",shape:"rectangle",d:{length:4,width:3},qty:2,coef:1,note:"Hai phòng cùng kích thước"},
+{id:"s3",floor:"Tầng 2",name:"Ban công",shape:"rectangle",d:{length:3,width:2},qty:1,coef:.5,note:"Tính 50% diện tích"},
+{id:"s4",floor:"Tầng mái",name:"Khu kỹ thuật",shape:"rectangle",d:{length:4.5,width:2.8},qty:1,coef:1,note:"Khu vực kỹ thuật"},
+{id:"s5",floor:"Sân và cổng",name:"Sân trước",shape:"custom",d:{area:18},qty:1,coef:1,note:"Diện tích nhập trực tiếp"}];
+const shapes={
+rectangle:{icon:"▭",formula:"Diện tích = Dài × Rộng",fields:[["length","Chiều dài","m"],["width","Chiều rộng","m"]],calc:d=>d.length*d.width,detail:d=>`${fmt(d.length)}m × ${fmt(d.width)}m`},
+triangle:{icon:"△",formula:"Diện tích = Đáy × Cao ÷ 2",fields:[["base","Cạnh đáy","m"],["height","Chiều cao","m"]],calc:d=>d.base*d.height/2,detail:d=>`Đáy ${fmt(d.base)}m, cao ${fmt(d.height)}m`},
+trapezoid:{icon:"⏢",formula:"Diện tích = (Đáy trên + Đáy dưới) × Cao ÷ 2",fields:[["top","Đáy trên","m"],["bottom","Đáy dưới","m"],["height","Chiều cao","m"]],calc:d=>(d.top+d.bottom)*d.height/2,detail:d=>`Đáy ${fmt(d.top)}m / ${fmt(d.bottom)}m, cao ${fmt(d.height)}m`},
+circle:{icon:"○",formula:"Diện tích = π × Bán kính²",fields:[["radius","Bán kính","m"]],calc:d=>Math.PI*d.radius*d.radius,detail:d=>`Bán kính ${fmt(d.radius)}m`},
+custom:{icon:"⌗",formula:"Diện tích = Giá trị nhập",fields:[["area","Diện tích mỗi mục","m²"]],calc:d=>d.area,detail:d=>`${fmt(d.area)}m² mỗi mục`}
+};
+let records=load(RK,sample),project=load(PK,{name:"Công trình mẫu",location:"Hà Nội",manager:"Người phụ trách",note:"Dữ liệu mẫu"}),shape="rectangle",editing=null,asc=true;
+const $=id=>document.getElementById(id),els={pages:[...document.querySelectorAll(".page")],nav:[...document.querySelectorAll(".nav button")],shapeTabs:$("shapeTabs"),dimensionFields:$("dimensionFields"),floor:$("floor"),customFloorBox:$("customFloorBox"),customFloor:$("customFloor"),name:$("name"),qty:$("qty"),coef:$("coef"),customCoefBox:$("customCoefBox"),customCoef:$("customCoef"),note:$("note"),preview:$("preview"),formulaText:$("formulaText"),records:$("records"),filter:$("filter"),empty:$("empty"),toast:$("toast")};
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function load(k,f){try{let v=JSON.parse(localStorage.getItem(k)||"null");return v??clone(f)}catch{return clone(f)}}
+function save(){localStorage.setItem(RK,JSON.stringify(records));localStorage.setItem(PK,JSON.stringify(project))}
+function uid(){return Date.now()+"-"+Math.random().toString(16).slice(2)}
+function fmt(v){v=Number(v);return Number.isFinite(v)?v.toFixed(2).replace(/\.?0+$/,""):"0"}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function norm(r){let raw=(shapes[r.shape]||shapes.rectangle).calc(r.d||{})*(Number(r.qty)||1),coef=Math.min(1,Math.max(0,Number(r.coef)||0));return {...r,raw,final:raw*coef}}
+function page(id){els.pages.forEach(x=>x.classList.toggle("active",x.id===id));els.nav.forEach(x=>x.classList.toggle("active",x.dataset.page===id));if(id==="data")renderData();window.scrollTo({top:0,behavior:"smooth"})}
+function renderProject(){$("projectTitle").textContent=project.name||"Chưa đặt tên công trình";$("projectMeta").textContent=(project.location||"Chưa có địa điểm")+" · Dữ liệu lưu trên thiết bị"}
+function renderHome(){let n=records.map(norm),raw=n.reduce((s,r)=>s+r.raw,0),final=n.reduce((s,r)=>s+r.final,0),floors=[...new Set(records.map(r=>r.floor).filter(Boolean))];$("rawTotal").textContent=raw.toFixed(2);$("finalTotal").textContent=final.toFixed(2);$("recordCount").textContent=records.length;$("floorCount").textContent=floors.length;let g={};n.forEach(r=>{let f=r.floor||"Chưa phân loại";g[f]??={area:0,count:0};g[f].area+=r.final;g[f].count++});let arr=Object.entries(g).sort((a,b)=>b[1].area-a[1].area);$("floorList").innerHTML=arr.length?arr.map(([f,v],i)=>`<div class="floor"><div class="floor-i">${i+1}</div><div><strong>${esc(f)}</strong><div class="meta">${v.count} hạng mục</div></div><div class="area">${v.area.toFixed(2)} m²</div></div>`).join(""):`<div class="empty"><b>⌂</b>Chưa có dữ liệu diện tích</div>`}
+function renderDims(values={}){let s=shapes[shape];els.dimensionFields.innerHTML=s.fields.map(([k,l,u])=>`<div class="field ${s.fields.length===1?"full":""}"><label>${l}</label><div class="wrap"><input data-dim="${k}" type="number" min="0" step="0.01" value="${values[k]??""}" placeholder="Nhập ${l.toLowerCase()}"><span class="unit">${u}</span></div></div>`).join("");els.formulaText.textContent=s.formula;els.dimensionFields.querySelectorAll("[data-dim]").forEach(i=>i.addEventListener("input",preview));preview()}
+function dims(){let d={};els.dimensionFields.querySelectorAll("[data-dim]").forEach(i=>d[i.dataset.dim]=Number(i.value)||0);return d}
+function coefficient(){return els.coef.value==="custom"?Math.min(100,Math.max(0,Number(els.customCoef.value)||0))/100:Number(els.coef.value)}
+function calc(){let d=dims(),unit=shapes[shape].calc(d),qty=Math.max(1,parseInt(els.qty.value)||1),coef=coefficient();return{d,unit:Number.isFinite(unit)?unit:0,qty,coef,final:Number.isFinite(unit)?unit*qty*coef:0}}
+function preview(){els.preview.textContent=calc().final.toFixed(2)}
+function floorValue(){return els.floor.value==="custom"?els.customFloor.value.trim():els.floor.value}
+function reset(){editing=null;shape="rectangle";els.shapeTabs.querySelectorAll(".shape").forEach(b=>b.classList.toggle("active",b.dataset.shape===shape));els.floor.value="Tầng 1";els.customFloorBox.style.display="none";els.customFloor.value="";els.name.value="";els.qty.value=1;els.coef.value="1";els.customCoefBox.style.display="none";els.customCoef.value=100;els.note.value="";$("formTitle").textContent="Thêm khu vực tính toán";$("saveRecord").textContent="Lưu khu vực";$("editChip").style.display="none";renderDims()}
+function storeRecord(){let f=floorValue(),name=els.name.value.trim(),c=calc();if(!f)return toast("Vui lòng nhập tên tầng hoặc khu vực");if(!name)return toast("Vui lòng nhập tên hạng mục");if(Object.values(c.d).some(v=>v<=0))return toast("Vui lòng nhập kích thước hợp lệ");let r={id:editing||uid(),floor:f,name,shape,d:c.d,qty:c.qty,coef:c.coef,note:els.note.value.trim()},i=records.findIndex(x=>x.id===editing);if(i>=0){records[i]=r;toast("Đã cập nhật hạng mục")}else{records.unshift(r);toast("Đã thêm hạng mục")}save();renderAll();reset();page("data")}
+function edit(id){let r=records.find(x=>x.id===id);if(!r)return;editing=id;shape=r.shape;els.shapeTabs.querySelectorAll(".shape").forEach(b=>b.classList.toggle("active",b.dataset.shape===shape));let opts=[...els.floor.options].map(o=>o.value);if(opts.includes(r.floor)){els.floor.value=r.floor;els.customFloorBox.style.display="none"}else{els.floor.value="custom";els.customFloorBox.style.display="flex";els.customFloor.value=r.floor}els.name.value=r.name;els.qty.value=r.qty;if(["1","0.5","0"].includes(String(r.coef))){els.coef.value=String(r.coef);els.customCoefBox.style.display="none"}else{els.coef.value="custom";els.customCoefBox.style.display="flex";els.customCoef.value=r.coef*100}els.note.value=r.note||"";$("formTitle").textContent="Chỉnh sửa khu vực";$("saveRecord").textContent="Cập nhật hạng mục";$("editChip").style.display="inline-flex";renderDims(r.d);page("calc")}
+function copyRec(id){let r=records.find(x=>x.id===id);if(!r)return;r=clone(r);r.id=uid();r.name+=" - bản sao";records.unshift(r);save();renderAll();toast("Đã sao chép hạng mục")}
+function del(id){let r=records.find(x=>x.id===id);if(!r||!confirm(`Xóa hạng mục "${r.name}"?`))return;records=records.filter(x=>x.id!==id);save();renderAll();toast("Đã xóa hạng mục")}
+function renderFilter(){let old=els.filter.value,f=[...new Set(records.map(r=>r.floor).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"vi"));els.filter.innerHTML='<option value="all">Tất cả tầng và khu vực</option>'+f.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");if(f.includes(old))els.filter.value=old}
+function renderData(){renderFilter();let f=els.filter.value,list=records.filter(r=>f==="all"||r.floor===f).sort((a,b)=>(asc?1:-1)*a.name.localeCompare(b.name,"vi"));$("dataBadge").textContent=list.length+" mục";els.empty.style.display=list.length?"none":"block";els.records.innerHTML=list.map(r=>{let s=shapes[r.shape]||shapes.rectangle,n=norm(r);return`<article class="record"><div class="record-top"><div class="record-i">${s.icon}</div><div><strong>${esc(r.name)}</strong><div class="meta">${esc(r.floor)} · ${esc(s.detail(r.d))}<br>${r.qty} mục · Tính ${fmt(r.coef*100)}%${r.note?" · "+esc(r.note):""}</div></div><div class="area">${n.final.toFixed(2)} m²</div></div><div class="actions"><button class="edit" data-edit="${r.id}">Chỉnh sửa</button><button class="copy" data-copy="${r.id}">Sao chép</button><button class="delete" data-delete="${r.id}">Xóa</button></div></article>`}).join("");els.records.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>edit(b.dataset.edit));els.records.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copyRec(b.dataset.copy));els.records.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>del(b.dataset.delete))}
+function renderAll(){renderProject();renderHome();renderData()}
+function openProject(){$("pName").value=project.name||"";$("pLocation").value=project.location||"";$("pManager").value=project.manager||"";$("pNote").value=project.note||"";$("projectModal").classList.add("open")}
+function closeProject(){$("projectModal").classList.remove("open")}
+function saveProject(){let name=$("pName").value.trim();if(!name)return toast("Vui lòng nhập tên công trình");project={name,location:$("pLocation").value.trim(),manager:$("pManager").value.trim(),note:$("pNote").value.trim()};save();renderProject();closeProject();toast("Đã lưu thông tin công trình")}
+function restore(){if(!confirm("Khôi phục dữ liệu mẫu và thay thế dữ liệu hiện tại?"))return;records=clone(sample).map(r=>({...r,id:uid()}));project={name:"Công trình mẫu",location:"Hà Nội",manager:"Người phụ trách",note:"Dữ liệu mẫu"};save();reset();renderAll();toast("Đã khôi phục dữ liệu mẫu")}
+function clearAll(){if(!records.length)return toast("Không có dữ liệu để xóa");if(!confirm("Xóa toàn bộ dữ liệu diện tích hiện tại?"))return;records=[];save();renderAll();toast("Đã xóa toàn bộ dữ liệu")}
+function toast(m){els.toast.textContent=m;els.toast.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>els.toast.classList.remove("show"),1700)}
+els.nav.forEach(b=>b.onclick=()=>page(b.dataset.page));$("quickAdd").onclick=()=>page("calc");$("openProject").onclick=openProject;$("closeProject").onclick=closeProject;$("cancelProject").onclick=closeProject;$("saveProject").onclick=saveProject;$("restoreSample").onclick=restore;$("clearAll").onclick=clearAll;
+els.shapeTabs.onclick=e=>{let b=e.target.closest("[data-shape]");if(!b)return;shape=b.dataset.shape;els.shapeTabs.querySelectorAll(".shape").forEach(x=>x.classList.toggle("active",x===b));renderDims()};
+els.floor.onchange=()=>els.customFloorBox.style.display=els.floor.value==="custom"?"flex":"none";els.coef.onchange=()=>{els.customCoefBox.style.display=els.coef.value==="custom"?"flex":"none";preview()};els.qty.oninput=preview;els.customCoef.oninput=preview;$("saveRecord").onclick=storeRecord;$("resetForm").onclick=reset;els.filter.onchange=renderData;$("sort").onclick=()=>{asc=!asc;$("sort").textContent=asc?"Sắp xếp A-Z":"Sắp xếp Z-A";renderData()};
+document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>$(b.dataset.panel).classList.toggle("open"));$("projectModal").onclick=e=>{if(e.target===$("projectModal"))closeProject()};
+renderDims();renderAll();
+})();
+</script>
 </body>
 </html>

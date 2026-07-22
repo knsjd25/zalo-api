@@ -3,22 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <meta name="theme-color" content="#2563eb" />
+  <meta name="theme-color" content="#1d4ed8" />
+  <meta name="description" content="Quản lý dự án giai đoạn thi công tiến độ và nhật ký công trình" />
   <title>Theo dõi tiến độ công trình</title>
   <style>
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
       --primary-soft: #eff6ff;
+      --primary-line: #bfdbfe;
       --success: #16a34a;
+      --success-soft: #dcfce7;
       --warning: #d97706;
+      --warning-soft: #fef3c7;
       --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --slate: #475569;
       --text: #172033;
-      --muted: #6b7280;
-      --line: #e5e7eb;
+      --muted: #64748b;
+      --line: #e2e8f0;
       --bg: #f4f7fb;
       --card: #ffffff;
-      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+      --shadow: 0 10px 28px rgba(15, 23, 42, .08);
       --radius: 18px;
     }
 
@@ -32,29 +38,26 @@
       background: var(--bg);
     }
 
+    body { -webkit-tap-highlight-color: transparent; }
     button, input, textarea, select { font: inherit; }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    button { border: 0; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
 
     .app {
-      width: min(100%, 720px);
+      width: min(100%, 760px);
       min-height: 100vh;
       margin: 0 auto;
-      padding-bottom: 92px;
+      padding-bottom: 88px;
     }
 
     .header {
-      padding: 24px 18px 22px;
       color: #fff;
-      background:
-        radial-gradient(circle at 90% 10%, rgba(255,255,255,.2), transparent 30%),
-        linear-gradient(135deg, #2563eb, #1e40af);
+      padding: 20px 16px 24px;
       border-radius: 0 0 28px 28px;
-      box-shadow: 0 12px 30px rgba(37, 99, 235, .22);
+      background:
+        radial-gradient(circle at 90% 0%, rgba(255,255,255,.22), transparent 28%),
+        linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+      box-shadow: 0 12px 30px rgba(37, 99, 235, .2);
     }
 
     .header-row {
@@ -64,279 +67,320 @@
       gap: 14px;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .brand-icon {
       width: 48px;
       height: 48px;
+      flex: none;
       display: grid;
       place-items: center;
       border-radius: 15px;
       background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.22);
-      font-size: 25px;
+      border: 1px solid rgba(255,255,255,.2);
+      font-size: 24px;
     }
 
-    .header h1 {
-      margin: 0;
-      font-size: 21px;
-      line-height: 1.25;
-    }
-
-    .header p {
-      margin: 5px 0 0;
-      font-size: 13px;
-      opacity: .82;
-    }
-
-    .today {
-      white-space: nowrap;
-      font-size: 12px;
+    .brand h1 { margin: 0; font-size: 20px; line-height: 1.25; }
+    .brand p { margin: 5px 0 0; font-size: 12px; opacity: .84; }
+    .header-date {
+      flex: none;
       padding: 8px 10px;
       border-radius: 999px;
       background: rgba(255,255,255,.15);
+      font-size: 11px;
+      white-space: nowrap;
     }
 
-    .dashboard {
+    .metrics {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin: -3px 14px 0;
-      transform: translateY(18px);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+      margin: -13px 12px 0;
+      position: relative;
+      z-index: 2;
     }
 
-    .stat-card {
+    .metric {
       min-width: 0;
-      padding: 14px 10px;
+      padding: 13px 7px;
       text-align: center;
-      border-radius: 16px;
+      border-radius: 15px;
       background: var(--card);
       box-shadow: var(--shadow);
     }
 
-    .stat-value {
-      font-size: 23px;
-      font-weight: 800;
-      color: var(--primary);
+    .metric-value { font-size: 21px; font-weight: 800; color: var(--primary); }
+    .metric-value.danger { color: var(--danger); }
+    .metric-label { margin-top: 3px; color: var(--muted); font-size: 10px; }
+
+    .main { padding: 18px 14px 24px; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 12px 2px 10px;
     }
 
-    .stat-label {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 11px;
+    .section-head h2 { margin: 0; font-size: 17px; }
+    .section-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+
+    .small-btn, .ghost-btn, .primary-btn, .danger-btn {
+      border-radius: 11px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 750;
     }
 
-    .content {
-      padding: 38px 14px 20px;
+    .small-btn, .primary-btn { color: #fff; background: var(--primary); }
+    .ghost-btn { color: var(--primary); background: var(--primary-soft); }
+    .danger-btn { color: var(--danger); background: var(--danger-soft); }
+
+    .hero-card {
+      padding: 17px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #ffffff, #f8fbff);
+      border: 1px solid var(--primary-line);
+      box-shadow: var(--shadow);
     }
+
+    .hero-card h2 { margin: 0; font-size: 18px; }
+    .hero-card p { margin: 7px 0 14px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .hero-actions { display: flex; gap: 9px; flex-wrap: wrap; }
 
     .toolbar {
       display: flex;
-      gap: 9px;
-      margin-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .search-wrap {
-      position: relative;
-      flex: 1;
-    }
-
+    .search-wrap { position: relative; flex: 1; }
     .search-wrap span {
       position: absolute;
-      left: 13px;
+      left: 12px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--muted);
       pointer-events: none;
     }
 
-    .search,
-    .filter {
+    .search, .filter, .input, .select, .textarea {
       width: 100%;
-      height: 44px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
+      border: 1px solid #dbe3ee;
+      border-radius: 12px;
       background: #fff;
       outline: none;
-    }
-
-    .search {
-      padding: 0 12px 0 38px;
-    }
-
-    .filter {
-      width: 128px;
-      padding: 0 10px;
       color: var(--text);
     }
 
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 18px 2px 10px;
+    .search, .filter, .input, .select { height: 44px; }
+    .search { padding: 0 12px 0 36px; }
+    .filter { width: 144px; padding: 0 10px; }
+    .input, .select { padding: 0 12px; }
+    .textarea { min-height: 82px; padding: 11px 12px; resize: vertical; line-height: 1.5; }
+
+    .search:focus, .filter:focus, .input:focus, .select:focus, .textarea:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,.16);
     }
 
-    .section-title h2 {
-      margin: 0;
-      font-size: 17px;
-    }
-
-    .link-button {
-      padding: 7px 10px;
-      border-radius: 10px;
-      color: var(--primary);
-      background: var(--primary-soft);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .record-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .record-card {
+    .list { display: grid; gap: 12px; }
+    .card {
       padding: 15px;
       border-radius: var(--radius);
       background: var(--card);
-      box-shadow: 0 7px 22px rgba(15, 23, 42, .06);
-      border: 1px solid rgba(229, 231, 235, .8);
+      border: 1px solid rgba(226,232,240,.95);
+      box-shadow: 0 7px 22px rgba(15,23,42,.055);
     }
 
-    .record-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
-    .record-title {
-      min-width: 0;
-    }
-
-    .record-title h3 {
-      margin: 0;
-      font-size: 16px;
-      overflow-wrap: anywhere;
-    }
-
-    .record-title p {
-      margin: 5px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
+    .card.clickable { cursor: pointer; }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-title { min-width: 0; }
+    .card-title h3 { margin: 0; font-size: 16px; overflow-wrap: anywhere; }
+    .card-title p { margin: 5px 0 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
 
     .status {
       flex: none;
       padding: 6px 9px;
       border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
-    .status.todo { color: #475569; background: #f1f5f9; }
+    .status.planned { color: #475569; background: #f1f5f9; }
     .status.doing { color: #1d4ed8; background: #dbeafe; }
     .status.paused { color: #b45309; background: #fef3c7; }
     .status.done { color: #15803d; background: #dcfce7; }
+    .status.overdue { color: #b91c1c; background: #fee2e2; }
 
-    .progress-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 14px 0;
-    }
+    .progress-row { display: flex; align-items: center; gap: 10px; margin: 13px 0 10px; }
+    .progress-track { flex: 1; height: 9px; overflow: hidden; border-radius: 999px; background: #e8eef7; }
+    .progress-bar { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #60a5fa, #2563eb); }
+    .progress-text { min-width: 39px; text-align: right; color: var(--primary); font-size: 12px; font-weight: 800; }
 
-    .progress-track {
-      flex: 1;
-      height: 9px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: #eaf0f8;
-    }
-
-    .progress-bar {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #60a5fa, #2563eb);
-    }
-
-    .progress-text {
-      min-width: 39px;
-      text-align: right;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .record-detail {
+    .meta-grid {
       display: grid;
-      gap: 7px;
-      padding: 12px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 8px;
+      padding: 11px;
       border-radius: 13px;
       background: #f8fafc;
-      font-size: 13px;
-      line-height: 1.55;
     }
 
-    .record-detail div {
-      overflow-wrap: anywhere;
-    }
+    .meta-item { min-width: 0; font-size: 12px; color: var(--muted); }
+    .meta-item strong { display: block; margin-top: 3px; color: #334155; font-size: 12px; overflow-wrap: anywhere; }
 
-    .record-detail strong {
-      color: #334155;
-    }
-
-    .card-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .action-btn {
-      min-width: 64px;
-      padding: 8px 11px;
+    .card-actions { display: flex; justify-content: flex-end; gap: 7px; flex-wrap: wrap; margin-top: 11px; }
+    .icon-btn {
+      padding: 8px 10px;
       border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 750;
+      color: var(--primary);
+      background: var(--primary-soft);
     }
-
-    .edit-btn { color: var(--primary); background: var(--primary-soft); }
-    .delete-btn { color: var(--danger); background: #fef2f2; }
+    .icon-btn.danger { color: var(--danger); background: var(--danger-soft); }
+    .icon-btn.neutral { color: #475569; background: #f1f5f9; }
 
     .empty {
-      padding: 42px 20px;
+      padding: 38px 18px;
       text-align: center;
       color: var(--muted);
       border-radius: var(--radius);
       background: #fff;
       border: 1px dashed #cbd5e1;
     }
+    .empty-icon { font-size: 38px; margin-bottom: 7px; }
+    .empty strong { color: var(--text); }
+    .empty p { margin: 6px 0 0; font-size: 12px; line-height: 1.5; }
 
-    .empty-icon {
-      font-size: 42px;
-      margin-bottom: 8px;
+    .deadline-list, .recent-list { display: grid; gap: 9px; }
+    .deadline-item, .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
     }
+    .deadline-item h4, .recent-item h4 { margin: 0; font-size: 13px; }
+    .deadline-item p, .recent-item p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .date-chip { flex: none; padding: 7px 9px; border-radius: 10px; background: var(--primary-soft); color: var(--primary); font-size: 11px; font-weight: 800; }
+    .date-chip.overdue { color: var(--danger); background: var(--danger-soft); }
+
+    .detail-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .back-btn { padding: 8px 10px; border-radius: 10px; color: var(--slate); background: #eaf0f6; font-size: 12px; font-weight: 750; }
+    .detail-actions { display: flex; gap: 7px; }
+
+    .project-summary {
+      padding: 16px;
+      color: #fff;
+      border-radius: 19px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      box-shadow: 0 12px 26px rgba(37,99,235,.2);
+    }
+    .project-summary h2 { margin: 0; font-size: 18px; }
+    .project-summary p { margin: 6px 0 0; opacity: .84; font-size: 12px; }
+    .project-summary .progress-track { background: rgba(255,255,255,.25); }
+    .project-summary .progress-bar { background: #fff; }
+    .project-summary .progress-text { color: #fff; }
+    .project-summary-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 9px; margin-top: 12px; }
+    .project-summary-item { padding: 10px; border-radius: 12px; background: rgba(255,255,255,.13); font-size: 11px; }
+    .project-summary-item strong { display: block; margin-top: 3px; font-size: 12px; }
+
+    .stage-card { position: relative; }
+    .stage-index {
+      width: 30px;
+      height: 30px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .stage-heading { display: flex; gap: 10px; min-width: 0; }
+    .stage-heading h3 { margin: 0; font-size: 15px; }
+    .stage-heading p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .stage-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .latest-log {
+      margin-top: 10px;
+      padding: 10px;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 11px 11px 0;
+      background: #f8fafc;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .latest-log strong { color: #334155; }
+    .latest-log p { margin: 4px 0 0; color: var(--muted); }
+
+    .log-card .log-body { display: grid; gap: 7px; margin-top: 10px; padding: 11px; border-radius: 12px; background: #f8fafc; font-size: 12px; line-height: 1.5; }
+    .log-card .log-body strong { color: #334155; }
+
+    .info-grid { display: grid; gap: 12px; }
+    .info-card { padding: 15px; border-radius: var(--radius); background: #fff; border: 1px solid var(--line); }
+    .info-card h3 { margin: 0 0 10px; font-size: 15px; }
+    .info-card p, .info-card li { color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .info-card ul, .info-card ol { margin: 0; padding-left: 20px; }
+    .company-line { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid #eef2f7; font-size: 12px; }
+    .company-line:last-child { border-bottom: 0; }
+    .company-line span { color: var(--muted); }
+    .company-line strong { text-align: right; }
+    .data-tools { display: grid; grid-template-columns: repeat(2,1fr); gap: 9px; }
+    .data-tools button { min-height: 44px; }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 50;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100%, 760px);
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-btn {
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      padding: 5px 2px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .nav-btn span { font-size: 19px; line-height: 1; }
+    .nav-btn.active { color: var(--primary); }
 
     .fab {
       position: fixed;
-      z-index: 30;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%);
-      width: min(calc(100% - 28px), 692px);
-      height: 56px;
+      z-index: 55;
+      right: max(18px, calc((100vw - 760px) / 2 + 18px));
+      bottom: 78px;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
       color: #fff;
       border-radius: 17px;
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      box-shadow: 0 13px 30px rgba(37, 99, 235, .32);
-      font-size: 15px;
-      font-weight: 800;
+      box-shadow: 0 12px 27px rgba(37,99,235,.34);
+      font-size: 27px;
     }
 
     .modal {
@@ -346,219 +390,81 @@
       display: none;
       align-items: flex-end;
       justify-content: center;
-      background: rgba(15, 23, 42, .48);
+      background: rgba(15,23,42,.5);
       backdrop-filter: blur(3px);
     }
-
     .modal.open { display: flex; }
-
     .sheet {
-      width: min(100%, 720px);
+      width: min(100%, 760px);
       max-height: 92vh;
       overflow-y: auto;
-      padding: 14px 16px 24px;
+      padding: 14px 16px calc(24px + env(safe-area-inset-bottom));
       border-radius: 24px 24px 0 0;
       background: #fff;
-      animation: slideUp .22s ease-out;
+      animation: slideUp .2s ease-out;
     }
+    @keyframes slideUp { from { transform: translateY(35px); opacity: .65; } to { transform: translateY(0); opacity: 1; } }
+    .sheet-handle { width: 42px; height: 5px; margin: 0 auto 13px; border-radius: 999px; background: #d1d5db; }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+    .sheet-head h2 { margin: 0; font-size: 18px; }
+    .close-btn { width: 34px; height: 34px; border-radius: 50%; color: var(--slate); background: #f1f5f9; font-size: 18px; }
 
-    @keyframes slideUp {
-      from { transform: translateY(35px); opacity: .6; }
-      to { transform: translateY(0); opacity: 1; }
-    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+    .field { display: grid; gap: 7px; margin-bottom: 12px; }
+    .field.full { grid-column: 1/-1; }
+    .field label { color: #334155; font-size: 12px; font-weight: 750; }
+    .field label.required::after { content: " *"; color: var(--danger); }
+    .field-note { margin-top: -2px; color: var(--muted); font-size: 10px; }
 
-    .sheet-handle {
-      width: 42px;
-      height: 5px;
-      margin: 0 auto 13px;
-      border-radius: 999px;
-      background: #d1d5db;
-    }
-
-    .sheet-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .sheet-head h2 {
-      margin: 0;
-      font-size: 19px;
-    }
-
-    .close-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #f1f5f9;
-      color: #475569;
-      font-size: 18px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .field {
-      display: grid;
-      gap: 7px;
-      margin-bottom: 12px;
-    }
-
-    .field.full { grid-column: 1 / -1; }
-
-    .field label {
-      color: #334155;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .required::after {
-      content: " *";
-      color: var(--danger);
-    }
-
-    .input,
-    .textarea,
-    .select {
-      width: 100%;
-      border: 1px solid #dbe1ea;
-      border-radius: 12px;
-      background: #fff;
-      outline: none;
-      transition: .15s;
-    }
-
-    .input,
-    .select {
-      height: 45px;
-      padding: 0 12px;
-    }
-
-    .textarea {
-      min-height: 82px;
-      padding: 11px 12px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .input:focus,
-    .textarea:focus,
-    .select:focus {
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 3px rgba(96,165,250,.18);
-    }
-
-    .range-box {
-      display: grid;
-      grid-template-columns: 1fr 58px;
-      align-items: center;
-      gap: 10px;
-      height: 45px;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--primary);
-    }
-
-    .range-value {
-      padding: 7px 6px;
-      text-align: center;
-      border-radius: 9px;
-      color: var(--primary);
-      background: var(--primary-soft);
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .submit-btn {
-      width: 100%;
-      height: 50px;
-      margin-top: 4px;
-      color: #fff;
-      border-radius: 14px;
-      background: var(--primary);
-      font-weight: 800;
-      box-shadow: 0 8px 20px rgba(37,99,235,.22);
-    }
-
-    .tools-menu {
-      position: fixed;
-      z-index: 110;
-      inset: 0;
-      display: none;
-      place-items: center;
-      padding: 20px;
-      background: rgba(15, 23, 42, .45);
-    }
-
-    .tools-menu.open { display: grid; }
-
-    .tools-card {
-      width: min(100%, 380px);
-      padding: 18px;
-      border-radius: 20px;
-      background: #fff;
-      box-shadow: var(--shadow);
-    }
-
-    .tools-card h3 {
-      margin: 0 0 14px;
-    }
-
-    .tool-btn {
-      width: 100%;
-      padding: 12px;
-      margin-top: 9px;
-      text-align: left;
-      border-radius: 12px;
-      background: #f8fafc;
-      color: var(--text);
-      font-weight: 700;
-    }
-
-    .tool-btn.danger {
-      color: var(--danger);
-      background: #fef2f2;
-    }
+    .range-box { display: grid; grid-template-columns: 1fr 58px; align-items: center; gap: 10px; min-height: 44px; }
+    input[type="range"] { width: 100%; accent-color: var(--primary); }
+    .range-value { padding: 7px 5px; text-align: center; border-radius: 9px; color: var(--primary); background: var(--primary-soft); font-size: 12px; font-weight: 800; }
+    .submit-btn { width: 100%; min-height: 49px; margin-top: 3px; border-radius: 13px; color: #fff; background: var(--primary); font-weight: 800; box-shadow: 0 8px 20px rgba(37,99,235,.2); }
 
     .toast {
       position: fixed;
       z-index: 200;
       left: 50%;
-      bottom: 92px;
-      transform: translate(-50%, 20px);
-      max-width: calc(100% - 40px);
-      padding: 11px 15px;
+      bottom: 90px;
+      transform: translate(-50%, 18px);
+      max-width: calc(100% - 36px);
+      padding: 11px 14px;
       color: #fff;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, .92);
+      border-radius: 11px;
+      background: rgba(15,23,42,.94);
       opacity: 0;
       pointer-events: none;
       transition: .2s;
-      font-size: 13px;
+      font-size: 12px;
       box-shadow: var(--shadow);
     }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
+    .notice {
+      margin-bottom: 12px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      color: #1e40af;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-size: 11px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 520px) {
-      .header { padding-top: 20px; }
-      .today { display: none; }
-      .dashboard { grid-template-columns: repeat(3, 1fr); }
-      .stat-card { padding-inline: 5px; }
-      .stat-value { font-size: 20px; }
+    @media (max-width: 560px) {
+      .header-date { display: none; }
+      .metrics { grid-template-columns: repeat(4,1fr); margin-inline: 9px; gap: 6px; }
+      .metric { padding-inline: 3px; }
+      .metric-value { font-size: 18px; }
+      .metric-label { font-size: 9px; }
       .toolbar { flex-direction: column; }
       .filter { width: 100%; }
-      .form-grid { grid-template-columns: 1fr; gap: 0; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column: auto; }
+      .data-tools { grid-template-columns: 1fr; }
+      .project-summary-grid { grid-template-columns: 1fr 1fr; }
+      .fab { right: 16px; }
     }
   </style>
 </head>
@@ -570,548 +476,779 @@
           <div class="brand-icon">🏗️</div>
           <div>
             <h1>Theo dõi tiến độ công trình</h1>
-            <p>Ghi chép công việc nhanh chóng và rõ ràng</p>
+            <p>Quản lý dự án giai đoạn thi công và nhật ký tiến độ</p>
           </div>
         </div>
-        <div class="today" id="todayText"></div>
+        <div id="headerDate" class="header-date"></div>
       </div>
     </header>
 
-    <section class="dashboard">
-      <article class="stat-card">
-        <div class="stat-value" id="totalCount">0</div>
-        <div class="stat-label">Tổng bản ghi</div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-value" id="doingCount">0</div>
-        <div class="stat-label">Đang thực hiện</div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-value" id="avgProgress">0%</div>
-        <div class="stat-label">Tiến độ TB</div>
-      </article>
+    <section class="metrics" aria-label="Tổng quan dữ liệu">
+      <article class="metric"><div id="metricProjects" class="metric-value">0</div><div class="metric-label">Dự án</div></article>
+      <article class="metric"><div id="metricDoing" class="metric-value">0</div><div class="metric-label">Đang làm</div></article>
+      <article class="metric"><div id="metricProgress" class="metric-value">0%</div><div class="metric-label">Tiến độ TB</div></article>
+      <article class="metric"><div id="metricOverdue" class="metric-value danger">0</div><div class="metric-label">Quá hạn</div></article>
     </section>
 
-    <section class="content">
-      <div class="toolbar">
-        <div class="search-wrap">
-          <span>⌕</span>
-          <input id="searchInput" class="search" type="search" placeholder="Tìm dự án, hạng mục, người phụ trách..." />
-        </div>
-        <select id="statusFilter" class="filter">
-          <option value="all">Tất cả trạng thái</option>
-          <option value="todo">Chưa bắt đầu</option>
-          <option value="doing">Đang thực hiện</option>
-          <option value="paused">Tạm dừng</option>
-          <option value="done">Đã hoàn thành</option>
-        </select>
-      </div>
-
-      <div class="section-title">
-        <h2>Nhật ký tiến độ</h2>
-        <button id="toolsBtn" class="link-button" type="button">Quản lý dữ liệu</button>
-      </div>
-
-      <div id="recordList" class="record-list"></div>
+    <section class="main">
+      <div id="overviewView" class="view active"></div>
+      <div id="projectsView" class="view"></div>
+      <div id="logsView" class="view"></div>
+      <div id="infoView" class="view"></div>
     </section>
   </main>
 
-  <button id="addBtn" class="fab" type="button">＋ Thêm bản ghi tiến độ</button>
+  <button id="fab" class="fab" type="button" aria-label="Thêm dữ liệu">＋</button>
 
-  <div id="recordModal" class="modal" aria-hidden="true">
+  <nav class="bottom-nav" aria-label="Điều hướng chính">
+    <button class="nav-btn active" data-tab="overview" type="button"><span>⌂</span>Tổng quan</button>
+    <button class="nav-btn" data-tab="projects" type="button"><span>▦</span>Dự án</button>
+    <button class="nav-btn" data-tab="logs" type="button"><span>≡</span>Nhật ký</button>
+    <button class="nav-btn" data-tab="info" type="button"><span>ⓘ</span>Thông tin</button>
+  </nav>
+
+  <div id="projectModal" class="modal" aria-hidden="true">
     <section class="sheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-head">
-        <h2 id="formTitle">Thêm bản ghi mới</h2>
-        <button id="closeModalBtn" class="close-btn" type="button">×</button>
-      </div>
-
-      <form id="recordForm">
-        <input id="recordId" type="hidden" />
-
+      <div class="sheet-head"><h2 id="projectFormTitle">Thêm dự án</h2><button class="close-btn" data-close="projectModal" type="button">×</button></div>
+      <form id="projectForm">
+        <input id="projectId" type="hidden" />
         <div class="form-grid">
-          <div class="field full">
-            <label class="required" for="projectName">Tên công trình / dự án</label>
-            <input id="projectName" class="input" type="text" maxlength="80" placeholder="Ví dụ: Công trình nhà xưởng A" required />
-          </div>
-
-          <div class="field">
-            <label class="required" for="workItem">Hạng mục công việc</label>
-            <input id="workItem" class="input" type="text" maxlength="80" placeholder="Ví dụ: Thi công phần móng" required />
-          </div>
-
-          <div class="field">
-            <label class="required" for="recordDate">Ngày ghi nhận</label>
-            <input id="recordDate" class="input" type="date" required />
-          </div>
-
-          <div class="field">
-            <label for="responsible">Người phụ trách</label>
-            <input id="responsible" class="input" type="text" maxlength="40" placeholder="Họ và tên" />
-          </div>
-
-          <div class="field">
-            <label for="status">Trạng thái</label>
-            <select id="status" class="select">
-              <option value="todo">Chưa bắt đầu</option>
-              <option value="doing" selected>Đang thực hiện</option>
-              <option value="paused">Tạm dừng</option>
-              <option value="done">Đã hoàn thành</option>
-            </select>
-          </div>
-
-          <div class="field full">
-            <label for="progress">Tiến độ hoàn thành</label>
-            <div class="range-box">
-              <input id="progress" type="range" min="0" max="100" step="1" value="0" />
-              <div id="progressValue" class="range-value">0%</div>
-            </div>
-          </div>
-
-          <div class="field full">
-            <label class="required" for="completedWork">Công việc đã thực hiện</label>
-            <textarea id="completedWork" class="textarea" maxlength="500" placeholder="Mô tả nội dung và khối lượng công việc đã hoàn thành..." required></textarea>
-          </div>
-
-          <div class="field full">
-            <label for="issues">Vấn đề / khó khăn</label>
-            <textarea id="issues" class="textarea" maxlength="300" placeholder="Ghi lại vấn đề phát sinh, nguyên nhân hoặc nội dung cần xử lý..."></textarea>
-          </div>
-
-          <div class="field full">
-            <label for="nextPlan">Kế hoạch tiếp theo</label>
-            <textarea id="nextPlan" class="textarea" maxlength="300" placeholder="Nội dung dự kiến thực hiện trong giai đoạn tiếp theo..."></textarea>
-          </div>
+          <div class="field full"><label class="required" for="projectName">Tên dự án</label><input id="projectName" class="input" maxlength="100" placeholder="Ví dụ Xây dựng nhà kho" required /></div>
+          <div class="field"><label for="projectLocation">Địa điểm</label><input id="projectLocation" class="input" maxlength="100" placeholder="Địa chỉ công trình" /></div>
+          <div class="field"><label for="projectManager">Người phụ trách</label><input id="projectManager" class="input" maxlength="60" placeholder="Họ và tên" /></div>
+          <div class="field"><label class="required" for="projectStart">Ngày bắt đầu</label><input id="projectStart" class="input" type="date" required /></div>
+          <div class="field"><label class="required" for="projectEnd">Ngày dự kiến hoàn thành</label><input id="projectEnd" class="input" type="date" required /></div>
+          <div class="field"><label for="projectStatus">Tình trạng hiện tại</label><select id="projectStatus" class="select"><option value="planned">Chưa bắt đầu</option><option value="doing">Đang thực hiện</option><option value="paused">Tạm dừng</option><option value="done">Đã hoàn thành</option></select></div>
+          <div class="field"><label for="projectCode">Mã dự án</label><input id="projectCode" class="input" maxlength="30" placeholder="Ví dụ DA001" /></div>
+          <div class="field full"><label for="projectDescription">Mô tả dự án</label><textarea id="projectDescription" class="textarea" maxlength="500" placeholder="Mục tiêu phạm vi và nội dung chính của dự án"></textarea></div>
         </div>
-
-        <button class="submit-btn" type="submit">Lưu bản ghi</button>
+        <button class="submit-btn" type="submit">Lưu dự án</button>
       </form>
     </section>
   </div>
 
-  <div id="toolsMenu" class="tools-menu">
-    <div class="tools-card">
-      <h3>Quản lý dữ liệu</h3>
-      <button id="exportBtn" class="tool-btn" type="button">⬇ Xuất dữ liệu JSON</button>
-      <button id="importBtn" class="tool-btn" type="button">⬆ Nhập dữ liệu JSON</button>
-      <input id="importFile" type="file" accept="application/json,.json" hidden />
-      <button id="clearBtn" class="tool-btn danger" type="button">🗑 Xóa toàn bộ dữ liệu</button>
-      <button id="closeToolsBtn" class="tool-btn" type="button">Đóng</button>
-    </div>
+  <div id="stageModal" class="modal" aria-hidden="true">
+    <section class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><h2 id="stageFormTitle">Thêm giai đoạn thi công</h2><button class="close-btn" data-close="stageModal" type="button">×</button></div>
+      <form id="stageForm">
+        <input id="stageId" type="hidden" />
+        <input id="stageProjectId" type="hidden" />
+        <div class="form-grid">
+          <div class="field full"><label class="required" for="stageName">Tên giai đoạn hoặc hạng mục</label><input id="stageName" class="input" maxlength="100" placeholder="Ví dụ Thi công phần móng" required /></div>
+          <div class="field"><label for="stageManager">Người phụ trách</label><input id="stageManager" class="input" maxlength="60" placeholder="Họ và tên" /></div>
+          <div class="field"><label for="stageStatus">Tình trạng hiện tại</label><select id="stageStatus" class="select"><option value="planned">Chưa bắt đầu</option><option value="doing">Đang thực hiện</option><option value="paused">Tạm dừng</option><option value="done">Đã hoàn thành</option></select></div>
+          <div class="field"><label class="required" for="stageStart">Ngày bắt đầu</label><input id="stageStart" class="input" type="date" required /></div>
+          <div class="field"><label class="required" for="stageEnd">Ngày dự kiến hoàn thành</label><input id="stageEnd" class="input" type="date" required /></div>
+          <div class="field full"><label for="stageProgress">Tỷ lệ hoàn thành</label><div class="range-box"><input id="stageProgress" type="range" min="0" max="100" step="1" value="0" /><div id="stageProgressValue" class="range-value">0%</div></div></div>
+          <div class="field full"><label for="stageDescription">Nội dung công việc</label><textarea id="stageDescription" class="textarea" maxlength="500" placeholder="Mô tả phạm vi và khối lượng công việc của giai đoạn"></textarea></div>
+        </div>
+        <button class="submit-btn" type="submit">Lưu giai đoạn</button>
+      </form>
+    </section>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <div id="logModal" class="modal" aria-hidden="true">
+    <section class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><h2 id="logFormTitle">Thêm nhật ký tiến độ</h2><button class="close-btn" data-close="logModal" type="button">×</button></div>
+      <form id="logForm">
+        <input id="logId" type="hidden" />
+        <div class="form-grid">
+          <div class="field"><label class="required" for="logProject">Dự án</label><select id="logProject" class="select" required></select></div>
+          <div class="field"><label class="required" for="logStage">Giai đoạn</label><select id="logStage" class="select" required></select></div>
+          <div class="field"><label class="required" for="logDate">Ngày cập nhật</label><input id="logDate" class="input" type="date" required /></div>
+          <div class="field"><label for="logReporter">Người cập nhật</label><input id="logReporter" class="input" maxlength="60" placeholder="Họ và tên" /></div>
+          <div class="field full"><label for="logProgress">Tiến độ hiện tại</label><div class="range-box"><input id="logProgress" type="range" min="0" max="100" step="1" value="0" /><div id="logProgressValue" class="range-value">0%</div></div><div class="field-note">Khi lưu nhật ký tiến độ của giai đoạn sẽ được cập nhật theo giá trị này</div></div>
+          <div class="field full"><label class="required" for="logWork">Công việc đã thực hiện</label><textarea id="logWork" class="textarea" maxlength="600" placeholder="Nội dung và khối lượng công việc đã hoàn thành" required></textarea></div>
+          <div class="field full"><label for="logIssue">Vấn đề phát sinh</label><textarea id="logIssue" class="textarea" maxlength="400" placeholder="Khó khăn nguyên nhân và nội dung cần xử lý"></textarea></div>
+          <div class="field full"><label for="logNext">Kế hoạch tiếp theo</label><textarea id="logNext" class="textarea" maxlength="400" placeholder="Công việc dự kiến thực hiện tiếp theo"></textarea></div>
+        </div>
+        <button class="submit-btn" type="submit">Lưu nhật ký</button>
+      </form>
+    </section>
+  </div>
+
+  <input id="importFile" type="file" accept="application/json,.json" hidden />
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
     (() => {
-      const STORAGE_KEY = "construction_progress_records_v1";
-
-      const $ = (id) => document.getElementById(id);
-      const elements = {
-        todayText: $("todayText"),
-        totalCount: $("totalCount"),
-        doingCount: $("doingCount"),
-        avgProgress: $("avgProgress"),
-        searchInput: $("searchInput"),
-        statusFilter: $("statusFilter"),
-        recordList: $("recordList"),
-        addBtn: $("addBtn"),
-        toolsBtn: $("toolsBtn"),
-        recordModal: $("recordModal"),
-        closeModalBtn: $("closeModalBtn"),
-        formTitle: $("formTitle"),
-        recordForm: $("recordForm"),
-        recordId: $("recordId"),
-        projectName: $("projectName"),
-        workItem: $("workItem"),
-        recordDate: $("recordDate"),
-        responsible: $("responsible"),
-        status: $("status"),
-        progress: $("progress"),
-        progressValue: $("progressValue"),
-        completedWork: $("completedWork"),
-        issues: $("issues"),
-        nextPlan: $("nextPlan"),
-        toolsMenu: $("toolsMenu"),
-        exportBtn: $("exportBtn"),
-        importBtn: $("importBtn"),
-        importFile: $("importFile"),
-        clearBtn: $("clearBtn"),
-        closeToolsBtn: $("closeToolsBtn"),
-        toast: $("toast")
+      const STORAGE_KEY = "construction_project_manager_v2";
+      const SAMPLE_VERSION = 2;
+      const $ = id => document.getElementById(id);
+      const todayISO = () => {
+        const d = new Date();
+        return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
       };
 
-      let records = loadRecords();
-
       const statusMap = {
-        todo: { label: "Chưa bắt đầu", className: "todo" },
+        planned: { label: "Chưa bắt đầu", className: "planned" },
         doing: { label: "Đang thực hiện", className: "doing" },
         paused: { label: "Tạm dừng", className: "paused" },
         done: { label: "Đã hoàn thành", className: "done" }
       };
 
-      function loadRecords() {
+      const elements = {
+        headerDate: $("headerDate"), metricProjects: $("metricProjects"), metricDoing: $("metricDoing"),
+        metricProgress: $("metricProgress"), metricOverdue: $("metricOverdue"),
+        overviewView: $("overviewView"), projectsView: $("projectsView"), logsView: $("logsView"), infoView: $("infoView"),
+        fab: $("fab"), toast: $("toast"), importFile: $("importFile"),
+        projectModal: $("projectModal"), projectForm: $("projectForm"), projectFormTitle: $("projectFormTitle"), projectId: $("projectId"),
+        projectName: $("projectName"), projectLocation: $("projectLocation"), projectManager: $("projectManager"), projectStart: $("projectStart"),
+        projectEnd: $("projectEnd"), projectStatus: $("projectStatus"), projectCode: $("projectCode"), projectDescription: $("projectDescription"),
+        stageModal: $("stageModal"), stageForm: $("stageForm"), stageFormTitle: $("stageFormTitle"), stageId: $("stageId"), stageProjectId: $("stageProjectId"),
+        stageName: $("stageName"), stageManager: $("stageManager"), stageStatus: $("stageStatus"), stageStart: $("stageStart"), stageEnd: $("stageEnd"),
+        stageProgress: $("stageProgress"), stageProgressValue: $("stageProgressValue"), stageDescription: $("stageDescription"),
+        logModal: $("logModal"), logForm: $("logForm"), logFormTitle: $("logFormTitle"), logId: $("logId"), logProject: $("logProject"), logStage: $("logStage"),
+        logDate: $("logDate"), logReporter: $("logReporter"), logProgress: $("logProgress"), logProgressValue: $("logProgressValue"),
+        logWork: $("logWork"), logIssue: $("logIssue"), logNext: $("logNext")
+      };
+
+      let state = loadState();
+      let activeTab = "overview";
+      let selectedProjectId = null;
+      let projectSearch = "";
+      let projectStatusFilter = "all";
+      let logSearch = "";
+
+      function seedState() {
+        return {
+          sampleVersion: SAMPLE_VERSION,
+          projects: [
+            {
+              id: "project-demo-1",
+              code: "DA001",
+              name: "Xây dựng nhà kho Diệp Linh",
+              location: "Khu công nghiệp mẫu",
+              manager: "Nguyễn Văn Minh",
+              startDate: "2026-07-15",
+              endDate: "2026-09-30",
+              status: "doing",
+              description: "Dự án mẫu giúp người dùng kiểm tra đầy đủ chức năng quản lý dự án giai đoạn thi công và nhật ký tiến độ",
+              createdAt: 1784073600000,
+              stages: [
+                {
+                  id: "stage-demo-1",
+                  name: "Chuẩn bị mặt bằng",
+                  manager: "Trần Văn An",
+                  startDate: "2026-07-15",
+                  endDate: "2026-07-20",
+                  status: "done",
+                  progress: 100,
+                  description: "Dọn dẹp mặt bằng định vị công trình và chuẩn bị khu vực tập kết vật tư",
+                  createdAt: 1784073600001,
+                  logs: [
+                    { id: "log-demo-1", date: "2026-07-20", reporter: "Trần Văn An", progress: 100, work: "Đã hoàn thành dọn mặt bằng và xác định tim mốc công trình", issue: "Không có vấn đề phát sinh", next: "Bàn giao mặt bằng cho đội thi công móng", createdAt: 1784505600000 }
+                  ]
+                },
+                {
+                  id: "stage-demo-2",
+                  name: "Thi công phần móng",
+                  manager: "Lê Quốc Hùng",
+                  startDate: "2026-07-21",
+                  endDate: "2026-08-10",
+                  status: "doing",
+                  progress: 75,
+                  description: "Đào móng lắp đặt cốt thép cốp pha và đổ bê tông móng",
+                  createdAt: 1784073600002,
+                  logs: [
+                    { id: "log-demo-2", date: "2026-07-22", reporter: "Lê Quốc Hùng", progress: 75, work: "Đã hoàn thành đào móng và lắp đặt phần lớn cốt thép", issue: "Một khu vực nền đất mềm cần gia cố bổ sung", next: "Hoàn thiện cốt thép kiểm tra cao độ và chuẩn bị đổ bê tông", createdAt: 1784678400000 }
+                  ]
+                },
+                {
+                  id: "stage-demo-3",
+                  name: "Xây dựng phần khung",
+                  manager: "Phạm Đức Long",
+                  startDate: "2026-08-11",
+                  endDate: "2026-09-05",
+                  status: "planned",
+                  progress: 0,
+                  description: "Thi công cột dầm khung thép và mái nhà kho",
+                  createdAt: 1784073600003,
+                  logs: []
+                },
+                {
+                  id: "stage-demo-4",
+                  name: "Hoàn thiện công trình",
+                  manager: "Nguyễn Văn Minh",
+                  startDate: "2026-09-06",
+                  endDate: "2026-09-30",
+                  status: "planned",
+                  progress: 0,
+                  description: "Hoàn thiện nền hệ thống điện nước nghiệm thu và bàn giao",
+                  createdAt: 1784073600004,
+                  logs: []
+                }
+              ]
+            },
+            {
+              id: "project-demo-2",
+              code: "DA002",
+              name: "Cải tạo khu vực văn phòng",
+              location: "Văn phòng doanh nghiệp",
+              manager: "Võ Thị Lan",
+              startDate: "2026-08-01",
+              endDate: "2026-08-31",
+              status: "planned",
+              description: "Cải tạo không gian làm việc và hệ thống chiếu sáng",
+              createdAt: 1784073600100,
+              stages: [
+                { id: "stage-demo-5", name: "Khảo sát và chuẩn bị", manager: "Võ Thị Lan", startDate: "2026-08-01", endDate: "2026-08-05", status: "planned", progress: 0, description: "Khảo sát hiện trạng và xác nhận phương án", createdAt: 1784073600101, logs: [] },
+                { id: "stage-demo-6", name: "Thi công cải tạo", manager: "Ngô Văn Bình", startDate: "2026-08-06", endDate: "2026-08-25", status: "planned", progress: 0, description: "Thi công trần vách sơn và hệ thống điện", createdAt: 1784073600102, logs: [] },
+                { id: "stage-demo-7", name: "Kiểm tra và bàn giao", manager: "Võ Thị Lan", startDate: "2026-08-26", endDate: "2026-08-31", status: "planned", progress: 0, description: "Kiểm tra chất lượng vệ sinh và bàn giao", createdAt: 1784073600103, logs: [] }
+              ]
+            }
+          ]
+        };
+      }
+
+      function loadState() {
         try {
-          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-          return Array.isArray(data) ? data : [];
-        } catch {
-          return [];
+          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+          if (stored && Array.isArray(stored.projects)) return normalizeState(stored);
+        } catch (error) {
+          console.warn("Không thể đọc dữ liệu", error);
         }
+        const seeded = seedState();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+        return seeded;
       }
 
-      function saveRecords() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      function normalizeState(input) {
+        return {
+          sampleVersion: input.sampleVersion || 1,
+          projects: (input.projects || []).map(project => ({
+            ...project,
+            stages: (project.stages || []).map(stage => ({ ...stage, logs: Array.isArray(stage.logs) ? stage.logs : [] }))
+          }))
+        };
       }
 
+      function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+      function uid(prefix) { return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`; }
       function escapeHtml(value = "") {
-        return String(value)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
+        return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
       }
-
-      function formatDate(dateString) {
-        if (!dateString) return "—";
-        const date = new Date(dateString + "T00:00:00");
-        return new Intl.DateTimeFormat("vi-VN", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric"
-        }).format(date);
+      function formatDate(value) {
+        if (!value) return "Chưa cập nhật";
+        const date = new Date(value + "T00:00:00");
+        if (Number.isNaN(date.getTime())) return value;
+        return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date);
       }
-
-      function todayValue() {
-        const now = new Date();
-        const offset = now.getTimezoneOffset();
-        return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+      function statusInfo(status) { return statusMap[status] || statusMap.planned; }
+      function projectProgress(project) {
+        const stages = project.stages || [];
+        if (!stages.length) return project.status === "done" ? 100 : 0;
+        return Math.round(stages.reduce((sum, stage) => sum + Number(stage.progress || 0), 0) / stages.length);
       }
-
-      function updateToday() {
-        elements.todayText.textContent = new Intl.DateTimeFormat("vi-VN", {
-          weekday: "short",
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric"
-        }).format(new Date());
+      function isOverdue(endDate, status) { return Boolean(endDate && status !== "done" && endDate < todayISO()); }
+      function daysUntil(endDate) {
+        const now = new Date(todayISO() + "T00:00:00");
+        const end = new Date(endDate + "T00:00:00");
+        return Math.ceil((end - now) / 86400000);
       }
-
-      function updateStats() {
-        elements.totalCount.textContent = records.length;
-        elements.doingCount.textContent = records.filter(r => r.status === "doing").length;
-        const avg = records.length
-          ? Math.round(records.reduce((sum, r) => sum + Number(r.progress || 0), 0) / records.length)
-          : 0;
-        elements.avgProgress.textContent = avg + "%";
+      function allStages() {
+        return state.projects.flatMap(project => (project.stages || []).map(stage => ({ project, stage })));
       }
-
-      function renderRecords() {
-        const keyword = elements.searchInput.value.trim().toLowerCase();
-        const selectedStatus = elements.statusFilter.value;
-
-        const filtered = records
-          .filter(record => {
-            const text = [
-              record.projectName,
-              record.workItem,
-              record.responsible,
-              record.completedWork,
-              record.issues,
-              record.nextPlan
-            ].join(" ").toLowerCase();
-
-            const matchKeyword = !keyword || text.includes(keyword);
-            const matchStatus = selectedStatus === "all" || record.status === selectedStatus;
-            return matchKeyword && matchStatus;
-          })
-          .sort((a, b) => {
-            const dateCompare = String(b.recordDate).localeCompare(String(a.recordDate));
-            return dateCompare || Number(b.updatedAt || b.createdAt) - Number(a.updatedAt || a.createdAt);
-          });
-
-        if (!filtered.length) {
-          elements.recordList.innerHTML = `
-            <div class="empty">
-              <div class="empty-icon">📝</div>
-              <strong>Chưa có bản ghi phù hợp</strong>
-              <div style="margin-top:6px;font-size:13px;">Nhấn “Thêm bản ghi tiến độ” để bắt đầu.</div>
-            </div>
-          `;
-          updateStats();
-          return;
-        }
-
-        elements.recordList.innerHTML = filtered.map(record => {
-          const status = statusMap[record.status] || statusMap.todo;
-          const issues = record.issues
-            ? `<div><strong>Vấn đề:</strong> ${escapeHtml(record.issues)}</div>`
-            : "";
-          const nextPlan = record.nextPlan
-            ? `<div><strong>Kế hoạch tiếp theo:</strong> ${escapeHtml(record.nextPlan)}</div>`
-            : "";
-          const responsible = record.responsible
-            ? ` · ${escapeHtml(record.responsible)}`
-            : "";
-
-          return `
-            <article class="record-card">
-              <div class="record-top">
-                <div class="record-title">
-                  <h3>${escapeHtml(record.projectName)}</h3>
-                  <p>${escapeHtml(record.workItem)} · ${formatDate(record.recordDate)}${responsible}</p>
-                </div>
-                <span class="status ${status.className}">${status.label}</span>
-              </div>
-
-              <div class="progress-row">
-                <div class="progress-track">
-                  <div class="progress-bar" style="width:${Math.min(100, Math.max(0, Number(record.progress) || 0))}%"></div>
-                </div>
-                <div class="progress-text">${Number(record.progress) || 0}%</div>
-              </div>
-
-              <div class="record-detail">
-                <div><strong>Đã thực hiện:</strong> ${escapeHtml(record.completedWork)}</div>
-                ${issues}
-                ${nextPlan}
-              </div>
-
-              <div class="card-actions">
-                <button class="action-btn edit-btn" type="button" data-action="edit" data-id="${record.id}">Sửa</button>
-                <button class="action-btn delete-btn" type="button" data-action="delete" data-id="${record.id}">Xóa</button>
-              </div>
-            </article>
-          `;
-        }).join("");
-
-        updateStats();
+      function allLogs() {
+        return state.projects.flatMap(project => (project.stages || []).flatMap(stage => (stage.logs || []).map(log => ({ project, stage, log }))));
       }
-
-      function openModal(record = null) {
-        elements.recordForm.reset();
-        elements.recordId.value = "";
-        elements.formTitle.textContent = record ? "Chỉnh sửa bản ghi" : "Thêm bản ghi mới";
-
-        if (record) {
-          elements.recordId.value = record.id;
-          elements.projectName.value = record.projectName || "";
-          elements.workItem.value = record.workItem || "";
-          elements.recordDate.value = record.recordDate || todayValue();
-          elements.responsible.value = record.responsible || "";
-          elements.status.value = record.status || "doing";
-          elements.progress.value = Number(record.progress) || 0;
-          elements.completedWork.value = record.completedWork || "";
-          elements.issues.value = record.issues || "";
-          elements.nextPlan.value = record.nextPlan || "";
-        } else {
-          elements.recordDate.value = todayValue();
-          elements.status.value = "doing";
-          elements.progress.value = 0;
-        }
-
-        updateRange();
-        elements.recordModal.classList.add("open");
-        elements.recordModal.setAttribute("aria-hidden", "false");
-        setTimeout(() => elements.projectName.focus(), 180);
-      }
-
-      function closeModal() {
-        elements.recordModal.classList.remove("open");
-        elements.recordModal.setAttribute("aria-hidden", "true");
-      }
-
-      function updateRange() {
-        elements.progressValue.textContent = elements.progress.value + "%";
-      }
-
+      function findProject(id) { return state.projects.find(project => project.id === id); }
+      function findStage(project, id) { return project?.stages?.find(stage => stage.id === id); }
       function showToast(message) {
         elements.toast.textContent = message;
         elements.toast.classList.add("show");
         clearTimeout(showToast.timer);
-        showToast.timer = setTimeout(() => elements.toast.classList.remove("show"), 1800);
+        showToast.timer = setTimeout(() => elements.toast.classList.remove("show"), 1900);
+      }
+      function openModal(modal) { modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); }
+      function closeModal(modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
+
+      function updateHeaderAndMetrics() {
+        elements.headerDate.textContent = new Intl.DateTimeFormat("vi-VN", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date());
+        const projects = state.projects;
+        const active = projects.filter(p => p.status === "doing").length;
+        const avg = projects.length ? Math.round(projects.reduce((sum, p) => sum + projectProgress(p), 0) / projects.length) : 0;
+        const overdueCount = allStages().filter(item => isOverdue(item.stage.endDate, item.stage.status)).length;
+        elements.metricProjects.textContent = projects.length;
+        elements.metricDoing.textContent = active;
+        elements.metricProgress.textContent = avg + "%";
+        elements.metricOverdue.textContent = overdueCount;
       }
 
-      function handleSubmit(event) {
-        event.preventDefault();
+      function renderOverview() {
+        const upcoming = allStages()
+          .filter(({ stage }) => stage.status !== "done")
+          .sort((a, b) => String(a.stage.endDate).localeCompare(String(b.stage.endDate)))
+          .slice(0, 5);
+        const recent = allLogs().sort((a, b) => String(b.log.date).localeCompare(String(a.log.date)) || Number(b.log.createdAt) - Number(a.log.createdAt)).slice(0, 5);
 
-        const id = elements.recordId.value;
-        const oldRecord = records.find(r => r.id === id);
-        const now = Date.now();
+        elements.overviewView.innerHTML = `
+          <div class="notice">Ứng dụng đã có dữ liệu mẫu đầy đủ để kiểm tra. Bạn có thể thêm dự án mới hoặc chỉnh sửa dữ liệu mẫu theo nhu cầu thực tế.</div>
+          <article class="hero-card">
+            <h2>Quản lý tiến độ rõ ràng theo từng giai đoạn</h2>
+            <p>Tạo dự án phân chia hạng mục cập nhật tỷ lệ hoàn thành theo dõi thời hạn và lưu nhật ký thi công trên cùng một giao diện.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" data-action="add-project" type="button">＋ Tạo dự án mới</button>
+              <button class="ghost-btn" data-action="go-projects" type="button">Xem danh sách dự án</button>
+            </div>
+          </article>
 
-        const record = {
-          id: id || (crypto.randomUUID ? crypto.randomUUID() : String(now) + Math.random().toString(16).slice(2)),
-          projectName: elements.projectName.value.trim(),
-          workItem: elements.workItem.value.trim(),
-          recordDate: elements.recordDate.value,
-          responsible: elements.responsible.value.trim(),
-          status: elements.status.value,
-          progress: Number(elements.progress.value),
-          completedWork: elements.completedWork.value.trim(),
-          issues: elements.issues.value.trim(),
-          nextPlan: elements.nextPlan.value.trim(),
-          createdAt: oldRecord?.createdAt || now,
-          updatedAt: now
-        };
+          <div class="section-head"><div><h2>Thời hạn sắp tới</h2><p>Các giai đoạn chưa hoàn thành được sắp xếp theo ngày dự kiến</p></div></div>
+          <div class="deadline-list">
+            ${upcoming.length ? upcoming.map(({ project, stage }) => {
+              const overdue = isOverdue(stage.endDate, stage.status);
+              const remaining = daysUntil(stage.endDate);
+              const label = overdue ? `Quá hạn ${Math.abs(remaining)} ngày` : remaining === 0 ? "Hôm nay" : `Còn ${remaining} ngày`;
+              return `<button class="deadline-item" data-action="open-project" data-project-id="${project.id}" type="button">
+                <div><h4>${escapeHtml(stage.name)}</h4><p>${escapeHtml(project.name)} · ${stage.progress}% hoàn thành</p></div>
+                <span class="date-chip ${overdue ? "overdue" : ""}">${label}</span>
+              </button>`;
+            }).join("") : `<div class="empty"><div class="empty-icon">✓</div><strong>Không có thời hạn đang chờ</strong><p>Tất cả giai đoạn hiện tại đã hoàn thành.</p></div>`}
+          </div>
 
-        if (!record.projectName || !record.workItem || !record.recordDate || !record.completedWork) {
-          showToast("Vui lòng điền đầy đủ các mục bắt buộc.");
+          <div class="section-head"><div><h2>Nhật ký gần đây</h2><p>Cập nhật mới nhất từ các giai đoạn thi công</p></div><button class="ghost-btn" data-action="go-logs" type="button">Xem tất cả</button></div>
+          <div class="recent-list">
+            ${recent.length ? recent.map(({ project, stage, log }) => `<article class="recent-item">
+              <div><h4>${escapeHtml(log.work)}</h4><p>${escapeHtml(project.name)} · ${escapeHtml(stage.name)} · ${formatDate(log.date)}</p></div>
+              <span class="date-chip">${Number(log.progress) || 0}%</span>
+            </article>`).join("") : `<div class="empty"><div class="empty-icon">📝</div><strong>Chưa có nhật ký</strong><p>Thêm nhật ký để theo dõi công việc đã thực hiện và kế hoạch tiếp theo.</p></div>`}
+          </div>`;
+      }
+
+      function renderProjects() {
+        if (selectedProjectId) {
+          renderProjectDetail();
           return;
         }
 
-        if (record.status === "done" && record.progress < 100) {
-          record.progress = 100;
-        }
+        const keyword = projectSearch.trim().toLowerCase();
+        const projects = state.projects.filter(project => {
+          const text = [project.name, project.code, project.location, project.manager, project.description].join(" ").toLowerCase();
+          return (!keyword || text.includes(keyword)) && (projectStatusFilter === "all" || project.status === projectStatusFilter);
+        }).sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
 
-        if (id) {
-          records = records.map(item => item.id === id ? record : item);
-          showToast("Đã cập nhật bản ghi.");
-        } else {
-          records.push(record);
-          showToast("Đã thêm bản ghi mới.");
-        }
+        elements.projectsView.innerHTML = `
+          <div class="section-head"><div><h2>Danh sách dự án</h2><p>Quản lý thông tin và các giai đoạn thi công</p></div><button class="small-btn" data-action="add-project" type="button">＋ Thêm dự án</button></div>
+          <div class="toolbar">
+            <div class="search-wrap"><span>⌕</span><input id="projectSearchInput" class="search" value="${escapeHtml(projectSearch)}" placeholder="Tìm tên mã địa điểm hoặc phụ trách" /></div>
+            <select id="projectStatusFilter" class="filter">
+              <option value="all" ${projectStatusFilter === "all" ? "selected" : ""}>Tất cả tình trạng</option>
+              <option value="planned" ${projectStatusFilter === "planned" ? "selected" : ""}>Chưa bắt đầu</option>
+              <option value="doing" ${projectStatusFilter === "doing" ? "selected" : ""}>Đang thực hiện</option>
+              <option value="paused" ${projectStatusFilter === "paused" ? "selected" : ""}>Tạm dừng</option>
+              <option value="done" ${projectStatusFilter === "done" ? "selected" : ""}>Đã hoàn thành</option>
+            </select>
+          </div>
+          <div class="list">
+            ${projects.length ? projects.map(projectCardHtml).join("") : `<div class="empty"><div class="empty-icon">🏗️</div><strong>Không tìm thấy dự án</strong><p>Thay đổi bộ lọc hoặc tạo dự án mới.</p></div>`}
+          </div>`;
 
-        saveRecords();
-        closeModal();
-        renderRecords();
+        $("projectSearchInput")?.addEventListener("input", event => { projectSearch = event.target.value; renderProjects(); });
+        $("projectStatusFilter")?.addEventListener("change", event => { projectStatusFilter = event.target.value; renderProjects(); });
       }
 
-      function deleteRecord(id) {
-        const record = records.find(item => item.id === id);
-        if (!record) return;
+      function projectCardHtml(project) {
+        const status = statusInfo(project.status);
+        const progress = projectProgress(project);
+        const overdue = isOverdue(project.endDate, project.status);
+        return `<article class="card clickable" data-action="open-project" data-project-id="${project.id}">
+          <div class="card-top">
+            <div class="card-title"><h3>${escapeHtml(project.name)}</h3><p>${escapeHtml(project.code || "Chưa có mã")} · ${escapeHtml(project.location || "Chưa cập nhật địa điểm")}</p></div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end"><span class="status ${status.className}">${status.label}</span>${overdue ? `<span class="status overdue">Quá hạn</span>` : ""}</div>
+          </div>
+          <div class="progress-row"><div class="progress-track"><div class="progress-bar" style="width:${progress}%"></div></div><div class="progress-text">${progress}%</div></div>
+          <div class="meta-grid">
+            <div class="meta-item">Người phụ trách<strong>${escapeHtml(project.manager || "Chưa cập nhật")}</strong></div>
+            <div class="meta-item">Số giai đoạn<strong>${project.stages.length} giai đoạn</strong></div>
+            <div class="meta-item">Ngày bắt đầu<strong>${formatDate(project.startDate)}</strong></div>
+            <div class="meta-item">Dự kiến hoàn thành<strong>${formatDate(project.endDate)}</strong></div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn neutral" data-action="open-project" data-project-id="${project.id}" type="button">Chi tiết</button>
+            <button class="icon-btn" data-action="edit-project" data-project-id="${project.id}" type="button">Sửa</button>
+            <button class="icon-btn danger" data-action="delete-project" data-project-id="${project.id}" type="button">Xóa</button>
+          </div>
+        </article>`;
+      }
 
-        const ok = confirm(`Bạn có chắc muốn xóa bản ghi “${record.projectName} - ${record.workItem}”?`);
-        if (!ok) return;
+      function renderProjectDetail() {
+        const project = findProject(selectedProjectId);
+        if (!project) { selectedProjectId = null; renderProjects(); return; }
+        const status = statusInfo(project.status);
+        const progress = projectProgress(project);
+        const stages = [...project.stages].sort((a, b) => String(a.startDate).localeCompare(String(b.startDate)) || Number(a.createdAt) - Number(b.createdAt));
 
-        records = records.filter(item => item.id !== id);
-        saveRecords();
-        renderRecords();
-        showToast("Đã xóa bản ghi.");
+        elements.projectsView.innerHTML = `
+          <div class="detail-toolbar">
+            <button class="back-btn" data-action="back-projects" type="button">← Danh sách dự án</button>
+            <div class="detail-actions"><button class="ghost-btn" data-action="edit-project" data-project-id="${project.id}" type="button">Sửa dự án</button><button class="small-btn" data-action="add-stage" data-project-id="${project.id}" type="button">＋ Thêm giai đoạn</button></div>
+          </div>
+          <article class="project-summary">
+            <div class="card-top"><div><h2>${escapeHtml(project.name)}</h2><p>${escapeHtml(project.code || "Chưa có mã")} · ${escapeHtml(project.location || "Chưa cập nhật địa điểm")}</p></div><span class="status ${status.className}">${status.label}</span></div>
+            <div class="progress-row"><div class="progress-track"><div class="progress-bar" style="width:${progress}%"></div></div><div class="progress-text">${progress}%</div></div>
+            <div class="project-summary-grid">
+              <div class="project-summary-item">Người phụ trách<strong>${escapeHtml(project.manager || "Chưa cập nhật")}</strong></div>
+              <div class="project-summary-item">Số giai đoạn<strong>${project.stages.length}</strong></div>
+              <div class="project-summary-item">Ngày bắt đầu<strong>${formatDate(project.startDate)}</strong></div>
+              <div class="project-summary-item">Dự kiến hoàn thành<strong>${formatDate(project.endDate)}</strong></div>
+            </div>
+          </article>
+          ${project.description ? `<div class="notice" style="margin-top:12px">${escapeHtml(project.description)}</div>` : ""}
+          <div class="section-head"><div><h2>Các giai đoạn thi công</h2><p>Cập nhật tiến độ và nhật ký theo từng hạng mục</p></div></div>
+          <div class="list">
+            ${stages.length ? stages.map((stage, index) => stageCardHtml(project, stage, index)).join("") : `<div class="empty"><div class="empty-icon">▦</div><strong>Chưa có giai đoạn thi công</strong><p>Thêm ít nhất một giai đoạn để theo dõi tiến độ dự án.</p><button class="small-btn" style="margin-top:12px" data-action="add-stage" data-project-id="${project.id}" type="button">Thêm giai đoạn</button></div>`}
+          </div>`;
+      }
+
+      function stageCardHtml(project, stage, index) {
+        const status = statusInfo(stage.status);
+        const overdue = isOverdue(stage.endDate, stage.status);
+        const latest = [...(stage.logs || [])].sort((a, b) => String(b.date).localeCompare(String(a.date)) || Number(b.createdAt) - Number(a.createdAt))[0];
+        return `<article class="card stage-card">
+          <div class="card-top">
+            <div class="stage-heading"><div class="stage-index">${index + 1}</div><div><h3>${escapeHtml(stage.name)}</h3><p>${escapeHtml(stage.manager || "Chưa cập nhật người phụ trách")}</p></div></div>
+            <div class="stage-badges"><span class="status ${status.className}">${status.label}</span>${overdue ? `<span class="status overdue">Quá hạn</span>` : ""}</div>
+          </div>
+          <div class="progress-row"><div class="progress-track"><div class="progress-bar" style="width:${Number(stage.progress) || 0}%"></div></div><div class="progress-text">${Number(stage.progress) || 0}%</div></div>
+          <div class="meta-grid">
+            <div class="meta-item">Bắt đầu<strong>${formatDate(stage.startDate)}</strong></div>
+            <div class="meta-item">Dự kiến hoàn thành<strong>${formatDate(stage.endDate)}</strong></div>
+            <div class="meta-item">Số nhật ký<strong>${stage.logs.length} bản ghi</strong></div>
+            <div class="meta-item">Tình trạng thời hạn<strong>${overdue ? "Đã quá hạn" : "Trong kế hoạch"}</strong></div>
+          </div>
+          ${stage.description ? `<div class="latest-log"><strong>Nội dung công việc</strong><p>${escapeHtml(stage.description)}</p></div>` : ""}
+          ${latest ? `<div class="latest-log"><strong>Cập nhật gần nhất ngày ${formatDate(latest.date)}</strong><p>${escapeHtml(latest.work)}</p></div>` : ""}
+          <div class="card-actions">
+            <button class="icon-btn" data-action="add-log" data-project-id="${project.id}" data-stage-id="${stage.id}" type="button">＋ Nhật ký</button>
+            <button class="icon-btn neutral" data-action="edit-stage" data-project-id="${project.id}" data-stage-id="${stage.id}" type="button">Sửa</button>
+            <button class="icon-btn danger" data-action="delete-stage" data-project-id="${project.id}" data-stage-id="${stage.id}" type="button">Xóa</button>
+          </div>
+        </article>`;
+      }
+
+      function renderLogs() {
+        const keyword = logSearch.trim().toLowerCase();
+        const logs = allLogs().filter(({ project, stage, log }) => [project.name, stage.name, log.reporter, log.work, log.issue, log.next].join(" ").toLowerCase().includes(keyword)).sort((a, b) => String(b.log.date).localeCompare(String(a.log.date)) || Number(b.log.createdAt) - Number(a.log.createdAt));
+        elements.logsView.innerHTML = `
+          <div class="section-head"><div><h2>Nhật ký tiến độ</h2><p>Lịch sử công việc vấn đề phát sinh và kế hoạch tiếp theo</p></div><button class="small-btn" data-action="add-log" type="button">＋ Thêm nhật ký</button></div>
+          <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="logSearchInput" class="search" value="${escapeHtml(logSearch)}" placeholder="Tìm dự án giai đoạn hoặc nội dung công việc" /></div></div>
+          <div class="list">
+            ${logs.length ? logs.map(logCardHtml).join("") : `<div class="empty"><div class="empty-icon">📝</div><strong>Chưa có nhật ký phù hợp</strong><p>Thêm nhật ký mới hoặc thay đổi nội dung tìm kiếm.</p></div>`}
+          </div>`;
+        $("logSearchInput")?.addEventListener("input", event => { logSearch = event.target.value; renderLogs(); });
+      }
+
+      function logCardHtml({ project, stage, log }) {
+        return `<article class="card log-card">
+          <div class="card-top">
+            <div class="card-title"><h3>${escapeHtml(stage.name)}</h3><p>${escapeHtml(project.name)} · ${formatDate(log.date)} · ${escapeHtml(log.reporter || "Chưa cập nhật người ghi")}</p></div>
+            <span class="status doing">${Number(log.progress) || 0}%</span>
+          </div>
+          <div class="log-body">
+            <div><strong>Công việc đã thực hiện</strong><br>${escapeHtml(log.work)}</div>
+            ${log.issue ? `<div><strong>Vấn đề phát sinh</strong><br>${escapeHtml(log.issue)}</div>` : ""}
+            ${log.next ? `<div><strong>Kế hoạch tiếp theo</strong><br>${escapeHtml(log.next)}</div>` : ""}
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" data-action="edit-log" data-project-id="${project.id}" data-stage-id="${stage.id}" data-log-id="${log.id}" type="button">Sửa</button>
+            <button class="icon-btn danger" data-action="delete-log" data-project-id="${project.id}" data-stage-id="${stage.id}" data-log-id="${log.id}" type="button">Xóa</button>
+          </div>
+        </article>`;
+      }
+
+      function renderInfo() {
+        elements.infoView.innerHTML = `
+          <div class="section-head"><div><h2>Thông tin ứng dụng</h2><p>Hướng dẫn sử dụng và quản lý dữ liệu</p></div></div>
+          <div class="info-grid">
+            <article class="info-card">
+              <h3>Thông tin đơn vị vận hành</h3>
+              <div class="company-line"><span>Tên Mini App</span><strong>Theo dõi tiến độ công trình</strong></div>
+              <div class="company-line"><span>Đơn vị vận hành</span><strong>MTV TMDV Diệp Linh</strong></div>
+              <div class="company-line"><span>Phiên bản</span><strong>1.1.0</strong></div>
+              <div class="company-line"><span>Hỗ trợ người dùng</span><strong>Liên hệ qua OA Zalo của doanh nghiệp</strong></div>
+              <div class="company-line"><span>Phạm vi sử dụng</span><strong>Quản lý và ghi chép tiến độ công trình</strong></div>
+            </article>
+            <article class="info-card">
+              <h3>Hướng dẫn sử dụng</h3>
+              <ol>
+                <li>Tạo dự án và nhập ngày bắt đầu ngày dự kiến hoàn thành cùng người phụ trách</li>
+                <li>Mở chi tiết dự án và phân chia các giai đoạn hoặc hạng mục thi công</li>
+                <li>Cập nhật tỷ lệ hoàn thành và tình trạng hiện tại của từng giai đoạn</li>
+                <li>Thêm nhật ký để ghi công việc đã thực hiện vấn đề phát sinh và kế hoạch tiếp theo</li>
+                <li>Kiểm tra mục Tổng quan để theo dõi thời hạn sắp tới và các giai đoạn quá hạn</li>
+              </ol>
+            </article>
+            <article class="info-card">
+              <h3>Lưu trữ và bảo mật dữ liệu</h3>
+              <p>Dữ liệu được lưu trực tiếp trên thiết bị và trình duyệt đang sử dụng. Mini App không tự động gửi dữ liệu công trình đến máy chủ bên ngoài. Người dùng nên xuất tệp sao lưu định kỳ để tránh mất dữ liệu khi xóa bộ nhớ trình duyệt hoặc thay đổi thiết bị.</p>
+              <div class="data-tools">
+                <button class="ghost-btn" data-action="export-data" type="button">Xuất dữ liệu JSON</button>
+                <button class="ghost-btn" data-action="import-data" type="button">Nhập dữ liệu JSON</button>
+                <button class="ghost-btn" data-action="restore-sample" type="button">Khôi phục dữ liệu mẫu</button>
+                <button class="danger-btn" data-action="clear-data" type="button">Xóa toàn bộ dữ liệu</button>
+              </div>
+            </article>
+            <article class="info-card">
+              <h3>Điều khoản sử dụng tóm tắt</h3>
+              <ul>
+                <li>Người dùng chịu trách nhiệm về tính chính xác và hợp pháp của dữ liệu đã nhập</li>
+                <li>Ứng dụng là công cụ hỗ trợ ghi chép không thay thế hồ sơ kỹ thuật hợp đồng hoặc biên bản nghiệm thu</li>
+                <li>Người dùng cần chủ động sao lưu dữ liệu và bảo vệ thiết bị của mình</li>
+                <li>Không sử dụng ứng dụng để lưu nội dung vi phạm pháp luật hoặc xâm phạm quyền của bên thứ ba</li>
+              </ul>
+            </article>
+          </div>`;
+      }
+
+      function render() {
+        updateHeaderAndMetrics();
+        document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+        document.querySelectorAll(".nav-btn").forEach(button => button.classList.toggle("active", button.dataset.tab === activeTab));
+        const view = elements[activeTab + "View"];
+        view.classList.add("active");
+        if (activeTab === "overview") renderOverview();
+        if (activeTab === "projects") renderProjects();
+        if (activeTab === "logs") renderLogs();
+        if (activeTab === "info") renderInfo();
+        elements.fab.style.display = activeTab === "info" ? "none" : "grid";
+        elements.fab.setAttribute("aria-label", activeTab === "logs" ? "Thêm nhật ký" : "Thêm dự án");
+      }
+
+      function switchTab(tab) {
+        activeTab = tab;
+        if (tab !== "projects") selectedProjectId = null;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function openProjectForm(project = null) {
+        elements.projectForm.reset();
+        elements.projectId.value = project?.id || "";
+        elements.projectFormTitle.textContent = project ? "Chỉnh sửa dự án" : "Thêm dự án mới";
+        elements.projectName.value = project?.name || "";
+        elements.projectLocation.value = project?.location || "";
+        elements.projectManager.value = project?.manager || "";
+        elements.projectStart.value = project?.startDate || todayISO();
+        elements.projectEnd.value = project?.endDate || todayISO();
+        elements.projectStatus.value = project?.status || "planned";
+        elements.projectCode.value = project?.code || "";
+        elements.projectDescription.value = project?.description || "";
+        openModal(elements.projectModal);
+      }
+
+      function openStageForm(project, stage = null) {
+        if (!project) return;
+        elements.stageForm.reset();
+        elements.stageId.value = stage?.id || "";
+        elements.stageProjectId.value = project.id;
+        elements.stageFormTitle.textContent = stage ? "Chỉnh sửa giai đoạn" : "Thêm giai đoạn thi công";
+        elements.stageName.value = stage?.name || "";
+        elements.stageManager.value = stage?.manager || project.manager || "";
+        elements.stageStatus.value = stage?.status || "planned";
+        elements.stageStart.value = stage?.startDate || project.startDate || todayISO();
+        elements.stageEnd.value = stage?.endDate || project.endDate || todayISO();
+        elements.stageProgress.value = Number(stage?.progress || 0);
+        elements.stageProgressValue.textContent = elements.stageProgress.value + "%";
+        elements.stageDescription.value = stage?.description || "";
+        openModal(elements.stageModal);
+      }
+
+      function populateLogProjects(selectedProject = "", selectedStage = "") {
+        elements.logProject.innerHTML = state.projects.length ? state.projects.map(project => `<option value="${project.id}" ${project.id === selectedProject ? "selected" : ""}>${escapeHtml(project.name)}</option>`).join("") : `<option value="">Chưa có dự án</option>`;
+        populateLogStages(selectedProject || elements.logProject.value, selectedStage);
+      }
+
+      function populateLogStages(projectId, selectedStage = "") {
+        const project = findProject(projectId);
+        elements.logStage.innerHTML = project?.stages?.length ? project.stages.map(stage => `<option value="${stage.id}" ${stage.id === selectedStage ? "selected" : ""}>${escapeHtml(stage.name)}</option>`).join("") : `<option value="">Chưa có giai đoạn</option>`;
+      }
+
+      function openLogForm(project = null, stage = null, log = null) {
+        if (!state.projects.length) { showToast("Vui lòng tạo dự án trước"); openProjectForm(); return; }
+        elements.logForm.reset();
+        elements.logId.value = log?.id || "";
+        elements.logFormTitle.textContent = log ? "Chỉnh sửa nhật ký" : "Thêm nhật ký tiến độ";
+        const defaultProject = project || state.projects.find(item => item.stages.length) || state.projects[0];
+        const defaultStage = stage || defaultProject?.stages?.[0];
+        populateLogProjects(defaultProject?.id || "", defaultStage?.id || "");
+        elements.logProject.disabled = Boolean(log);
+        elements.logStage.disabled = Boolean(log);
+        elements.logDate.value = log?.date || todayISO();
+        elements.logReporter.value = log?.reporter || defaultStage?.manager || defaultProject?.manager || "";
+        elements.logProgress.value = Number(log?.progress ?? defaultStage?.progress ?? 0);
+        elements.logProgressValue.textContent = elements.logProgress.value + "%";
+        elements.logWork.value = log?.work || "";
+        elements.logIssue.value = log?.issue || "";
+        elements.logNext.value = log?.next || "";
+        openModal(elements.logModal);
+      }
+
+      function handleProjectSubmit(event) {
+        event.preventDefault();
+        const startDate = elements.projectStart.value;
+        const endDate = elements.projectEnd.value;
+        if (endDate < startDate) { showToast("Ngày hoàn thành phải sau ngày bắt đầu"); return; }
+        const id = elements.projectId.value;
+        const existing = findProject(id);
+        const project = {
+          id: id || uid("project"),
+          code: elements.projectCode.value.trim(),
+          name: elements.projectName.value.trim(),
+          location: elements.projectLocation.value.trim(),
+          manager: elements.projectManager.value.trim(),
+          startDate,
+          endDate,
+          status: elements.projectStatus.value,
+          description: elements.projectDescription.value.trim(),
+          createdAt: existing?.createdAt || Date.now(),
+          stages: existing?.stages || []
+        };
+        if (!project.name) { showToast("Vui lòng nhập tên dự án"); return; }
+        if (id) state.projects = state.projects.map(item => item.id === id ? project : item);
+        else state.projects.push(project);
+        saveState(); closeModal(elements.projectModal); selectedProjectId = project.id; activeTab = "projects"; render(); showToast(id ? "Đã cập nhật dự án" : "Đã tạo dự án mới");
+      }
+
+      function handleStageSubmit(event) {
+        event.preventDefault();
+        const project = findProject(elements.stageProjectId.value);
+        if (!project) return;
+        const startDate = elements.stageStart.value;
+        const endDate = elements.stageEnd.value;
+        if (endDate < startDate) { showToast("Ngày hoàn thành phải sau ngày bắt đầu"); return; }
+        if (startDate < project.startDate || endDate > project.endDate) { showToast("Thời gian giai đoạn phải nằm trong thời gian dự án"); return; }
+        const id = elements.stageId.value;
+        const existing = findStage(project, id);
+        let progress = Number(elements.stageProgress.value);
+        let status = elements.stageStatus.value;
+        if (status === "done") progress = 100;
+        if (progress === 100) status = "done";
+        const stage = {
+          id: id || uid("stage"), name: elements.stageName.value.trim(), manager: elements.stageManager.value.trim(),
+          startDate, endDate, status, progress, description: elements.stageDescription.value.trim(),
+          createdAt: existing?.createdAt || Date.now(), logs: existing?.logs || []
+        };
+        if (!stage.name) { showToast("Vui lòng nhập tên giai đoạn"); return; }
+        if (id) project.stages = project.stages.map(item => item.id === id ? stage : item);
+        else project.stages.push(stage);
+        if (project.status === "planned" && progress > 0) project.status = "doing";
+        if (project.stages.length && project.stages.every(item => item.status === "done")) project.status = "done";
+        saveState(); closeModal(elements.stageModal); render(); showToast(id ? "Đã cập nhật giai đoạn" : "Đã thêm giai đoạn");
+      }
+
+      function handleLogSubmit(event) {
+        event.preventDefault();
+        const project = findProject(elements.logProject.value);
+        const stage = findStage(project, elements.logStage.value);
+        if (!project || !stage) { showToast("Vui lòng chọn dự án và giai đoạn hợp lệ"); return; }
+        const id = elements.logId.value;
+        const existing = stage.logs.find(item => item.id === id);
+        const progress = Number(elements.logProgress.value);
+        const log = { id: id || uid("log"), date: elements.logDate.value, reporter: elements.logReporter.value.trim(), progress, work: elements.logWork.value.trim(), issue: elements.logIssue.value.trim(), next: elements.logNext.value.trim(), createdAt: existing?.createdAt || Date.now() };
+        if (!log.date || !log.work) { showToast("Vui lòng nhập ngày và công việc đã thực hiện"); return; }
+        if (id) stage.logs = stage.logs.map(item => item.id === id ? log : item);
+        else stage.logs.push(log);
+        stage.progress = progress;
+        stage.status = progress >= 100 ? "done" : progress > 0 ? "doing" : stage.status;
+        if (project.status === "planned" && progress > 0) project.status = "doing";
+        if (project.stages.length && project.stages.every(item => item.status === "done")) project.status = "done";
+        saveState(); closeModal(elements.logModal); render(); showToast(id ? "Đã cập nhật nhật ký" : "Đã thêm nhật ký tiến độ");
+      }
+
+      function deleteProject(id) {
+        const project = findProject(id);
+        if (!project || !confirm(`Bạn có chắc muốn xóa dự án ${project.name} cùng toàn bộ giai đoạn và nhật ký không`)) return;
+        state.projects = state.projects.filter(item => item.id !== id);
+        if (selectedProjectId === id) selectedProjectId = null;
+        saveState(); render(); showToast("Đã xóa dự án");
+      }
+      function deleteStage(projectId, stageId) {
+        const project = findProject(projectId); const stage = findStage(project, stageId);
+        if (!project || !stage || !confirm(`Bạn có chắc muốn xóa giai đoạn ${stage.name} cùng toàn bộ nhật ký không`)) return;
+        project.stages = project.stages.filter(item => item.id !== stageId);
+        saveState(); render(); showToast("Đã xóa giai đoạn");
+      }
+      function deleteLog(projectId, stageId, logId) {
+        const project = findProject(projectId); const stage = findStage(project, stageId); const log = stage?.logs.find(item => item.id === logId);
+        if (!log || !confirm("Bạn có chắc muốn xóa bản ghi nhật ký này không")) return;
+        stage.logs = stage.logs.filter(item => item.id !== logId);
+        const latest = [...stage.logs].sort((a, b) => String(b.date).localeCompare(String(a.date)) || Number(b.createdAt) - Number(a.createdAt))[0];
+        if (latest) { stage.progress = Number(latest.progress) || 0; stage.status = stage.progress >= 100 ? "done" : stage.progress > 0 ? "doing" : "planned"; }
+        saveState(); render(); showToast("Đã xóa nhật ký");
       }
 
       function exportData() {
-        if (!records.length) {
-          showToast("Chưa có dữ liệu để xuất.");
-          return;
-        }
-
-        const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json" });
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.href = url;
-        link.download = `tien-do-cong-trinh-${todayValue()}.json`;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(url);
-        showToast("Đã xuất dữ liệu.");
+        link.href = url; link.download = `du-lieu-tien-do-cong-trinh-${todayISO()}.json`; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+        showToast("Đã xuất dữ liệu");
       }
-
       function importData(file) {
         if (!file) return;
         const reader = new FileReader();
-
         reader.onload = () => {
           try {
-            const imported = JSON.parse(reader.result);
-            if (!Array.isArray(imported)) throw new Error("invalid");
-
-            const valid = imported.filter(item =>
-              item &&
-              typeof item === "object" &&
-              item.projectName &&
-              item.workItem &&
-              item.recordDate
-            );
-
-            if (!valid.length) throw new Error("empty");
-
-            const ok = confirm(`Tìm thấy ${valid.length} bản ghi. Bạn có muốn thay thế dữ liệu hiện tại không?`);
-            if (!ok) return;
-
-            records = valid.map((item, index) => ({
-              ...item,
-              id: item.id || `${Date.now()}-${index}`,
-              progress: Math.min(100, Math.max(0, Number(item.progress) || 0)),
-              status: statusMap[item.status] ? item.status : "todo"
-            }));
-
-            saveRecords();
-            renderRecords();
-            elements.toolsMenu.classList.remove("open");
-            showToast("Đã nhập dữ liệu thành công.");
-          } catch {
-            alert("Tệp dữ liệu không hợp lệ. Vui lòng chọn đúng tệp JSON đã xuất từ ứng dụng.");
-          } finally {
-            elements.importFile.value = "";
-          }
+            const parsed = JSON.parse(reader.result);
+            if (!parsed || !Array.isArray(parsed.projects)) throw new Error("invalid");
+            if (!confirm(`Tìm thấy ${parsed.projects.length} dự án. Thay thế toàn bộ dữ liệu hiện tại không`)) return;
+            state = normalizeState(parsed); saveState(); selectedProjectId = null; render(); showToast("Đã nhập dữ liệu thành công");
+          } catch { alert("Tệp dữ liệu không hợp lệ"); }
+          finally { elements.importFile.value = ""; }
         };
-
         reader.readAsText(file, "UTF-8");
       }
 
-      elements.addBtn.addEventListener("click", () => openModal());
-      elements.closeModalBtn.addEventListener("click", closeModal);
-      elements.recordForm.addEventListener("submit", handleSubmit);
-      elements.progress.addEventListener("input", updateRange);
-
-      elements.status.addEventListener("change", () => {
-        if (elements.status.value === "done") {
-          elements.progress.value = 100;
-          updateRange();
-        }
-      });
-
-      elements.searchInput.addEventListener("input", renderRecords);
-      elements.statusFilter.addEventListener("change", renderRecords);
-
-      elements.recordList.addEventListener("click", (event) => {
-        const button = event.target.closest("button[data-action]");
+      document.addEventListener("click", event => {
+        const nav = event.target.closest(".nav-btn");
+        if (nav) { switchTab(nav.dataset.tab); return; }
+        const button = event.target.closest("[data-action]");
         if (!button) return;
+        const action = button.dataset.action;
+        const project = findProject(button.dataset.projectId);
+        const stage = findStage(project, button.dataset.stageId);
+        const log = stage?.logs.find(item => item.id === button.dataset.logId);
+        event.stopPropagation();
 
-        const id = button.dataset.id;
-        if (button.dataset.action === "edit") {
-          const record = records.find(item => item.id === id);
-          if (record) openModal(record);
+        if (action === "add-project") openProjectForm();
+        if (action === "go-projects") switchTab("projects");
+        if (action === "go-logs") switchTab("logs");
+        if (action === "open-project") { activeTab = "projects"; selectedProjectId = button.dataset.projectId; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+        if (action === "back-projects") { selectedProjectId = null; renderProjects(); }
+        if (action === "edit-project") openProjectForm(project);
+        if (action === "delete-project") deleteProject(button.dataset.projectId);
+        if (action === "add-stage") openStageForm(project);
+        if (action === "edit-stage") openStageForm(project, stage);
+        if (action === "delete-stage") deleteStage(button.dataset.projectId, button.dataset.stageId);
+        if (action === "add-log") openLogForm(project, stage);
+        if (action === "edit-log") openLogForm(project, stage, log);
+        if (action === "delete-log") deleteLog(button.dataset.projectId, button.dataset.stageId, button.dataset.logId);
+        if (action === "export-data") exportData();
+        if (action === "import-data") elements.importFile.click();
+        if (action === "restore-sample") {
+          if (confirm("Khôi phục dữ liệu mẫu sẽ thay thế toàn bộ dữ liệu hiện tại. Bạn có muốn tiếp tục không")) { state = seedState(); saveState(); selectedProjectId = null; render(); showToast("Đã khôi phục dữ liệu mẫu"); }
         }
-
-        if (button.dataset.action === "delete") {
-          deleteRecord(id);
+        if (action === "clear-data") {
+          if (confirm("Bạn có chắc muốn xóa toàn bộ dự án giai đoạn và nhật ký không")) { state = { sampleVersion: SAMPLE_VERSION, projects: [] }; saveState(); selectedProjectId = null; render(); showToast("Đã xóa toàn bộ dữ liệu"); }
         }
       });
 
-      elements.recordModal.addEventListener("click", (event) => {
-        if (event.target === elements.recordModal) closeModal();
-      });
-
-      elements.toolsBtn.addEventListener("click", () => elements.toolsMenu.classList.add("open"));
-      elements.closeToolsBtn.addEventListener("click", () => elements.toolsMenu.classList.remove("open"));
-      elements.toolsMenu.addEventListener("click", (event) => {
-        if (event.target === elements.toolsMenu) elements.toolsMenu.classList.remove("open");
-      });
-
-      elements.exportBtn.addEventListener("click", exportData);
-      elements.importBtn.addEventListener("click", () => elements.importFile.click());
+      document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => closeModal($(button.dataset.close))));
+      document.querySelectorAll(".modal").forEach(modal => modal.addEventListener("click", event => { if (event.target === modal) closeModal(modal); }));
+      elements.fab.addEventListener("click", () => activeTab === "logs" ? openLogForm() : openProjectForm());
+      elements.projectForm.addEventListener("submit", handleProjectSubmit);
+      elements.stageForm.addEventListener("submit", handleStageSubmit);
+      elements.logForm.addEventListener("submit", handleLogSubmit);
+      elements.stageProgress.addEventListener("input", () => elements.stageProgressValue.textContent = elements.stageProgress.value + "%");
+      elements.stageStatus.addEventListener("change", () => { if (elements.stageStatus.value === "done") { elements.stageProgress.value = 100; elements.stageProgressValue.textContent = "100%"; } });
+      elements.logProgress.addEventListener("input", () => elements.logProgressValue.textContent = elements.logProgress.value + "%");
+      elements.logProject.addEventListener("change", () => populateLogStages(elements.logProject.value));
       elements.importFile.addEventListener("change", () => importData(elements.importFile.files[0]));
 
-      elements.clearBtn.addEventListener("click", () => {
-        if (!records.length) {
-          showToast("Không có dữ liệu để xóa.");
-          return;
-        }
-
-        const ok = confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu? Thao tác này không thể hoàn tác.");
-        if (!ok) return;
-
-        records = [];
-        saveRecords();
-        renderRecords();
-        elements.toolsMenu.classList.remove("open");
-        showToast("Đã xóa toàn bộ dữ liệu.");
-      });
-
-      updateToday();
-      renderRecords();
+      render();
     })();
   </script>
 </body>

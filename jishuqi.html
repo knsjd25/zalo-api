@@ -3,93 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#5B6CFF" />
+  <meta name="theme-color" content="#4F65F5" />
   <title>Bộ đếm khách vào cửa hàng</title>
   <style>
     :root {
-      --primary: #5B6CFF;
-      --primary-dark: #4453E8;
-      --bg: #F5F7FB;
+      --primary: #4F65F5;
+      --primary-dark: #3D50D6;
+      --primary-soft: #EEF1FF;
+      --teal: #18B7A0;
+      --teal-soft: #E8FBF7;
+      --bg: #F4F6FB;
       --card: #FFFFFF;
       --text: #172033;
-      --muted: #7B8499;
-      --danger: #EF5B5B;
-      --border: #E8ECF4;
-      --shadow: 0 16px 40px rgba(50, 66, 110, .10);
+      --muted: #778197;
+      --border: #E7EAF1;
+      --danger: #E95858;
+      --warning: #F4A62A;
+      --success: #2EAF72;
+      --shadow: 0 14px 34px rgba(44, 56, 102, .09);
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top right, rgba(91,108,255,.15), transparent 35%),
-        var(--bg);
+        radial-gradient(circle at top right, rgba(79, 101, 245, .14), transparent 28%),
+        linear-gradient(180deg, #F8F9FD 0%, var(--bg) 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, sans-serif;
     }
 
-    button { font: inherit; }
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
 
     .app {
-      width: min(100%, 520px);
+      width: min(100%, 560px);
       min-height: 100vh;
       margin: 0 auto;
-      padding: max(20px, env(safe-area-inset-top)) 18px
-               max(28px, env(safe-area-inset-bottom));
+      padding:
+        max(16px, env(safe-area-inset-top))
+        16px
+        calc(94px + env(safe-area-inset-bottom));
     }
 
-    .header {
+    .topbar {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
-    .title h1 {
-      margin: 0 0 5px;
-      font-size: 24px;
-      line-height: 1.2;
+    .brand {
+      min-width: 0;
     }
 
-    .title p {
+    .eyebrow {
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .brand h1 {
       margin: 0;
+      font-size: 23px;
+      line-height: 1.25;
+    }
+
+    .brand p {
+      margin: 5px 0 0;
       color: var(--muted);
       font-size: 13px;
     }
 
-    .status {
-      display: flex;
+    .status-badge {
+      display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 8px 11px;
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      border: 1px solid #DCEFE6;
       border-radius: 999px;
-      background: rgba(255,255,255,.85);
-      border: 1px solid var(--border);
-      color: #3F9B68;
+      color: var(--success);
+      background: #F5FFFA;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #38B978;
-      box-shadow: 0 0 0 4px rgba(56,185,120,.12);
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(46, 175, 114, .12);
+    }
+
+    .store-card,
+    .panel,
+    .info-card {
+      background: rgba(255, 255, 255, .96);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .store-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      border-radius: 20px;
+    }
+
+    .store-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      border-radius: 15px;
+      color: white;
+      background: linear-gradient(145deg, var(--primary), var(--teal));
+      font-size: 24px;
+    }
+
+    .store-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .store-name {
+      overflow: hidden;
+      font-size: 15px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .store-note {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      color: var(--primary);
+      background: white;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+      animation: fade .18s ease;
+    }
+
+    @keyframes fade {
+      from { opacity: .4; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .counter-card {
       position: relative;
       overflow: hidden;
-      padding: 28px 22px 24px;
+      padding: 26px 22px 22px;
       border-radius: 28px;
-      color: #fff;
+      color: white;
       text-align: center;
-      background: linear-gradient(145deg, #6676FF, #4F5FE8);
-      box-shadow: 0 22px 45px rgba(71,87,226,.28);
+      background: linear-gradient(145deg, #6073FF 0%, #4658E1 68%, #3344C5 100%);
+      box-shadow: 0 22px 45px rgba(65, 81, 210, .27);
     }
 
     .counter-card::before,
@@ -101,149 +210,274 @@
     }
 
     .counter-card::before {
-      width: 180px;
-      height: 180px;
-      right: -70px;
-      top: -80px;
+      width: 190px;
+      height: 190px;
+      top: -95px;
+      right: -60px;
     }
 
     .counter-card::after {
-      width: 110px;
-      height: 110px;
-      left: -45px;
-      bottom: -50px;
+      width: 120px;
+      height: 120px;
+      left: -50px;
+      bottom: -55px;
+    }
+
+    .counter-label,
+    .counter-number,
+    .counter-unit,
+    .counter-time {
+      position: relative;
     }
 
     .counter-label {
-      position: relative;
       font-size: 14px;
-      opacity: .85;
+      opacity: .86;
     }
 
     .counter-number {
-      position: relative;
-      margin: 8px 0 16px;
-      font-size: clamp(72px, 21vw, 108px);
-      line-height: 1;
+      margin: 8px 0 12px;
+      font-size: clamp(78px, 22vw, 112px);
+      line-height: .98;
+      font-weight: 850;
       letter-spacing: -5px;
-      font-weight: 800;
       font-variant-numeric: tabular-nums;
     }
 
     .counter-unit {
-      position: relative;
       font-size: 13px;
-      opacity: .76;
+      opacity: .78;
     }
 
-    .add-button {
+    .counter-time {
+      margin-top: 13px;
+      font-size: 11px;
+      opacity: .72;
+    }
+
+    .primary-add {
       width: 100%;
-      margin-top: 18px;
-      min-height: 118px;
+      min-height: 104px;
+      margin-top: 14px;
       border: 0;
-      border-radius: 28px;
-      color: #fff;
-      background: linear-gradient(145deg, #5B6CFF, #4858E4);
-      box-shadow: 0 16px 32px rgba(73,89,226,.25);
-      cursor: pointer;
-      transition: transform .08s ease, box-shadow .2s ease;
+      border-radius: 24px;
+      color: white;
+      background: linear-gradient(145deg, var(--teal), #0CA78F);
+      box-shadow: 0 15px 30px rgba(24, 183, 160, .24);
+      transition: transform .08s ease;
       touch-action: manipulation;
     }
 
-    .add-button:active {
-      transform: scale(.975);
-      box-shadow: 0 8px 20px rgba(73,89,226,.24);
+    .primary-add:active {
+      transform: scale(.978);
     }
 
-    .plus {
+    .primary-add strong {
       display: block;
-      font-size: 46px;
-      line-height: .9;
-      font-weight: 300;
+      font-size: 34px;
+      line-height: 1;
     }
 
-    .add-text {
+    .primary-add span {
       display: block;
       margin-top: 7px;
-      font-size: 17px;
-      font-weight: 750;
+      font-size: 16px;
+      font-weight: 800;
     }
 
-    .action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .secondary-btn {
-      min-height: 54px;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      color: var(--text);
-      background: var(--card);
-      box-shadow: 0 7px 18px rgba(50,66,110,.06);
-      cursor: pointer;
-    }
-
-    .secondary-btn:active { transform: scale(.98); }
-    .secondary-btn.danger { color: var(--danger); }
-
-    .stats {
+    .quick-actions {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 10px;
     }
 
-    .stat-card {
-      padding: 15px 8px;
-      border-radius: 18px;
-      text-align: center;
-      background: rgba(255,255,255,.92);
+    .quick-btn {
+      min-height: 50px;
       border: 1px solid var(--border);
-      box-shadow: 0 7px 18px rgba(50,66,110,.05);
+      border-radius: 15px;
+      color: var(--text);
+      background: white;
+      font-weight: 750;
+      box-shadow: 0 7px 18px rgba(44, 56, 102, .05);
     }
 
-    .stat-value {
+    .quick-btn.minus {
+      color: var(--danger);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      padding: 14px 8px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: white;
+      text-align: center;
+    }
+
+    .metric-value {
       font-size: 21px;
-      font-weight: 800;
+      font-weight: 850;
       font-variant-numeric: tabular-nums;
     }
 
-    .stat-label {
+    .metric-label {
       margin-top: 5px;
       color: var(--muted);
       font-size: 11px;
     }
 
-    .section {
-      margin-top: 20px;
-      padding: 18px;
+    .panel {
+      margin-top: 16px;
+      padding: 17px;
       border-radius: 22px;
-      background: rgba(255,255,255,.92);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
     }
 
-    .section-head {
+    .panel-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
       margin-bottom: 13px;
     }
 
-    .section-title {
+    .panel-title {
       font-size: 15px;
+      font-weight: 850;
+    }
+
+    .panel-subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .text-btn {
+      border: 0;
+      color: var(--primary);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .hour-bars {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      align-items: end;
+      gap: 4px;
+      height: 116px;
+      padding-top: 10px;
+    }
+
+    .hour-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
+      height: 100%;
+      gap: 5px;
+    }
+
+    .hour-bar {
+      width: 100%;
+      min-height: 3px;
+      border-radius: 7px 7px 3px 3px;
+      background: linear-gradient(180deg, var(--primary), #7D8BFF);
+      transition: height .2s ease;
+    }
+
+    .hour-label {
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
       font-weight: 800;
     }
 
-    .clear-history {
+    textarea,
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      color: var(--text);
+      background: #FAFBFD;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      height: 46px;
+      padding: 0 13px;
+    }
+
+    textarea {
+      min-height: 88px;
+      padding: 12px 13px;
+      resize: vertical;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,101,245,.10);
+    }
+
+    .save-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .save-btn,
+    .outline-btn,
+    .danger-btn {
+      min-height: 46px;
+      border-radius: 14px;
+      font-weight: 800;
+    }
+
+    .save-btn {
+      flex: 1;
       border: 0;
-      color: var(--muted);
-      background: transparent;
-      font-size: 12px;
-      cursor: pointer;
+      color: white;
+      background: var(--primary);
+    }
+
+    .outline-btn {
+      flex: 1;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: white;
+    }
+
+    .danger-btn {
+      width: 100%;
+      border: 1px solid #F2CDCD;
+      color: var(--danger);
+      background: #FFF8F8;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .history-list {
@@ -252,44 +486,276 @@
     }
 
     .history-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 11px 12px;
-      border-radius: 14px;
-      background: #F7F8FC;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #FAFBFD;
     }
 
     .history-date {
-      color: #525D72;
       font-size: 13px;
-    }
-
-    .history-count {
-      font-size: 15px;
       font-weight: 800;
     }
 
-    .empty {
-      padding: 18px 8px;
-      text-align: center;
+    .history-note {
+      overflow: hidden;
+      margin-top: 4px;
       color: var(--muted);
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-count {
+      align-self: center;
+      color: var(--primary);
+      font-size: 18px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      padding: 24px 12px;
+      color: var(--muted);
+      text-align: center;
       font-size: 13px;
+    }
+
+    .empty-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 9px;
+      border-radius: 15px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 22px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-card {
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .stat-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 12px;
+      border-radius: 11px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 16px;
+    }
+
+    .stat-card.teal .stat-icon {
+      color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .stat-value-large {
+      font-size: 25px;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-caption {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .day-ranking {
+      display: grid;
+      gap: 11px;
+    }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 44px;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .rank-date {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .rank-track {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #EEF0F5;
+    }
+
+    .rank-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--teal));
+    }
+
+    .rank-value {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .help-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .help-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 11px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .help-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      color: white;
+      background: var(--primary);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .help-title {
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .help-text {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .privacy-box {
+      padding: 14px;
+      border: 1px solid #D6EFE9;
+      border-radius: 17px;
+      color: #216E61;
+      background: #F3FFFC;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      bottom: 0;
+      width: min(100%, 560px);
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 9px 10px calc(9px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-btn {
+      min-height: 54px;
+      border: 0;
+      border-radius: 14px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .nav-btn span {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 19px;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(16, 23, 40, .46);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(100%, 520px);
+      padding: 18px;
+      border-radius: 23px;
+      background: white;
+      animation: slide .2s ease;
+    }
+
+    @keyframes slide {
+      from { transform: translateY(20px); opacity: .6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-title {
+      margin: 0 0 14px;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
     }
 
     .toast {
       position: fixed;
+      z-index: 80;
       left: 50%;
-      bottom: calc(30px + env(safe-area-inset-bottom));
+      bottom: calc(88px + env(safe-area-inset-bottom));
       transform: translate(-50%, 20px);
+      max-width: calc(100% - 40px);
       padding: 10px 15px;
       border-radius: 999px;
-      color: #fff;
-      background: rgba(23,32,51,.9);
-      font-size: 13px;
+      color: white;
+      background: rgba(23, 32, 51, .92);
+      font-size: 12px;
+      text-align: center;
       opacity: 0;
       pointer-events: none;
-      transition: .22s ease;
+      transition: .2s ease;
     }
 
     .toast.show {
@@ -297,75 +763,271 @@
       transform: translate(-50%, 0);
     }
 
-    @media (max-width: 360px) {
-      .app { padding-left: 14px; padding-right: 14px; }
-      .title h1 { font-size: 21px; }
-      .status { padding: 7px 9px; }
+    @media (max-width: 370px) {
+      .app { padding-left: 12px; padding-right: 12px; }
+      .brand h1 { font-size: 20px; }
+      .metric-grid { gap: 7px; }
+      .quick-actions { gap: 7px; }
+      .status-badge { padding: 7px 8px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="header">
-      <div class="title">
+    <header class="topbar">
+      <div class="brand">
+        <div class="eyebrow">Quản lý cửa hàng</div>
         <h1>Bộ đếm khách vào cửa hàng</h1>
-        <p id="todayDate">—</p>
+        <p id="todayDate">Đang tải ngày</p>
       </div>
-      <div class="status"><span class="status-dot"></span>Lưu trên thiết bị</div>
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        Hoạt động
+      </div>
     </header>
 
-    <section class="counter-card" aria-label="Số khách vào hôm nay">
-      <div class="counter-label">Số khách vào hôm nay</div>
-      <div class="counter-number" id="counter">0</div>
-      <div class="counter-unit">lượt khách</div>
+    <section class="store-card">
+      <div class="store-icon">🏪</div>
+      <div class="store-meta">
+        <div class="store-name" id="storeNameText">Cửa hàng của tôi</div>
+        <div class="store-note">Dữ liệu được lưu cục bộ trên thiết bị</div>
+      </div>
+      <button class="icon-btn" id="editStoreButton" type="button" aria-label="Chỉnh sửa tên cửa hàng">✎</button>
     </section>
 
-    <button class="add-button" id="addButton" type="button" aria-label="Thêm một khách">
-      <span class="plus">＋</span>
-      <span class="add-text">Thêm một khách</span>
-    </button>
+    <section class="view active" id="viewToday">
+      <section class="counter-card">
+        <div class="counter-label">Tổng số khách hôm nay</div>
+        <div class="counter-number" id="counter">0</div>
+        <div class="counter-unit">lượt khách</div>
+        <div class="counter-time" id="lastUpdate">Chưa có lượt ghi nhận</div>
+      </section>
 
-    <div class="action-row">
-      <button class="secondary-btn" id="minusButton" type="button">Bớt một khách</button>
-      <button class="secondary-btn danger" id="resetButton" type="button">Đặt lại hôm nay</button>
-    </div>
+      <button class="primary-add" id="addOneButton" type="button">
+        <strong>＋1</strong>
+        <span>Ghi nhận một khách vào cửa hàng</span>
+      </button>
 
-    <section class="stats" aria-label="Thống kê khách">
-      <div class="stat-card">
-        <div class="stat-value" id="todayStat">0</div>
-        <div class="stat-label">Hôm nay</div>
+      <div class="quick-actions">
+        <button class="quick-btn minus" id="minusOneButton" type="button">Trừ 1</button>
+        <button class="quick-btn" data-add="5" type="button">Thêm 5</button>
+        <button class="quick-btn" data-add="10" type="button">Thêm 10</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-value" id="yesterdayStat">0</div>
-        <div class="stat-label">Hôm qua</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="weekStat">0</div>
-        <div class="stat-label">7 ngày gần đây</div>
-      </div>
+
+      <section class="metric-grid">
+        <div class="metric">
+          <div class="metric-value" id="todayMetric">0</div>
+          <div class="metric-label">Hôm nay</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="yesterdayMetric">0</div>
+          <div class="metric-label">Hôm qua</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="weekMetric">0</div>
+          <div class="metric-label">7 ngày gần đây</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Lượng khách theo giờ</div>
+            <div class="panel-subtitle">Tự động cập nhật từ thao tác ghi nhận</div>
+          </div>
+        </div>
+        <div class="hour-bars" id="hourBars"></div>
+      </section>
+
+      <section class="panel">
+        <label class="input-label" for="dailyNote">Ghi chú trong ngày</label>
+        <textarea id="dailyNote" maxlength="300" placeholder="Ví dụ  Chương trình khuyến mãi hoặc thời tiết hôm nay"></textarea>
+        <div class="save-row">
+          <button class="save-btn" id="saveNoteButton" type="button">Lưu ghi chú</button>
+          <button class="outline-btn" id="manualEntryButton" type="button">Nhập thủ công</button>
+        </div>
+      </section>
     </section>
 
-    <section class="section">
-      <div class="section-head">
-        <div class="section-title">Lịch sử gần đây</div>
-        <button class="clear-history" id="clearHistoryButton" type="button">Xóa tất cả</button>
-      </div>
-      <div class="history-list" id="historyList"></div>
+    <section class="view" id="viewHistory">
+      <section class="panel" style="margin-top:0">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Lịch sử theo ngày</div>
+            <div class="panel-subtitle">Hiển thị dữ liệu đã lưu trên thiết bị</div>
+          </div>
+          <button class="text-btn" id="exportButton" type="button">Xuất CSV</button>
+        </div>
+
+        <div class="filters">
+          <select id="historyRange" aria-label="Chọn khoảng thời gian">
+            <option value="7">7 ngày</option>
+            <option value="30">30 ngày</option>
+            <option value="90">90 ngày</option>
+            <option value="all">Tất cả</option>
+          </select>
+          <select id="historySort" aria-label="Sắp xếp lịch sử">
+            <option value="newest">Mới nhất</option>
+            <option value="highest">Nhiều khách nhất</option>
+            <option value="lowest">Ít khách nhất</option>
+          </select>
+        </div>
+
+        <div class="history-list" id="historyList"></div>
+      </section>
+
+      <section class="panel">
+        <button class="danger-btn" id="clearAllButton" type="button">Xóa toàn bộ dữ liệu</button>
+      </section>
+    </section>
+
+    <section class="view" id="viewStats">
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">7</div>
+          <div class="stat-value-large" id="stat7Days">0</div>
+          <div class="stat-caption">Tổng khách trong 7 ngày</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-icon">30</div>
+          <div class="stat-value-large" id="stat30Days">0</div>
+          <div class="stat-caption">Tổng khách trong 30 ngày</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-icon">Ø</div>
+          <div class="stat-value-large" id="statAverage">0</div>
+          <div class="stat-caption">Trung bình mỗi ngày</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">◷</div>
+          <div class="stat-value-large" id="statPeakHour">--</div>
+          <div class="stat-caption">Khung giờ đông nhất</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">So sánh 7 ngày gần đây</div>
+            <div class="panel-subtitle">Dữ liệu thực tế từ các lượt đã ghi nhận</div>
+          </div>
+        </div>
+        <div class="day-ranking" id="dayRanking"></div>
+      </section>
+
+      <section class="panel">
+        <div class="privacy-box">
+          Thống kê chỉ dùng dữ liệu do người dùng nhập trên thiết bị này
+          Ứng dụng không tự động nhận diện khuôn mặt không ghi hình và không thu thập thông tin cá nhân của khách
+        </div>
+      </section>
+    </section>
+
+    <section class="view" id="viewHelp">
+      <section class="panel" style="margin-top:0">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Hướng dẫn sử dụng</div>
+            <div class="panel-subtitle">Các bước thao tác cơ bản</div>
+          </div>
+        </div>
+
+        <div class="help-list">
+          <div class="help-item">
+            <div class="help-number">1</div>
+            <div>
+              <div class="help-title">Ghi nhận khách vào</div>
+              <div class="help-text">Mỗi khi có một khách vào cửa hàng hãy nhấn nút Ghi nhận một khách</div>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-number">2</div>
+            <div>
+              <div class="help-title">Sửa thao tác nhầm</div>
+              <div class="help-text">Dùng nút Trừ 1 hoặc mục Nhập thủ công để điều chỉnh số lượng chính xác</div>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-number">3</div>
+            <div>
+              <div class="help-title">Theo dõi lịch sử</div>
+              <div class="help-text">Mở mục Lịch sử để xem số khách theo ngày và xuất dữ liệu CSV khi cần</div>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-number">4</div>
+            <div>
+              <div class="help-title">Xem thống kê</div>
+              <div class="help-text">Mục Thống kê hiển thị tổng 7 ngày 30 ngày trung bình và khung giờ đông nhất</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" style="margin-bottom:10px">Thông tin dữ liệu</div>
+        <div class="privacy-box">
+          Dữ liệu được lưu trong bộ nhớ cục bộ của trình duyệt hoặc Mini App
+          Khi xóa bộ nhớ trình duyệt gỡ ứng dụng hoặc đổi thiết bị dữ liệu có thể bị mất
+          Người dùng nên xuất CSV định kỳ nếu dữ liệu quan trọng
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" style="margin-bottom:10px">Dữ liệu dùng thử</div>
+        <div style="color:var(--muted);font-size:12px;line-height:1.7;margin-bottom:12px">
+          Tạo dữ liệu mẫu để xem nhanh lịch sử và thống kê
+          Dữ liệu này được đánh dấu rõ là dữ liệu mẫu và có thể xóa bất cứ lúc nào
+        </div>
+        <button class="outline-btn" id="demoDataButton" type="button" style="width:100%">Tạo dữ liệu mẫu</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" style="margin-bottom:10px">Phiên bản ứng dụng</div>
+        <div style="color:var(--muted);font-size:12px;line-height:1.7">
+          Phiên bản 1 1 0<br>
+          Bổ sung lịch sử thống kê theo giờ ghi chú xuất dữ liệu và hướng dẫn sử dụng
+        </div>
+      </section>
     </section>
   </main>
 
-  <div class="toast" id="toast">Đã lưu</div>
+  <nav class="bottom-nav" aria-label="Điều hướng chính">
+    <button class="nav-btn active" data-view="Today" type="button"><span>＋</span>Hôm nay</button>
+    <button class="nav-btn" data-view="History" type="button"><span>▤</span>Lịch sử</button>
+    <button class="nav-btn" data-view="Stats" type="button"><span>▥</span>Thống kê</button>
+    <button class="nav-btn" data-view="Help" type="button"><span>?</span>Hướng dẫn</button>
+  </nav>
+
+  <div class="modal" id="storeModal" role="dialog" aria-modal="true" aria-labelledby="storeModalTitle">
+    <div class="modal-card">
+      <h2 class="modal-title" id="storeModalTitle">Tên cửa hàng</h2>
+      <label class="input-label" for="storeNameInput">Nhập tên hiển thị</label>
+      <input id="storeNameInput" type="text" maxlength="60" placeholder="Cửa hàng của tôi" />
+      <div class="modal-actions">
+        <button class="outline-btn" data-close-modal="storeModal" type="button">Hủy</button>
+        <button class="save-btn" id="saveStoreButton" type="button">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="manualModal" role="dialog" aria-modal="true" aria-labelledby="manualModalTitle">
+    <div class="modal-card">
+      <h2 class="modal-title" id="manualModalTitle">Nhập số khách hôm nay</h2>
+      <label class="input-label" for="manualCountInput">Số lượng chính xác</label>
+      <input id="manualCountInput" type="number" inputmode="numeric" min="0" max="999999" />
+      <div class="modal-actions">
+        <button class="outline-btn" data-close-modal="manualModal" type="button">Hủy</button>
+        <button class="save-btn" id="saveManualButton" type="button">Cập nhật</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite">Đã lưu</div>
 
   <script>
     (() => {
-      const STORAGE_KEY = "store_visitor_counter_v1";
-      const counterEl = document.getElementById("counter");
-      const todayStatEl = document.getElementById("todayStat");
-      const yesterdayStatEl = document.getElementById("yesterdayStat");
-      const weekStatEl = document.getElementById("weekStat");
-      const historyListEl = document.getElementById("historyList");
-      const toastEl = document.getElementById("toast");
-
+      const STORAGE_KEY = "store_visitor_counter_complete_v1";
       const pad = n => String(n).padStart(2, "0");
 
       function dateKey(date = new Date()) {
@@ -379,118 +1041,427 @@
         return date;
       }
 
+      function defaultDay() {
+        return {
+          count: 0,
+          note: "",
+          hourly: Array(24).fill(0),
+          updatedAt: null
+        };
+      }
+
+      function defaultData() {
+        return {
+          storeName: "Cửa hàng của tôi",
+          days: {}
+        };
+      }
+
       function loadData() {
         try {
           const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-          return parsed && typeof parsed === "object" ? parsed : {};
+          if (!parsed || typeof parsed !== "object") return defaultData();
+          if (!parsed.days || typeof parsed.days !== "object") parsed.days = {};
+          if (!parsed.storeName) parsed.storeName = "Cửa hàng của tôi";
+          return parsed;
         } catch {
-          return {};
+          return defaultData();
         }
       }
 
-      function saveData(data) {
+      function normalizeDay(day) {
+        if (!day || typeof day !== "object") return defaultDay();
+        return {
+          count: Math.max(0, Number(day.count) || 0),
+          note: typeof day.note === "string" ? day.note : "",
+          hourly: Array.from({ length: 24 }, (_, i) => Math.max(0, Number(day.hourly?.[i]) || 0)),
+          updatedAt: day.updatedAt || null
+        };
+      }
+
+      function saveData() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function getDay(key) {
+        if (!data.days[key]) data.days[key] = defaultDay();
+        data.days[key] = normalizeDay(data.days[key]);
+        return data.days[key];
+      }
+
+      function formatDate(key, withYear = false) {
+        const [year, month, day] = key.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        const weekdays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+        return withYear
+          ? `${pad(day)}/${pad(month)}/${year} ${weekdays[date.getDay()]}`
+          : `${pad(day)}/${pad(month)} ${weekdays[date.getDay()]}`;
+      }
+
+      function formatTime(value) {
+        if (!value) return "Chưa có lượt ghi nhận";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Chưa có lượt ghi nhận";
+        return `Cập nhật lúc ${pad(date.getHours())}:${pad(date.getMinutes())}`;
       }
 
       let data = loadData();
       const todayKey = dateKey();
+      getDay(todayKey);
+      saveData();
 
-      if (!Number.isFinite(data[todayKey])) {
-        data[todayKey] = 0;
-        saveData(data);
-      }
+      const el = id => document.getElementById(id);
+      const counter = el("counter");
+      const toast = el("toast");
 
       function showToast(message) {
-        toastEl.textContent = message;
-        toastEl.classList.add("show");
+        toast.textContent = message;
+        toast.classList.add("show");
         clearTimeout(showToast.timer);
-        showToast.timer = setTimeout(() => toastEl.classList.remove("show"), 1200);
+        showToast.timer = setTimeout(() => toast.classList.remove("show"), 1300);
       }
 
-      function formatDateLabel(key) {
-        const [year, month, day] = key.split("-").map(Number);
-        const date = new Date(year, month - 1, day);
-        const week = ["Chủ nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"][date.getDay()];
-        return `${pad(day)}/${pad(month)} · ${week}`;
+      function sumDays(days) {
+        let total = 0;
+        for (let i = 0; i < days; i++) {
+          total += getDay(dateKey(offsetDate(-i))).count;
+        }
+        return total;
       }
 
-      function render() {
-        const todayCount = Number(data[todayKey] || 0);
-        const yesterdayKey = dateKey(offsetDate(-1));
-        const yesterdayCount = Number(data[yesterdayKey] || 0);
+      function renderHeader() {
+        const now = new Date();
+        const weekdays = ["Chủ nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+        el("todayDate").textContent =
+          `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}  ${weekdays[now.getDay()]}`;
+        el("storeNameText").textContent = data.storeName;
+      }
 
-        let weekTotal = 0;
-        for (let i = 0; i < 7; i++) {
-          weekTotal += Number(data[dateKey(offsetDate(-i))] || 0);
+      function renderToday() {
+        const today = getDay(todayKey);
+        const yesterday = getDay(dateKey(offsetDate(-1)));
+        counter.textContent = today.count;
+        el("todayMetric").textContent = today.count;
+        el("yesterdayMetric").textContent = yesterday.count;
+        el("weekMetric").textContent = sumDays(7);
+        el("lastUpdate").textContent = formatTime(today.updatedAt);
+        el("dailyNote").value = today.note;
+
+        const hoursToShow = [8,9,10,11,12,13,14,15,16,17,18,19];
+        const values = hoursToShow.map(h => today.hourly[h] || 0);
+        const max = Math.max(1, ...values);
+
+        el("hourBars").innerHTML = hoursToShow.map((hour, index) => {
+          const value = values[index];
+          const height = Math.max(3, Math.round((value / max) * 84));
+          return `
+            <div class="hour-col" title="${hour}:00  ${value} khách">
+              <div class="hour-bar" style="height:${height}px;opacity:${value ? 1 : .22}"></div>
+              <div class="hour-label">${hour}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function getHistoryEntries() {
+        const range = el("historyRange").value;
+        const sort = el("historySort").value;
+        let entries = Object.entries(data.days)
+          .map(([key, value]) => [key, normalizeDay(value)])
+          .filter(([, day]) => day.count > 0 || day.note.trim());
+
+        if (range !== "all") {
+          const allowed = new Set();
+          for (let i = 0; i < Number(range); i++) {
+            allowed.add(dateKey(offsetDate(-i)));
+          }
+          entries = entries.filter(([key]) => allowed.has(key));
         }
 
-        counterEl.textContent = todayCount;
-        todayStatEl.textContent = todayCount;
-        yesterdayStatEl.textContent = yesterdayCount;
-        weekStatEl.textContent = weekTotal;
+        if (sort === "highest") {
+          entries.sort((a, b) => b[1].count - a[1].count || b[0].localeCompare(a[0]));
+        } else if (sort === "lowest") {
+          entries.sort((a, b) => a[1].count - b[1].count || b[0].localeCompare(a[0]));
+        } else {
+          entries.sort((a, b) => b[0].localeCompare(a[0]));
+        }
+        return entries;
+      }
 
-        const recentEntries = Object.entries(data)
-          .filter(([, count]) => Number(count) > 0)
-          .sort(([a], [b]) => b.localeCompare(a))
-          .slice(0, 7);
-
-        if (!recentEntries.length) {
-          historyListEl.innerHTML = '<div class="empty">Chưa có dữ liệu khách vào</div>';
+      function renderHistory() {
+        const entries = getHistoryEntries();
+        if (!entries.length) {
+          el("historyList").innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">▤</div>
+              Chưa có dữ liệu trong khoảng thời gian này<br>
+              Hãy ghi nhận khách ở mục Hôm nay
+            </div>
+          `;
           return;
         }
 
-        historyListEl.innerHTML = recentEntries
-          .map(([key, count]) => `
-            <div class="history-item">
-              <span class="history-date">${formatDateLabel(key)}</span>
-              <span class="history-count">${count} khách</span>
+        el("historyList").innerHTML = entries.map(([key, day]) => `
+          <div class="history-item">
+            <div>
+              <div class="history-date">${formatDate(key, true)}</div>
+              <div class="history-note">${day.note ? day.note.replace(/[<>]/g, "") : "Không có ghi chú"}</div>
             </div>
-          `).join("");
+            <div class="history-count">${day.count} khách</div>
+          </div>
+        `).join("");
+      }
+
+      function renderStats() {
+        const last30 = [];
+        for (let i = 0; i < 30; i++) {
+          last30.push(getDay(dateKey(offsetDate(-i))));
+        }
+
+        const total7 = sumDays(7);
+        const total30 = last30.reduce((sum, day) => sum + day.count, 0);
+        const activeDays = last30.filter(day => day.count > 0).length;
+        const average = activeDays ? Math.round(total30 / activeDays) : 0;
+
+        const hourlyTotals = Array(24).fill(0);
+        last30.forEach(day => day.hourly.forEach((value, hour) => {
+          hourlyTotals[hour] += Number(value) || 0;
+        }));
+        const peakValue = Math.max(...hourlyTotals);
+        const peakHour = peakValue > 0 ? hourlyTotals.indexOf(peakValue) : -1;
+
+        el("stat7Days").textContent = total7;
+        el("stat30Days").textContent = total30;
+        el("statAverage").textContent = average;
+        el("statPeakHour").textContent = peakHour >= 0 ? `${pad(peakHour)}:00` : "--";
+
+        const rows = [];
+        for (let i = 6; i >= 0; i--) {
+          const key = dateKey(offsetDate(-i));
+          rows.push([key, getDay(key).count]);
+        }
+        const max = Math.max(1, ...rows.map(([, value]) => value));
+
+        el("dayRanking").innerHTML = rows.map(([key, value]) => `
+          <div class="rank-row">
+            <div class="rank-date">${formatDate(key)}</div>
+            <div class="rank-track"><div class="rank-fill" style="width:${Math.round((value / max) * 100)}%"></div></div>
+            <div class="rank-value">${value}</div>
+          </div>
+        `).join("");
+      }
+
+      function renderAll() {
+        renderHeader();
+        renderToday();
+        renderHistory();
+        renderStats();
       }
 
       function changeCount(delta) {
-        const current = Number(data[todayKey] || 0);
+        const day = getDay(todayKey);
+        const current = day.count;
         const next = Math.max(0, current + delta);
-        data[todayKey] = next;
-        saveData(data);
-        render();
+        const actualDelta = next - current;
 
+        day.count = next;
+        day.updatedAt = new Date().toISOString();
+
+        if (actualDelta > 0) {
+          const hour = new Date().getHours();
+          day.hourly[hour] += actualDelta;
+        } else if (actualDelta < 0) {
+          let remaining = Math.abs(actualDelta);
+          for (let hour = 23; hour >= 0 && remaining > 0; hour--) {
+            const reduce = Math.min(day.hourly[hour], remaining);
+            day.hourly[hour] -= reduce;
+            remaining -= reduce;
+          }
+        }
+
+        saveData();
+        renderAll();
         if (navigator.vibrate) navigator.vibrate(25);
-        showToast(delta > 0 ? "Đã thêm 1 khách" : "Đã bớt 1 khách");
+        showToast(actualDelta > 0 ? `Đã thêm ${actualDelta} khách` : "Đã điều chỉnh số khách");
       }
 
-      document.getElementById("addButton").addEventListener("click", () => changeCount(1));
+      function openModal(id) {
+        el(id).classList.add("show");
+      }
 
-      document.getElementById("minusButton").addEventListener("click", () => {
-        if (Number(data[todayKey] || 0) === 0) {
+      function closeModal(id) {
+        el(id).classList.remove("show");
+      }
+
+      function switchView(name) {
+        document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+        document.querySelectorAll(".nav-btn").forEach(button => button.classList.remove("active"));
+        el(`view${name}`).classList.add("active");
+        document.querySelector(`.nav-btn[data-view="${name}"]`).classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        if (name === "History") renderHistory();
+        if (name === "Stats") renderStats();
+      }
+
+      el("addOneButton").addEventListener("click", () => changeCount(1));
+      el("minusOneButton").addEventListener("click", () => {
+        if (getDay(todayKey).count === 0) {
           showToast("Số khách hiện tại đã là 0");
           return;
         }
         changeCount(-1);
       });
 
-      document.getElementById("resetButton").addEventListener("click", () => {
-        if (!confirm("Bạn có chắc muốn đặt lại số khách hôm nay không?")) return;
-        data[todayKey] = 0;
-        saveData(data);
-        render();
-        showToast("Đã đặt lại số khách hôm nay");
+      document.querySelectorAll("[data-add]").forEach(button => {
+        button.addEventListener("click", () => changeCount(Number(button.dataset.add)));
       });
 
-      document.getElementById("clearHistoryButton").addEventListener("click", () => {
-        if (!confirm("Bạn có chắc muốn xóa toàn bộ lịch sử không?")) return;
-        data = { [todayKey]: 0 };
-        saveData(data);
-        render();
-        showToast("Đã xóa toàn bộ lịch sử");
+      document.querySelectorAll(".nav-btn").forEach(button => {
+        button.addEventListener("click", () => switchView(button.dataset.view));
       });
 
-      const now = new Date();
-      const weekday = ["Chủ nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"][now.getDay()];
-      document.getElementById("todayDate").textContent =
-        `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} · ${weekday}`;
+      el("saveNoteButton").addEventListener("click", () => {
+        getDay(todayKey).note = el("dailyNote").value.trim();
+        saveData();
+        renderAll();
+        showToast("Đã lưu ghi chú");
+      });
 
-      render();
+      el("editStoreButton").addEventListener("click", () => {
+        el("storeNameInput").value = data.storeName;
+        openModal("storeModal");
+      });
+
+      el("saveStoreButton").addEventListener("click", () => {
+        const value = el("storeNameInput").value.trim();
+        data.storeName = value || "Cửa hàng của tôi";
+        saveData();
+        renderHeader();
+        closeModal("storeModal");
+        showToast("Đã lưu tên cửa hàng");
+      });
+
+      el("manualEntryButton").addEventListener("click", () => {
+        el("manualCountInput").value = getDay(todayKey).count;
+        openModal("manualModal");
+      });
+
+      el("saveManualButton").addEventListener("click", () => {
+        const value = Math.floor(Number(el("manualCountInput").value));
+        if (!Number.isFinite(value) || value < 0) {
+          showToast("Vui lòng nhập số hợp lệ");
+          return;
+        }
+
+        const day = getDay(todayKey);
+        const diff = value - day.count;
+        day.count = value;
+        day.updatedAt = new Date().toISOString();
+
+        if (diff > 0) {
+          day.hourly[new Date().getHours()] += diff;
+        } else if (diff < 0) {
+          let remaining = Math.abs(diff);
+          for (let hour = 23; hour >= 0 && remaining > 0; hour--) {
+            const reduce = Math.min(day.hourly[hour], remaining);
+            day.hourly[hour] -= reduce;
+            remaining -= reduce;
+          }
+        }
+
+        saveData();
+        renderAll();
+        closeModal("manualModal");
+        showToast("Đã cập nhật số khách");
+      });
+
+      document.querySelectorAll("[data-close-modal]").forEach(button => {
+        button.addEventListener("click", () => closeModal(button.dataset.closeModal));
+      });
+
+      document.querySelectorAll(".modal").forEach(modal => {
+        modal.addEventListener("click", event => {
+          if (event.target === modal) closeModal(modal.id);
+        });
+      });
+
+      el("historyRange").addEventListener("change", renderHistory);
+      el("historySort").addEventListener("change", renderHistory);
+
+      el("exportButton").addEventListener("click", () => {
+        const entries = Object.entries(data.days)
+          .map(([key, value]) => [key, normalizeDay(value)])
+          .filter(([, day]) => day.count > 0 || day.note.trim())
+          .sort((a, b) => a[0].localeCompare(b[0]));
+
+        if (!entries.length) {
+          showToast("Chưa có dữ liệu để xuất");
+          return;
+        }
+
+        const rows = [["Ngay", "So khach", "Ghi chu"]];
+        entries.forEach(([key, day]) => {
+          rows.push([
+            key,
+            String(day.count),
+            `"${day.note.replace(/"/g, '""')}"`
+          ]);
+        });
+
+        const csv = "\uFEFF" + rows.map(row => row.join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `du-lieu-khach-${todayKey}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast("Đã xuất dữ liệu CSV");
+      });
+
+      el("clearAllButton").addEventListener("click", () => {
+        if (!confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu đã lưu không")) return;
+        data = defaultData();
+        getDay(todayKey);
+        saveData();
+        renderAll();
+        showToast("Đã xóa toàn bộ dữ liệu");
+      });
+
+      el("demoDataButton").addEventListener("click", () => {
+        if (!confirm("Tạo dữ liệu mẫu cho 7 ngày gần đây")) return;
+
+        const samples = [42, 58, 49, 76, 63, 91, 35];
+        for (let i = 6; i >= 0; i--) {
+          const key = dateKey(offsetDate(-i));
+          const sample = samples[6 - i];
+          const day = defaultDay();
+          day.count = sample;
+          day.note = "Dữ liệu mẫu dùng để xem chức năng";
+          day.updatedAt = new Date().toISOString();
+
+          const distribution = [0,0,0,0,0,0,0,0,3,5,8,9,7,4,5,6,5,4,3,2,0,0,0,0];
+          const baseTotal = distribution.reduce((sum, value) => sum + value, 0);
+          let assigned = 0;
+          distribution.forEach((value, hour) => {
+            const amount = Math.floor(sample * value / baseTotal);
+            day.hourly[hour] = amount;
+            assigned += amount;
+          });
+          day.hourly[11] += sample - assigned;
+          data.days[key] = day;
+        }
+
+        saveData();
+        renderAll();
+        switchView("Stats");
+        showToast("Đã tạo dữ liệu mẫu");
+      });
+
+      renderAll();
     })();
   </script>
 </body>

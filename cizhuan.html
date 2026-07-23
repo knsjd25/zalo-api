@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#e86f3d" />
+  <title>Tính số lượng gạch ốp lát</title>
+  <style>
+    :root {
+      --primary: #e86f3d;
+      --primary-dark: #c9572c;
+      --primary-soft: #fff0e9;
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #20242a;
+      --muted: #6f7782;
+      --line: #e5e7eb;
+      --danger: #d43f3a;
+      --success: #18864b;
+      --shadow: 0 8px 24px rgba(25, 32, 44, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(232, 111, 61, 0.12), transparent 35%),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 0 14px calc(32px + env(safe-area-inset-bottom));
+    }
+
+    .hero {
+      margin: 0 -14px 16px;
+      padding: calc(24px + env(safe-area-inset-top)) 20px 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #f29a5f);
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 12px 30px rgba(232, 111, 61, 0.25);
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .app-icon {
+      width: 58px;
+      height: 58px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .app-icon svg {
+      width: 34px;
+      height: 34px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .hero p {
+      margin: 7px 0 0;
+      opacity: 0.92;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .sample-note {
+      margin-top: 16px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .card {
+      margin-top: 14px;
+      padding: 18px;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 13px;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(232, 111, 61, 0.13);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .input-group input {
+      border-radius: 13px 0 0 13px;
+    }
+
+    .input-group span {
+      min-width: 48px;
+      display: grid;
+      place-items: center;
+      padding: 0 10px;
+      color: var(--muted);
+      background: #f4f5f7;
+      border: 1px solid var(--line);
+      border-left: 0;
+      border-radius: 0 13px 13px 0;
+      font-size: 13px;
+    }
+
+    .area-row {
+      position: relative;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fafafa;
+    }
+
+    .area-row + .area-row {
+      margin-top: 10px;
+    }
+
+    .area-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .area-index {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .remove-area {
+      min-height: 34px;
+      padding: 0 10px;
+      color: var(--danger);
+      background: #fff;
+      border: 1px solid #f2c5c3;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .area-summary {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      min-height: 36px;
+      padding: 0 12px;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    .chip.active {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      border-color: #f4b99f;
+      font-weight: 700;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 13px;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 8px 18px rgba(232, 111, 61, 0.25);
+    }
+
+    .btn-primary:active {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      border: 1px solid #f4c0a8;
+    }
+
+    .btn-light {
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .button-row .btn-primary {
+      grid-column: 1 / -1;
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 12px;
+      padding: 11px 13px;
+      color: var(--danger);
+      background: #fff3f2;
+      border: 1px solid #f4c5c2;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .result-card {
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .result-head {
+      padding: 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #26374d, #435a76);
+    }
+
+    .result-head small {
+      display: block;
+      opacity: 0.78;
+      margin-bottom: 5px;
+    }
+
+    .result-main {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .result-main strong {
+      font-size: 33px;
+      line-height: 1.1;
+    }
+
+    .result-main span {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .result-item {
+      min-height: 92px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .result-item span {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .result-item strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .result-item small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .cost-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: #fffaf7;
+      border-top: 1px solid var(--line);
+    }
+
+    .cost-row span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .cost-row strong {
+      color: var(--primary-dark);
+      font-size: 22px;
+    }
+
+    .formula {
+      margin-top: 12px;
+      padding: 12px 13px;
+      color: #4b5563;
+      background: #f7f8fa;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-empty {
+      padding: 16px 10px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .history-item {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fafafa;
+    }
+
+    .history-item-head,
+    .history-item-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .history-item-head strong {
+      font-size: 14px;
+    }
+
+    .history-item-head time {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .history-item p {
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .history-item-actions button {
+      min-height: 34px;
+      padding: 0 10px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .history-load {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      border: 1px solid #f4c0a8;
+    }
+
+    .history-delete {
+      color: var(--danger);
+      background: #fff;
+      border: 1px solid #f2c5c3;
+    }
+
+    details {
+      border-top: 1px solid var(--line);
+    }
+
+    details:first-of-type {
+      border-top: 0;
+    }
+
+    summary {
+      padding: 14px 0;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    details p,
+    details ol {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    details ol {
+      padding-left: 20px;
+    }
+
+    .privacy-note {
+      margin-top: 14px;
+      padding: 12px 13px;
+      color: var(--success);
+      background: #effaf4;
+      border: 1px solid #bfe8d0;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      padding: 22px 10px 4px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 540px) {
+      .grid.two,
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row .btn-primary {
+        grid-column: auto;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero h1 {
+        font-size: 21px;
+      }
+
+      .result-main strong {
+        font-size: 29px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="app-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <rect x="7" y="7" width="22" height="22" rx="4" fill="white" opacity="0.95"/>
+            <rect x="35" y="7" width="22" height="22" rx="4" fill="white" opacity="0.8"/>
+            <rect x="7" y="35" width="22" height="22" rx="4" fill="white" opacity="0.8"/>
+            <rect x="35" y="35" width="22" height="22" rx="4" fill="white" opacity="0.95"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Tính số lượng gạch ốp lát</h1>
+          <p>Tính diện tích, số viên gạch, số thùng, phần hao hụt và chi phí dự kiến.</p>
+        </div>
+      </div>
+      <div class="sample-note">
+        Dữ liệu mẫu đã được điền sẵn để bạn có thể xem kết quả ngay. Hãy thay đổi thông số theo công trình thực tế.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>1. Khu vực thi công</h2>
+        <span>Có thể thêm nhiều khu vực</span>
+      </div>
+
+      <div class="field">
+        <label for="projectName">Tên công trình</label>
+        <input id="projectName" type="text" maxlength="60" value="Lát nền phòng khách" placeholder="Ví dụ: Lát nền phòng khách" />
+      </div>
+
+      <div id="areaList" style="margin-top: 14px;"></div>
+
+      <button id="addAreaBtn" class="btn btn-secondary" type="button" style="width: 100%; margin-top: 12px;">
+        Thêm khu vực
+      </button>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>2. Kích thước gạch</h2>
+        <span>Đơn vị centimet</span>
+      </div>
+
+      <div class="field">
+        <label>Mẫu kích thước phổ biến</label>
+        <div class="chip-row" id="tilePresets">
+          <button type="button" class="chip" data-width="30" data-height="30">30 × 30</button>
+          <button type="button" class="chip" data-width="40" data-height="40">40 × 40</button>
+          <button type="button" class="chip" data-width="60" data-height="60">60 × 60</button>
+          <button type="button" class="chip active" data-width="80" data-height="80">80 × 80</button>
+          <button type="button" class="chip" data-width="60" data-height="120">60 × 120</button>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top: 14px;">
+        <div class="field">
+          <label for="tileWidth">Chiều rộng viên gạch</label>
+          <div class="input-group">
+            <input id="tileWidth" type="number" min="1" step="0.1" value="80" inputmode="decimal" />
+            <span>cm</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="tileHeight">Chiều dài viên gạch</label>
+          <div class="input-group">
+            <input id="tileHeight" type="number" min="1" step="0.1" value="80" inputmode="decimal" />
+            <span>cm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top: 12px;">
+        <div class="field">
+          <label for="groutWidth">Độ rộng mạch gạch</label>
+          <div class="input-group">
+            <input id="groutWidth" type="number" min="0" step="0.1" value="0.2" inputmode="decimal" />
+            <span>cm</span>
+          </div>
+          <small>Nhập 0 nếu không cần tính mạch.</small>
+        </div>
+        <div class="field">
+          <label for="tilesPerBox">Số viên trong một thùng</label>
+          <div class="input-group">
+            <input id="tilesPerBox" type="number" min="1" step="1" value="4" inputmode="numeric" />
+            <span>viên</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>3. Hao hụt và chi phí</h2>
+        <span>Tùy chọn</span>
+      </div>
+
+      <div class="field">
+        <label>Tỷ lệ dự phòng hao hụt</label>
+        <div class="chip-row" id="wastePresets">
+          <button type="button" class="chip" data-value="5">5%</button>
+          <button type="button" class="chip active" data-value="10">10%</button>
+          <button type="button" class="chip" data-value="15">15%</button>
+          <button type="button" class="chip" data-value="20">20%</button>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top: 14px;">
+        <div class="field">
+          <label for="wasteRate">Tỷ lệ hao hụt</label>
+          <div class="input-group">
+            <input id="wasteRate" type="number" min="0" max="100" step="0.1" value="10" inputmode="decimal" />
+            <span>%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="pricePerBox">Giá một thùng</label>
+          <div class="input-group">
+            <input id="pricePerBox" type="number" min="0" step="1000" value="420000" inputmode="numeric" />
+            <span>đ</span>
+          </div>
+          <small>Có thể để 0 nếu không cần tính chi phí.</small>
+        </div>
+      </div>
+
+      <div id="errorBox" class="error-box" role="alert"></div>
+
+      <div class="button-row">
+        <button id="calculateBtn" class="btn btn-primary" type="button">Tính toán ngay</button>
+        <button id="resetBtn" class="btn btn-light" type="button">Khôi phục dữ liệu mẫu</button>
+        <button id="saveBtn" class="btn btn-secondary" type="button">Lưu kết quả</button>
+      </div>
+    </section>
+
+    <section class="card result-card" id="resultSection" aria-live="polite">
+      <div class="result-head">
+        <small>Số lượng cần mua sau khi làm tròn theo thùng</small>
+        <div class="result-main">
+          <strong id="resultBoxes">9 thùng</strong>
+          <span id="resultPurchasedTiles">36 viên</span>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-item">
+          <span>Tổng diện tích thi công</span>
+          <strong id="resultArea">20,00 m²</strong>
+          <small id="resultAreaCount">1 khu vực</small>
+        </div>
+        <div class="result-item">
+          <span>Diện tích một viên</span>
+          <strong id="resultTileArea">0,64 m²</strong>
+          <small>Đã tính mạch gạch</small>
+        </div>
+        <div class="result-item">
+          <span>Số viên cơ bản</span>
+          <strong id="resultBaseTiles">32 viên</strong>
+          <small>Chưa cộng hao hụt</small>
+        </div>
+        <div class="result-item">
+          <span>Số viên sau hao hụt</span>
+          <strong id="resultWasteTiles">35 viên</strong>
+          <small id="resultWasteLabel">Hao hụt 10%</small>
+        </div>
+        <div class="result-item">
+          <span>Số viên mua thực tế</span>
+          <strong id="resultActualTiles">36 viên</strong>
+          <small>Làm tròn theo số viên mỗi thùng</small>
+        </div>
+        <div class="result-item">
+          <span>Số viên còn dự phòng</span>
+          <strong id="resultSpareTiles">1 viên</strong>
+          <small>Sau khi đủ nhu cầu tính toán</small>
+        </div>
+      </div>
+
+      <div class="cost-row">
+        <span>Chi phí dự kiến</span>
+        <strong id="resultCost">3.780.000 đ</strong>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Lịch sử tính toán</h2>
+        <button id="clearHistoryBtn" class="remove-area" type="button">Xóa tất cả</button>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Hướng dẫn sử dụng</h2>
+        <span>Thông tin đầy đủ</span>
+      </div>
+
+      <details open>
+        <summary>Cách tính số lượng gạch</summary>
+        <ol>
+          <li>Nhập kích thước từng khu vực cần lát hoặc ốp.</li>
+          <li>Chọn kích thước viên gạch hoặc nhập kích thước tùy chỉnh.</li>
+          <li>Nhập số viên trong một thùng và tỷ lệ hao hụt.</li>
+          <li>Nhấn Tính toán ngay để xem số viên, số thùng và chi phí.</li>
+        </ol>
+      </details>
+
+      <details>
+        <summary>Nên chọn tỷ lệ hao hụt bao nhiêu</summary>
+        <p>
+          Công trình đơn giản thường dùng 5% đến 10%. Khu vực có nhiều góc cắt, lát chéo hoặc hoa văn phức tạp nên dùng 15% đến 20%.
+        </p>
+      </details>
+
+      <details>
+        <summary>Công thức áp dụng</summary>
+        <div class="formula">
+          Tổng diện tích = tổng của chiều dài × chiều rộng × số lượng khu vực.<br />
+          Số viên cơ bản = tổng diện tích ÷ diện tích phủ của một viên.<br />
+          Số viên sau hao hụt = số viên cơ bản × (1 + tỷ lệ hao hụt).<br />
+          Số thùng = làm tròn lên số viên sau hao hụt ÷ số viên mỗi thùng.
+        </div>
+      </details>
+
+      <details>
+        <summary>Lưu ý trước khi mua gạch</summary>
+        <p>
+          Kết quả là giá trị tham khảo. Kích thước thực tế, phương pháp thi công, độ rộng mạch, hoa văn và cách cắt gạch có thể làm thay đổi số lượng cần mua. Nên xác nhận lại với đơn vị thi công hoặc nhà cung cấp.
+        </p>
+      </details>
+
+      <div class="privacy-note">
+        Ứng dụng hoạt động trực tiếp trên thiết bị. Dữ liệu lịch sử chỉ được lưu trong trình duyệt của người dùng và không được gửi đến máy chủ.
+      </div>
+    </section>
+
+    <footer class="footer">
+      Phiên bản 1.0.0<br />
+      Công cụ hỗ trợ tính toán vật liệu gạch ốp lát.
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const STORAGE_KEY = "tile_calculator_history_v1";
+      const MAX_AREAS = 20;
+      const MAX_HISTORY = 20;
+
+      const areaList = document.getElementById("areaList");
+      const addAreaBtn = document.getElementById("addAreaBtn");
+      const calculateBtn = document.getElementById("calculateBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const saveBtn = document.getElementById("saveBtn");
+      const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+      const historyList = document.getElementById("historyList");
+      const errorBox = document.getElementById("errorBox");
+
+      const fields = {
+        projectName: document.getElementById("projectName"),
+        tileWidth: document.getElementById("tileWidth"),
+        tileHeight: document.getElementById("tileHeight"),
+        groutWidth: document.getElementById("groutWidth"),
+        tilesPerBox: document.getElementById("tilesPerBox"),
+        wasteRate: document.getElementById("wasteRate"),
+        pricePerBox: document.getElementById("pricePerBox")
+      };
+
+      let areas = [];
+      let lastResult = null;
+
+      function createId() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      }
+
+      function formatNumber(value, digits) {
+        return new Intl.NumberFormat("vi-VN", {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        }).format(value);
+      }
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+          maximumFractionDigits: 0
+        }).format(value);
+      }
+
+      function toNumber(value) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : 0;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function showError(messages) {
+        if (!messages.length) {
+          errorBox.style.display = "none";
+          errorBox.textContent = "";
+          return;
+        }
+        errorBox.innerHTML = messages.map((message) => "• " + escapeHtml(message)).join("<br>");
+        errorBox.style.display = "block";
+        errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function addArea(data) {
+        if (areas.length >= MAX_AREAS) {
+          showError(["Chỉ có thể thêm tối đa " + MAX_AREAS + " khu vực."]);
+          return;
+        }
+
+        areas.push({
+          id: createId(),
+          name: data && data.name ? data.name : "Khu vực " + (areas.length + 1),
+          length: data && data.length ? data.length : 3,
+          width: data && data.width ? data.width : 3,
+          quantity: data && data.quantity ? data.quantity : 1
+        });
+
+        renderAreas();
+        calculate();
+      }
+
+      function removeArea(id) {
+        if (areas.length === 1) {
+          showError(["Cần giữ lại ít nhất một khu vực để tính toán."]);
+          return;
+        }
+        areas = areas.filter((area) => area.id !== id);
+        renderAreas();
+        calculate();
+      }
+
+      function renderAreas() {
+        areaList.innerHTML = "";
+
+        areas.forEach((area, index) => {
+          const row = document.createElement("div");
+          row.className = "area-row";
+          row.dataset.id = area.id;
+
+          row.innerHTML = `
+            <div class="area-row-header">
+              <span class="area-index">Khu vực ${index + 1}</span>
+              <button class="remove-area" type="button">Xóa</button>
+            </div>
+            <div class="field">
+              <label>Tên khu vực</label>
+              <input class="area-name" type="text" maxlength="50" value="${escapeHtml(area.name)}" placeholder="Ví dụ: Phòng khách" />
+            </div>
+            <div class="grid two" style="margin-top: 10px;">
+              <div class="field">
+                <label>Chiều dài</label>
+                <div class="input-group">
+                  <input class="area-length" type="number" min="0.01" step="0.01" value="${area.length}" inputmode="decimal" />
+                  <span>m</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Chiều rộng</label>
+                <div class="input-group">
+                  <input class="area-width" type="number" min="0.01" step="0.01" value="${area.width}" inputmode="decimal" />
+                  <span>m</span>
+                </div>
+              </div>
+            </div>
+            <div class="field" style="margin-top: 10px;">
+              <label>Số khu vực cùng kích thước</label>
+              <div class="input-group">
+                <input class="area-quantity" type="number" min="1" step="1" value="${area.quantity}" inputmode="numeric" />
+                <span>khu</span>
+              </div>
+            </div>
+            <div class="area-summary">Diện tích: <strong class="area-value">0,00 m²</strong></div>
+          `;
+
+          row.querySelector(".remove-area").addEventListener("click", () => removeArea(area.id));
+
+          const nameInput = row.querySelector(".area-name");
+          const lengthInput = row.querySelector(".area-length");
+          const widthInput = row.querySelector(".area-width");
+          const quantityInput = row.querySelector(".area-quantity");
+          const areaValue = row.querySelector(".area-value");
+
+          function updateAreaFromInputs() {
+            area.name = nameInput.value.trim() || "Khu vực " + (index + 1);
+            area.length = toNumber(lengthInput.value);
+            area.width = toNumber(widthInput.value);
+            area.quantity = Math.max(1, Math.floor(toNumber(quantityInput.value)));
+            const value = area.length * area.width * area.quantity;
+            areaValue.textContent = formatNumber(value, 2) + " m²";
+            calculate(false);
+          }
+
+          [nameInput, lengthInput, widthInput, quantityInput].forEach((input) => {
+            input.addEventListener("input", updateAreaFromInputs);
+          });
+
+          updateAreaFromInputs();
+          areaList.appendChild(row);
+        });
+      }
+
+      function validate() {
+        const messages = [];
+
+        if (!areas.length) {
+          messages.push("Vui lòng thêm ít nhất một khu vực.");
+        }
+
+        areas.forEach((area, index) => {
+          if (area.length <= 0 || area.width <= 0) {
+            messages.push("Kích thước của khu vực " + (index + 1) + " phải lớn hơn 0.");
+          }
+          if (area.quantity < 1) {
+            messages.push("Số lượng khu vực " + (index + 1) + " phải từ 1 trở lên.");
+          }
+        });
+
+        if (toNumber(fields.tileWidth.value) <= 0 || toNumber(fields.tileHeight.value) <= 0) {
+          messages.push("Kích thước viên gạch phải lớn hơn 0.");
+        }
+
+        if (toNumber(fields.groutWidth.value) < 0) {
+          messages.push("Độ rộng mạch gạch không được nhỏ hơn 0.");
+        }
+
+        if (toNumber(fields.tilesPerBox.value) < 1) {
+          messages.push("Số viên trong một thùng phải từ 1 trở lên.");
+        }
+
+        const wasteRate = toNumber(fields.wasteRate.value);
+        if (wasteRate < 0 || wasteRate > 100) {
+          messages.push("Tỷ lệ hao hụt phải nằm trong khoảng từ 0% đến 100%.");
+        }
+
+        if (toNumber(fields.pricePerBox.value) < 0) {
+          messages.push("Giá một thùng không được nhỏ hơn 0.");
+        }
+
+        return messages;
+      }
+
+      function collectData() {
+        return {
+          projectName: fields.projectName.value.trim() || "Công trình chưa đặt tên",
+          areas: areas.map((area) => ({ ...area })),
+          tileWidth: toNumber(fields.tileWidth.value),
+          tileHeight: toNumber(fields.tileHeight.value),
+          groutWidth: toNumber(fields.groutWidth.value),
+          tilesPerBox: Math.max(1, Math.floor(toNumber(fields.tilesPerBox.value))),
+          wasteRate: toNumber(fields.wasteRate.value),
+          pricePerBox: toNumber(fields.pricePerBox.value)
+        };
+      }
+
+      function calculate(shouldShowError = true) {
+        const messages = validate();
+        if (messages.length) {
+          if (shouldShowError) {
+            showError(messages);
+          }
+          return null;
+        }
+
+        showError([]);
+
+        const data = collectData();
+        const totalArea = data.areas.reduce((sum, area) => {
+          return sum + area.length * area.width * area.quantity;
+        }, 0);
+
+        const effectiveWidthM = (data.tileWidth + data.groutWidth) / 100;
+        const effectiveHeightM = (data.tileHeight + data.groutWidth) / 100;
+        const effectiveTileArea = effectiveWidthM * effectiveHeightM;
+        const rawTileArea = (data.tileWidth / 100) * (data.tileHeight / 100);
+
+        const baseTiles = Math.ceil(totalArea / effectiveTileArea);
+        const wasteTiles = Math.ceil(baseTiles * (1 + data.wasteRate / 100));
+        const boxes = Math.ceil(wasteTiles / data.tilesPerBox);
+        const purchasedTiles = boxes * data.tilesPerBox;
+        const spareTiles = purchasedTiles - wasteTiles;
+        const cost = boxes * data.pricePerBox;
+
+        const result = {
+          ...data,
+          totalArea,
+          effectiveTileArea,
+          rawTileArea,
+          baseTiles,
+          wasteTiles,
+          boxes,
+          purchasedTiles,
+          spareTiles,
+          cost,
+          calculatedAt: new Date().toISOString()
+        };
+
+        document.getElementById("resultBoxes").textContent = boxes + " thùng";
+        document.getElementById("resultPurchasedTiles").textContent = purchasedTiles + " viên";
+        document.getElementById("resultArea").textContent = formatNumber(totalArea, 2) + " m²";
+        document.getElementById("resultAreaCount").textContent =
+          data.areas.length + (data.areas.length === 1 ? " khu vực" : " khu vực");
+        document.getElementById("resultTileArea").textContent = formatNumber(rawTileArea, 3) + " m²";
+        document.getElementById("resultBaseTiles").textContent = baseTiles + " viên";
+        document.getElementById("resultWasteTiles").textContent = wasteTiles + " viên";
+        document.getElementById("resultWasteLabel").textContent =
+          "Hao hụt " + formatNumber(data.wasteRate, data.wasteRate % 1 ? 1 : 0) + "%";
+        document.getElementById("resultActualTiles").textContent = purchasedTiles + " viên";
+        document.getElementById("resultSpareTiles").textContent = spareTiles + " viên";
+        document.getElementById("resultCost").textContent =
+          data.pricePerBox > 0 ? formatCurrency(cost) : "Chưa nhập giá";
+
+        lastResult = result;
+        return result;
+      }
+
+      function saveResult() {
+        const result = calculate();
+        if (!result) return;
+
+        const history = getHistory();
+        history.unshift({
+          id: createId(),
+          savedAt: new Date().toISOString(),
+          data: result
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)));
+        renderHistory();
+        saveBtn.textContent = "Đã lưu";
+        setTimeout(() => {
+          saveBtn.textContent = "Lưu kết quả";
+        }, 1200);
+      }
+
+      function getHistory() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function deleteHistoryItem(id) {
+        const history = getHistory().filter((item) => item.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+        renderHistory();
+      }
+
+      function loadHistoryItem(item) {
+        const data = item.data;
+        fields.projectName.value = data.projectName || "";
+        fields.tileWidth.value = data.tileWidth;
+        fields.tileHeight.value = data.tileHeight;
+        fields.groutWidth.value = data.groutWidth;
+        fields.tilesPerBox.value = data.tilesPerBox;
+        fields.wasteRate.value = data.wasteRate;
+        fields.pricePerBox.value = data.pricePerBox;
+
+        areas = (data.areas || []).map((area) => ({
+          id: createId(),
+          name: area.name,
+          length: area.length,
+          width: area.width,
+          quantity: area.quantity
+        }));
+
+        if (!areas.length) {
+          areas = [{
+            id: createId(),
+            name: "Khu vực 1",
+            length: 3,
+            width: 3,
+            quantity: 1
+          }];
+        }
+
+        updatePresetStates();
+        renderAreas();
+        calculate();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function renderHistory() {
+        const history = getHistory();
+        historyList.innerHTML = "";
+
+        if (!history.length) {
+          historyList.innerHTML = '<div class="history-empty">Chưa có kết quả nào được lưu.</div>';
+          return;
+        }
+
+        history.forEach((item) => {
+          const data = item.data;
+          const row = document.createElement("div");
+          row.className = "history-item";
+
+          const date = new Date(item.savedAt);
+          const dateText = Number.isNaN(date.getTime())
+            ? ""
+            : date.toLocaleString("vi-VN");
+
+          row.innerHTML = `
+            <div class="history-item-head">
+              <strong>${escapeHtml(data.projectName || "Công trình")}</strong>
+              <time>${escapeHtml(dateText)}</time>
+            </div>
+            <p>
+              ${formatNumber(data.totalArea || 0, 2)} m² ·
+              ${data.tileWidth} × ${data.tileHeight} cm ·
+              ${data.boxes || 0} thùng ·
+              ${data.purchasedTiles || 0} viên
+            </p>
+            <div class="history-item-actions">
+              <button class="history-load" type="button">Dùng lại dữ liệu</button>
+              <button class="history-delete" type="button">Xóa</button>
+            </div>
+          `;
+
+          row.querySelector(".history-load").addEventListener("click", () => loadHistoryItem(item));
+          row.querySelector(".history-delete").addEventListener("click", () => deleteHistoryItem(item.id));
+
+          historyList.appendChild(row);
+        });
+      }
+
+      function updatePresetStates() {
+        const tileWidth = toNumber(fields.tileWidth.value);
+        const tileHeight = toNumber(fields.tileHeight.value);
+        document.querySelectorAll("#tilePresets .chip").forEach((chip) => {
+          const width = toNumber(chip.dataset.width);
+          const height = toNumber(chip.dataset.height);
+          chip.classList.toggle("active", width === tileWidth && height === tileHeight);
+        });
+
+        const wasteRate = toNumber(fields.wasteRate.value);
+        document.querySelectorAll("#wastePresets .chip").forEach((chip) => {
+          chip.classList.toggle("active", toNumber(chip.dataset.value) === wasteRate);
+        });
+      }
+
+      function resetSample() {
+        fields.projectName.value = "Lát nền phòng khách";
+        fields.tileWidth.value = 80;
+        fields.tileHeight.value = 80;
+        fields.groutWidth.value = 0.2;
+        fields.tilesPerBox.value = 4;
+        fields.wasteRate.value = 10;
+        fields.pricePerBox.value = 420000;
+
+        areas = [{
+          id: createId(),
+          name: "Phòng khách",
+          length: 5,
+          width: 4,
+          quantity: 1
+        }];
+
+        updatePresetStates();
+        renderAreas();
+        calculate();
+      }
+
+      document.querySelectorAll("#tilePresets .chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          fields.tileWidth.value = chip.dataset.width;
+          fields.tileHeight.value = chip.dataset.height;
+          updatePresetStates();
+          calculate();
+        });
+      });
+
+      document.querySelectorAll("#wastePresets .chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          fields.wasteRate.value = chip.dataset.value;
+          updatePresetStates();
+          calculate();
+        });
+      });
+
+      Object.values(fields).forEach((field) => {
+        field.addEventListener("input", () => {
+          updatePresetStates();
+          calculate(false);
+        });
+      });
+
+      addAreaBtn.addEventListener("click", () => addArea());
+      calculateBtn.addEventListener("click", () => {
+        const result = calculate();
+        if (result) {
+          document.getElementById("resultSection").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      });
+      resetBtn.addEventListener("click", resetSample);
+      saveBtn.addEventListener("click", saveResult);
+      clearHistoryBtn.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        renderHistory();
+      });
+
+      resetSample();
+      renderHistory();
+    })();
+  </script>
+</body>
+</html>

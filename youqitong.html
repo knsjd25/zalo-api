@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#F47C20" />
+  <title>Máy tính lượng sơn</title>
+  <style>
+    :root{
+      --primary:#F47C20;
+      --primary-dark:#D95E08;
+      --primary-soft:#FFF1E6;
+      --ink:#1F2937;
+      --muted:#6B7280;
+      --line:#E5E7EB;
+      --surface:#FFFFFF;
+      --bg:#F5F7FA;
+      --success:#14804A;
+      --danger:#C62828;
+      --shadow:0 10px 30px rgba(31,41,55,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(244,124,32,.13), transparent 30%),
+        var(--bg);
+      min-height:100vh;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{
+      width:min(1180px,100%);
+      margin:0 auto;
+      padding:18px 16px 44px;
+    }
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      background:linear-gradient(135deg,#F47C20,#FFB05B);
+      color:#fff;
+      padding:28px;
+      box-shadow:0 18px 44px rgba(244,124,32,.22);
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:230px;height:230px;
+      right:-80px;top:-90px;
+      border:30px solid rgba(255,255,255,.16);
+      border-radius:50%;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      position:relative;
+      z-index:1;
+    }
+    .brand-icon{
+      width:68px;height:68px;border-radius:22px;
+      background:#fff;
+      display:grid;place-items:center;
+      box-shadow:0 12px 28px rgba(132,63,0,.18);
+      flex:0 0 auto;
+    }
+    .brand-icon svg{width:44px;height:44px}
+    .hero h1{font-size:clamp(26px,4vw,42px);margin:0 0 8px}
+    .hero p{margin:0;max-width:760px;line-height:1.65;opacity:.96}
+    .hero-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+    .hero-tag{
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+      font-weight:700;
+    }
+    .notice{
+      display:flex;gap:10px;align-items:flex-start;
+      margin:16px 0 0;
+      padding:13px 15px;
+      border-radius:15px;
+      background:#FFF8F1;
+      color:#8A4300;
+      border:1px solid #FFD9B5;
+      line-height:1.5;
+      font-size:14px;
+    }
+    .tabs{
+      position:sticky;top:0;z-index:20;
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      padding:10px;
+      margin:18px 0;
+      background:rgba(245,247,250,.92);
+      backdrop-filter:blur(12px);
+      border-radius:18px;
+      border:1px solid rgba(229,231,235,.8);
+    }
+    .tab{
+      border:0;border-radius:13px;padding:12px 10px;
+      background:transparent;color:var(--muted);font-weight:800;
+    }
+    .tab.active{background:var(--surface);color:var(--primary-dark);box-shadow:var(--shadow)}
+    .panel{display:none}
+    .panel.active{display:block}
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);
+      gap:18px;
+      align-items:start;
+    }
+    .card{
+      background:var(--surface);
+      border:1px solid rgba(229,231,235,.92);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+    }
+    .card + .card{margin-top:18px}
+    .section-title{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin-bottom:16px;
+    }
+    .section-title h2,.section-title h3{margin:0;font-size:19px}
+    .section-title span{font-size:12px;color:var(--muted)}
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .field{min-width:0}
+    .field.full{grid-column:1/-1}
+    label{
+      display:block;
+      font-weight:800;
+      font-size:13px;
+      margin:0 0 7px;
+    }
+    .hint{display:block;color:var(--muted);font-size:12px;margin-top:6px;line-height:1.45}
+    input,select{
+      width:100%;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:13px;
+      padding:12px 13px;
+      outline:none;
+      color:var(--ink);
+      transition:.2s ease;
+    }
+    input:focus,select:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(244,124,32,.12);
+    }
+    .switch-row{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 13px;
+      background:#FAFAFA;
+    }
+    .switch-copy b{display:block;font-size:14px}
+    .switch-copy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+    .switch{position:relative;width:50px;height:28px;flex:0 0 auto}
+    .switch input{display:none}
+    .slider{
+      position:absolute;inset:0;border-radius:999px;background:#D1D5DB;transition:.2s;
+    }
+    .slider::after{
+      content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;
+      border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:.2s;
+    }
+    .switch input:checked + .slider{background:var(--primary)}
+    .switch input:checked + .slider::after{transform:translateX(22px)}
+    .subtle-box{
+      margin-top:14px;
+      padding:14px;
+      border:1px dashed #F6B57D;
+      border-radius:16px;
+      background:#FFFAF6;
+    }
+    .hidden{display:none!important}
+    .actions{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      margin-top:18px;
+    }
+    .btn{
+      border:0;border-radius:14px;padding:13px 16px;font-weight:900;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .btn-primary{
+      color:#fff;background:linear-gradient(135deg,var(--primary),#FF9C46);
+      box-shadow:0 10px 22px rgba(244,124,32,.25);
+    }
+    .btn-secondary{color:var(--ink);background:#EEF0F3}
+    .btn-danger{color:#fff;background:var(--danger)}
+    .result-card{
+      position:sticky;top:88px;
+      overflow:hidden;
+    }
+    .result-card::before{
+      content:"";
+      position:absolute;left:0;right:0;top:0;height:6px;
+      background:linear-gradient(90deg,var(--primary),#FFC178);
+    }
+    .result-empty{
+      text-align:center;padding:28px 14px;color:var(--muted)
+    }
+    .result-empty svg{width:82px;height:82px;margin-bottom:12px;opacity:.8}
+    .result-list{display:grid;gap:10px}
+    .result-item{
+      display:flex;justify-content:space-between;gap:16px;align-items:center;
+      border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:#FAFAFA;
+    }
+    .result-item span{font-size:13px;color:var(--muted)}
+    .result-item strong{text-align:right;font-size:15px}
+    .result-highlight{
+      padding:17px;
+      border-radius:17px;
+      background:linear-gradient(135deg,#FFF1E6,#FFF9F3);
+      border:1px solid #FFD3AE;
+      margin-bottom:12px;
+    }
+    .result-highlight span{font-size:13px;color:#8A4300}
+    .result-highlight strong{display:block;color:var(--primary-dark);font-size:32px;margin-top:4px}
+    .result-note{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+    .history-toolbar{
+      display:flex;flex-wrap:wrap;gap:9px;justify-content:space-between;align-items:center;margin-bottom:14px;
+    }
+    .history-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .history-list{display:grid;gap:12px}
+    .history-item{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:15px;
+      background:#fff;
+    }
+    .history-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .history-top h3{margin:0 0 4px;font-size:16px}
+    .history-top time{font-size:12px;color:var(--muted)}
+    .history-values{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;margin-top:12px;
+    }
+    .history-value{
+      background:#F7F7F8;border-radius:12px;padding:10px;
+    }
+    .history-value span{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+    .history-value strong{font-size:14px}
+    .icon-btn{
+      border:0;border-radius:10px;background:#F2F3F5;color:var(--danger);
+      width:36px;height:36px;font-weight:900;
+    }
+    .empty-state{
+      text-align:center;color:var(--muted);padding:40px 12px;border:1px dashed var(--line);border-radius:18px;
+    }
+    .guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .guide-card h3{margin-top:0}
+    .guide-card p,.guide-card li{line-height:1.65;color:#4B5563}
+    .formula{
+      background:#111827;color:#fff;border-radius:14px;padding:14px;line-height:1.7;font-size:14px;
+    }
+    .footer{
+      text-align:center;color:var(--muted);font-size:12px;padding:24px 8px 0;line-height:1.6;
+    }
+    .toast{
+      position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);
+      background:#111827;color:#fff;padding:11px 15px;border-radius:12px;
+      opacity:0;pointer-events:none;transition:.25s;z-index:50;font-size:13px;
+      box-shadow:0 14px 32px rgba(0,0,0,.24);
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:860px){
+      .layout{grid-template-columns:1fr}
+      .result-card{position:static}
+      .history-values{grid-template-columns:repeat(2,1fr)}
+      .guide-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .app{padding:10px 10px 32px}
+      .hero{padding:20px;border-radius:22px}
+      .brand{align-items:flex-start}
+      .brand-icon{width:58px;height:58px;border-radius:18px}
+      .hero p{font-size:14px}
+      .card{padding:16px;border-radius:17px}
+      .form-grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .actions{grid-template-columns:1fr}
+      .tabs{top:0}
+      .tab{font-size:12px;padding:11px 6px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M14 42h36v9a5 5 0 0 1-5 5H19a5 5 0 0 1-5-5v-9Z" fill="#F47C20"/>
+            <path d="M18 18h28a6 6 0 0 1 6 6v18H12V24a6 6 0 0 1 6-6Z" fill="#FFE0C2"/>
+            <path d="M12 32h40v10H12V32Z" fill="#FF9D4A"/>
+            <path d="M24 8h16v10H24V8Z" fill="#F47C20"/>
+            <path d="M28 42h8v15h-8V42Z" fill="#D95E08"/>
+            <path d="M21 25h22" stroke="#F47C20" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Máy tính lượng sơn</h1>
+          <p>Tính diện tích cần sơn, số lít sơn, số thùng và chi phí dự kiến cho tường, trần hoặc bề mặt khác.</p>
+          <div class="hero-tags">
+            <span class="hero-tag">Hoạt động ngoại tuyến</span>
+            <span class="hero-tag">Lưu lịch sử trên thiết bị</span>
+            <span class="hero-tag">Không thu thập dữ liệu cá nhân</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="notice">
+      <strong>Lưu ý:</strong>
+      <span>Kết quả là giá trị ước tính. Độ phủ thực tế phụ thuộc vào loại sơn, độ nhám, màu nền, phương pháp thi công và hướng dẫn của nhà sản xuất.</span>
+    </div>
+
+    <nav class="tabs" aria-label="Điều hướng chức năng">
+      <button class="tab active" data-tab="calculator">Tính lượng sơn</button>
+      <button class="tab" data-tab="history">Lịch sử</button>
+      <button class="tab" data-tab="guide">Hướng dẫn</button>
+    </nav>
+
+    <section id="calculator" class="panel active">
+      <div class="layout">
+        <div>
+          <div class="card">
+            <div class="section-title">
+              <h2>Thông tin công trình</h2>
+              <span>Các mục có dấu * là bắt buộc</span>
+            </div>
+            <div class="form-grid">
+              <div class="field full">
+                <label for="projectName">Tên khu vực hoặc công trình</label>
+                <input id="projectName" maxlength="60" placeholder="Ví dụ: Phòng khách tầng 1" />
+              </div>
+              <div class="field">
+                <label for="calcMode">Phương pháp nhập diện tích *</label>
+                <select id="calcMode">
+                  <option value="room">Tính theo kích thước phòng</option>
+                  <option value="manual">Nhập trực tiếp diện tích</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="surfaceType">Loại bề mặt</label>
+                <select id="surfaceType">
+                  <option value="Tường nội thất">Tường nội thất</option>
+                  <option value="Tường ngoại thất">Tường ngoại thất</option>
+                  <option value="Trần nhà">Trần nhà</option>
+                  <option value="Gỗ">Gỗ</option>
+                  <option value="Kim loại">Kim loại</option>
+                  <option value="Khác">Khác</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="roomFields" class="subtle-box">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="length">Chiều dài phòng, m *</label>
+                  <input id="length" type="number" min="0" step="0.01" inputmode="decimal" placeholder="5" />
+                </div>
+                <div class="field">
+                  <label for="width">Chiều rộng phòng, m *</label>
+                  <input id="width" type="number" min="0" step="0.01" inputmode="decimal" placeholder="4" />
+                </div>
+                <div class="field">
+                  <label for="height">Chiều cao tường, m *</label>
+                  <input id="height" type="number" min="0" step="0.01" inputmode="decimal" placeholder="3" />
+                </div>
+                <div class="field">
+                  <label for="openings">Diện tích cửa cần trừ, m²</label>
+                  <input id="openings" type="number" min="0" step="0.01" inputmode="decimal" value="0" />
+                  <span class="hint">Tổng diện tích cửa ra vào và cửa sổ không sơn.</span>
+                </div>
+                <div class="field full">
+                  <div class="switch-row">
+                    <div class="switch-copy">
+                      <b>Tính cả trần nhà</b>
+                      <span>Diện tích trần bằng chiều dài nhân chiều rộng.</span>
+                    </div>
+                    <label class="switch" aria-label="Tính cả trần nhà">
+                      <input id="includeCeiling" type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="manualFields" class="subtle-box hidden">
+              <div class="field">
+                <label for="manualArea">Diện tích cần sơn, m² *</label>
+                <input id="manualArea" type="number" min="0" step="0.01" inputmode="decimal" placeholder="60" />
+                <span class="hint">Nhập diện tích bề mặt sau khi đã trừ phần không sơn.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">
+              <h2>Thông số sơn phủ</h2>
+              <span>Có thể điều chỉnh theo sản phẩm thực tế</span>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="coats">Số lớp sơn phủ *</label>
+                <select id="coats">
+                  <option value="1">1 lớp</option>
+                  <option value="2" selected>2 lớp</option>
+                  <option value="3">3 lớp</option>
+                  <option value="4">4 lớp</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="coverage">Độ phủ, m²/lít/lớp *</label>
+                <input id="coverage" type="number" min="0.1" step="0.1" inputmode="decimal" value="10" />
+                <span class="hint">Thường từ 8 đến 14 m²/lít/lớp.</span>
+              </div>
+              <div class="field">
+                <label for="waste">Hao hụt dự phòng, %</label>
+                <input id="waste" type="number" min="0" max="100" step="1" inputmode="numeric" value="10" />
+              </div>
+              <div class="field">
+                <label for="canSize">Dung tích mỗi thùng, lít *</label>
+                <select id="canSize">
+                  <option value="1">1 lít</option>
+                  <option value="3">3 lít</option>
+                  <option value="5" selected>5 lít</option>
+                  <option value="15">15 lít</option>
+                  <option value="18">18 lít</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="paintPrice">Giá mỗi thùng, VND</label>
+                <input id="paintPrice" type="number" min="0" step="1000" inputmode="numeric" placeholder="650000" />
+              </div>
+              <div class="field">
+                <label for="customCanSize">Dung tích tùy chỉnh, lít</label>
+                <input id="customCanSize" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Không bắt buộc" />
+                <span class="hint">Nếu nhập, giá trị này sẽ thay thế dung tích đã chọn.</span>
+              </div>
+            </div>
+
+            <div class="switch-row" style="margin-top:14px">
+              <div class="switch-copy">
+                <b>Tính thêm sơn lót</b>
+                <span>Tính riêng lượng sơn lót và số thùng cần mua.</span>
+              </div>
+              <label class="switch" aria-label="Tính thêm sơn lót">
+                <input id="includePrimer" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div id="primerFields" class="subtle-box hidden">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="primerCoats">Số lớp sơn lót</label>
+                  <select id="primerCoats">
+                    <option value="1" selected>1 lớp</option>
+                    <option value="2">2 lớp</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="primerCoverage">Độ phủ sơn lót, m²/lít/lớp</label>
+                  <input id="primerCoverage" type="number" min="0.1" step="0.1" inputmode="decimal" value="10" />
+                </div>
+                <div class="field">
+                  <label for="primerCanSize">Dung tích thùng sơn lót, lít</label>
+                  <select id="primerCanSize">
+                    <option value="1">1 lít</option>
+                    <option value="5" selected>5 lít</option>
+                    <option value="15">15 lít</option>
+                    <option value="18">18 lít</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="primerPrice">Giá mỗi thùng sơn lót, VND</label>
+                  <input id="primerPrice" type="number" min="0" step="1000" inputmode="numeric" placeholder="450000" />
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button id="calculateBtn" class="btn btn-primary">Tính lượng sơn</button>
+              <button id="resetBtn" class="btn btn-secondary">Đặt lại</button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card result-card">
+          <div class="section-title">
+            <h2>Kết quả ước tính</h2>
+            <span id="resultStatus">Chưa tính</span>
+          </div>
+
+          <div id="resultEmpty" class="result-empty">
+            <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+              <path d="M23 68h54v13a7 7 0 0 1-7 7H30a7 7 0 0 1-7-7V68Z" fill="#F47C20"/>
+              <path d="M30 29h40a8 8 0 0 1 8 8v31H22V37a8 8 0 0 1 8-8Z" fill="#FFE0C2"/>
+              <path d="M22 52h56v16H22V52Z" fill="#FF9D4A"/>
+              <path d="M39 14h22v15H39V14Z" fill="#F47C20"/>
+              <path d="M44 68h12v22H44V68Z" fill="#D95E08"/>
+            </svg>
+            <div>Nhập thông tin và nhấn “Tính lượng sơn”.</div>
+          </div>
+
+          <div id="resultContent" class="hidden">
+            <div class="result-highlight">
+              <span>Lượng sơn phủ cần dùng</span>
+              <strong id="paintLiters">0 lít</strong>
+            </div>
+            <div class="result-list">
+              <div class="result-item"><span>Diện tích bề mặt</span><strong id="netArea">0 m²</strong></div>
+              <div class="result-item"><span>Diện tích thi công theo số lớp</span><strong id="coatArea">0 m²</strong></div>
+              <div class="result-item"><span>Số thùng sơn phủ</span><strong id="paintCans">0 thùng</strong></div>
+              <div id="paintCostRow" class="result-item hidden"><span>Chi phí sơn phủ</span><strong id="paintCost">0 VND</strong></div>
+              <div id="primerLitersRow" class="result-item hidden"><span>Lượng sơn lót</span><strong id="primerLiters">0 lít</strong></div>
+              <div id="primerCansRow" class="result-item hidden"><span>Số thùng sơn lót</span><strong id="primerCans">0 thùng</strong></div>
+              <div id="totalCostRow" class="result-item hidden"><span>Tổng chi phí dự kiến</span><strong id="totalCost">0 VND</strong></div>
+            </div>
+            <div id="resultNote" class="result-note"></div>
+            <button id="saveBtn" class="btn btn-primary" style="width:100%;margin-top:14px">Lưu kết quả</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="history" class="panel">
+      <div class="card">
+        <div class="history-toolbar">
+          <div>
+            <h2 style="margin:0 0 5px">Lịch sử tính toán</h2>
+            <div id="historyCount" style="font-size:13px;color:var(--muted)">0 kết quả đã lưu</div>
+          </div>
+          <div class="history-actions">
+            <button id="exportBtn" class="btn btn-secondary">Xuất CSV</button>
+            <button id="clearHistoryBtn" class="btn btn-danger">Xóa tất cả</button>
+          </div>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </section>
+
+    <section id="guide" class="panel">
+      <div class="guide-grid">
+        <div class="card guide-card">
+          <h3>Cách tính diện tích</h3>
+          <div class="formula">
+            Diện tích tường = 2 × (dài + rộng) × cao<br>
+            Diện tích trần = dài × rộng<br>
+            Diện tích thực = tường + trần − cửa
+          </div>
+          <p>Khi nhập trực tiếp diện tích, ứng dụng sử dụng đúng giá trị bạn cung cấp và không tự động trừ cửa.</p>
+        </div>
+        <div class="card guide-card">
+          <h3>Cách tính lượng sơn</h3>
+          <div class="formula">
+            Lít sơn = diện tích × số lớp ÷ độ phủ<br>
+            Lượng dự phòng = lít sơn × tỷ lệ hao hụt<br>
+            Số thùng = làm tròn lên(lít sơn ÷ dung tích)
+          </div>
+          <p>Nên dùng độ phủ ghi trên bao bì sản phẩm để có kết quả sát thực tế hơn.</p>
+        </div>
+        <div class="card guide-card">
+          <h3>Khuyến nghị sử dụng</h3>
+          <ul>
+            <li>Đo từng khu vực riêng nếu phòng có hình dạng phức tạp.</li>
+            <li>Tăng hao hụt khi bề mặt nhám, thấm hút mạnh hoặc đổi màu đậm sang màu sáng.</li>
+            <li>Không cộng phần cửa, kính hoặc bề mặt không thi công.</li>
+            <li>Kiểm tra hướng dẫn pha và thi công của nhà sản xuất.</li>
+          </ul>
+        </div>
+        <div class="card guide-card">
+          <h3>Dữ liệu và quyền riêng tư</h3>
+          <p>Ứng dụng hoạt động độc lập trên thiết bị. Lịch sử chỉ được lưu trong bộ nhớ trình duyệt của người dùng và có thể xóa bất kỳ lúc nào.</p>
+          <p>Ứng dụng không yêu cầu đăng nhập, không truy cập vị trí, danh bạ, máy ảnh hoặc thông tin thanh toán.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Máy tính lượng sơn chỉ cung cấp kết quả tham khảo và không thay thế tư vấn kỹ thuật của nhà sản xuất hoặc đơn vị thi công.
+    </footer>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const STORAGE_KEY = "paint_calculator_history_v1";
+    let currentResult = null;
+
+    const money = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 });
+    const number = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 2 });
+
+    function toNumber(id) {
+      const value = parseFloat($(id).value);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tabId));
+      document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("active", panel.id === tabId));
+      if (tabId === "history") renderHistory();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    $("calcMode").addEventListener("change", () => {
+      const room = $("calcMode").value === "room";
+      $("roomFields").classList.toggle("hidden", !room);
+      $("manualFields").classList.toggle("hidden", room);
+    });
+
+    $("includePrimer").addEventListener("change", () => {
+      $("primerFields").classList.toggle("hidden", !$("includePrimer").checked);
+    });
+
+    function validate() {
+      if ($("calcMode").value === "room") {
+        if (toNumber("length") <= 0 || toNumber("width") <= 0 || toNumber("height") <= 0) {
+          showToast("Vui lòng nhập đầy đủ kích thước phòng lớn hơn 0.");
+          return false;
+        }
+      } else if (toNumber("manualArea") <= 0) {
+        showToast("Vui lòng nhập diện tích cần sơn lớn hơn 0.");
+        return false;
+      }
+      if (toNumber("coverage") <= 0) {
+        showToast("Độ phủ sơn phải lớn hơn 0.");
+        return false;
+      }
+      if ($("includePrimer").checked && toNumber("primerCoverage") <= 0) {
+        showToast("Độ phủ sơn lót phải lớn hơn 0.");
+        return false;
+      }
+      return true;
+    }
+
+    function calculate() {
+      if (!validate()) return;
+
+      const mode = $("calcMode").value;
+      let grossArea = 0;
+      let openingArea = 0;
+      let ceilingArea = 0;
+
+      if (mode === "room") {
+        const length = toNumber("length");
+        const width = toNumber("width");
+        const height = toNumber("height");
+        grossArea = 2 * (length + width) * height;
+        openingArea = Math.max(0, toNumber("openings"));
+        ceilingArea = $("includeCeiling").checked ? length * width : 0;
+      } else {
+        grossArea = toNumber("manualArea");
+      }
+
+      const netArea = grossArea + ceilingArea - openingArea;
+      if (netArea <= 0) {
+        showToast("Diện tích sau khi khấu trừ phải lớn hơn 0.");
+        return;
+      }
+
+      const coats = parseInt($("coats").value, 10);
+      const coverage = toNumber("coverage");
+      const wasteRate = Math.max(0, toNumber("waste")) / 100;
+      const canSize = toNumber("customCanSize") > 0 ? toNumber("customCanSize") : parseFloat($("canSize").value);
+      const paintPrice = Math.max(0, toNumber("paintPrice"));
+
+      const coatArea = netArea * coats;
+      const paintLitersRaw = coatArea / coverage;
+      const paintLiters = paintLitersRaw * (1 + wasteRate);
+      const paintCans = Math.ceil(paintLiters / canSize);
+      const paintCost = paintPrice > 0 ? paintCans * paintPrice : 0;
+
+      let primerLiters = 0;
+      let primerCans = 0;
+      let primerCost = 0;
+      const includePrimer = $("includePrimer").checked;
+
+      if (includePrimer) {
+        const primerCoats = parseInt($("primerCoats").value, 10);
+        const primerCoverage = toNumber("primerCoverage");
+        const primerCanSize = parseFloat($("primerCanSize").value);
+        const primerPrice = Math.max(0, toNumber("primerPrice"));
+        primerLiters = (netArea * primerCoats / primerCoverage) * (1 + wasteRate);
+        primerCans = Math.ceil(primerLiters / primerCanSize);
+        primerCost = primerPrice > 0 ? primerCans * primerPrice : 0;
+      }
+
+      const totalCost = paintCost + primerCost;
+      const projectName = $("projectName").value.trim() || "Khu vực chưa đặt tên";
+
+      currentResult = {
+        id: Date.now(),
+        createdAt: new Date().toISOString(),
+        projectName,
+        surfaceType: $("surfaceType").value,
+        mode,
+        netArea,
+        coatArea,
+        paintLiters,
+        paintCans,
+        canSize,
+        paintCost,
+        includePrimer,
+        primerLiters,
+        primerCans,
+        primerCost,
+        totalCost,
+        coats,
+        coverage,
+        wastePercent: toNumber("waste")
+      };
+
+      $("paintLiters").textContent = `${number.format(paintLiters)} lít`;
+      $("netArea").textContent = `${number.format(netArea)} m²`;
+      $("coatArea").textContent = `${number.format(coatArea)} m²`;
+      $("paintCans").textContent = `${paintCans} thùng × ${number.format(canSize)} lít`;
+
+      $("paintCostRow").classList.toggle("hidden", paintCost <= 0);
+      $("paintCost").textContent = `${money.format(paintCost)} VND`;
+
+      $("primerLitersRow").classList.toggle("hidden", !includePrimer);
+      $("primerCansRow").classList.toggle("hidden", !includePrimer);
+      $("primerLiters").textContent = `${number.format(primerLiters)} lít`;
+      $("primerCans").textContent = `${primerCans} thùng`;
+
+      $("totalCostRow").classList.toggle("hidden", totalCost <= 0);
+      $("totalCost").textContent = `${money.format(totalCost)} VND`;
+
+      $("resultNote").textContent =
+        `Đã bao gồm ${number.format(toNumber("waste"))}% hao hụt dự phòng. ` +
+        `Kết quả được làm tròn số thùng lên để bảo đảm đủ vật tư.`;
+
+      $("resultEmpty").classList.add("hidden");
+      $("resultContent").classList.remove("hidden");
+      $("resultStatus").textContent = "Đã tính";
+      showToast("Đã tính xong lượng sơn.");
+    }
+
+    function resetForm() {
+      $("projectName").value = "";
+      $("calcMode").value = "room";
+      $("surfaceType").value = "Tường nội thất";
+      $("length").value = "";
+      $("width").value = "";
+      $("height").value = "";
+      $("openings").value = "0";
+      $("includeCeiling").checked = false;
+      $("manualArea").value = "";
+      $("coats").value = "2";
+      $("coverage").value = "10";
+      $("waste").value = "10";
+      $("canSize").value = "5";
+      $("customCanSize").value = "";
+      $("paintPrice").value = "";
+      $("includePrimer").checked = false;
+      $("primerCoats").value = "1";
+      $("primerCoverage").value = "10";
+      $("primerCanSize").value = "5";
+      $("primerPrice").value = "";
+      $("roomFields").classList.remove("hidden");
+      $("manualFields").classList.add("hidden");
+      $("primerFields").classList.add("hidden");
+      $("resultEmpty").classList.remove("hidden");
+      $("resultContent").classList.add("hidden");
+      $("resultStatus").textContent = "Chưa tính";
+      currentResult = null;
+      showToast("Đã đặt lại dữ liệu.");
+    }
+
+    function getHistory() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function setHistory(items) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function saveCurrentResult() {
+      if (!currentResult) {
+        showToast("Chưa có kết quả để lưu.");
+        return;
+      }
+      const items = getHistory();
+      items.unshift({ ...currentResult, id: Date.now(), createdAt: new Date().toISOString() });
+      setHistory(items.slice(0, 100));
+      showToast("Đã lưu kết quả vào lịch sử.");
+    }
+
+    function deleteHistoryItem(id) {
+      setHistory(getHistory().filter(item => item.id !== id));
+      renderHistory();
+      showToast("Đã xóa kết quả.");
+    }
+
+    function renderHistory() {
+      const items = getHistory();
+      $("historyCount").textContent = `${items.length} kết quả đã lưu`;
+      const list = $("historyList");
+
+      if (!items.length) {
+        list.innerHTML = `<div class="empty-state">Chưa có dữ liệu. Hãy tính và lưu một kết quả trước.</div>`;
+        return;
+      }
+
+      list.innerHTML = items.map(item => {
+        const date = new Date(item.createdAt);
+        const timeText = new Intl.DateTimeFormat("vi-VN", {
+          year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"
+        }).format(date);
+
+        return `
+          <article class="history-item">
+            <div class="history-top">
+              <div>
+                <h3>${escapeHtml(item.projectName)}</h3>
+                <time>${timeText} · ${escapeHtml(item.surfaceType || "")}</time>
+              </div>
+              <button class="icon-btn" data-delete="${item.id}" aria-label="Xóa kết quả">×</button>
+            </div>
+            <div class="history-values">
+              <div class="history-value"><span>Diện tích</span><strong>${number.format(item.netArea)} m²</strong></div>
+              <div class="history-value"><span>Sơn phủ</span><strong>${number.format(item.paintLiters)} lít</strong></div>
+              <div class="history-value"><span>Số thùng</span><strong>${item.paintCans} thùng</strong></div>
+              <div class="history-value"><span>Chi phí</span><strong>${item.totalCost > 0 ? money.format(item.totalCost) + " VND" : "Chưa nhập"}</strong></div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      list.querySelectorAll("[data-delete]").forEach(btn => {
+        btn.addEventListener("click", () => deleteHistoryItem(Number(btn.dataset.delete)));
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function exportCSV() {
+      const items = getHistory();
+      if (!items.length) {
+        showToast("Không có dữ liệu để xuất.");
+        return;
+      }
+      const rows = [
+        ["Tên khu vực","Thời gian","Loại bề mặt","Diện tích m2","Lít sơn phủ","Số thùng sơn phủ","Lít sơn lót","Số thùng sơn lót","Tổng chi phí VND"],
+        ...items.map(item => [
+          item.projectName,
+          new Date(item.createdAt).toLocaleString("vi-VN"),
+          item.surfaceType,
+          item.netArea.toFixed(2),
+          item.paintLiters.toFixed(2),
+          item.paintCans,
+          (item.primerLiters || 0).toFixed(2),
+          item.primerCans || 0,
+          item.totalCost || 0
+        ])
+      ];
+      const csv = "\uFEFF" + rows.map(row => row.map(cell => `"${String(cell).replaceAll('"','""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type:"text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `lich-su-tinh-luong-son-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Đã xuất tệp CSV.");
+    }
+
+    $("calculateBtn").addEventListener("click", calculate);
+    $("resetBtn").addEventListener("click", resetForm);
+    $("saveBtn").addEventListener("click", saveCurrentResult);
+    $("exportBtn").addEventListener("click", exportCSV);
+    $("clearHistoryBtn").addEventListener("click", () => {
+      const items = getHistory();
+      if (!items.length) {
+        showToast("Lịch sử đang trống.");
+        return;
+      }
+      if (confirm("Bạn có chắc muốn xóa toàn bộ lịch sử?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderHistory();
+        showToast("Đã xóa toàn bộ lịch sử.");
+      }
+    });
+
+    renderHistory();
+  </script>
+</body>
+</html>

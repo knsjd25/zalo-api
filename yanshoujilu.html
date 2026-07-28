@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Biên bản nghiệm thu công trình</title>
+  <style>
+:root {
+  --primary: #0f766e;
+  --primary-dark: #115e59;
+  --primary-soft: #ccfbf1;
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --text: #173042;
+  --muted: #64748b;
+  --line: #dce4ea;
+  --success: #15803d;
+  --success-soft: #dcfce7;
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --draft: #475569;
+  --draft-soft: #e2e8f0;
+  --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  line-height: 1.55;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 18px 18px calc(30px + env(safe-area-inset-bottom));
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 28px;
+  color: white;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,.22), transparent 30%),
+    linear-gradient(135deg, #0f766e, #134e4a);
+  box-shadow: var(--shadow);
+}
+
+.eyebrow,
+.section-kicker {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(25px, 4vw, 40px);
+  line-height: 1.15;
+}
+
+.header-desc {
+  max-width: 720px;
+  margin: 10px 0 0;
+  color: rgba(255,255,255,.88);
+}
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 14px 0 18px;
+  padding: 9px;
+  background: rgba(255,255,255,.95);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(15,23,42,.06);
+  backdrop-filter: blur(10px);
+}
+
+.nav-btn {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 11px;
+  padding: 10px 15px;
+  color: var(--muted);
+  background: transparent;
+  font-weight: 700;
+}
+
+.nav-btn.active {
+  color: white;
+  background: var(--primary);
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 32px;
+}
+
+.stat-card.success strong { color: var(--success); }
+.stat-card.warning strong { color: var(--warning); }
+.stat-card.danger strong { color: var(--danger); }
+
+.dashboard-grid,
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.info-grid {
+  align-items: start;
+}
+
+.panel {
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.form-panel {
+  padding: 24px;
+}
+
+.panel-heading,
+.section-row,
+.history-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+
+.panel-heading {
+  margin-bottom: 18px;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0;
+}
+
+.panel h2 {
+  font-size: 22px;
+}
+
+.panel h3 {
+  font-size: 17px;
+}
+
+.section-row p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.quick-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.action-card {
+  width: 100%;
+  padding: 16px;
+  text-align: left;
+  color: var(--text);
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.action-card:hover,
+.action-card:focus {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.action-card strong,
+.action-card span {
+  display: block;
+}
+
+.action-card span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.form-section {
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+}
+
+.form-section:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.form-section > h3 {
+  margin-bottom: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field > span:first-child {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.field b {
+  color: var(--danger);
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 46px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  outline: none;
+  padding: 11px 13px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15,118,110,.12);
+}
+
+.invalid {
+  border-color: var(--danger) !important;
+  background: #fffafa;
+}
+
+.error {
+  min-height: 16px;
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.counter {
+  align-self: flex-end;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.btn {
+  min-height: 42px;
+  border-radius: 11px;
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  font-weight: 800;
+}
+
+.btn-primary {
+  color: white;
+  background: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  color: var(--text);
+  background: #f8fafc;
+  border-color: var(--line);
+}
+
+.btn-light {
+  flex: 0 0 auto;
+  color: var(--primary-dark);
+  background: white;
+}
+
+.btn-danger {
+  color: white;
+  background: var(--danger);
+}
+
+.btn-danger-outline {
+  color: var(--danger);
+  background: white;
+  border-color: #fecaca;
+}
+
+.text-btn,
+.icon-btn {
+  border: 0;
+  padding: 6px;
+  color: var(--primary);
+  background: transparent;
+  font-weight: 800;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.checklist-container {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.check-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 170px auto;
+  gap: 10px;
+  align-items: start;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.remove-check-btn {
+  min-height: 46px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  color: var(--danger);
+  background: white;
+  padding: 0 13px;
+  font-weight: 700;
+}
+
+.upload-box {
+  display: block;
+  padding: 22px;
+  text-align: center;
+  border: 1px dashed #94a3b8;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.upload-box input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.upload-box strong,
+.upload-box span {
+  display: block;
+}
+
+.upload-box span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.photo-item {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #eef2f6;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-remove {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: white;
+  background: rgba(15,23,42,.78);
+  font-size: 12px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.history-summary {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.record-list {
+  display: grid;
+  gap: 12px;
+}
+
+.record-card {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.record-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.record-main h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.record-main p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.record-actions button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 7px 11px;
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+.badge {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.badge.passed { color: var(--success); background: var(--success-soft); }
+.badge.fix { color: var(--warning); background: var(--warning-soft); }
+.badge.failed { color: var(--danger); background: var(--danger-soft); }
+.badge.draft { color: var(--draft); background: var(--draft-soft); }
+.badge.sample { color: #6d28d9; background: #ede9fe; }
+
+.empty-state {
+  padding: 36px 18px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+}
+
+.empty-state p {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.steps {
+  margin: 16px 0 0;
+  padding-left: 22px;
+}
+
+.steps li + li {
+  margin-top: 12px;
+}
+
+.text-content p {
+  margin: 0;
+}
+
+.text-content p + p {
+  margin-top: 12px;
+}
+
+.detail-table {
+  display: grid;
+  gap: 10px;
+}
+
+.detail-table > div {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-table span {
+  color: var(--muted);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 60;
+  transform: translate(-50%, 120px);
+  min-width: 240px;
+  max-width: calc(100vw - 36px);
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: white;
+  background: #0f172a;
+  text-align: center;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transition: .25s ease;
+}
+
+.toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(15,23,42,.55);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal {
+  width: min(720px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(15,23,42,.25);
+}
+
+.small-modal {
+  width: min(460px, 100%);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-content,
+.confirm-message {
+  padding: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.modal-section + .modal-section {
+  margin-top: 20px;
+}
+
+.modal-section h3 {
+  margin: 0 0 10px;
+}
+
+.modal-check {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.conditional-field {
+  display: none;
+}
+
+.conditional-field.visible {
+  display: flex;
+}
+
+@media (max-width: 820px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dashboard-grid,
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .app-shell {
+    padding: 10px 10px calc(20px + env(safe-area-inset-bottom));
+  }
+
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .app-header .btn {
+    width: 100%;
+  }
+
+  .top-nav {
+    margin-top: 10px;
+    border-radius: 13px;
+  }
+
+  .stats-grid {
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-card strong {
+    font-size: 27px;
+  }
+
+  .panel,
+  .form-panel {
+    padding: 16px;
+    border-radius: 15px;
+  }
+
+  .panel-heading,
+  .section-row,
+  .history-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .check-item {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-check-btn {
+    width: 100%;
+  }
+
+  .photo-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-actions,
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn,
+  .modal-actions .btn {
+    width: 100%;
+  }
+
+  .record-main {
+    flex-direction: column;
+  }
+
+  .detail-table > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Quản lý nghiệm thu tại công trình</p>
+        <h1>Biên bản nghiệm thu công trình</h1>
+        <p class="header-desc">Lập, lưu và theo dõi kết quả nghiệm thu từng hạng mục ngay trên thiết bị.</p>
+      </div>
+      <button class="btn btn-light" id="newRecordTopBtn" type="button">Tạo biên bản</button>
+    </header>
+
+    <nav class="top-nav" aria-label="Điều hướng">
+      <button class="nav-btn active" data-page="dashboard" type="button">Tổng quan</button>
+      <button class="nav-btn" data-page="form" type="button">Lập biên bản</button>
+      <button class="nav-btn" data-page="history" type="button">Lịch sử</button>
+      <button class="nav-btn" data-page="guide" type="button">Hướng dẫn</button>
+      <button class="nav-btn" data-page="about" type="button">Thông tin</button>
+    </nav>
+
+    <main>
+      <section class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span>Tổng biên bản</span>
+            <strong id="statTotal">0</strong>
+          </article>
+          <article class="stat-card success">
+            <span>Đạt yêu cầu</span>
+            <strong id="statPassed">0</strong>
+          </article>
+          <article class="stat-card warning">
+            <span>Cần khắc phục</span>
+            <strong id="statFix">0</strong>
+          </article>
+          <article class="stat-card danger">
+            <span>Không đạt</span>
+            <strong id="statFailed">0</strong>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">Thao tác nhanh</p>
+                <h2>Công việc chính</h2>
+              </div>
+            </div>
+            <div class="quick-actions">
+              <button class="action-card" id="quickCreateBtn" type="button">
+                <strong>Lập biên bản mới</strong>
+                <span>Ghi đầy đủ thông tin, kiểm tra và kết luận.</span>
+              </button>
+              <button class="action-card" id="quickHistoryBtn" type="button">
+                <strong>Xem lịch sử</strong>
+                <span>Tìm kiếm, lọc, xem chi tiết, sửa hoặc xóa.</span>
+              </button>
+              <button class="action-card" id="quickGuideBtn" type="button">
+                <strong>Xem hướng dẫn</strong>
+                <span>Kiểm tra quy trình sử dụng trước khi ghi nhận.</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">Gần đây</p>
+                <h2>Biên bản mới nhất</h2>
+              </div>
+              <button class="text-btn" id="viewAllBtn" type="button">Xem tất cả</button>
+            </div>
+            <div id="recentList" class="record-list compact-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-form">
+        <article class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker" id="formModeLabel">Biên bản mới</p>
+              <h2 id="formTitle">Lập biên bản nghiệm thu</h2>
+            </div>
+            <button class="btn btn-secondary" id="resetFormBtn" type="button">Đặt lại</button>
+          </div>
+
+          <form id="inspectionForm" novalidate>
+            <input type="hidden" id="recordId">
+
+            <div class="form-section">
+              <h3>Thông tin công trình</h3>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Tên công trình <b>*</b></span>
+                  <input id="projectName" type="text" maxlength="120" placeholder="Ví dụ: Nhà xưởng sản xuất số 2">
+                  <small class="error" data-error-for="projectName"></small>
+                </label>
+
+                <label class="field">
+                  <span>Địa điểm <b>*</b></span>
+                  <input id="location" type="text" maxlength="160" placeholder="Nhập địa điểm nghiệm thu">
+                  <small class="error" data-error-for="location"></small>
+                </label>
+
+                <label class="field">
+                  <span>Hạng mục nghiệm thu <b>*</b></span>
+                  <input id="workItem" type="text" maxlength="120" placeholder="Ví dụ: Kết cấu cột tầng 1">
+                  <small class="error" data-error-for="workItem"></small>
+                </label>
+
+                <label class="field">
+                  <span>Loại nghiệm thu <b>*</b></span>
+                  <select id="inspectionType">
+                    <option value="">Chọn loại nghiệm thu</option>
+                    <option>Nghiệm thu vật liệu đầu vào</option>
+                    <option>Nghiệm thu công việc xây dựng</option>
+                    <option>Nghiệm thu giai đoạn thi công</option>
+                    <option>Nghiệm thu hạng mục hoàn thành</option>
+                    <option>Nghiệm thu bàn giao đưa vào sử dụng</option>
+                  </select>
+                  <small class="error" data-error-for="inspectionType"></small>
+                </label>
+
+                <label class="field">
+                  <span>Ngày nghiệm thu <b>*</b></span>
+                  <input id="inspectionDate" type="date">
+                  <small class="error" data-error-for="inspectionDate"></small>
+                </label>
+
+                <label class="field">
+                  <span>Mã biên bản</span>
+                  <input id="recordCode" type="text" maxlength="40" placeholder="Tự tạo nếu để trống">
+                </label>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3>Thành phần tham gia</h3>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Đơn vị thi công <b>*</b></span>
+                  <input id="contractor" type="text" maxlength="120" placeholder="Nhập tên đơn vị thi công">
+                  <small class="error" data-error-for="contractor"></small>
+                </label>
+
+                <label class="field">
+                  <span>Đại diện đơn vị thi công <b>*</b></span>
+                  <input id="contractorRepresentative" type="text" maxlength="80" placeholder="Họ và tên">
+                  <small class="error" data-error-for="contractorRepresentative"></small>
+                </label>
+
+                <label class="field">
+                  <span>Đơn vị giám sát</span>
+                  <input id="supervisorUnit" type="text" maxlength="120" placeholder="Nhập tên đơn vị giám sát">
+                </label>
+
+                <label class="field">
+                  <span>Người nghiệm thu <b>*</b></span>
+                  <input id="inspector" type="text" maxlength="80" placeholder="Họ và tên">
+                  <small class="error" data-error-for="inspector"></small>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="section-row">
+                <div>
+                  <h3>Nội dung kiểm tra</h3>
+                  <p>Đánh giá từng nội dung để hình thành kết luận chung.</p>
+                </div>
+                <button class="btn btn-secondary" id="addChecklistBtn" type="button">Thêm nội dung</button>
+              </div>
+              <div id="checklistContainer" class="checklist-container"></div>
+              <small class="error" id="checklistError"></small>
+            </div>
+
+            <div class="form-section">
+              <h3>Kết luận nghiệm thu</h3>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Kết quả chung <b>*</b></span>
+                  <select id="overallStatus">
+                    <option value="">Chọn kết quả</option>
+                    <option value="passed">Đạt yêu cầu</option>
+                    <option value="fix">Cần khắc phục</option>
+                    <option value="failed">Không đạt</option>
+                  </select>
+                  <small class="error" data-error-for="overallStatus"></small>
+                </label>
+
+                <label class="field conditional-field" id="deadlineField">
+                  <span>Hạn hoàn thành khắc phục</span>
+                  <input id="fixDeadline" type="date">
+                  <small class="error" data-error-for="fixDeadline"></small>
+                </label>
+
+                <label class="field full-width">
+                  <span>Ghi chú và yêu cầu xử lý</span>
+                  <textarea id="notes" rows="4" maxlength="1000" placeholder="Ghi rõ tồn tại, yêu cầu sửa chữa hoặc nội dung cần theo dõi"></textarea>
+                  <span class="counter"><span id="notesCount">0</span>/1000</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="section-row">
+                <div>
+                  <h3>Hình ảnh hiện trường</h3>
+                  <p>Tối đa 3 ảnh. Ảnh được giảm kích thước trước khi lưu trên thiết bị.</p>
+                </div>
+              </div>
+              <label class="upload-box">
+                <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
+                <strong>Chọn hoặc chụp ảnh</strong>
+                <span>Dung lượng mỗi ảnh không vượt quá 5 MB.</span>
+              </label>
+              <div id="photoPreview" class="photo-grid"></div>
+              <small class="error" id="photoError"></small>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-secondary" id="saveDraftBtn" type="button">Lưu tạm</button>
+              <button class="btn btn-primary" type="submit">Lưu biên bản</button>
+            </div>
+          </form>
+        </article>
+      </section>
+
+      <section class="page" id="page-history">
+        <article class="panel">
+          <div class="panel-heading history-heading">
+            <div>
+              <p class="section-kicker">Dữ liệu trên thiết bị</p>
+              <h2>Lịch sử nghiệm thu</h2>
+            </div>
+            <button class="btn btn-danger-outline" id="deleteAllBtn" type="button">Xóa toàn bộ</button>
+          </div>
+
+          <div class="filters">
+            <label class="field">
+              <span>Tìm kiếm</span>
+              <input id="searchInput" type="search" placeholder="Tên công trình, hạng mục hoặc mã biên bản">
+            </label>
+            <label class="field">
+              <span>Trạng thái</span>
+              <select id="statusFilter">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="passed">Đạt yêu cầu</option>
+                <option value="fix">Cần khắc phục</option>
+                <option value="failed">Không đạt</option>
+                <option value="draft">Bản lưu tạm</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Sắp xếp</span>
+              <select id="sortFilter">
+                <option value="newest">Mới nhất</option>
+                <option value="oldest">Cũ nhất</option>
+                <option value="project">Theo tên công trình</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="history-summary" id="historySummary"></div>
+          <div id="historyList" class="record-list"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-guide">
+        <div class="info-grid">
+          <article class="panel info-card">
+            <p class="section-kicker">Quy trình</p>
+            <h2>Hướng dẫn sử dụng</h2>
+            <ol class="steps">
+              <li>Chọn Lập biên bản và nhập đầy đủ thông tin công trình.</li>
+              <li>Ghi thành phần tham gia và người chịu trách nhiệm nghiệm thu.</li>
+              <li>Đánh giá từng nội dung kiểm tra theo thực tế tại hiện trường.</li>
+              <li>Chọn kết quả chung, ghi yêu cầu xử lý và thêm ảnh khi cần.</li>
+              <li>Lưu biên bản, sau đó kiểm tra trong mục Lịch sử.</li>
+            </ol>
+          </article>
+
+          <article class="panel info-card">
+            <p class="section-kicker">Lưu ý</p>
+            <h2>Nguyên tắc ghi nhận</h2>
+            <div class="text-content">
+              <p>Thông tin cần được đối chiếu với hồ sơ thiết kế, tiêu chuẩn áp dụng và tình trạng thực tế.</p>
+              <p>Ứng dụng chỉ hỗ trợ ghi chép và quản lý dữ liệu. Kết luận chuyên môn thuộc trách nhiệm của các bên tham gia nghiệm thu.</p>
+              <p>Dữ liệu được lưu trên thiết bị đang sử dụng. Khi xóa dữ liệu trình duyệt hoặc đổi thiết bị, lịch sử có thể không còn.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-about">
+        <div class="info-grid">
+          <article class="panel info-card">
+            <p class="section-kicker">Ứng dụng</p>
+            <h2>Thông tin ứng dụng</h2>
+            <div class="detail-table">
+              <div><span>Tên ứng dụng</span><strong>Biên bản nghiệm thu công trình</strong></div>
+              <div><span>Chức năng</span><strong>Ghi nhận và quản lý nghiệm thu công trình</strong></div>
+              <div><span>Đơn vị phát hành</span><strong>MTV TMDV Diệp Linh</strong></div>
+              <div><span>Phiên bản</span><strong>1.0.0</strong></div>
+            </div>
+          </article>
+
+          <article class="panel info-card">
+            <p class="section-kicker">Điều khoản</p>
+            <h2>Điều khoản sử dụng</h2>
+            <div class="text-content">
+              <p>Người dùng chịu trách nhiệm về tính chính xác của thông tin đã nhập và việc sử dụng dữ liệu trong hoạt động nghiệm thu.</p>
+              <p>Không sử dụng ứng dụng để tạo thông tin sai lệch, thay thế hồ sơ bắt buộc hoặc làm căn cứ duy nhất cho quyết định chuyên môn.</p>
+              <p>Nhà phát hành có thể điều chỉnh chức năng để cải thiện tính ổn định và khả năng sử dụng.</p>
+            </div>
+          </article>
+
+          <article class="panel info-card">
+            <p class="section-kicker">Dữ liệu</p>
+            <h2>Chính sách quyền riêng tư</h2>
+            <div class="text-content">
+              <p>Ứng dụng không yêu cầu đăng ký tài khoản và không tự động gửi dữ liệu nghiệm thu lên máy chủ.</p>
+              <p>Dữ liệu biên bản và hình ảnh được lưu cục bộ trên thiết bị. Người dùng có thể xóa từng biên bản hoặc xóa toàn bộ lịch sử.</p>
+              <p>Người dùng không nên nhập thông tin bí mật, dữ liệu cá nhân nhạy cảm hoặc nội dung không cần thiết cho việc nghiệm thu.</p>
+            </div>
+          </article>
+
+          <article class="panel info-card">
+            <p class="section-kicker">Cập nhật</p>
+            <h2>Thông tin phiên bản</h2>
+            <div class="text-content">
+              <p>Phiên bản 1.0.0</p>
+              <p>Hoàn thiện chức năng lập biên bản nghiệm thu, đánh giá nội dung kiểm tra, lưu ảnh, quản lý lịch sử, chỉnh sửa, xóa và xem chi tiết.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="detailModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <p class="section-kicker">Chi tiết biên bản</p>
+          <h2 id="modalTitle">Thông tin nghiệm thu</h2>
+        </div>
+        <button class="icon-btn" id="closeModalBtn" type="button" aria-label="Đóng">Đóng</button>
+      </div>
+      <div id="modalContent" class="modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalEditBtn" type="button">Chỉnh sửa</button>
+        <button class="btn btn-danger-outline" id="modalDeleteBtn" type="button">Xóa biên bản</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="confirmModal" hidden>
+    <div class="modal small-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal-header">
+        <div>
+          <p class="section-kicker">Xác nhận thao tác</p>
+          <h2 id="confirmTitle">Bạn có chắc chắn không</h2>
+        </div>
+      </div>
+      <p id="confirmMessage" class="confirm-message"></p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelConfirmBtn" type="button">Hủy</button>
+        <button class="btn btn-danger" id="acceptConfirmBtn" type="button">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "construction_acceptance_records_v1";
+  const MAX_RECORDS = 100;
+  const MAX_PHOTOS = 3;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+  const state = {
+    records: [],
+    photos: [],
+    activeModalId: null,
+    confirmAction: null
+  };
+
+  const defaultChecklist = [
+    "Hồ sơ thiết kế và tài liệu kỹ thuật",
+    "Vật liệu và thiết bị sử dụng",
+    "Kích thước, cao độ và vị trí thi công",
+    "Chất lượng bề mặt và độ hoàn thiện",
+    "An toàn, vệ sinh và điều kiện bàn giao"
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    navButtons: [...document.querySelectorAll(".nav-btn")],
+    pages: [...document.querySelectorAll(".page")],
+    form: $("inspectionForm"),
+    checklist: $("checklistContainer"),
+    checklistError: $("checklistError"),
+    photoInput: $("photoInput"),
+    photoPreview: $("photoPreview"),
+    photoError: $("photoError"),
+    notes: $("notes"),
+    notesCount: $("notesCount"),
+    overallStatus: $("overallStatus"),
+    deadlineField: $("deadlineField"),
+    historyList: $("historyList"),
+    recentList: $("recentList"),
+    searchInput: $("searchInput"),
+    statusFilter: $("statusFilter"),
+    sortFilter: $("sortFilter"),
+    historySummary: $("historySummary"),
+    detailModal: $("detailModal"),
+    modalContent: $("modalContent"),
+    modalEditBtn: $("modalEditBtn"),
+    modalDeleteBtn: $("modalDeleteBtn"),
+    confirmModal: $("confirmModal"),
+    confirmTitle: $("confirmTitle"),
+    confirmMessage: $("confirmMessage"),
+    toast: $("toast")
+  };
+
+  function escapeHtml(value = "") {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return "Chưa có";
+    const date = new Date(`${dateString}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return "Không hợp lệ";
+    return new Intl.DateTimeFormat("vi-VN").format(date);
+  }
+
+  function formatDateTime(timestamp) {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return "Không hợp lệ";
+    return new Intl.DateTimeFormat("vi-VN", {
+      dateStyle: "short",
+      timeStyle: "short"
+    }).format(date);
+  }
+
+  function statusLabel(status) {
+    return {
+      passed: "Đạt yêu cầu",
+      fix: "Cần khắc phục",
+      failed: "Không đạt",
+      draft: "Bản lưu tạm"
+    }[status] || "Chưa xác định";
+  }
+
+  function todayValue() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+
+  function generateId() {
+    return `rec_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  function generateCode() {
+    const now = new Date();
+    const date = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
+    const serial = String(state.records.filter(r => !r.isSample).length + 1).padStart(3, "0");
+    return `NT-${date}-${serial}`;
+  }
+
+  function showToast(message) {
+    els.toast.textContent = message;
+    els.toast.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => els.toast.classList.remove("show"), 2400);
+  }
+
+  function saveRecords() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records.slice(0, MAX_RECORDS)));
+      return true;
+    } catch (error) {
+      showToast("Không thể lưu dữ liệu. Hãy xóa bớt ảnh hoặc biên bản cũ.");
+      return false;
+    }
+  }
+
+  function loadRecords() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        state.records = Array.isArray(parsed) ? parsed : [];
+      } else {
+        state.records = [createSampleRecord()];
+        saveRecords();
+      }
+    } catch (error) {
+      state.records = [createSampleRecord()];
+      saveRecords();
+    }
+  }
+
+  function createSampleRecord() {
+    const now = Date.now();
+    return {
+      id: "sample_record",
+      isSample: true,
+      projectName: "Khu nhà điều hành mẫu",
+      location: "Khu vực thi công mẫu",
+      workItem: "Nghiệm thu hoàn thiện tường tầng 1",
+      inspectionType: "Nghiệm thu công việc xây dựng",
+      inspectionDate: todayValue(),
+      recordCode: "MẪU-NT-001",
+      contractor: "Đơn vị thi công mẫu",
+      contractorRepresentative: "Nguyễn Văn A",
+      supervisorUnit: "Đơn vị giám sát mẫu",
+      inspector: "Trần Văn B",
+      checklist: [
+        { content: "Hồ sơ thiết kế và tài liệu kỹ thuật", result: "passed" },
+        { content: "Vật liệu và thiết bị sử dụng", result: "passed" },
+        { content: "Chất lượng bề mặt và độ hoàn thiện", result: "fix" }
+      ],
+      overallStatus: "fix",
+      fixDeadline: todayValue(),
+      notes: "Dữ liệu mẫu để minh họa chức năng. Cần xử lý lại một vị trí bề mặt trước khi xác nhận hoàn thành.",
+      photos: [],
+      createdAt: now,
+      updatedAt: now
+    };
+  }
+
+  function navigate(pageName) {
+    els.navButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.page === pageName));
+    els.pages.forEach(page => page.classList.toggle("active", page.id === `page-${pageName}`));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (pageName === "history") renderHistory();
+    if (pageName === "dashboard") renderDashboard();
+  }
+
+  function addChecklistItem(content = "", result = "") {
+    const row = document.createElement("div");
+    row.className = "check-item";
+    row.innerHTML = `
+      <label class="field">
+        <span>Nội dung kiểm tra</span>
+        <input class="check-content" type="text" maxlength="180" value="${escapeHtml(content)}" placeholder="Nhập nội dung cần kiểm tra">
+      </label>
+      <label class="field">
+        <span>Kết quả</span>
+        <select class="check-result">
+          <option value="">Chọn kết quả</option>
+          <option value="passed" ${result === "passed" ? "selected" : ""}>Đạt</option>
+          <option value="fix" ${result === "fix" ? "selected" : ""}>Cần khắc phục</option>
+          <option value="failed" ${result === "failed" ? "selected" : ""}>Không đạt</option>
+        </select>
+      </label>
+      <button class="remove-check-btn" type="button">Xóa</button>
+    `;
+    row.querySelector(".remove-check-btn").addEventListener("click", () => {
+      if (els.checklist.children.length <= 1) {
+        showToast("Biên bản cần ít nhất một nội dung kiểm tra.");
+        return;
+      }
+      row.remove();
+    });
+    els.checklist.appendChild(row);
+  }
+
+  function resetForm(options = {}) {
+    els.form.reset();
+    $("recordId").value = "";
+    $("inspectionDate").value = todayValue();
+    $("formModeLabel").textContent = "Biên bản mới";
+    $("formTitle").textContent = "Lập biên bản nghiệm thu";
+    state.photos = [];
+    renderPhotos();
+    els.checklist.innerHTML = "";
+    defaultChecklist.forEach(item => addChecklistItem(item, ""));
+    clearErrors();
+    els.notesCount.textContent = "0";
+    els.deadlineField.classList.remove("visible");
+    if (!options.silent) showToast("Đã đặt lại biểu mẫu.");
+  }
+
+  function clearErrors() {
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
+    document.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
+  }
+
+  function setFieldError(id, message) {
+    const field = $(id);
+    const error = document.querySelector(`[data-error-for="${id}"]`);
+    if (field) field.classList.add("invalid");
+    if (error) error.textContent = message;
+  }
+
+  function collectChecklist() {
+    return [...els.checklist.querySelectorAll(".check-item")].map(row => ({
+      content: row.querySelector(".check-content").value.trim(),
+      result: row.querySelector(".check-result").value
+    }));
+  }
+
+  function validateForm(isDraft = false) {
+    clearErrors();
+    const requiredFields = [
+      ["projectName", "Vui lòng nhập tên công trình."],
+      ["location", "Vui lòng nhập địa điểm."],
+      ["workItem", "Vui lòng nhập hạng mục nghiệm thu."],
+      ["inspectionType", "Vui lòng chọn loại nghiệm thu."],
+      ["inspectionDate", "Vui lòng chọn ngày nghiệm thu."],
+      ["contractor", "Vui lòng nhập đơn vị thi công."],
+      ["contractorRepresentative", "Vui lòng nhập đại diện đơn vị thi công."],
+      ["inspector", "Vui lòng nhập người nghiệm thu."]
+    ];
+
+    let valid = true;
+
+    requiredFields.forEach(([id, message]) => {
+      if (!$(id).value.trim()) {
+        setFieldError(id, message);
+        valid = false;
+      }
+    });
+
+    const inspectionDate = $("inspectionDate").value;
+    if (inspectionDate) {
+      const selected = new Date(`${inspectionDate}T00:00:00`);
+      const maxDate = new Date();
+      maxDate.setFullYear(maxDate.getFullYear() + 1);
+      if (Number.isNaN(selected.getTime()) || selected > maxDate) {
+        setFieldError("inspectionDate", "Ngày nghiệm thu không hợp lệ.");
+        valid = false;
+      }
+    }
+
+    const checklist = collectChecklist();
+    if (!checklist.length) {
+      els.checklistError.textContent = "Vui lòng thêm ít nhất một nội dung kiểm tra.";
+      valid = false;
+    } else if (!isDraft && checklist.some(item => !item.content || !item.result)) {
+      els.checklistError.textContent = "Vui lòng nhập nội dung và kết quả cho tất cả mục kiểm tra.";
+      valid = false;
+    } else if (checklist.some(item => !item.content)) {
+      els.checklistError.textContent = "Nội dung kiểm tra không được để trống.";
+      valid = false;
+    }
+
+    if (!isDraft && !els.overallStatus.value) {
+      setFieldError("overallStatus", "Vui lòng chọn kết quả chung.");
+      valid = false;
+    }
+
+    if (!isDraft && els.overallStatus.value === "fix") {
+      const deadline = $("fixDeadline").value;
+      if (!deadline) {
+        setFieldError("fixDeadline", "Vui lòng chọn hạn hoàn thành khắc phục.");
+        valid = false;
+      } else if (inspectionDate && deadline < inspectionDate) {
+        setFieldError("fixDeadline", "Hạn khắc phục không được trước ngày nghiệm thu.");
+        valid = false;
+      }
+    }
+
+    if (!valid) {
+      const firstInvalid = document.querySelector(".invalid");
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    return valid;
+  }
+
+  function getFormData(isDraft = false) {
+    const existingId = $("recordId").value;
+    const existing = state.records.find(r => r.id === existingId);
+    const now = Date.now();
+
+    return {
+      id: existingId || generateId(),
+      isSample: false,
+      projectName: $("projectName").value.trim(),
+      location: $("location").value.trim(),
+      workItem: $("workItem").value.trim(),
+      inspectionType: $("inspectionType").value,
+      inspectionDate: $("inspectionDate").value,
+      recordCode: $("recordCode").value.trim() || generateCode(),
+      contractor: $("contractor").value.trim(),
+      contractorRepresentative: $("contractorRepresentative").value.trim(),
+      supervisorUnit: $("supervisorUnit").value.trim(),
+      inspector: $("inspector").value.trim(),
+      checklist: collectChecklist(),
+      overallStatus: isDraft ? "draft" : els.overallStatus.value,
+      fixDeadline: els.overallStatus.value === "fix" ? $("fixDeadline").value : "",
+      notes: $("notes").value.trim(),
+      photos: state.photos,
+      createdAt: existing?.createdAt || now,
+      updatedAt: now
+    };
+  }
+
+  function upsertRecord(record) {
+    const index = state.records.findIndex(item => item.id === record.id);
+    if (index >= 0) state.records[index] = record;
+    else state.records.unshift(record);
+
+    state.records.sort((a, b) => b.updatedAt - a.updatedAt);
+    if (state.records.length > MAX_RECORDS) state.records = state.records.slice(0, MAX_RECORDS);
+    return saveRecords();
+  }
+
+  function handleSave(isDraft) {
+    if (!validateForm(isDraft)) return;
+    const record = getFormData(isDraft);
+    if (!upsertRecord(record)) return;
+    resetForm({ silent: true });
+    renderAll();
+    navigate("history");
+    showToast(isDraft ? "Đã lưu bản tạm." : "Đã lưu biên bản nghiệm thu.");
+  }
+
+  function renderDashboard() {
+    const normalRecords = state.records.filter(r => !r.isSample && r.overallStatus !== "draft");
+    $("statTotal").textContent = normalRecords.length;
+    $("statPassed").textContent = normalRecords.filter(r => r.overallStatus === "passed").length;
+    $("statFix").textContent = normalRecords.filter(r => r.overallStatus === "fix").length;
+    $("statFailed").textContent = normalRecords.filter(r => r.overallStatus === "failed").length;
+
+    const recent = [...state.records]
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, 4);
+
+    els.recentList.innerHTML = recent.length
+      ? recent.map(record => recordCardHtml(record, true)).join("")
+      : emptyStateHtml("Chưa có biên bản", "Hãy lập biên bản đầu tiên để bắt đầu theo dõi.", "Tạo biên bản", "create");
+
+    bindRecordActions(els.recentList);
+  }
+
+  function getFilteredRecords() {
+    const keyword = els.searchInput.value.trim().toLocaleLowerCase("vi");
+    const status = els.statusFilter.value;
+    const sort = els.sortFilter.value;
+
+    let records = state.records.filter(record => {
+      const searchable = [
+        record.projectName,
+        record.workItem,
+        record.recordCode,
+        record.location
+      ].join(" ").toLocaleLowerCase("vi");
+      const matchesKeyword = !keyword || searchable.includes(keyword);
+      const matchesStatus = status === "all" || record.overallStatus === status;
+      return matchesKeyword && matchesStatus;
+    });
+
+    if (sort === "oldest") records.sort((a, b) => a.updatedAt - b.updatedAt);
+    else if (sort === "project") records.sort((a, b) => a.projectName.localeCompare(b.projectName, "vi"));
+    else records.sort((a, b) => b.updatedAt - a.updatedAt);
+
+    return records;
+  }
+
+  function renderHistory() {
+    const records = getFilteredRecords();
+    els.historySummary.textContent = `Hiển thị ${records.length} biên bản. Dữ liệu được lưu tối đa ${MAX_RECORDS} bản trên thiết bị.`;
+
+    els.historyList.innerHTML = records.length
+      ? records.map(record => recordCardHtml(record, false)).join("")
+      : emptyStateHtml("Không tìm thấy dữ liệu", "Hãy thay đổi bộ lọc hoặc lập biên bản mới.", "Lập biên bản", "create");
+
+    bindRecordActions(els.historyList);
+  }
+
+  function recordCardHtml(record, compact) {
+    return `
+      <article class="record-card" data-id="${escapeHtml(record.id)}">
+        <div class="record-main">
+          <div>
+            <h3>${escapeHtml(record.projectName)}</h3>
+            <p>${escapeHtml(record.workItem)}</p>
+          </div>
+          <div>
+            <span class="badge ${escapeHtml(record.overallStatus)}">${escapeHtml(statusLabel(record.overallStatus))}</span>
+            ${record.isSample ? '<span class="badge sample">Dữ liệu mẫu</span>' : ""}
+          </div>
+        </div>
+        <div class="record-meta">
+          <span>Mã: ${escapeHtml(record.recordCode)}</span>
+          <span>Ngày: ${escapeHtml(formatDate(record.inspectionDate))}</span>
+          <span>Cập nhật: ${escapeHtml(formatDateTime(record.updatedAt))}</span>
+        </div>
+        <div class="record-actions">
+          <button type="button" data-action="view">Xem chi tiết</button>
+          ${compact ? "" : '<button type="button" data-action="edit">Chỉnh sửa</button>'}
+          ${compact ? "" : '<button type="button" data-action="delete">Xóa</button>'}
+        </div>
+      </article>
+    `;
+  }
+
+  function emptyStateHtml(title, text, buttonText, action) {
+    return `
+      <div class="empty-state">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(text)}</p>
+        <button class="btn btn-primary" type="button" data-empty-action="${escapeHtml(action)}">${escapeHtml(buttonText)}</button>
+      </div>
+    `;
+  }
+
+  function bindRecordActions(container) {
+    container.querySelectorAll("[data-action]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest("[data-id]");
+        const id = card?.dataset.id;
+        if (!id) return;
+        const action = btn.dataset.action;
+        if (action === "view") openDetail(id);
+        if (action === "edit") editRecord(id);
+        if (action === "delete") requestDelete(id);
+      });
+    });
+
+    container.querySelectorAll("[data-empty-action='create']").forEach(btn => {
+      btn.addEventListener("click", () => {
+        resetForm({ silent: true });
+        navigate("form");
+      });
+    });
+  }
+
+  function openDetail(id) {
+    const record = state.records.find(r => r.id === id);
+    if (!record) {
+      showToast("Không tìm thấy biên bản.");
+      return;
+    }
+
+    state.activeModalId = id;
+    $("modalTitle").textContent = record.projectName;
+    els.modalContent.innerHTML = `
+      <section class="modal-section">
+        <div class="detail-table">
+          <div><span>Mã biên bản</span><strong>${escapeHtml(record.recordCode)}</strong></div>
+          <div><span>Hạng mục</span><strong>${escapeHtml(record.workItem)}</strong></div>
+          <div><span>Loại nghiệm thu</span><strong>${escapeHtml(record.inspectionType)}</strong></div>
+          <div><span>Địa điểm</span><strong>${escapeHtml(record.location)}</strong></div>
+          <div><span>Ngày nghiệm thu</span><strong>${escapeHtml(formatDate(record.inspectionDate))}</strong></div>
+          <div><span>Đơn vị thi công</span><strong>${escapeHtml(record.contractor)}</strong></div>
+          <div><span>Đại diện thi công</span><strong>${escapeHtml(record.contractorRepresentative)}</strong></div>
+          <div><span>Đơn vị giám sát</span><strong>${escapeHtml(record.supervisorUnit || "Chưa nhập")}</strong></div>
+          <div><span>Người nghiệm thu</span><strong>${escapeHtml(record.inspector)}</strong></div>
+          <div><span>Kết quả chung</span><strong>${escapeHtml(statusLabel(record.overallStatus))}</strong></div>
+          ${record.fixDeadline ? `<div><span>Hạn khắc phục</span><strong>${escapeHtml(formatDate(record.fixDeadline))}</strong></div>` : ""}
+        </div>
+      </section>
+      <section class="modal-section">
+        <h3>Nội dung kiểm tra</h3>
+        ${record.checklist.map(item => `
+          <div class="modal-check">
+            <span>${escapeHtml(item.content)}</span>
+            <strong>${escapeHtml(statusLabel(item.result).replace(" yêu cầu", ""))}</strong>
+          </div>
+        `).join("")}
+      </section>
+      <section class="modal-section">
+        <h3>Ghi chú</h3>
+        <p>${escapeHtml(record.notes || "Không có ghi chú.")}</p>
+      </section>
+      ${record.photos?.length ? `
+        <section class="modal-section">
+          <h3>Hình ảnh hiện trường</h3>
+          <div class="photo-grid">
+            ${record.photos.map(src => `<div class="photo-item"><img src="${src}" alt="Hình ảnh hiện trường"></div>`).join("")}
+          </div>
+        </section>
+      ` : ""}
+      ${record.isSample ? '<p><span class="badge sample">Đây là dữ liệu mẫu minh họa</span></p>' : ""}
+    `;
+    els.detailModal.hidden = false;
+  }
+
+  function closeDetail() {
+    els.detailModal.hidden = true;
+    state.activeModalId = null;
+  }
+
+  function editRecord(id) {
+    const record = state.records.find(r => r.id === id);
+    if (!record) {
+      showToast("Không tìm thấy biên bản.");
+      return;
+    }
+
+    closeDetail();
+    resetForm({ silent: true });
+    $("recordId").value = record.id;
+    $("projectName").value = record.projectName;
+    $("location").value = record.location;
+    $("workItem").value = record.workItem;
+    $("inspectionType").value = record.inspectionType;
+    $("inspectionDate").value = record.inspectionDate;
+    $("recordCode").value = record.recordCode;
+    $("contractor").value = record.contractor;
+    $("contractorRepresentative").value = record.contractorRepresentative;
+    $("supervisorUnit").value = record.supervisorUnit || "";
+    $("inspector").value = record.inspector;
+    els.checklist.innerHTML = "";
+    record.checklist.forEach(item => addChecklistItem(item.content, item.result));
+    els.overallStatus.value = record.overallStatus === "draft" ? "" : record.overallStatus;
+    $("fixDeadline").value = record.fixDeadline || "";
+    $("notes").value = record.notes || "";
+    els.notesCount.textContent = String((record.notes || "").length);
+    state.photos = [...(record.photos || [])];
+    renderPhotos();
+    $("formModeLabel").textContent = record.isSample ? "Chỉnh sửa dữ liệu mẫu" : "Chỉnh sửa biên bản";
+    $("formTitle").textContent = record.projectName;
+    toggleDeadline();
+    navigate("form");
+  }
+
+  function requestDelete(id) {
+    const record = state.records.find(r => r.id === id);
+    if (!record) return;
+    openConfirm(
+      "Xóa biên bản",
+      `Biên bản ${record.recordCode} sẽ bị xóa khỏi thiết bị và không thể khôi phục.`,
+      () => {
+        state.records = state.records.filter(r => r.id !== id);
+        saveRecords();
+        closeDetail();
+        renderAll();
+        showToast("Đã xóa biên bản.");
+      }
+    );
+  }
+
+  function openConfirm(title, message, action) {
+    els.confirmTitle.textContent = title;
+    els.confirmMessage.textContent = message;
+    state.confirmAction = action;
+    els.confirmModal.hidden = false;
+  }
+
+  function closeConfirm() {
+    els.confirmModal.hidden = true;
+    state.confirmAction = null;
+  }
+
+  function toggleDeadline() {
+    const visible = els.overallStatus.value === "fix";
+    els.deadlineField.classList.toggle("visible", visible);
+    if (!visible) $("fixDeadline").value = "";
+  }
+
+  async function handlePhotos(files) {
+    els.photoError.textContent = "";
+    const availableSlots = MAX_PHOTOS - state.photos.length;
+    if (availableSlots <= 0) {
+      els.photoError.textContent = `Chỉ được lưu tối đa ${MAX_PHOTOS} ảnh.`;
+      return;
+    }
+
+    const selected = [...files].slice(0, availableSlots);
+    if (files.length > availableSlots) {
+      els.photoError.textContent = `Chỉ thêm ${availableSlots} ảnh do đã đạt giới hạn.`;
+    }
+
+    for (const file of selected) {
+      if (!file.type.startsWith("image/")) {
+        els.photoError.textContent = "Chỉ chấp nhận tệp hình ảnh.";
+        continue;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        els.photoError.textContent = "Có ảnh vượt quá 5 MB và không được thêm.";
+        continue;
+      }
+      try {
+        const compressed = await compressImage(file);
+        state.photos.push(compressed);
+      } catch (error) {
+        els.photoError.textContent = "Không thể xử lý một ảnh đã chọn.";
+      }
+    }
+
+    renderPhotos();
+    els.photoInput.value = "";
+  }
+
+  function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = () => {
+          const maxSide = 1280;
+          const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+          const width = Math.max(1, Math.round(img.width * scale));
+          const height = Math.max(1, Math.round(img.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Canvas unavailable"));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.72));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderPhotos() {
+    els.photoPreview.innerHTML = state.photos.map((src, index) => `
+      <div class="photo-item">
+        <img src="${src}" alt="Hình ảnh hiện trường ${index + 1}">
+        <button class="photo-remove" type="button" data-photo-index="${index}">Xóa</button>
+      </div>
+    `).join("");
+
+    els.photoPreview.querySelectorAll("[data-photo-index]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.photoIndex);
+        if (!Number.isInteger(index)) return;
+        state.photos.splice(index, 1);
+        renderPhotos();
+      });
+    });
+  }
+
+  function renderAll() {
+    renderDashboard();
+    renderHistory();
+  }
+
+  els.navButtons.forEach(btn => btn.addEventListener("click", () => navigate(btn.dataset.page)));
+
+  $("newRecordTopBtn").addEventListener("click", () => {
+    resetForm({ silent: true });
+    navigate("form");
+  });
+  $("quickCreateBtn").addEventListener("click", () => {
+    resetForm({ silent: true });
+    navigate("form");
+  });
+  $("quickHistoryBtn").addEventListener("click", () => navigate("history"));
+  $("quickGuideBtn").addEventListener("click", () => navigate("guide"));
+  $("viewAllBtn").addEventListener("click", () => navigate("history"));
+  $("resetFormBtn").addEventListener("click", () => resetForm());
+  $("addChecklistBtn").addEventListener("click", () => addChecklistItem("", ""));
+  $("saveDraftBtn").addEventListener("click", () => handleSave(true));
+  els.form.addEventListener("submit", event => {
+    event.preventDefault();
+    handleSave(false);
+  });
+
+  els.notes.addEventListener("input", () => {
+    els.notesCount.textContent = String(els.notes.value.length);
+  });
+
+  els.overallStatus.addEventListener("change", toggleDeadline);
+  els.photoInput.addEventListener("change", event => handlePhotos(event.target.files || []));
+
+  [els.searchInput, els.statusFilter, els.sortFilter].forEach(el => {
+    el.addEventListener(el === els.searchInput ? "input" : "change", renderHistory);
+  });
+
+  $("deleteAllBtn").addEventListener("click", () => {
+    if (!state.records.length) {
+      showToast("Không có dữ liệu để xóa.");
+      return;
+    }
+    openConfirm(
+      "Xóa toàn bộ lịch sử",
+      "Tất cả biên bản trên thiết bị sẽ bị xóa và không thể khôi phục.",
+      () => {
+        state.records = [];
+        saveRecords();
+        renderAll();
+        showToast("Đã xóa toàn bộ lịch sử.");
+      }
+    );
+  });
+
+  $("closeModalBtn").addEventListener("click", closeDetail);
+  els.detailModal.addEventListener("click", event => {
+    if (event.target === els.detailModal) closeDetail();
+  });
+  els.modalEditBtn.addEventListener("click", () => {
+    if (state.activeModalId) editRecord(state.activeModalId);
+  });
+  els.modalDeleteBtn.addEventListener("click", () => {
+    if (state.activeModalId) requestDelete(state.activeModalId);
+  });
+
+  $("cancelConfirmBtn").addEventListener("click", closeConfirm);
+  $("acceptConfirmBtn").addEventListener("click", () => {
+    const action = state.confirmAction;
+    closeConfirm();
+    if (typeof action === "function") action();
+  });
+  els.confirmModal.addEventListener("click", event => {
+    if (event.target === els.confirmModal) closeConfirm();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      if (!els.confirmModal.hidden) closeConfirm();
+      else if (!els.detailModal.hidden) closeDetail();
+    }
+  });
+
+  loadRecords();
+  resetForm({ silent: true });
+  renderAll();
+})();
+
+</script>
+</body>
+</html>

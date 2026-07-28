@@ -1,0 +1,2980 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f6b5a" />
+  <meta name="description" content="Ứng dụng hỗ trợ lập danh sách kiểm tra thi công, ghi nhận kết quả, theo dõi vấn đề cần khắc phục và lưu lịch sử kiểm tra trên thiết bị." />
+  <title>Danh sách kiểm tra thi công</title>
+  <style>
+    :root {
+      --primary: #0f6b5a;
+      --primary-dark: #0a5044;
+      --primary-soft: #e9f6f2;
+      --accent: #d97706;
+      --danger: #c2413a;
+      --danger-soft: #fff1f0;
+      --warning: #a55d00;
+      --warning-soft: #fff7e8;
+      --success: #18794e;
+      --success-soft: #eaf8f0;
+      --info: #2563a6;
+      --info-soft: #eef5ff;
+      --text: #17231f;
+      --muted: #60716a;
+      --line: #dbe5e1;
+      --bg: #f3f7f5;
+      --card: #ffffff;
+      --shadow: 0 10px 28px rgba(19, 53, 43, 0.08);
+      --radius: 18px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at top right, rgba(15, 107, 90, 0.09), transparent 34%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.5;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: calc(88px + var(--safe-bottom));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid rgba(219, 229, 225, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      position: relative;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, var(--primary), #1c8c75);
+      box-shadow: 0 8px 18px rgba(15, 107, 90, 0.25);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      height: 4px;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .brand-mark::before {
+      top: 14px;
+      box-shadow: 0 8px 0 #ffffff;
+    }
+
+    .brand-mark::after {
+      width: 6px;
+      height: 6px;
+      left: 9px;
+      top: 13px;
+      background: #fbbf24;
+      box-shadow: 0 8px 0 #fbbf24;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: clamp(17px, 3vw, 22px);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .header-action {
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 13px;
+      color: #ffffff;
+      background: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 7px 16px rgba(15, 107, 90, 0.18);
+    }
+
+    .main {
+      padding: 18px;
+    }
+
+    .page {
+      display: none;
+      animation: pageIn 0.22s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero-card,
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(219, 229, 225, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      overflow: hidden;
+      padding: 22px;
+    }
+
+    .hero-main {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(15, 107, 90, 0.97), rgba(25, 126, 104, 0.91)),
+        #0f6b5a;
+      color: #ffffff;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      right: -70px;
+      bottom: -95px;
+      border: 26px solid rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .hero-main h2 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 8px;
+      font-size: clamp(24px, 5vw, 38px);
+      line-height: 1.15;
+    }
+
+    .hero-main p {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      min-height: 44px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-weight: 750;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      color: #ffffff;
+      background: var(--primary);
+      box-shadow: 0 8px 18px rgba(15, 107, 90, 0.18);
+    }
+
+    .btn-light {
+      color: var(--primary-dark);
+      background: #ffffff;
+    }
+
+    .btn-outline {
+      color: var(--primary-dark);
+      background: #ffffff;
+      border-color: #b7d1c8;
+    }
+
+    .btn-danger {
+      color: #ffffff;
+      background: var(--danger);
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+      background: #f6f9f8;
+      border-color: var(--line);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .overview-card {
+      display: grid;
+      align-content: center;
+      gap: 14px;
+    }
+
+    .overview-card h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      padding: 14px;
+      background: #f7faf9;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 24px 0 12px;
+    }
+
+    .section-title h2,
+    .section-title h3 {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .section-title h2 {
+      font-size: 22px;
+    }
+
+    .section-title h3 {
+      font-size: 18px;
+    }
+
+    .section-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      padding: 18px;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 12px;
+      color: #ffffff;
+      background: var(--primary);
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    .step-card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .step-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .form-card {
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--danger);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 12px;
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid #cddbd6;
+      border-radius: 11px;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .field textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 107, 90, 0.12);
+    }
+
+    .field .hint {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .field-error {
+      min-height: 17px;
+      margin: 5px 0 0;
+      color: var(--danger);
+      font-size: 12px;
+    }
+
+    .progress-card {
+      position: sticky;
+      top: 84px;
+      z-index: 15;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 15px 18px;
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      background: #e3ebe8;
+      border-radius: 999px;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #2a9d7f);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .score {
+      display: grid;
+      place-items: center;
+      width: 70px;
+      height: 58px;
+      border-radius: 14px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: 22px;
+      font-weight: 850;
+    }
+
+    .checklist-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .checklist-tools input,
+    .checklist-tools select {
+      min-height: 44px;
+      padding: 10px 12px;
+      background: #ffffff;
+      border: 1px solid #cddbd6;
+      border-radius: 11px;
+      outline: none;
+    }
+
+    .category {
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 17px;
+      background: #f8fbfa;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .category-header h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .category-count {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .check-item {
+      padding: 16px 17px;
+      border-top: 1px solid #edf2f0;
+    }
+
+    .check-item:first-child {
+      border-top: 0;
+    }
+
+    .check-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .check-text {
+      min-width: 0;
+    }
+
+    .check-text h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+    }
+
+    .check-text p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(82px, 1fr));
+      gap: 7px;
+      flex: 0 0 310px;
+    }
+
+    .status-btn {
+      min-height: 38px;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-btn.active[data-status="pass"] {
+      color: var(--success);
+      background: var(--success-soft);
+      border-color: #a8d7bd;
+    }
+
+    .status-btn.active[data-status="fail"] {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-color: #efb5b1;
+    }
+
+    .status-btn.active[data-status="na"] {
+      color: var(--warning);
+      background: var(--warning-soft);
+      border-color: #edca91;
+    }
+
+    .issue-panel {
+      display: none;
+      grid-template-columns: 1fr 160px 180px;
+      gap: 10px;
+      padding: 13px;
+      margin-top: 12px;
+      background: var(--danger-soft);
+      border: 1px solid #f1cbc8;
+      border-radius: 12px;
+    }
+
+    .issue-panel.show {
+      display: grid;
+    }
+
+    .issue-panel input,
+    .issue-panel select,
+    .issue-panel textarea {
+      width: 100%;
+      min-height: 40px;
+      padding: 9px 10px;
+      background: #ffffff;
+      border: 1px solid #e3b7b3;
+      border-radius: 9px;
+      outline: none;
+    }
+
+    .issue-panel textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    .issue-panel .issue-description {
+      grid-row: span 2;
+    }
+
+    .item-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .link-button {
+      border: 0;
+      padding: 5px 0;
+      color: var(--danger);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bottom-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 10px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .empty-state {
+      padding: 42px 20px;
+      text-align: center;
+    }
+
+    .empty-illustration {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 16px;
+      background: var(--primary-soft);
+      border-radius: 26px;
+    }
+
+    .empty-illustration::before {
+      content: "";
+      position: absolute;
+      width: 42px;
+      height: 52px;
+      left: 23px;
+      top: 18px;
+      background: #ffffff;
+      border: 3px solid var(--primary);
+      border-radius: 8px;
+    }
+
+    .empty-illustration::after {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 3px;
+      left: 34px;
+      top: 35px;
+      background: var(--primary);
+      box-shadow: 0 10px 0 var(--primary), 0 20px 0 var(--primary);
+      border-radius: 4px;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 6px;
+    }
+
+    .empty-state p {
+      max-width: 520px;
+      margin: 0 auto 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .history-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .history-toolbar input,
+    .history-toolbar select {
+      min-height: 44px;
+      padding: 10px 12px;
+      background: #ffffff;
+      border: 1px solid #cddbd6;
+      border-radius: 11px;
+      outline: none;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-card {
+      padding: 17px;
+    }
+
+    .history-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .history-title {
+      min-width: 0;
+    }
+
+    .history-title h3 {
+      margin: 0 0 5px;
+      font-size: 17px;
+    }
+
+    .history-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .record-badge {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .record-badge.completed {
+      color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .record-badge.draft {
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .history-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .history-stat {
+      padding: 10px;
+      text-align: center;
+      background: #f7faf9;
+      border-radius: 10px;
+    }
+
+    .history-stat strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .history-stat span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .history-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .small-btn {
+      min-height: 38px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .small-btn.primary {
+      color: #ffffff;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .small-btn.danger {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-color: #f0c4c1;
+    }
+
+    .detail-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .detail-block {
+      padding: 13px;
+      background: #f8fbfa;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .detail-block span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .detail-block strong {
+      display: block;
+      margin-top: 4px;
+      word-break: break-word;
+      font-size: 14px;
+    }
+
+    .issue-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .issue-card {
+      padding: 13px;
+      background: var(--danger-soft);
+      border: 1px solid #f0c9c6;
+      border-radius: 12px;
+    }
+
+    .issue-card h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+    }
+
+    .issue-card p {
+      margin: 3px 0;
+      color: #6d3a37;
+      font-size: 12px;
+    }
+
+    .info-layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .info-nav {
+      position: sticky;
+      top: 84px;
+      height: fit-content;
+      padding: 10px;
+    }
+
+    .info-nav button {
+      width: 100%;
+      min-height: 42px;
+      margin: 3px 0;
+      padding: 10px 12px;
+      text-align: left;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .info-nav button.active {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+    }
+
+    .info-content {
+      padding: 22px;
+    }
+
+    .info-section {
+      display: none;
+    }
+
+    .info-section.active {
+      display: block;
+    }
+
+    .info-section h2 {
+      margin: 0 0 14px;
+    }
+
+    .info-section h3 {
+      margin: 22px 0 8px;
+      font-size: 16px;
+    }
+
+    .info-section p {
+      margin: 8px 0;
+      color: #42534c;
+    }
+
+    .plain-description {
+      padding: 14px;
+      background: #f8fbfa;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      white-space: pre-line;
+    }
+
+    .guide-steps {
+      display: grid;
+      gap: 12px;
+    }
+
+    .guide-step {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      background: #f8fbfa;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .guide-step strong {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      color: #ffffff;
+      background: var(--primary);
+      border-radius: 11px;
+    }
+
+    .guide-step h3 {
+      margin: 0 0 4px;
+    }
+
+    .guide-step p {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 40;
+      left: 50%;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: min(760px, 100%);
+      padding: 8px 8px calc(8px + var(--safe-bottom));
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.96);
+      border-top: 1px solid rgba(219, 229, 225, 0.92);
+      box-shadow: 0 -10px 30px rgba(19, 53, 43, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-btn {
+      display: grid;
+      place-items: center;
+      min-height: 52px;
+      border: 0;
+      border-radius: 13px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .nav-btn.active {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+    }
+
+    .nav-symbol {
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin-bottom: 3px;
+      border: 2px solid currentColor;
+      border-radius: 6px;
+    }
+
+    .nav-btn[data-page="home"] .nav-symbol {
+      border-radius: 5px 5px 8px 8px;
+      transform: rotate(45deg) scale(0.72);
+    }
+
+    .nav-btn[data-page="inspection"] .nav-symbol {
+      position: relative;
+      border-radius: 4px;
+    }
+
+    .nav-btn[data-page="inspection"] .nav-symbol::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 4px;
+      left: 4px;
+      top: 5px;
+      border-left: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(-45deg);
+    }
+
+    .nav-btn[data-page="history"] .nav-symbol {
+      border-radius: 50%;
+      border-right-color: transparent;
+    }
+
+    .nav-btn[data-page="info"] .nav-symbol {
+      position: relative;
+      border-radius: 50%;
+    }
+
+    .nav-btn[data-page="info"] .nav-symbol::after {
+      content: "i";
+      position: absolute;
+      inset: -3px 0 0;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(7, 21, 17, 0.54);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(680px, 100%);
+      max-height: min(88vh, 820px);
+      overflow: auto;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 17px 18px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .close-btn {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 10px;
+      color: var(--muted);
+      background: #f3f7f5;
+      font-size: 22px;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 18px 18px;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      left: 50%;
+      bottom: calc(90px + var(--safe-bottom));
+      max-width: min(92vw, 520px);
+      padding: 12px 16px;
+      transform: translate(-50%, 20px);
+      border-radius: 12px;
+      color: #ffffff;
+      background: #22352e;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .toast.error {
+      background: var(--danger);
+    }
+
+    .storage-warning {
+      display: none;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      color: #6f4400;
+      background: var(--warning-soft);
+      border: 1px solid #edca91;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .storage-warning.show {
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .step-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .check-main {
+        display: block;
+      }
+
+      .status-options {
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      .issue-panel {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .issue-panel .issue-description {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+
+      .info-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .info-nav {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .info-nav button {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 11px 12px;
+      }
+
+      .brand-text p {
+        display: none;
+      }
+
+      .header-action {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+
+      .main {
+        padding: 12px;
+      }
+
+      .hero-card,
+      .form-card,
+      .info-content {
+        padding: 16px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .progress-card {
+        top: 67px;
+        grid-template-columns: 1fr 60px;
+        padding: 12px;
+      }
+
+      .score {
+        width: 60px;
+        height: 50px;
+        font-size: 19px;
+      }
+
+      .checklist-tools {
+        grid-template-columns: 1fr;
+      }
+
+      .category-header,
+      .check-item {
+        padding-left: 13px;
+        padding-right: 13px;
+      }
+
+      .status-options {
+        grid-template-columns: 1fr;
+      }
+
+      .issue-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .issue-panel .issue-description {
+        grid-column: auto;
+      }
+
+      .bottom-actions {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
+
+      .history-toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .history-stats,
+      .detail-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .info-nav {
+        grid-template-columns: 1fr 1fr;
+        padding: 7px;
+      }
+
+      .info-nav button {
+        padding: 9px 7px;
+        font-size: 12px;
+      }
+    }
+
+    @media print {
+      .topbar,
+      .bottom-nav,
+      .header-action,
+      .bottom-actions,
+      .checklist-tools,
+      .history-actions,
+      .info-nav,
+      .toast {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff;
+      }
+
+      .app-shell {
+        width: 100%;
+        padding-bottom: 0;
+      }
+
+      .main {
+        padding: 0;
+      }
+
+      .card,
+      .hero-card {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-text">
+          <h1>Danh sách kiểm tra thi công</h1>
+          <p>Ghi nhận hiện trường và theo dõi khắc phục</p>
+        </div>
+      </div>
+      <button class="header-action" id="quickCreateBtn" type="button">Tạo kiểm tra</button>
+    </header>
+
+    <main class="main">
+      <div class="storage-warning" id="storageWarning">
+        Trình duyệt hiện không cho phép lưu dữ liệu trên thiết bị. Bạn vẫn có thể nhập và kiểm tra nhưng dữ liệu có thể mất khi đóng trang.
+      </div>
+
+      <section class="page active" id="page-home">
+        <div class="hero">
+          <div class="hero-card hero-main">
+            <h2>Kiểm tra thi công rõ ràng và có thể theo dõi</h2>
+            <p>Tạo hồ sơ kiểm tra theo từng công trình, đánh dấu kết quả, ghi nhận lỗi, người phụ trách và thời hạn khắc phục ngay trên điện thoại.</p>
+            <div class="hero-actions">
+              <button class="btn btn-light" type="button" data-go="inspection">Bắt đầu kiểm tra</button>
+              <button class="btn btn-outline" type="button" data-go="history">Xem lịch sử</button>
+            </div>
+          </div>
+
+          <div class="hero-card overview-card">
+            <h3>Tổng quan dữ liệu</h3>
+            <div class="overview-grid">
+              <div class="stat">
+                <strong id="homeTotalRecords">0</strong>
+                <span>Hồ sơ đã lưu</span>
+              </div>
+              <div class="stat">
+                <strong id="homeCompletedRecords">0</strong>
+                <span>Hồ sơ hoàn tất</span>
+              </div>
+              <div class="stat">
+                <strong id="homeOpenIssues">0</strong>
+                <span>Lỗi cần xử lý</span>
+              </div>
+              <div class="stat">
+                <strong id="homeAverageScore">0%</strong>
+                <span>Tỷ lệ đạt trung bình</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <div>
+            <h2>Quy trình sử dụng</h2>
+            <p>Ba bước để hoàn thành một hồ sơ kiểm tra.</p>
+          </div>
+        </div>
+
+        <div class="step-grid">
+          <article class="card step-card">
+            <div class="step-number">1</div>
+            <h3>Nhập thông tin công trình</h3>
+            <p>Ghi tên công trình, vị trí, hạng mục, ngày kiểm tra và người kiểm tra.</p>
+          </article>
+          <article class="card step-card">
+            <div class="step-number">2</div>
+            <h3>Đánh giá từng nội dung</h3>
+            <p>Chọn đạt, không đạt hoặc không áp dụng. Với lỗi không đạt, cần ghi rõ biện pháp xử lý.</p>
+          </article>
+          <article class="card step-card">
+            <div class="step-number">3</div>
+            <h3>Lưu hồ sơ và theo dõi</h3>
+            <p>Lưu nháp khi chưa xong hoặc hoàn tất hồ sơ để tra cứu trong lịch sử trên thiết bị.</p>
+          </article>
+        </div>
+
+        <div class="section-title">
+          <div>
+            <h2>Phạm vi kiểm tra mặc định</h2>
+            <p>Nội dung có thể bổ sung thêm theo nhu cầu thực tế.</p>
+          </div>
+        </div>
+
+        <div class="step-grid">
+          <article class="card step-card">
+            <h3>An toàn và mặt bằng</h3>
+            <p>Biển báo, lối đi, bảo hộ cá nhân, vệ sinh và khu vực nguy hiểm.</p>
+          </article>
+          <article class="card step-card">
+            <h3>Chất lượng thi công</h3>
+            <p>Vật liệu, kích thước, cao độ, bề mặt, liên kết và hồ sơ nghiệm thu.</p>
+          </article>
+          <article class="card step-card">
+            <h3>Điện nước và hoàn thiện</h3>
+            <p>Hệ thống điện, cấp thoát nước, chống thấm, cửa, sơn và vệ sinh bàn giao.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-inspection">
+        <div class="section-title">
+          <div>
+            <h2 id="inspectionPageTitle">Tạo hồ sơ kiểm tra</h2>
+            <p id="inspectionPageSubtitle">Nhập đầy đủ thông tin và đánh giá từng nội dung.</p>
+          </div>
+        </div>
+
+        <section class="card form-card">
+          <div class="form-grid">
+            <div class="field">
+              <label class="required" for="projectName">Tên công trình</label>
+              <input id="projectName" maxlength="120" placeholder="Ví dụ: Nhà ở lô A12" autocomplete="off" />
+              <div class="field-error" id="error-projectName"></div>
+            </div>
+
+            <div class="field">
+              <label class="required" for="projectLocation">Vị trí công trình</label>
+              <input id="projectLocation" maxlength="160" placeholder="Nhập địa chỉ hoặc khu vực thi công" autocomplete="off" />
+              <div class="field-error" id="error-projectLocation"></div>
+            </div>
+
+            <div class="field">
+              <label class="required" for="workCategory">Hạng mục kiểm tra</label>
+              <select id="workCategory">
+                <option value="">Chọn hạng mục</option>
+                <option value="Kiểm tra tổng hợp">Kiểm tra tổng hợp</option>
+                <option value="Phần móng">Phần móng</option>
+                <option value="Kết cấu">Kết cấu</option>
+                <option value="Xây tô">Xây tô</option>
+                <option value="Điện và cấp thoát nước">Điện và cấp thoát nước</option>
+                <option value="Chống thấm">Chống thấm</option>
+                <option value="Hoàn thiện">Hoàn thiện</option>
+                <option value="An toàn lao động">An toàn lao động</option>
+              </select>
+              <div class="field-error" id="error-workCategory"></div>
+            </div>
+
+            <div class="field">
+              <label class="required" for="inspectionDate">Ngày kiểm tra</label>
+              <input id="inspectionDate" type="date" />
+              <div class="field-error" id="error-inspectionDate"></div>
+            </div>
+
+            <div class="field">
+              <label class="required" for="inspectorName">Người kiểm tra</label>
+              <input id="inspectorName" maxlength="100" placeholder="Nhập họ và tên" autocomplete="off" />
+              <div class="field-error" id="error-inspectorName"></div>
+            </div>
+
+            <div class="field">
+              <label for="contractorName">Đơn vị thi công</label>
+              <input id="contractorName" maxlength="120" placeholder="Nhập tên đơn vị thi công" autocomplete="off" />
+              <div class="field-error" id="error-contractorName"></div>
+            </div>
+
+            <div class="field full">
+              <label for="generalNote">Ghi chú chung</label>
+              <textarea id="generalNote" maxlength="1000" placeholder="Ghi điều kiện hiện trường, phạm vi kiểm tra hoặc lưu ý cần thiết"></textarea>
+              <p class="hint"><span id="generalNoteCount">0</span> trên 1000 ký tự</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card progress-card">
+          <div>
+            <div class="progress-labels">
+              <span>Tiến độ đánh giá</span>
+              <strong id="progressText">0 trên 0 nội dung</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <div class="score" id="scoreValue">0%</div>
+        </section>
+
+        <div class="checklist-tools">
+          <input id="checklistSearch" placeholder="Tìm nội dung kiểm tra" autocomplete="off" />
+          <select id="checklistFilter">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="unchecked">Chưa đánh giá</option>
+            <option value="pass">Đạt</option>
+            <option value="fail">Không đạt</option>
+            <option value="na">Không áp dụng</option>
+          </select>
+          <button class="btn btn-outline" id="addCustomItemBtn" type="button">Thêm nội dung</button>
+        </div>
+
+        <div id="checklistContainer"></div>
+
+        <section class="card bottom-actions">
+          <button class="btn btn-ghost" id="resetInspectionBtn" type="button">Làm mới biểu mẫu</button>
+          <button class="btn btn-outline" id="saveDraftBtn" type="button">Lưu nháp</button>
+          <button class="btn btn-primary" id="completeInspectionBtn" type="button">Hoàn tất kiểm tra</button>
+        </section>
+      </section>
+
+      <section class="page" id="page-history">
+        <div class="section-title">
+          <div>
+            <h2>Lịch sử kiểm tra</h2>
+            <p>Dữ liệu được lưu trên thiết bị đang sử dụng.</p>
+          </div>
+        </div>
+
+        <div class="history-toolbar">
+          <input id="historySearch" placeholder="Tìm theo công trình, vị trí hoặc người kiểm tra" autocomplete="off" />
+          <select id="historyFilter">
+            <option value="all">Tất cả hồ sơ</option>
+            <option value="completed">Đã hoàn tất</option>
+            <option value="draft">Bản nháp</option>
+            <option value="hasIssues">Có lỗi không đạt</option>
+          </select>
+        </div>
+
+        <div id="historyContainer"></div>
+      </section>
+
+      <section class="page" id="page-info">
+        <div class="section-title">
+          <div>
+            <h2>Thông tin và hướng dẫn</h2>
+            <p>Nội dung hỗ trợ sử dụng và chính sách của ứng dụng.</p>
+          </div>
+        </div>
+
+        <div class="info-layout">
+          <nav class="card info-nav" aria-label="Danh mục thông tin">
+            <button class="active" type="button" data-info="guide">Hướng dẫn sử dụng</button>
+            <button type="button" data-info="about">Thông tin ứng dụng</button>
+            <button type="button" data-info="terms">Điều khoản sử dụng</button>
+            <button type="button" data-info="privacy">Chính sách riêng tư</button>
+            <button type="button" data-info="version">Thông tin phiên bản</button>
+          </nav>
+
+          <article class="card info-content">
+            <section class="info-section active" id="info-guide">
+              <h2>Hướng dẫn sử dụng</h2>
+              <div class="guide-steps">
+                <div class="guide-step">
+                  <strong>1</strong>
+                  <div>
+                    <h3>Tạo hồ sơ</h3>
+                    <p>Mở trang Kiểm tra, nhập tên công trình, vị trí, hạng mục, ngày kiểm tra và người kiểm tra.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <strong>2</strong>
+                  <div>
+                    <h3>Đánh giá nội dung</h3>
+                    <p>Với mỗi nội dung, chọn Đạt, Không đạt hoặc Không áp dụng. Có thể dùng ô tìm kiếm và bộ lọc để thao tác nhanh hơn.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <strong>3</strong>
+                  <div>
+                    <h3>Ghi nhận lỗi</h3>
+                    <p>Khi chọn Không đạt, nhập mô tả vấn đề, mức độ, người phụ trách và thời hạn khắc phục.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <strong>4</strong>
+                  <div>
+                    <h3>Lưu hoặc hoàn tất</h3>
+                    <p>Dùng Lưu nháp khi chưa đánh giá xong. Dùng Hoàn tất kiểm tra khi tất cả nội dung đã được đánh giá và thông tin lỗi đã đầy đủ.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <strong>5</strong>
+                  <div>
+                    <h3>Tra cứu lịch sử</h3>
+                    <p>Mở trang Lịch sử để xem chi tiết, tiếp tục chỉnh sửa hoặc xóa hồ sơ không còn cần thiết.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Lưu ý về dữ liệu</h3>
+              <p>Dữ liệu được lưu cục bộ trên thiết bị. Khi xóa dữ liệu trình duyệt, đổi thiết bị hoặc gỡ ứng dụng, lịch sử đã lưu có thể không còn.</p>
+            </section>
+
+            <section class="info-section" id="info-about">
+              <h2>Thông tin ứng dụng</h2>
+              <div class="plain-description">Danh sách kiểm tra thi công là ứng dụng hỗ trợ tạo hồ sơ kiểm tra hiện trường, đánh giá chất lượng và an toàn, ghi nhận vấn đề cần khắc phục, theo dõi người phụ trách và lưu lịch sử kiểm tra trên thiết bị.</div>
+
+              <h3>Chức năng chính</h3>
+              <p>Tạo hồ sơ kiểm tra theo từng công trình và hạng mục.</p>
+              <p>Sử dụng danh sách kiểm tra có sẵn hoặc thêm nội dung riêng.</p>
+              <p>Ghi nhận kết quả đạt, không đạt và không áp dụng.</p>
+              <p>Quản lý mô tả lỗi, mức độ, người phụ trách và thời hạn khắc phục.</p>
+              <p>Lưu nháp, hoàn tất, xem chi tiết, chỉnh sửa và xóa lịch sử.</p>
+
+              <h3>Phạm vi sử dụng</h3>
+              <p>Ứng dụng hỗ trợ ghi chép và quản lý nội bộ. Kết quả trong ứng dụng không thay thế biên bản pháp lý, tiêu chuẩn kỹ thuật, hồ sơ nghiệm thu hoặc kết luận của người có thẩm quyền.</p>
+            </section>
+
+            <section class="info-section" id="info-terms">
+              <h2>Điều khoản sử dụng</h2>
+              <p>Khi sử dụng ứng dụng, người dùng đồng ý tự chịu trách nhiệm về tính chính xác của thông tin đã nhập và kết quả đánh giá tại hiện trường.</p>
+              <p>Ứng dụng chỉ cung cấp công cụ hỗ trợ ghi chép, tổng hợp và lưu trữ dữ liệu trên thiết bị. Ứng dụng không thay thế quy trình quản lý chất lượng, quy định an toàn, tiêu chuẩn xây dựng hoặc hồ sơ nghiệm thu bắt buộc.</p>
+              <p>Người dùng cần kiểm tra nội dung trước khi hoàn tất hồ sơ và phải tuân thủ quy định pháp luật, quy trình của doanh nghiệp và yêu cầu của công trình.</p>
+              <p>Không được sử dụng ứng dụng để nhập nội dung trái pháp luật, xâm phạm quyền của tổ chức hoặc cá nhân khác, hoặc cố ý tạo dữ liệu sai lệch.</p>
+              <p>Nhà cung cấp có thể cập nhật chức năng để cải thiện tính ổn định và khả năng sử dụng. Các thay đổi quan trọng sẽ được thể hiện trong thông tin phiên bản.</p>
+            </section>
+
+            <section class="info-section" id="info-privacy">
+              <h2>Chính sách riêng tư</h2>
+              <p>Ứng dụng không yêu cầu đăng ký tài khoản và không chủ động thu thập thông tin cá nhân trên máy chủ.</p>
+              <p>Dữ liệu công trình, nội dung kiểm tra và lịch sử được lưu cục bộ trên thiết bị bằng bộ nhớ của trình duyệt hoặc WebView.</p>
+              <p>Ứng dụng không tự động gửi dữ liệu kiểm tra đến bên thứ ba. Người dùng có trách nhiệm bảo vệ thiết bị và kiểm soát người có quyền truy cập.</p>
+              <p>Khi người dùng xóa hồ sơ trong ứng dụng, dữ liệu tương ứng sẽ bị xóa khỏi bộ nhớ cục bộ. Khi xóa toàn bộ dữ liệu trình duyệt hoặc gỡ ứng dụng, lịch sử có thể bị xóa hoàn toàn.</p>
+              <p>Ứng dụng không lưu hình ảnh, vị trí chính xác, danh bạ, nội dung tin nhắn hoặc thông tin thanh toán.</p>
+            </section>
+
+            <section class="info-section" id="info-version">
+              <h2>Thông tin phiên bản</h2>
+              <div class="plain-description">Phiên bản 1.0.0
+
+Ra mắt chức năng tạo danh sách kiểm tra thi công theo công trình và hạng mục
+
+Hỗ trợ đánh giá đạt không đạt và không áp dụng
+
+Hỗ trợ ghi nhận vấn đề mức độ người phụ trách và thời hạn khắc phục
+
+Hỗ trợ thêm nội dung kiểm tra riêng
+
+Hỗ trợ lưu nháp hoàn tất xem chi tiết chỉnh sửa và xóa lịch sử
+
+Hoàn thiện trang hướng dẫn thông tin ứng dụng điều khoản sử dụng và chính sách riêng tư
+
+Đã tối ưu giao diện cho màn hình điện thoại</div>
+            </section>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Điều hướng chính">
+      <button class="nav-btn active" type="button" data-page="home">
+        <span class="nav-symbol" aria-hidden="true"></span>
+        Trang chủ
+      </button>
+      <button class="nav-btn" type="button" data-page="inspection">
+        <span class="nav-symbol" aria-hidden="true"></span>
+        Kiểm tra
+      </button>
+      <button class="nav-btn" type="button" data-page="history">
+        <span class="nav-symbol" aria-hidden="true"></span>
+        Lịch sử
+      </button>
+      <button class="nav-btn" type="button" data-page="info">
+        <span class="nav-symbol" aria-hidden="true"></span>
+        Thông tin
+      </button>
+    </nav>
+  </div>
+
+  <div class="modal" id="customItemModal" role="dialog" aria-modal="true" aria-labelledby="customItemTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="customItemTitle">Thêm nội dung kiểm tra</h3>
+        <button class="close-btn" type="button" data-close-modal="customItemModal" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field">
+            <label class="required" for="customCategory">Nhóm kiểm tra</label>
+            <select id="customCategory">
+              <option value="">Chọn nhóm</option>
+              <option value="An toàn và mặt bằng">An toàn và mặt bằng</option>
+              <option value="Vật liệu và hồ sơ">Vật liệu và hồ sơ</option>
+              <option value="Kết cấu và xây tô">Kết cấu và xây tô</option>
+              <option value="Điện và cấp thoát nước">Điện và cấp thoát nước</option>
+              <option value="Chống thấm và hoàn thiện">Chống thấm và hoàn thiện</option>
+              <option value="Nội dung bổ sung">Nội dung bổ sung</option>
+            </select>
+            <div class="field-error" id="error-customCategory"></div>
+          </div>
+          <div class="field">
+            <label class="required" for="customTitle">Tên nội dung</label>
+            <input id="customTitle" maxlength="160" placeholder="Nhập nội dung cần kiểm tra" autocomplete="off" />
+            <div class="field-error" id="error-customTitle"></div>
+          </div>
+          <div class="field full">
+            <label for="customDescription">Yêu cầu hoặc tiêu chí</label>
+            <textarea id="customDescription" maxlength="500" placeholder="Mô tả tiêu chí cần đáp ứng"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" type="button" data-close-modal="customItemModal">Hủy</button>
+        <button class="btn btn-primary" id="confirmAddCustomItemBtn" type="button">Thêm vào danh sách</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="detailModalTitle">Chi tiết hồ sơ</h3>
+        <button class="close-btn" type="button" data-close-modal="detailModal" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body" id="detailModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="button" data-close-modal="detailModal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="confirmModalTitle">Xác nhận thao tác</h3>
+        <button class="close-btn" type="button" data-close-modal="confirmModal" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmModalMessage">Bạn có chắc chắn muốn thực hiện thao tác này không?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" type="button" data-close-modal="confirmModal">Hủy</button>
+        <button class="btn btn-danger" id="confirmActionBtn" type="button">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "construction_checklist_records_v1";
+      const DRAFT_KEY = "construction_checklist_current_draft_v1";
+      const MAX_RECORDS = 100;
+
+      const defaultTemplates = [
+        {
+          category: "An toàn và mặt bằng",
+          items: [
+            { title: "Lối đi và khu vực làm việc thông thoáng", description: "Không có vật cản nguy hiểm, vật liệu được sắp xếp gọn và có lối thoát phù hợp." },
+            { title: "Biển báo và rào chắn khu vực nguy hiểm", description: "Khu vực có nguy cơ rơi ngã, điện, hố mở hoặc thiết bị đang vận hành phải được cảnh báo rõ." },
+            { title: "Trang bị bảo hộ cá nhân", description: "Người lao động sử dụng đầy đủ mũ, giày, găng tay và thiết bị bảo hộ phù hợp công việc." },
+            { title: "Giàn giáo và thang làm việc", description: "Lắp đặt chắc chắn, có sàn thao tác, lan can và điểm tiếp cận an toàn." },
+            { title: "Vệ sinh và thu gom phế thải", description: "Phế thải được thu gom đúng khu vực, không gây cản trở hoặc phát sinh nguy cơ." }
+          ]
+        },
+        {
+          category: "Vật liệu và hồ sơ",
+          items: [
+            { title: "Vật liệu đúng chủng loại đã phê duyệt", description: "Tên vật liệu, quy cách, nguồn gốc và thông số phù hợp hồ sơ được chấp thuận." },
+            { title: "Vật liệu được bảo quản đúng điều kiện", description: "Không ẩm ướt, hư hỏng, biến dạng, nhiễm bẩn hoặc quá thời hạn sử dụng." },
+            { title: "Có hồ sơ kiểm tra hoặc chứng nhận cần thiết", description: "Biên bản, chứng chỉ, kết quả thí nghiệm hoặc tài liệu liên quan có thể tra cứu." },
+            { title: "Thiết bị đo và dụng cụ kiểm tra phù hợp", description: "Dụng cụ còn hoạt động tốt và phù hợp với nội dung cần đo kiểm." }
+          ]
+        },
+        {
+          category: "Kết cấu và xây tô",
+          items: [
+            { title: "Kích thước và vị trí cấu kiện đúng hồ sơ", description: "Tim trục, chiều dài, chiều rộng, chiều cao và vị trí lắp đặt nằm trong giới hạn cho phép." },
+            { title: "Cốt thép và liên kết được lắp đúng yêu cầu", description: "Đường kính, số lượng, khoảng cách, lớp bảo vệ, neo và nối phù hợp hồ sơ." },
+            { title: "Cốp pha ổn định và kín khít", description: "Không biến dạng, sai lệch lớn hoặc mất nước xi măng trong quá trình đổ bê tông." },
+            { title: "Bề mặt bê tông không có khuyết tật nghiêm trọng", description: "Không có rỗ sâu, nứt bất thường, lộ cốt thép hoặc bong tróc ảnh hưởng chất lượng." },
+            { title: "Tường xây đúng vị trí và liên kết", description: "Tường thẳng, phẳng, mạch vữa đầy, có râu liên kết và chi tiết gia cường theo yêu cầu." },
+            { title: "Lớp tô phẳng và không bong rỗ", description: "Bề mặt đạt độ phẳng, không nứt lớn, không bong bộp hoặc sai chiều dày rõ rệt." }
+          ]
+        },
+        {
+          category: "Điện và cấp thoát nước",
+          items: [
+            { title: "Đường ống và hộp kỹ thuật đúng vị trí", description: "Không xung đột kết cấu, đúng cao độ, có khoảng cách và phương án cố định phù hợp." },
+            { title: "Mối nối điện và đầu cáp an toàn", description: "Được cách điện, bảo vệ và bố trí trong hộp hoặc tủ phù hợp." },
+            { title: "Hệ thống tiếp địa và thiết bị bảo vệ", description: "Có dây tiếp địa, thiết bị đóng cắt và bảo vệ theo yêu cầu thiết kế." },
+            { title: "Đường ống cấp thoát nước không rò rỉ", description: "Mối nối kín, đường ống được cố định và đã kiểm tra thử phù hợp giai đoạn." },
+            { title: "Độ dốc thoát nước phù hợp", description: "Không có điểm võng, tắc nghẽn hoặc hướng thoát sai." }
+          ]
+        },
+        {
+          category: "Chống thấm và hoàn thiện",
+          items: [
+            { title: "Bề mặt chống thấm được chuẩn bị đúng", description: "Bề mặt sạch, khô hoặc đủ ẩm theo vật liệu, không có khuyết tật chưa xử lý." },
+            { title: "Lớp chống thấm liên tục và đủ phạm vi", description: "Không thủng, bong, thiếu lớp hoặc bỏ sót các vị trí chân tường, cổ ống và góc." },
+            { title: "Đã kiểm tra thử nước khi cần thiết", description: "Khu vực được thử theo thời gian phù hợp và không phát hiện thấm rò." },
+            { title: "Cửa và phụ kiện lắp đặt chắc chắn", description: "Đóng mở bình thường, không cong vênh, khe hở và liên kết phù hợp." },
+            { title: "Bề mặt sơn đồng đều", description: "Không chảy, loang màu, bong tróc, lộ nền hoặc bám bẩn rõ rệt." },
+            { title: "Khu vực hoàn thiện được vệ sinh", description: "Bề mặt sạch, thiết bị không hư hỏng và không còn vật liệu thừa ảnh hưởng bàn giao." }
+          ]
+        }
+      ];
+
+      let records = [];
+      let currentItems = [];
+      let editingRecordId = null;
+      let confirmCallback = null;
+      let storageAvailable = true;
+
+      const elements = {
+        pages: document.querySelectorAll(".page"),
+        navButtons: document.querySelectorAll(".nav-btn"),
+        quickCreateBtn: document.getElementById("quickCreateBtn"),
+        projectName: document.getElementById("projectName"),
+        projectLocation: document.getElementById("projectLocation"),
+        workCategory: document.getElementById("workCategory"),
+        inspectionDate: document.getElementById("inspectionDate"),
+        inspectorName: document.getElementById("inspectorName"),
+        contractorName: document.getElementById("contractorName"),
+        generalNote: document.getElementById("generalNote"),
+        generalNoteCount: document.getElementById("generalNoteCount"),
+        checklistContainer: document.getElementById("checklistContainer"),
+        checklistSearch: document.getElementById("checklistSearch"),
+        checklistFilter: document.getElementById("checklistFilter"),
+        progressText: document.getElementById("progressText"),
+        progressBar: document.getElementById("progressBar"),
+        scoreValue: document.getElementById("scoreValue"),
+        addCustomItemBtn: document.getElementById("addCustomItemBtn"),
+        resetInspectionBtn: document.getElementById("resetInspectionBtn"),
+        saveDraftBtn: document.getElementById("saveDraftBtn"),
+        completeInspectionBtn: document.getElementById("completeInspectionBtn"),
+        historyContainer: document.getElementById("historyContainer"),
+        historySearch: document.getElementById("historySearch"),
+        historyFilter: document.getElementById("historyFilter"),
+        customItemModal: document.getElementById("customItemModal"),
+        customCategory: document.getElementById("customCategory"),
+        customTitle: document.getElementById("customTitle"),
+        customDescription: document.getElementById("customDescription"),
+        confirmAddCustomItemBtn: document.getElementById("confirmAddCustomItemBtn"),
+        detailModal: document.getElementById("detailModal"),
+        detailModalBody: document.getElementById("detailModalBody"),
+        confirmModal: document.getElementById("confirmModal"),
+        confirmModalTitle: document.getElementById("confirmModalTitle"),
+        confirmModalMessage: document.getElementById("confirmModalMessage"),
+        confirmActionBtn: document.getElementById("confirmActionBtn"),
+        toast: document.getElementById("toast"),
+        storageWarning: document.getElementById("storageWarning"),
+        inspectionPageTitle: document.getElementById("inspectionPageTitle"),
+        inspectionPageSubtitle: document.getElementById("inspectionPageSubtitle"),
+        homeTotalRecords: document.getElementById("homeTotalRecords"),
+        homeCompletedRecords: document.getElementById("homeCompletedRecords"),
+        homeOpenIssues: document.getElementById("homeOpenIssues"),
+        homeAverageScore: document.getElementById("homeAverageScore")
+      };
+
+      function createId(prefix = "id") {
+        const randomPart = Math.random().toString(36).slice(2, 10);
+        return `${prefix}_${Date.now()}_${randomPart}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function normalizeText(value) {
+        return String(value ?? "").trim();
+      }
+
+      function safeDate(value) {
+        const text = normalizeText(value);
+        if (!text) return "";
+        const date = new Date(`${text}T00:00:00`);
+        return Number.isNaN(date.getTime()) ? "" : text;
+      }
+
+      function formatDate(value) {
+        const valid = safeDate(value);
+        if (!valid) return "Chưa có";
+        const [year, month, day] = valid.split("-");
+        return `${day}/${month}/${year}`;
+      }
+
+      function formatDateTime(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Chưa có";
+        return date.toLocaleString("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function todayString() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function cloneDefaultItems() {
+        return defaultTemplates.flatMap(group =>
+          group.items.map(item => ({
+            id: createId("item"),
+            category: group.category,
+            title: item.title,
+            description: item.description,
+            custom: false,
+            status: "unchecked",
+            issueDescription: "",
+            severity: "Trung bình",
+            responsible: "",
+            dueDate: ""
+          }))
+        );
+      }
+
+      function testStorage() {
+        try {
+          const key = "__storage_test__";
+          localStorage.setItem(key, "1");
+          localStorage.removeItem(key);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function loadRecords() {
+        if (!storageAvailable) return [];
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : [];
+          if (!Array.isArray(parsed)) return [];
+          return parsed
+            .filter(record => record && typeof record === "object" && Array.isArray(record.items))
+            .slice(0, MAX_RECORDS);
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function saveRecords() {
+        if (!storageAvailable) return false;
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(records.slice(0, MAX_RECORDS)));
+          return true;
+        } catch (error) {
+          showToast("Không thể lưu dữ liệu. Bộ nhớ thiết bị có thể đã đầy.", true);
+          return false;
+        }
+      }
+
+      function saveCurrentDraftSnapshot() {
+        if (!storageAvailable) return;
+        const snapshot = collectFormData("draft", false);
+        try {
+          localStorage.setItem(DRAFT_KEY, JSON.stringify(snapshot));
+        } catch (error) {
+        }
+      }
+
+      function loadCurrentDraftSnapshot() {
+        if (!storageAvailable) return null;
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          if (!parsed || !Array.isArray(parsed.items)) return null;
+          return parsed;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function clearCurrentDraftSnapshot() {
+        if (!storageAvailable) return;
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch (error) {
+        }
+      }
+
+      function showToast(message, isError = false) {
+        elements.toast.textContent = message;
+        elements.toast.classList.toggle("error", isError);
+        elements.toast.classList.add("show");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => {
+          elements.toast.classList.remove("show");
+        }, 2600);
+      }
+
+      function openModal(modal) {
+        modal.classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal(modal) {
+        modal.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+
+      function showConfirm(title, message, callback) {
+        elements.confirmModalTitle.textContent = title;
+        elements.confirmModalMessage.textContent = message;
+        confirmCallback = callback;
+        openModal(elements.confirmModal);
+      }
+
+      function goToPage(pageName) {
+        elements.pages.forEach(page => {
+          page.classList.toggle("active", page.id === `page-${pageName}`);
+        });
+
+        elements.navButtons.forEach(button => {
+          button.classList.toggle("active", button.dataset.page === pageName);
+        });
+
+        if (pageName === "history") {
+          renderHistory();
+        }
+
+        if (pageName === "home") {
+          updateHomeOverview();
+        }
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function setFieldError(fieldId, message) {
+        const error = document.getElementById(`error-${fieldId}`);
+        if (error) error.textContent = message || "";
+      }
+
+      function clearFormErrors() {
+        [
+          "projectName",
+          "projectLocation",
+          "workCategory",
+          "inspectionDate",
+          "inspectorName",
+          "contractorName",
+          "customCategory",
+          "customTitle"
+        ].forEach(id => setFieldError(id, ""));
+      }
+
+      function validateBasicInfo(requireAll = true) {
+        clearFormErrors();
+        let valid = true;
+
+        const checks = [
+          { id: "projectName", value: normalizeText(elements.projectName.value), label: "Vui lòng nhập tên công trình." },
+          { id: "projectLocation", value: normalizeText(elements.projectLocation.value), label: "Vui lòng nhập vị trí công trình." },
+          { id: "workCategory", value: normalizeText(elements.workCategory.value), label: "Vui lòng chọn hạng mục kiểm tra." },
+          { id: "inspectionDate", value: safeDate(elements.inspectionDate.value), label: "Vui lòng chọn ngày kiểm tra hợp lệ." },
+          { id: "inspectorName", value: normalizeText(elements.inspectorName.value), label: "Vui lòng nhập người kiểm tra." }
+        ];
+
+        checks.forEach(check => {
+          if (!check.value) {
+            if (requireAll) {
+              setFieldError(check.id, check.label);
+              valid = false;
+            }
+          }
+        });
+
+        const contractor = normalizeText(elements.contractorName.value);
+        if (contractor.length > 120) {
+          setFieldError("contractorName", "Tên đơn vị thi công không được vượt quá 120 ký tự.");
+          valid = false;
+        }
+
+        return valid;
+      }
+
+      function validateCompletion() {
+        const basicValid = validateBasicInfo(true);
+        const unchecked = currentItems.filter(item => item.status === "unchecked");
+        const invalidIssues = currentItems.filter(item =>
+          item.status === "fail" &&
+          (
+            !normalizeText(item.issueDescription) ||
+            !normalizeText(item.responsible) ||
+            !safeDate(item.dueDate)
+          )
+        );
+
+        if (!basicValid) {
+          showToast("Vui lòng kiểm tra lại thông tin công trình.", true);
+          return false;
+        }
+
+        if (currentItems.length === 0) {
+          showToast("Danh sách kiểm tra chưa có nội dung.", true);
+          return false;
+        }
+
+        if (unchecked.length > 0) {
+          showToast(`Còn ${unchecked.length} nội dung chưa được đánh giá.`, true);
+          return false;
+        }
+
+        if (invalidIssues.length > 0) {
+          showToast("Mỗi lỗi không đạt phải có mô tả, người phụ trách và thời hạn khắc phục.", true);
+          return false;
+        }
+
+        return true;
+      }
+
+      function calculateStats(items) {
+        const safeItems = Array.isArray(items) ? items : [];
+        const total = safeItems.length;
+        const checked = safeItems.filter(item => item.status !== "unchecked").length;
+        const pass = safeItems.filter(item => item.status === "pass").length;
+        const fail = safeItems.filter(item => item.status === "fail").length;
+        const na = safeItems.filter(item => item.status === "na").length;
+        const applicable = pass + fail;
+        const score = applicable > 0 ? Math.round((pass / applicable) * 100) : 0;
+        const progress = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+        return {
+          total,
+          checked,
+          pass,
+          fail,
+          na,
+          score: Number.isFinite(score) && score >= 0 ? score : 0,
+          progress: Number.isFinite(progress) && progress >= 0 ? progress : 0
+        };
+      }
+
+      function updateProgress() {
+        const stats = calculateStats(currentItems);
+        elements.progressText.textContent = `${stats.checked} trên ${stats.total} nội dung`;
+        elements.progressBar.style.width = `${Math.min(100, stats.progress)}%`;
+        elements.scoreValue.textContent = `${stats.score}%`;
+      }
+
+      function groupedFilteredItems() {
+        const keyword = normalizeText(elements.checklistSearch.value).toLocaleLowerCase("vi");
+        const filter = elements.checklistFilter.value;
+
+        const filtered = currentItems.filter(item => {
+          const matchesKeyword =
+            !keyword ||
+            item.title.toLocaleLowerCase("vi").includes(keyword) ||
+            item.description.toLocaleLowerCase("vi").includes(keyword) ||
+            item.category.toLocaleLowerCase("vi").includes(keyword);
+
+          const matchesFilter =
+            filter === "all" ||
+            item.status === filter ||
+            (filter === "unchecked" && item.status === "unchecked");
+
+          return matchesKeyword && matchesFilter;
+        });
+
+        return filtered.reduce((groups, item) => {
+          if (!groups[item.category]) groups[item.category] = [];
+          groups[item.category].push(item);
+          return groups;
+        }, {});
+      }
+
+      function renderChecklist() {
+        const groups = groupedFilteredItems();
+        const categoryNames = Object.keys(groups);
+
+        if (categoryNames.length === 0) {
+          elements.checklistContainer.innerHTML = `
+            <section class="card empty-state">
+              <div class="empty-illustration" aria-hidden="true"></div>
+              <h3>Không tìm thấy nội dung phù hợp</h3>
+              <p>Hãy thay đổi từ khóa, bộ lọc hoặc thêm một nội dung kiểm tra mới.</p>
+              <button class="btn btn-primary" type="button" id="emptyAddItemBtn">Thêm nội dung</button>
+            </section>
+          `;
+          const emptyAddItemBtn = document.getElementById("emptyAddItemBtn");
+          if (emptyAddItemBtn) {
+            emptyAddItemBtn.addEventListener("click", openCustomItemModal);
+          }
+          updateProgress();
+          return;
+        }
+
+        elements.checklistContainer.innerHTML = categoryNames.map(category => {
+          const items = groups[category];
+          const done = items.filter(item => item.status !== "unchecked").length;
+
+          return `
+            <section class="card category">
+              <div class="category-header">
+                <h3>${escapeHtml(category)}</h3>
+                <span class="category-count">${done} trên ${items.length}</span>
+              </div>
+              <div>
+                ${items.map(item => renderChecklistItem(item)).join("")}
+              </div>
+            </section>
+          `;
+        }).join("");
+
+        bindChecklistEvents();
+        updateProgress();
+      }
+
+      function renderChecklistItem(item) {
+        const issueVisible = item.status === "fail";
+        return `
+          <article class="check-item" data-item-id="${escapeHtml(item.id)}">
+            <div class="check-main">
+              <div class="check-text">
+                <h4>${escapeHtml(item.title)}</h4>
+                <p>${escapeHtml(item.description || "Không có mô tả bổ sung.")}</p>
+              </div>
+              <div class="status-options" role="group" aria-label="Kết quả đánh giá">
+                <button class="status-btn ${item.status === "pass" ? "active" : ""}" type="button" data-status="pass">Đạt</button>
+                <button class="status-btn ${item.status === "fail" ? "active" : ""}" type="button" data-status="fail">Không đạt</button>
+                <button class="status-btn ${item.status === "na" ? "active" : ""}" type="button" data-status="na">Không áp dụng</button>
+              </div>
+            </div>
+
+            <div class="issue-panel ${issueVisible ? "show" : ""}">
+              <textarea class="issue-description" maxlength="600" placeholder="Mô tả vấn đề và yêu cầu khắc phục">${escapeHtml(item.issueDescription)}</textarea>
+              <select class="issue-severity" aria-label="Mức độ vấn đề">
+                <option value="Thấp" ${item.severity === "Thấp" ? "selected" : ""}>Mức độ thấp</option>
+                <option value="Trung bình" ${item.severity === "Trung bình" ? "selected" : ""}>Mức độ trung bình</option>
+                <option value="Cao" ${item.severity === "Cao" ? "selected" : ""}>Mức độ cao</option>
+              </select>
+              <input class="issue-responsible" maxlength="100" placeholder="Người phụ trách" value="${escapeHtml(item.responsible)}" />
+              <input class="issue-due-date" type="date" aria-label="Thời hạn khắc phục" value="${escapeHtml(item.dueDate)}" />
+              <div class="field-error issue-error"></div>
+            </div>
+
+            ${item.custom ? `
+              <div class="item-actions">
+                <button class="link-button remove-custom-item" type="button">Xóa nội dung tự thêm</button>
+              </div>
+            ` : ""}
+          </article>
+        `;
+      }
+
+      function bindChecklistEvents() {
+        document.querySelectorAll(".check-item").forEach(itemElement => {
+          const itemId = itemElement.dataset.itemId;
+          const item = currentItems.find(entry => entry.id === itemId);
+          if (!item) return;
+
+          itemElement.querySelectorAll(".status-btn").forEach(button => {
+            button.addEventListener("click", () => {
+              const nextStatus = button.dataset.status;
+              item.status = item.status === nextStatus ? "unchecked" : nextStatus;
+
+              if (item.status !== "fail") {
+                item.issueDescription = "";
+                item.responsible = "";
+                item.dueDate = "";
+                item.severity = "Trung bình";
+              }
+
+              renderChecklist();
+              saveCurrentDraftSnapshot();
+            });
+          });
+
+          const issueDescription = itemElement.querySelector(".issue-description");
+          const issueSeverity = itemElement.querySelector(".issue-severity");
+          const issueResponsible = itemElement.querySelector(".issue-responsible");
+          const issueDueDate = itemElement.querySelector(".issue-due-date");
+
+          if (issueDescription) {
+            issueDescription.addEventListener("input", event => {
+              item.issueDescription = event.target.value.slice(0, 600);
+              saveCurrentDraftSnapshot();
+            });
+          }
+
+          if (issueSeverity) {
+            issueSeverity.addEventListener("change", event => {
+              item.severity = event.target.value;
+              saveCurrentDraftSnapshot();
+            });
+          }
+
+          if (issueResponsible) {
+            issueResponsible.addEventListener("input", event => {
+              item.responsible = event.target.value.slice(0, 100);
+              saveCurrentDraftSnapshot();
+            });
+          }
+
+          if (issueDueDate) {
+            issueDueDate.addEventListener("change", event => {
+              item.dueDate = safeDate(event.target.value);
+              saveCurrentDraftSnapshot();
+            });
+          }
+
+          const removeButton = itemElement.querySelector(".remove-custom-item");
+          if (removeButton) {
+            removeButton.addEventListener("click", () => {
+              showConfirm(
+                "Xóa nội dung kiểm tra",
+                "Nội dung tự thêm và dữ liệu đã nhập trong nội dung này sẽ bị xóa.",
+                () => {
+                  currentItems = currentItems.filter(entry => entry.id !== itemId);
+                  renderChecklist();
+                  saveCurrentDraftSnapshot();
+                  showToast("Đã xóa nội dung kiểm tra.");
+                }
+              );
+            });
+          }
+        });
+      }
+
+      function collectFormData(status, preserveId = true) {
+        const stats = calculateStats(currentItems);
+        const existingRecord = preserveId && editingRecordId
+          ? records.find(record => record.id === editingRecordId)
+          : null;
+
+        return {
+          id: existingRecord?.id || editingRecordId || createId("record"),
+          status,
+          projectName: normalizeText(elements.projectName.value).slice(0, 120),
+          projectLocation: normalizeText(elements.projectLocation.value).slice(0, 160),
+          workCategory: normalizeText(elements.workCategory.value),
+          inspectionDate: safeDate(elements.inspectionDate.value),
+          inspectorName: normalizeText(elements.inspectorName.value).slice(0, 100),
+          contractorName: normalizeText(elements.contractorName.value).slice(0, 120),
+          generalNote: normalizeText(elements.generalNote.value).slice(0, 1000),
+          items: currentItems.map(item => ({
+            id: item.id,
+            category: normalizeText(item.category).slice(0, 100),
+            title: normalizeText(item.title).slice(0, 160),
+            description: normalizeText(item.description).slice(0, 500),
+            custom: Boolean(item.custom),
+            status: ["unchecked", "pass", "fail", "na"].includes(item.status) ? item.status : "unchecked",
+            issueDescription: normalizeText(item.issueDescription).slice(0, 600),
+            severity: ["Thấp", "Trung bình", "Cao"].includes(item.severity) ? item.severity : "Trung bình",
+            responsible: normalizeText(item.responsible).slice(0, 100),
+            dueDate: safeDate(item.dueDate)
+          })),
+          stats,
+          createdAt: existingRecord?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          version: "1.0.0"
+        };
+      }
+
+      function upsertRecord(record) {
+        const index = records.findIndex(entry => entry.id === record.id);
+        if (index >= 0) {
+          records[index] = record;
+        } else {
+          records.unshift(record);
+        }
+
+        records.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        records = records.slice(0, MAX_RECORDS);
+        return saveRecords();
+      }
+
+      function saveInspection(status) {
+        const isCompletion = status === "completed";
+
+        if (isCompletion && !validateCompletion()) {
+          return;
+        }
+
+        if (!isCompletion) {
+          const hasAnyValue =
+            normalizeText(elements.projectName.value) ||
+            normalizeText(elements.projectLocation.value) ||
+            normalizeText(elements.inspectorName.value) ||
+            currentItems.some(item => item.status !== "unchecked" || item.custom);
+
+          if (!hasAnyValue) {
+            showToast("Chưa có dữ liệu để lưu nháp.", true);
+            return;
+          }
+        }
+
+        const record = collectFormData(status, true);
+
+        if (!upsertRecord(record)) {
+          return;
+        }
+
+        editingRecordId = record.id;
+        clearCurrentDraftSnapshot();
+        updateInspectionHeader();
+        updateHomeOverview();
+        renderHistory();
+
+        showToast(isCompletion ? "Đã hoàn tất và lưu hồ sơ kiểm tra." : "Đã lưu bản nháp.");
+        goToPage("history");
+      }
+
+      function updateInspectionHeader() {
+        if (editingRecordId) {
+          elements.inspectionPageTitle.textContent = "Chỉnh sửa hồ sơ kiểm tra";
+          elements.inspectionPageSubtitle.textContent = "Các thay đổi sẽ cập nhật vào hồ sơ đang chọn.";
+        } else {
+          elements.inspectionPageTitle.textContent = "Tạo hồ sơ kiểm tra";
+          elements.inspectionPageSubtitle.textContent = "Nhập đầy đủ thông tin và đánh giá từng nội dung.";
+        }
+      }
+
+      function resetInspection(force = false) {
+        const performReset = () => {
+          editingRecordId = null;
+          elements.projectName.value = "";
+          elements.projectLocation.value = "";
+          elements.workCategory.value = "";
+          elements.inspectionDate.value = todayString();
+          elements.inspectorName.value = "";
+          elements.contractorName.value = "";
+          elements.generalNote.value = "";
+          elements.generalNoteCount.textContent = "0";
+          elements.checklistSearch.value = "";
+          elements.checklistFilter.value = "all";
+          currentItems = cloneDefaultItems();
+          clearFormErrors();
+          clearCurrentDraftSnapshot();
+          updateInspectionHeader();
+          renderChecklist();
+          showToast("Đã tạo biểu mẫu kiểm tra mới.");
+        };
+
+        if (force) {
+          performReset();
+          return;
+        }
+
+        showConfirm(
+          "Làm mới biểu mẫu",
+          "Toàn bộ dữ liệu chưa lưu trong biểu mẫu hiện tại sẽ bị xóa.",
+          performReset
+        );
+      }
+
+      function loadRecordForEdit(recordId) {
+        const record = records.find(entry => entry.id === recordId);
+        if (!record) {
+          showToast("Không tìm thấy hồ sơ cần chỉnh sửa.", true);
+          return;
+        }
+
+        editingRecordId = record.id;
+        elements.projectName.value = record.projectName || "";
+        elements.projectLocation.value = record.projectLocation || "";
+        elements.workCategory.value = record.workCategory || "";
+        elements.inspectionDate.value = safeDate(record.inspectionDate) || todayString();
+        elements.inspectorName.value = record.inspectorName || "";
+        elements.contractorName.value = record.contractorName || "";
+        elements.generalNote.value = record.generalNote || "";
+        elements.generalNoteCount.textContent = String((record.generalNote || "").length);
+        currentItems = Array.isArray(record.items)
+          ? record.items.map(item => ({
+              id: item.id || createId("item"),
+              category: item.category || "Nội dung bổ sung",
+              title: item.title || "Nội dung chưa đặt tên",
+              description: item.description || "",
+              custom: Boolean(item.custom),
+              status: ["unchecked", "pass", "fail", "na"].includes(item.status) ? item.status : "unchecked",
+              issueDescription: item.issueDescription || "",
+              severity: ["Thấp", "Trung bình", "Cao"].includes(item.severity) ? item.severity : "Trung bình",
+              responsible: item.responsible || "",
+              dueDate: safeDate(item.dueDate)
+            }))
+          : cloneDefaultItems();
+
+        elements.checklistSearch.value = "";
+        elements.checklistFilter.value = "all";
+        updateInspectionHeader();
+        renderChecklist();
+        goToPage("inspection");
+        showToast("Đã mở hồ sơ để chỉnh sửa.");
+      }
+
+      function deleteRecord(recordId) {
+        const record = records.find(entry => entry.id === recordId);
+        if (!record) return;
+
+        showConfirm(
+          "Xóa hồ sơ",
+          `Hồ sơ của công trình ${record.projectName || "chưa đặt tên"} sẽ bị xóa khỏi thiết bị.`,
+          () => {
+            records = records.filter(entry => entry.id !== recordId);
+            saveRecords();
+
+            if (editingRecordId === recordId) {
+              resetInspection(true);
+            }
+
+            renderHistory();
+            updateHomeOverview();
+            showToast("Đã xóa hồ sơ.");
+          }
+        );
+      }
+
+      function renderHistory() {
+        const keyword = normalizeText(elements.historySearch.value).toLocaleLowerCase("vi");
+        const filter = elements.historyFilter.value;
+
+        const filtered = records.filter(record => {
+          const text = [
+            record.projectName,
+            record.projectLocation,
+            record.inspectorName,
+            record.workCategory,
+            record.contractorName
+          ].join(" ").toLocaleLowerCase("vi");
+
+          const matchesKeyword = !keyword || text.includes(keyword);
+          const issueCount = calculateStats(record.items).fail;
+          const matchesFilter =
+            filter === "all" ||
+            record.status === filter ||
+            (filter === "hasIssues" && issueCount > 0);
+
+          return matchesKeyword && matchesFilter;
+        });
+
+        if (filtered.length === 0) {
+          const hasRecords = records.length > 0;
+          elements.historyContainer.innerHTML = `
+            <section class="card empty-state">
+              <div class="empty-illustration" aria-hidden="true"></div>
+              <h3>${hasRecords ? "Không tìm thấy hồ sơ phù hợp" : "Chưa có hồ sơ kiểm tra"}</h3>
+              <p>${hasRecords
+                ? "Hãy thay đổi từ khóa hoặc bộ lọc để xem các hồ sơ khác."
+                : "Tạo hồ sơ kiểm tra đầu tiên để lưu kết quả và theo dõi các vấn đề cần khắc phục."
+              }</p>
+              <button class="btn btn-primary" type="button" id="historyCreateBtn">Tạo kiểm tra mới</button>
+            </section>
+          `;
+
+          const historyCreateBtn = document.getElementById("historyCreateBtn");
+          if (historyCreateBtn) {
+            historyCreateBtn.addEventListener("click", () => {
+              resetInspection(true);
+              goToPage("inspection");
+            });
+          }
+          return;
+        }
+
+        elements.historyContainer.innerHTML = `
+          <div class="history-list">
+            ${filtered.map(record => {
+              const stats = calculateStats(record.items);
+              return `
+                <article class="card history-card">
+                  <div class="history-top">
+                    <div class="history-title">
+                      <h3>${escapeHtml(record.projectName || "Công trình chưa đặt tên")}</h3>
+                      <p>${escapeHtml(record.projectLocation || "Chưa có vị trí")} · ${escapeHtml(record.workCategory || "Chưa chọn hạng mục")}</p>
+                      <p>Kiểm tra ngày ${formatDate(record.inspectionDate)} · Cập nhật ${formatDateTime(record.updatedAt)}</p>
+                    </div>
+                    <span class="record-badge ${record.status === "completed" ? "completed" : "draft"}">
+                      ${record.status === "completed" ? "Đã hoàn tất" : "Bản nháp"}
+                    </span>
+                  </div>
+
+                  <div class="history-stats">
+                    <div class="history-stat">
+                      <strong>${stats.score}%</strong>
+                      <span>Tỷ lệ đạt</span>
+                    </div>
+                    <div class="history-stat">
+                      <strong>${stats.pass}</strong>
+                      <span>Nội dung đạt</span>
+                    </div>
+                    <div class="history-stat">
+                      <strong>${stats.fail}</strong>
+                      <span>Không đạt</span>
+                    </div>
+                    <div class="history-stat">
+                      <strong>${stats.checked}/${stats.total}</strong>
+                      <span>Đã đánh giá</span>
+                    </div>
+                  </div>
+
+                  <div class="history-actions">
+                    <button class="small-btn primary view-record" type="button" data-record-id="${escapeHtml(record.id)}">Xem chi tiết</button>
+                    <button class="small-btn edit-record" type="button" data-record-id="${escapeHtml(record.id)}">Chỉnh sửa</button>
+                    <button class="small-btn danger delete-record" type="button" data-record-id="${escapeHtml(record.id)}">Xóa</button>
+                  </div>
+                </article>
+              `;
+            }).join("")}
+          </div>
+        `;
+
+        elements.historyContainer.querySelectorAll(".view-record").forEach(button => {
+          button.addEventListener("click", () => showRecordDetail(button.dataset.recordId));
+        });
+
+        elements.historyContainer.querySelectorAll(".edit-record").forEach(button => {
+          button.addEventListener("click", () => loadRecordForEdit(button.dataset.recordId));
+        });
+
+        elements.historyContainer.querySelectorAll(".delete-record").forEach(button => {
+          button.addEventListener("click", () => deleteRecord(button.dataset.recordId));
+        });
+      }
+
+      function showRecordDetail(recordId) {
+        const record = records.find(entry => entry.id === recordId);
+        if (!record) {
+          showToast("Không tìm thấy hồ sơ.", true);
+          return;
+        }
+
+        const stats = calculateStats(record.items);
+        const issues = record.items.filter(item => item.status === "fail");
+
+        elements.detailModalBody.innerHTML = `
+          <div class="detail-summary">
+            <div class="detail-block">
+              <span>Công trình</span>
+              <strong>${escapeHtml(record.projectName || "Chưa có")}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Hạng mục</span>
+              <strong>${escapeHtml(record.workCategory || "Chưa có")}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Ngày kiểm tra</span>
+              <strong>${formatDate(record.inspectionDate)}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Trạng thái</span>
+              <strong>${record.status === "completed" ? "Đã hoàn tất" : "Bản nháp"}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Vị trí</span>
+              <strong>${escapeHtml(record.projectLocation || "Chưa có")}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Người kiểm tra</span>
+              <strong>${escapeHtml(record.inspectorName || "Chưa có")}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Đơn vị thi công</span>
+              <strong>${escapeHtml(record.contractorName || "Chưa có")}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Tỷ lệ đạt</span>
+              <strong>${stats.score}%</strong>
+            </div>
+          </div>
+
+          <div class="detail-summary">
+            <div class="detail-block">
+              <span>Tổng nội dung</span>
+              <strong>${stats.total}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Đạt</span>
+              <strong>${stats.pass}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Không đạt</span>
+              <strong>${stats.fail}</strong>
+            </div>
+            <div class="detail-block">
+              <span>Không áp dụng</span>
+              <strong>${stats.na}</strong>
+            </div>
+          </div>
+
+          ${record.generalNote ? `
+            <h3>Ghi chú chung</h3>
+            <div class="detail-block">
+              <strong>${escapeHtml(record.generalNote)}</strong>
+            </div>
+          ` : ""}
+
+          <h3>Vấn đề cần khắc phục</h3>
+          ${issues.length > 0 ? `
+            <div class="issue-list">
+              ${issues.map(item => `
+                <article class="issue-card">
+                  <h4>${escapeHtml(item.title)}</h4>
+                  <p>Mô tả: ${escapeHtml(item.issueDescription || "Chưa nhập")}</p>
+                  <p>Mức độ: ${escapeHtml(item.severity || "Trung bình")}</p>
+                  <p>Người phụ trách: ${escapeHtml(item.responsible || "Chưa nhập")}</p>
+                  <p>Thời hạn: ${formatDate(item.dueDate)}</p>
+                </article>
+              `).join("")}
+            </div>
+          ` : `
+            <div class="detail-block">
+              <strong>Không có nội dung không đạt trong hồ sơ này.</strong>
+            </div>
+          `}
+        `;
+
+        openModal(elements.detailModal);
+      }
+
+      function updateHomeOverview() {
+        const completed = records.filter(record => record.status === "completed");
+        const allStats = records.map(record => calculateStats(record.items));
+        const totalOpenIssues = allStats.reduce((sum, stats) => sum + stats.fail, 0);
+        const scoreBase = completed.length > 0 ? completed : records;
+        const scores = scoreBase.map(record => calculateStats(record.items).score);
+        const average = scores.length > 0
+          ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+          : 0;
+
+        elements.homeTotalRecords.textContent = String(records.length);
+        elements.homeCompletedRecords.textContent = String(completed.length);
+        elements.homeOpenIssues.textContent = String(totalOpenIssues);
+        elements.homeAverageScore.textContent = `${Number.isFinite(average) ? Math.max(0, average) : 0}%`;
+      }
+
+      function openCustomItemModal() {
+        elements.customCategory.value = "";
+        elements.customTitle.value = "";
+        elements.customDescription.value = "";
+        setFieldError("customCategory", "");
+        setFieldError("customTitle", "");
+        openModal(elements.customItemModal);
+      }
+
+      function addCustomItem() {
+        const category = normalizeText(elements.customCategory.value);
+        const title = normalizeText(elements.customTitle.value);
+        const description = normalizeText(elements.customDescription.value);
+
+        setFieldError("customCategory", "");
+        setFieldError("customTitle", "");
+
+        let valid = true;
+
+        if (!category) {
+          setFieldError("customCategory", "Vui lòng chọn nhóm kiểm tra.");
+          valid = false;
+        }
+
+        if (!title) {
+          setFieldError("customTitle", "Vui lòng nhập tên nội dung.");
+          valid = false;
+        }
+
+        if (!valid) return;
+
+        currentItems.push({
+          id: createId("item"),
+          category,
+          title: title.slice(0, 160),
+          description: description.slice(0, 500),
+          custom: true,
+          status: "unchecked",
+          issueDescription: "",
+          severity: "Trung bình",
+          responsible: "",
+          dueDate: ""
+        });
+
+        closeModal(elements.customItemModal);
+        elements.checklistSearch.value = "";
+        elements.checklistFilter.value = "all";
+        renderChecklist();
+        saveCurrentDraftSnapshot();
+        showToast("Đã thêm nội dung kiểm tra.");
+      }
+
+      function bindNavigation() {
+        elements.navButtons.forEach(button => {
+          button.addEventListener("click", () => goToPage(button.dataset.page));
+        });
+
+        document.querySelectorAll("[data-go]").forEach(button => {
+          button.addEventListener("click", () => goToPage(button.dataset.go));
+        });
+
+        elements.quickCreateBtn.addEventListener("click", () => {
+          resetInspection(true);
+          goToPage("inspection");
+        });
+      }
+
+      function bindInfoNavigation() {
+        const infoButtons = document.querySelectorAll("[data-info]");
+        const sections = document.querySelectorAll(".info-section");
+
+        infoButtons.forEach(button => {
+          button.addEventListener("click", () => {
+            const target = button.dataset.info;
+            infoButtons.forEach(entry => entry.classList.toggle("active", entry === button));
+            sections.forEach(section => section.classList.toggle("active", section.id === `info-${target}`));
+          });
+        });
+      }
+
+      function bindModals() {
+        document.querySelectorAll("[data-close-modal]").forEach(button => {
+          button.addEventListener("click", () => {
+            const modal = document.getElementById(button.dataset.closeModal);
+            if (modal) closeModal(modal);
+          });
+        });
+
+        [elements.customItemModal, elements.detailModal, elements.confirmModal].forEach(modal => {
+          modal.addEventListener("click", event => {
+            if (event.target === modal) {
+              closeModal(modal);
+            }
+          });
+        });
+
+        elements.confirmActionBtn.addEventListener("click", () => {
+          const callback = confirmCallback;
+          confirmCallback = null;
+          closeModal(elements.confirmModal);
+          if (typeof callback === "function") callback();
+        });
+      }
+
+      function restoreInitialForm() {
+        const snapshot = loadCurrentDraftSnapshot();
+        if (snapshot && Array.isArray(snapshot.items)) {
+          editingRecordId = null;
+          elements.projectName.value = snapshot.projectName || "";
+          elements.projectLocation.value = snapshot.projectLocation || "";
+          elements.workCategory.value = snapshot.workCategory || "";
+          elements.inspectionDate.value = safeDate(snapshot.inspectionDate) || todayString();
+          elements.inspectorName.value = snapshot.inspectorName || "";
+          elements.contractorName.value = snapshot.contractorName || "";
+          elements.generalNote.value = snapshot.generalNote || "";
+          elements.generalNoteCount.textContent = String((snapshot.generalNote || "").length);
+          currentItems = snapshot.items.map(item => ({
+            id: item.id || createId("item"),
+            category: item.category || "Nội dung bổ sung",
+            title: item.title || "Nội dung chưa đặt tên",
+            description: item.description || "",
+            custom: Boolean(item.custom),
+            status: ["unchecked", "pass", "fail", "na"].includes(item.status) ? item.status : "unchecked",
+            issueDescription: item.issueDescription || "",
+            severity: ["Thấp", "Trung bình", "Cao"].includes(item.severity) ? item.severity : "Trung bình",
+            responsible: item.responsible || "",
+            dueDate: safeDate(item.dueDate)
+          }));
+        } else {
+          elements.inspectionDate.value = todayString();
+          currentItems = cloneDefaultItems();
+        }
+
+        updateInspectionHeader();
+        renderChecklist();
+      }
+
+      function bindFormEvents() {
+        elements.generalNote.addEventListener("input", () => {
+          elements.generalNote.value = elements.generalNote.value.slice(0, 1000);
+          elements.generalNoteCount.textContent = String(elements.generalNote.value.length);
+          saveCurrentDraftSnapshot();
+        });
+
+        [
+          elements.projectName,
+          elements.projectLocation,
+          elements.workCategory,
+          elements.inspectionDate,
+          elements.inspectorName,
+          elements.contractorName
+        ].forEach(input => {
+          const eventName = input.tagName === "SELECT" || input.type === "date" ? "change" : "input";
+          input.addEventListener(eventName, () => {
+            setFieldError(input.id, "");
+            saveCurrentDraftSnapshot();
+          });
+        });
+
+        elements.checklistSearch.addEventListener("input", renderChecklist);
+        elements.checklistFilter.addEventListener("change", renderChecklist);
+        elements.historySearch.addEventListener("input", renderHistory);
+        elements.historyFilter.addEventListener("change", renderHistory);
+
+        elements.addCustomItemBtn.addEventListener("click", openCustomItemModal);
+        elements.confirmAddCustomItemBtn.addEventListener("click", addCustomItem);
+        elements.resetInspectionBtn.addEventListener("click", () => resetInspection(false));
+        elements.saveDraftBtn.addEventListener("click", () => saveInspection("draft"));
+        elements.completeInspectionBtn.addEventListener("click", () => saveInspection("completed"));
+      }
+
+      function initialize() {
+        storageAvailable = testStorage();
+        elements.storageWarning.classList.toggle("show", !storageAvailable);
+
+        records = loadRecords();
+        bindNavigation();
+        bindInfoNavigation();
+        bindModals();
+        bindFormEvents();
+        restoreInitialForm();
+        renderHistory();
+        updateHomeOverview();
+      }
+
+      initialize();
+    })();
+  </script>
+</body>
+</html>

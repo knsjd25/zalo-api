@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#175cd3">
+  <title>Tính chi phí in ấn</title>
+  <style>
+    :root{
+      --primary:#175cd3;
+      --primary-dark:#0b4ab3;
+      --primary-soft:#eaf2ff;
+      --accent:#f79009;
+      --success:#067647;
+      --danger:#b42318;
+      --text:#1d2939;
+      --muted:#667085;
+      --line:#d0d5dd;
+      --surface:#ffffff;
+      --background:#f5f7fb;
+      --shadow:0 10px 30px rgba(16,24,40,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(23,92,211,.10), transparent 30%),
+        var(--background);
+      line-height:1.5;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:1120px;margin:0 auto;min-height:100vh;padding-bottom:92px}
+    .hero{
+      margin:0 14px;
+      padding:28px 22px 22px;
+      color:#fff;
+      background:linear-gradient(135deg,#0b4ab3,#175cd3 58%,#3b82f6);
+      border-radius:0 0 26px 26px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:190px;height:190px;
+      right:-60px;top:-70px;
+      border:24px solid rgba(255,255,255,.10);
+      border-radius:40px;
+      transform:rotate(18deg);
+    }
+    .hero h1{margin:0 0 6px;font-size:clamp(26px,5vw,40px);letter-spacing:-.5px}
+    .hero p{margin:0;max-width:720px;color:#eaf2ff}
+    .nav{
+      display:flex;
+      gap:8px;
+      padding:14px;
+      overflow:auto;
+      scrollbar-width:none;
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(245,247,251,.94);
+      backdrop-filter:blur(10px);
+    }
+    .nav::-webkit-scrollbar{display:none}
+    .nav button{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 14px;
+      white-space:nowrap;
+      font-weight:700;
+    }
+    .nav button.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    main{padding:0 14px}
+    .page{display:none}
+    .page.active{display:block}
+    .card{
+      background:var(--surface);
+      border:1px solid #eaecf0;
+      border-radius:var(--radius);
+      padding:18px;
+      margin:0 0 14px;
+      box-shadow:var(--shadow);
+    }
+    .card h2,.card h3{margin-top:0}
+    .card h2{font-size:21px}
+    .card h3{font-size:17px;margin-bottom:12px}
+    .muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .field{min-width:0}
+    label{display:block;font-weight:700;margin-bottom:6px}
+    .hint{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+    input,select,textarea{
+      width:100%;
+      min-height:46px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 12px;
+      color:var(--text);
+      background:#fff;
+      outline:none;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(23,92,211,.10);
+    }
+    input.invalid,select.invalid{border-color:var(--danger);box-shadow:0 0 0 4px rgba(180,35,24,.08)}
+    .section-title{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      margin-bottom:12px;
+    }
+    .section-title h2,.section-title h3{margin:0}
+    .actions{display:flex;flex-wrap:wrap;gap:10px}
+    .btn{
+      min-height:44px;
+      border:none;
+      border-radius:12px;
+      padding:11px 16px;
+      font-weight:800;
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:var(--primary-soft);color:var(--primary-dark)}
+    .btn-neutral{background:#f2f4f7;color:#344054}
+    .btn-danger{background:#fee4e2;color:var(--danger)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .error-box,.notice{
+      display:none;
+      border-radius:12px;
+      padding:12px 14px;
+      margin-bottom:14px;
+    }
+    .error-box{background:#fef3f2;border:1px solid #fecdca;color:var(--danger)}
+    .notice{background:#ecfdf3;border:1px solid #abefc6;color:var(--success)}
+    .result{
+      display:none;
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid #b2ccff;
+    }
+    .result-total{
+      padding:18px;
+      border-radius:16px;
+      background:var(--primary);
+      color:#fff;
+      margin-bottom:14px;
+    }
+    .result-total small{display:block;color:#dbe8ff;margin-bottom:3px}
+    .result-total strong{font-size:clamp(28px,7vw,42px);line-height:1.15}
+    .result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .metric{
+      border:1px solid #eaecf0;
+      background:#fff;
+      border-radius:14px;
+      padding:13px;
+      min-width:0;
+    }
+    .metric span{display:block;color:var(--muted);font-size:12px}
+    .metric strong{display:block;margin-top:4px;word-break:break-word}
+    .breakdown{margin-top:14px;border-top:1px solid #eaecf0}
+    .row{
+      display:flex;justify-content:space-between;gap:12px;
+      padding:10px 0;border-bottom:1px dashed #eaecf0;
+    }
+    .row:last-child{border-bottom:0}
+    .row b{text-align:right}
+    .history-list{display:grid;gap:12px}
+    .history-item{
+      border:1px solid #eaecf0;
+      border-radius:15px;
+      padding:14px;
+      background:#fff;
+    }
+    .history-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .history-name{font-weight:800}
+    .history-meta{color:var(--muted);font-size:13px;margin-top:3px}
+    .history-price{font-weight:900;color:var(--primary);text-align:right;white-space:nowrap}
+    .history-actions{display:flex;gap:8px;margin-top:12px}
+    .history-actions button{flex:1}
+    .empty{
+      text-align:center;
+      padding:34px 18px;
+      border:1px dashed #b2ccff;
+      border-radius:16px;
+      background:#f8fbff;
+    }
+    .empty strong{display:block;margin-bottom:6px}
+    details{
+      border:1px solid #eaecf0;
+      border-radius:14px;
+      padding:12px 14px;
+      margin:10px 0;
+      background:#fff;
+    }
+    summary{font-weight:800;cursor:pointer}
+    .legal h3{margin-top:22px}
+    .legal p{margin:8px 0;color:#475467}
+    .version-box{
+      display:grid;grid-template-columns:auto 1fr;gap:8px 14px;
+      align-items:start;
+    }
+    .version-box b{color:#344054}
+    .footer{
+      text-align:center;color:var(--muted);font-size:12px;padding:24px 14px 8px;
+    }
+    .bottom-bar{
+      position:fixed;
+      left:0;right:0;bottom:0;
+      padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.96);
+      border-top:1px solid #eaecf0;
+      z-index:20;
+      display:none;
+    }
+    .bottom-bar .btn{width:100%}
+    @media (max-width:760px){
+      .grid,.grid-3,.result-grid{grid-template-columns:1fr}
+      .hero{margin:0;border-radius:0 0 24px 24px}
+      .card{padding:16px}
+      .bottom-bar{display:block}
+      .app{padding-bottom:94px}
+      .desktop-calc{display:none}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <h1>Tính chi phí in ấn</h1>
+    <p>Ước tính giấy, lượt in, gia công, lợi nhuận, thuế và giá bán theo từng đơn hàng.</p>
+  </header>
+
+  <nav class="nav" aria-label="Điều hướng">
+    <button class="active" data-page="calculator">Tính chi phí</button>
+    <button data-page="history">Lịch sử</button>
+    <button data-page="guide">Hướng dẫn</button>
+    <button data-page="info">Thông tin</button>
+    <button data-page="terms">Điều khoản</button>
+    <button data-page="privacy">Quyền riêng tư</button>
+  </nav>
+
+  <main>
+    <section id="calculator" class="page active">
+      <div id="errorBox" class="error-box" role="alert"></div>
+      <div id="noticeBox" class="notice" role="status"></div>
+
+      <form id="costForm" novalidate>
+        <div class="card">
+          <div class="section-title">
+            <h2>Thông tin đơn hàng</h2>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="jobName">Tên đơn hàng</label>
+              <input id="jobName" maxlength="80" value="Tờ rơi quảng cáo" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="productType">Loại sản phẩm</label>
+              <select id="productType">
+                <option value="Tờ rơi">Tờ rơi</option>
+                <option value="Danh thiếp">Danh thiếp</option>
+                <option value="Poster">Poster</option>
+                <option value="Catalogue">Catalogue</option>
+                <option value="Nhãn dán">Nhãn dán</option>
+                <option value="Bao bì giấy">Bao bì giấy</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="quantity">Số lượng sản phẩm</label>
+              <input id="quantity" type="number" min="1" step="1" value="1000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="pages">Số trang hoặc số mặt nội dung</label>
+              <input id="pages" type="number" min="1" step="1" value="2" inputmode="numeric">
+              <span class="hint">Tờ in hai mặt thường nhập 2.</span>
+            </div>
+            <div class="field">
+              <label for="finishedWidth">Chiều rộng thành phẩm, mm</label>
+              <input id="finishedWidth" type="number" min="1" step="0.1" value="148" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="finishedHeight">Chiều cao thành phẩm, mm</label>
+              <input id="finishedHeight" type="number" min="1" step="0.1" value="210" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="printSides">Số mặt có thể in trên một tờ giấy</label>
+              <select id="printSides">
+                <option value="1">In một mặt</option>
+                <option value="2" selected>In hai mặt</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="colorMode">Chế độ màu</label>
+              <select id="colorMode">
+                <option value="Màu">In màu</option>
+                <option value="Đen trắng">In đen trắng</option>
+                <option value="Màu pha">Màu pha</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Giấy và bình trang</h2>
+          <div class="grid-3">
+            <div class="field">
+              <label for="sheetWidth">Chiều rộng khổ giấy, mm</label>
+              <input id="sheetWidth" type="number" min="1" step="0.1" value="650" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="sheetHeight">Chiều cao khổ giấy, mm</label>
+              <input id="sheetHeight" type="number" min="1" step="0.1" value="860" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="gap">Khoảng cách cắt, mm</label>
+              <input id="gap" type="number" min="0" step="0.1" value="3" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="reamPrice">Giá một ram giấy, đồng</label>
+              <input id="reamPrice" type="number" min="0" step="1000" value="850000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="sheetsPerReam">Số tờ trong một ram</label>
+              <input id="sheetsPerReam" type="number" min="1" step="1" value="500" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="wasteRate">Tỷ lệ hao hụt, phần trăm</label>
+              <input id="wasteRate" type="number" min="0" max="100" step="0.1" value="5" inputmode="decimal">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Chi phí in và gia công</h2>
+          <div class="grid-3">
+            <div class="field">
+              <label for="inkPerImpression">Chi phí một lượt in, đồng</label>
+              <input id="inkPerImpression" type="number" min="0" step="1" value="450" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="designFee">Thiết kế và dàn trang, đồng</label>
+              <input id="designFee" type="number" min="0" step="1000" value="200000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="setupFee">Khuôn, bản in và thiết lập, đồng</label>
+              <input id="setupFee" type="number" min="0" step="1000" value="300000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="cuttingFee">Cắt và xén toàn đơn, đồng</label>
+              <input id="cuttingFee" type="number" min="0" step="1000" value="100000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="finishingPerUnit">Gia công mỗi sản phẩm, đồng</label>
+              <input id="finishingPerUnit" type="number" min="0" step="1" value="150" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="packingPerUnit">Đóng gói mỗi sản phẩm, đồng</label>
+              <input id="packingPerUnit" type="number" min="0" step="1" value="50" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="deliveryFee">Vận chuyển, đồng</label>
+              <input id="deliveryFee" type="number" min="0" step="1000" value="100000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="otherFee">Chi phí khác, đồng</label>
+              <input id="otherFee" type="number" min="0" step="1000" value="0" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="profitRate">Lợi nhuận dự kiến, phần trăm</label>
+              <input id="profitRate" type="number" min="0" max="1000" step="0.1" value="20" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="vatRate">Thuế giá trị gia tăng, phần trăm</label>
+              <input id="vatRate" type="number" min="0" max="100" step="0.1" value="8" inputmode="decimal">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="actions">
+            <button class="btn btn-primary desktop-calc" type="submit">Tính chi phí</button>
+            <button class="btn btn-secondary" type="button" id="saveBtn" disabled>Lưu kết quả</button>
+            <button class="btn btn-neutral" type="button" id="resetBtn">Đặt lại dữ liệu</button>
+          </div>
+        </div>
+      </form>
+
+      <div id="resultCard" class="card result" aria-live="polite">
+        <div class="section-title">
+          <h2>Kết quả ước tính</h2>
+          <span class="muted" id="resultTime"></span>
+        </div>
+        <div class="result-total">
+          <small>Tổng giá bán đã gồm thuế</small>
+          <strong id="totalPrice">0 đồng</strong>
+        </div>
+        <div class="result-grid">
+          <div class="metric"><span>Giá bán mỗi sản phẩm</span><strong id="unitPrice">0 đồng</strong></div>
+          <div class="metric"><span>Sản phẩm trên một tờ</span><strong id="piecesPerSheet">0</strong></div>
+          <div class="metric"><span>Số tờ giấy có hao hụt</span><strong id="paperSheets">0</strong></div>
+          <div class="metric"><span>Số lượt in có hao hụt</span><strong id="impressions">0</strong></div>
+          <div class="metric"><span>Chi phí trước lợi nhuận</span><strong id="baseCost">0 đồng</strong></div>
+          <div class="metric"><span>Lợi nhuận dự kiến</span><strong id="profitAmount">0 đồng</strong></div>
+        </div>
+        <div class="breakdown">
+          <div class="row"><span>Chi phí giấy</span><b id="paperCost">0 đồng</b></div>
+          <div class="row"><span>Chi phí lượt in</span><b id="inkCost">0 đồng</b></div>
+          <div class="row"><span>Thiết kế và thiết lập</span><b id="prepressCost">0 đồng</b></div>
+          <div class="row"><span>Gia công và đóng gói</span><b id="finishingCost">0 đồng</b></div>
+          <div class="row"><span>Vận chuyển và chi phí khác</span><b id="extraCost">0 đồng</b></div>
+          <div class="row"><span>Thuế giá trị gia tăng</span><b id="vatAmount">0 đồng</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="history" class="page">
+      <div class="card">
+        <div class="section-title">
+          <div>
+            <h2>Lịch sử tính toán</h2>
+            <div class="muted">Lưu tối đa 100 kết quả trên thiết bị.</div>
+          </div>
+          <button class="btn btn-danger" id="clearHistoryBtn" type="button">Xóa tất cả</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </section>
+
+    <section id="guide" class="page">
+      <div class="card">
+        <h2>Hướng dẫn sử dụng</h2>
+        <details open>
+          <summary>Bước 1. Nhập thông tin sản phẩm</summary>
+          <p>Nhập số lượng, kích thước thành phẩm, số trang hoặc số mặt nội dung và chế độ in một mặt hoặc hai mặt.</p>
+        </details>
+        <details>
+          <summary>Bước 2. Khai báo khổ giấy</summary>
+          <p>Nhập kích thước tờ giấy lớn, giá một ram, số tờ trong một ram và tỷ lệ hao hụt. Hệ thống tự chọn cách xoay sản phẩm để lấy số lượng bình trang lớn hơn.</p>
+        </details>
+        <details>
+          <summary>Bước 3. Nhập chi phí sản xuất</summary>
+          <p>Nhập chi phí lượt in, thiết kế, bản in, cắt xén, gia công, đóng gói, vận chuyển và các khoản khác.</p>
+        </details>
+        <details>
+          <summary>Bước 4. Kiểm tra giá bán</summary>
+          <p>Kết quả gồm chi phí giấy, số lượt in, tổng chi phí, lợi nhuận, thuế, tổng giá bán và giá bán trên mỗi sản phẩm.</p>
+        </details>
+        <details>
+          <summary>Cách tính bình trang</summary>
+          <p>Hệ thống so sánh hai hướng đặt sản phẩm trên khổ giấy. Khoảng cách cắt được tính giữa các sản phẩm. Khi kích thước thành phẩm lớn hơn khổ giấy, hệ thống sẽ yêu cầu sửa dữ liệu.</p>
+        </details>
+        <details>
+          <summary>Lưu ý về kết quả</summary>
+          <p>Kết quả chỉ là ước tính nội bộ. Giá thực tế có thể thay đổi theo loại giấy, công nghệ in, số màu, yêu cầu gia công, tỷ lệ bù hao và báo giá của nhà cung cấp.</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="info" class="page">
+      <div class="card">
+        <h2>Thông tin ứng dụng</h2>
+        <p><b>Tên ứng dụng:</b> Tính chi phí in ấn</p>
+        <p><b>Chức năng:</b> Hỗ trợ ước tính vật tư, chi phí sản xuất, lợi nhuận, thuế và giá bán cho đơn hàng in.</p>
+        <p><b>Đối tượng sử dụng:</b> Cơ sở in, đơn vị quảng cáo, nhân viên báo giá và người quản lý đơn hàng.</p>
+        <p><b>Phạm vi:</b> Công cụ hỗ trợ tính toán, không thay thế báo giá chính thức hoặc chứng từ kế toán.</p>
+      </div>
+      <div class="card">
+        <h2>Phiên bản</h2>
+        <div class="version-box">
+          <b>Phiên bản</b><span>1.0.0</span>
+          <b>Ngày cập nhật</b><span>30 tháng 7 năm 2026</span>
+          <b>Nội dung</b><span>Hoàn thiện tính chi phí giấy, lượt in, gia công, lợi nhuận, thuế, giá bán và lịch sử kết quả.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="terms" class="page">
+      <div class="card legal">
+        <h2>Điều khoản sử dụng</h2>
+        <p>Có hiệu lực từ ngày 30 tháng 7 năm 2026.</p>
+        <h3>1. Phạm vi sử dụng</h3>
+        <p>Ứng dụng cung cấp công cụ ước tính chi phí in ấn dựa trên dữ liệu do người dùng nhập. Người dùng chịu trách nhiệm kiểm tra dữ liệu trước khi sử dụng kết quả.</p>
+        <h3>2. Tính chất của kết quả</h3>
+        <p>Kết quả chỉ có mục đích tham khảo và hỗ trợ lập báo giá. Kết quả không phải hợp đồng, hóa đơn, chứng từ kế toán hoặc cam kết giá của nhà cung cấp.</p>
+        <h3>3. Trách nhiệm của người dùng</h3>
+        <p>Người dùng không được sử dụng ứng dụng cho hoạt động trái pháp luật, gây nhầm lẫn hoặc làm ảnh hưởng đến quyền và lợi ích hợp pháp của tổ chức, cá nhân khác.</p>
+        <h3>4. Giới hạn trách nhiệm</h3>
+        <p>Nhà cung cấp ứng dụng không chịu trách nhiệm đối với thiệt hại phát sinh do dữ liệu nhập sai, biến động giá vật tư, thay đổi thuế, sai số sản xuất hoặc quyết định kinh doanh dựa hoàn toàn vào kết quả ước tính.</p>
+        <h3>5. Thay đổi dịch vụ</h3>
+        <p>Chức năng và nội dung có thể được điều chỉnh để cải thiện độ ổn định, tính chính xác và khả năng sử dụng.</p>
+      </div>
+    </section>
+
+    <section id="privacy" class="page">
+      <div class="card legal">
+        <h2>Chính sách quyền riêng tư</h2>
+        <p>Có hiệu lực từ ngày 30 tháng 7 năm 2026.</p>
+        <h3>1. Dữ liệu được xử lý</h3>
+        <p>Ứng dụng xử lý thông tin đơn hàng và các số liệu chi phí do người dùng tự nhập để thực hiện phép tính.</p>
+        <h3>2. Lưu lịch sử</h3>
+        <p>Kết quả đã lưu được giữ trên thiết bị của người dùng bằng bộ nhớ trình duyệt. Ứng dụng không yêu cầu nhập họ tên, số điện thoại, địa chỉ hoặc thông tin thanh toán.</p>
+        <h3>3. Mục đích sử dụng</h3>
+        <p>Dữ liệu được dùng để hiển thị kết quả, mở lại phép tính và quản lý lịch sử trên thiết bị.</p>
+        <h3>4. Xóa dữ liệu</h3>
+        <p>Người dùng có thể xóa từng kết quả hoặc xóa toàn bộ lịch sử trong mục Lịch sử.</p>
+        <h3>5. Bảo mật thiết bị</h3>
+        <p>Người dùng nên bảo vệ thiết bị và tài khoản Zalo để tránh người khác truy cập dữ liệu đã lưu.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Tính chi phí in ấn phiên bản 1.0.0</div>
+</div>
+
+<div class="bottom-bar">
+  <button class="btn btn-primary" id="mobileCalcBtn" type="button">Tính chi phí</button>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "printing_cost_history_v1";
+  const MAX_HISTORY = 100;
+  const form = document.getElementById("costForm");
+  const errorBox = document.getElementById("errorBox");
+  const noticeBox = document.getElementById("noticeBox");
+  const resultCard = document.getElementById("resultCard");
+  const saveBtn = document.getElementById("saveBtn");
+  let latestResult = null;
+
+  const ids = [
+    "jobName","productType","quantity","pages","finishedWidth","finishedHeight",
+    "printSides","colorMode","sheetWidth","sheetHeight","gap","reamPrice",
+    "sheetsPerReam","wasteRate","inkPerImpression","designFee","setupFee",
+    "cuttingFee","finishingPerUnit","packingPerUnit","deliveryFee","otherFee",
+    "profitRate","vatRate"
+  ];
+
+  const el = id => document.getElementById(id);
+  const number = id => Number(el(id).value);
+  const money = value => new Intl.NumberFormat("vi-VN", {
+    style:"currency", currency:"VND", maximumFractionDigits:0
+  }).format(Number.isFinite(value) ? Math.max(0, value) : 0);
+  const integer = value => new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits:0
+  }).format(Number.isFinite(value) ? Math.max(0, value) : 0);
+
+  function showError(messages){
+    errorBox.innerHTML = messages.map(x => "<div>" + escapeHtml(x) + "</div>").join("");
+    errorBox.style.display = messages.length ? "block" : "none";
+    if(messages.length) errorBox.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+
+  function showNotice(message){
+    noticeBox.textContent = message;
+    noticeBox.style.display = "block";
+    window.setTimeout(() => noticeBox.style.display = "none", 2600);
+  }
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    })[char]);
+  }
+
+  function validate(){
+    document.querySelectorAll(".invalid").forEach(x => x.classList.remove("invalid"));
+    const errors = [];
+    const requiredPositive = [
+      ["quantity","Số lượng sản phẩm phải lớn hơn 0."],
+      ["pages","Số trang hoặc số mặt nội dung phải lớn hơn 0."],
+      ["finishedWidth","Chiều rộng thành phẩm phải lớn hơn 0."],
+      ["finishedHeight","Chiều cao thành phẩm phải lớn hơn 0."],
+      ["sheetWidth","Chiều rộng khổ giấy phải lớn hơn 0."],
+      ["sheetHeight","Chiều cao khổ giấy phải lớn hơn 0."],
+      ["sheetsPerReam","Số tờ trong một ram phải lớn hơn 0."]
+    ];
+    const nonNegative = [
+      ["gap","Khoảng cách cắt không được nhỏ hơn 0."],
+      ["reamPrice","Giá ram giấy không được nhỏ hơn 0."],
+      ["wasteRate","Tỷ lệ hao hụt không được nhỏ hơn 0."],
+      ["inkPerImpression","Chi phí lượt in không được nhỏ hơn 0."],
+      ["designFee","Chi phí thiết kế không được nhỏ hơn 0."],
+      ["setupFee","Chi phí thiết lập không được nhỏ hơn 0."],
+      ["cuttingFee","Chi phí cắt xén không được nhỏ hơn 0."],
+      ["finishingPerUnit","Chi phí gia công không được nhỏ hơn 0."],
+      ["packingPerUnit","Chi phí đóng gói không được nhỏ hơn 0."],
+      ["deliveryFee","Chi phí vận chuyển không được nhỏ hơn 0."],
+      ["otherFee","Chi phí khác không được nhỏ hơn 0."],
+      ["profitRate","Tỷ lệ lợi nhuận không được nhỏ hơn 0."],
+      ["vatRate","Thuế không được nhỏ hơn 0."]
+    ];
+
+    requiredPositive.forEach(([id,msg]) => {
+      const value = number(id);
+      if(!Number.isFinite(value) || value <= 0){
+        errors.push(msg); el(id).classList.add("invalid");
+      }
+    });
+    nonNegative.forEach(([id,msg]) => {
+      const value = number(id);
+      if(!Number.isFinite(value) || value < 0){
+        errors.push(msg); el(id).classList.add("invalid");
+      }
+    });
+
+    if(number("wasteRate") > 100){
+      errors.push("Tỷ lệ hao hụt không được lớn hơn 100 phần trăm.");
+      el("wasteRate").classList.add("invalid");
+    }
+    if(number("vatRate") > 100){
+      errors.push("Thuế không được lớn hơn 100 phần trăm.");
+      el("vatRate").classList.add("invalid");
+    }
+    if(number("profitRate") > 1000){
+      errors.push("Tỷ lệ lợi nhuận không được lớn hơn 1000 phần trăm.");
+      el("profitRate").classList.add("invalid");
+    }
+    if(!el("jobName").value.trim()){
+      errors.push("Vui lòng nhập tên đơn hàng.");
+      el("jobName").classList.add("invalid");
+    }
+    return errors;
+  }
+
+  function calculate(){
+    const errors = validate();
+    if(errors.length){
+      showError(errors);
+      latestResult = null;
+      saveBtn.disabled = true;
+      resultCard.style.display = "none";
+      return null;
+    }
+
+    const fw = number("finishedWidth");
+    const fh = number("finishedHeight");
+    const sw = number("sheetWidth");
+    const sh = number("sheetHeight");
+    const gap = number("gap");
+
+    const countA = Math.floor((sw + gap) / (fw + gap)) * Math.floor((sh + gap) / (fh + gap));
+    const countB = Math.floor((sw + gap) / (fh + gap)) * Math.floor((sh + gap) / (fw + gap));
+    const piecesPerSheet = Math.max(countA, countB);
+
+    if(!Number.isFinite(piecesPerSheet) || piecesPerSheet < 1){
+      showError(["Kích thước thành phẩm không thể bố trí trên khổ giấy đã nhập."]);
+      latestResult = null;
+      saveBtn.disabled = true;
+      resultCard.style.display = "none";
+      return null;
+    }
+
+    const quantity = Math.ceil(number("quantity"));
+    const pages = Math.ceil(number("pages"));
+    const sides = Number(el("printSides").value);
+    const wasteFactor = 1 + number("wasteRate") / 100;
+
+    const contentUnits = quantity * pages;
+    const rawImpressions = Math.ceil(contentUnits / piecesPerSheet);
+    const rawPaperSheets = Math.ceil(rawImpressions / sides);
+    const impressions = Math.ceil(rawImpressions * wasteFactor);
+    const paperSheets = Math.ceil(rawPaperSheets * wasteFactor);
+
+    const paperUnitCost = number("reamPrice") / number("sheetsPerReam");
+    const paperCost = paperSheets * paperUnitCost;
+    const inkCost = impressions * number("inkPerImpression");
+    const prepressCost = number("designFee") + number("setupFee") + number("cuttingFee");
+    const finishingCost = quantity * (number("finishingPerUnit") + number("packingPerUnit"));
+    const extraCost = number("deliveryFee") + number("otherFee");
+    const baseCost = paperCost + inkCost + prepressCost + finishingCost + extraCost;
+    const profitAmount = baseCost * number("profitRate") / 100;
+    const taxable = baseCost + profitAmount;
+    const vatAmount = taxable * number("vatRate") / 100;
+    const totalPrice = taxable + vatAmount;
+    const unitPrice = totalPrice / quantity;
+
+    const numericValues = [
+      piecesPerSheet, impressions, paperSheets, paperCost, inkCost, prepressCost,
+      finishingCost, extraCost, baseCost, profitAmount, vatAmount, totalPrice, unitPrice
+    ];
+    if(numericValues.some(v => !Number.isFinite(v) || v < 0)){
+      showError(["Không thể tính kết quả với dữ liệu hiện tại. Vui lòng kiểm tra lại các trường đã nhập."]);
+      latestResult = null;
+      saveBtn.disabled = true;
+      resultCard.style.display = "none";
+      return null;
+    }
+
+    const inputs = {};
+    ids.forEach(id => inputs[id] = el(id).value);
+
+    latestResult = {
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      inputs,
+      summary: {
+        jobName: el("jobName").value.trim(),
+        productType: el("productType").value,
+        quantity, pages, piecesPerSheet, impressions, paperSheets,
+        paperCost, inkCost, prepressCost, finishingCost, extraCost,
+        baseCost, profitAmount, vatAmount, totalPrice, unitPrice
+      }
+    };
+
+    el("totalPrice").textContent = money(totalPrice);
+    el("unitPrice").textContent = money(unitPrice);
+    el("piecesPerSheet").textContent = integer(piecesPerSheet);
+    el("paperSheets").textContent = integer(paperSheets);
+    el("impressions").textContent = integer(impressions);
+    el("baseCost").textContent = money(baseCost);
+    el("profitAmount").textContent = money(profitAmount);
+    el("paperCost").textContent = money(paperCost);
+    el("inkCost").textContent = money(inkCost);
+    el("prepressCost").textContent = money(prepressCost);
+    el("finishingCost").textContent = money(finishingCost);
+    el("extraCost").textContent = money(extraCost);
+    el("vatAmount").textContent = money(vatAmount);
+    el("resultTime").textContent = new Date().toLocaleString("vi-VN");
+    resultCard.style.display = "block";
+    saveBtn.disabled = false;
+    showError([]);
+    resultCard.scrollIntoView({behavior:"smooth",block:"start"});
+    return latestResult;
+  }
+
+  function getHistory(){
+    try{
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    }catch{
+      return [];
+    }
+  }
+
+  function setHistory(items){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, MAX_HISTORY)));
+      return true;
+    }catch{
+      showError(["Không thể lưu dữ liệu trên thiết bị này."]);
+      return false;
+    }
+  }
+
+  function saveLatest(){
+    if(!latestResult){
+      showError(["Vui lòng tính chi phí trước khi lưu."]);
+      return;
+    }
+    const history = getHistory();
+    history.unshift({...latestResult, id: Date.now(), createdAt:new Date().toISOString()});
+    if(setHistory(history)){
+      renderHistory();
+      showNotice("Đã lưu kết quả vào lịch sử.");
+    }
+  }
+
+  function loadRecord(id){
+    const record = getHistory().find(item => item.id === id);
+    if(!record || !record.inputs){
+      showError(["Không tìm thấy dữ liệu đã lưu."]);
+      return;
+    }
+    ids.forEach(key => {
+      if(record.inputs[key] !== undefined && el(key)) el(key).value = record.inputs[key];
+    });
+    switchPage("calculator");
+    calculate();
+  }
+
+  function deleteRecord(id){
+    const next = getHistory().filter(item => item.id !== id);
+    if(setHistory(next)){
+      renderHistory();
+      showNotice("Đã xóa kết quả.");
+    }
+  }
+
+  function renderHistory(){
+    const list = el("historyList");
+    const history = getHistory();
+    el("clearHistoryBtn").disabled = history.length === 0;
+    if(!history.length){
+      list.innerHTML = '<div class="empty"><strong>Chưa có kết quả đã lưu</strong><span class="muted">Hãy tính chi phí và chọn Lưu kết quả.</span></div>';
+      return;
+    }
+    list.innerHTML = history.map(item => {
+      const s = item.summary || {};
+      const date = item.createdAt ? new Date(item.createdAt).toLocaleString("vi-VN") : "";
+      return `
+        <article class="history-item">
+          <div class="history-top">
+            <div>
+              <div class="history-name">${escapeHtml(s.jobName || "Đơn hàng in")}</div>
+              <div class="history-meta">${escapeHtml(s.productType || "")} · ${integer(s.quantity || 0)} sản phẩm · ${escapeHtml(date)}</div>
+            </div>
+            <div class="history-price">${money(s.totalPrice || 0)}</div>
+          </div>
+          <div class="history-meta">Giá mỗi sản phẩm: ${money(s.unitPrice || 0)} · Giấy: ${integer(s.paperSheets || 0)} tờ</div>
+          <div class="history-actions">
+            <button class="btn btn-secondary" data-load="${item.id}" type="button">Mở lại</button>
+            <button class="btn btn-danger" data-delete="${item.id}" type="button">Xóa</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function resetForm(){
+    form.reset();
+    const defaults = {
+      jobName:"Tờ rơi quảng cáo", productType:"Tờ rơi", quantity:"1000", pages:"2",
+      finishedWidth:"148", finishedHeight:"210", printSides:"2", colorMode:"Màu",
+      sheetWidth:"650", sheetHeight:"860", gap:"3", reamPrice:"850000",
+      sheetsPerReam:"500", wasteRate:"5", inkPerImpression:"450",
+      designFee:"200000", setupFee:"300000", cuttingFee:"100000",
+      finishingPerUnit:"150", packingPerUnit:"50", deliveryFee:"100000",
+      otherFee:"0", profitRate:"20", vatRate:"8"
+    };
+    Object.entries(defaults).forEach(([key,value]) => el(key).value = value);
+    document.querySelectorAll(".invalid").forEach(x => x.classList.remove("invalid"));
+    showError([]);
+    resultCard.style.display = "none";
+    saveBtn.disabled = true;
+    latestResult = null;
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function switchPage(pageId){
+    document.querySelectorAll(".page").forEach(page => page.classList.toggle("active", page.id === pageId));
+    document.querySelectorAll(".nav button").forEach(btn => btn.classList.toggle("active", btn.dataset.page === pageId));
+    if(pageId === "history") renderHistory();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    calculate();
+  });
+  el("mobileCalcBtn").addEventListener("click", () => {
+    if(!el("calculator").classList.contains("active")) switchPage("calculator");
+    calculate();
+  });
+  saveBtn.addEventListener("click", saveLatest);
+  el("resetBtn").addEventListener("click", resetForm);
+  el("clearHistoryBtn").addEventListener("click", () => {
+    if(getHistory().length === 0) return;
+    if(window.confirm("Bạn có chắc muốn xóa toàn bộ lịch sử không?")){
+      setHistory([]);
+      renderHistory();
+      showNotice("Đã xóa toàn bộ lịch sử.");
+    }
+  });
+  el("historyList").addEventListener("click", event => {
+    const loadId = event.target.getAttribute("data-load");
+    const deleteId = event.target.getAttribute("data-delete");
+    if(loadId) loadRecord(Number(loadId));
+    if(deleteId && window.confirm("Bạn có chắc muốn xóa kết quả này không?")) deleteRecord(Number(deleteId));
+  });
+  document.querySelectorAll(".nav button").forEach(btn => {
+    btn.addEventListener("click", () => switchPage(btn.dataset.page));
+  });
+  ids.forEach(id => {
+    el(id).addEventListener("input", () => el(id).classList.remove("invalid"));
+  });
+
+  renderHistory();
+})();
+</script>
+</body>
+</html>

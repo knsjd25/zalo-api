@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>Quản lý đơn hàng quảng cáo</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --success: #15803d;
+      --success-soft: #f0fdf4;
+      --warning: #b45309;
+      --warning-soft: #fffbeb;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --info: #0369a1;
+      --info-soft: #f0f9ff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --surface: #ffffff;
+      --bg: #f5f7fb;
+      --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, .12);
+    }
+    input[readonly] { background: #f8fafc; color: #475467; }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid rgba(228,231,236,.9);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #2563eb, #60a5fa);
+      box-shadow: 0 10px 24px rgba(37,99,235,.25);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      flex: 0 0 auto;
+    }
+    .brand h1 { margin: 0; font-size: 16px; line-height: 1.25; }
+    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+    .header-actions { display: flex; gap: 8px; }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 18px 16px 44px; }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 2px 0 14px;
+      scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #344054;
+      border-radius: 999px;
+      padding: 10px 14px;
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .nav-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .page { display: none; }
+    .page.active { display: block; animation: fade .18s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .hero {
+      border-radius: 24px;
+      padding: 22px;
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 54%, #60a5fa 100%);
+      color: #fff;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1.5fr .8fr;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .hero h2 { margin: 0 0 8px; font-size: clamp(22px, 4vw, 34px); line-height: 1.16; }
+    .hero p { margin: 0; opacity: .9; line-height: 1.6; }
+    .hero-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 9px; }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 750;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      text-decoration: none;
+    }
+    .btn-primary { color: #fff; background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-light { color: var(--primary-dark); background: #fff; }
+    .btn-outline { color: #344054; border: 1px solid var(--line); background: #fff; }
+    .btn-danger { color: var(--danger); background: var(--danger-soft); border: 1px solid #fecaca; }
+    .btn-success { color: #fff; background: var(--success); }
+    .btn-sm { min-height: 34px; padding: 7px 10px; font-size: 12px; border-radius: 10px; }
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #344054;
+      font-size: 19px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(16,24,40,.04);
+    }
+    .stat-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stat-value { font-size: clamp(19px, 3vw, 28px); font-weight: 850; margin-top: 7px; line-height: 1.15; word-break: break-word; }
+    .stat-note { margin-top: 7px; color: var(--muted); font-size: 12px; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 18px rgba(16,24,40,.04);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .panel-head {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-head h3 { margin: 0; font-size: 17px; }
+    .panel-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .panel-body { padding: 16px; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, minmax(140px, .7fr)) auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .field label {
+      display: block;
+      font-weight: 750;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: #344054;
+    }
+    .required::after { content: " *"; color: var(--danger); }
+    .field-help { color: var(--muted); font-size: 11px; margin-top: 5px; line-height: 1.45; }
+    .error-text { color: var(--danger); font-size: 11px; margin-top: 5px; min-height: 16px; }
+
+    .order-list { display: grid; gap: 11px; }
+    .order-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 1.35fr .8fr .8fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+    .order-card.sample { border-style: dashed; border-color: #93c5fd; background: #f8fbff; }
+    .order-main { min-width: 0; }
+    .order-topline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .order-code { font-weight: 850; color: var(--primary-dark); }
+    .order-title { margin-top: 6px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .order-sub { margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .order-metric strong { display: block; font-size: 14px; }
+    .order-metric span { color: var(--muted); font-size: 11px; display: block; margin-top: 4px; }
+    .order-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .badge-blue { color: #1d4ed8; background: #dbeafe; }
+    .badge-green { color: #166534; background: #dcfce7; }
+    .badge-yellow { color: #92400e; background: #fef3c7; }
+    .badge-red { color: #991b1b; background: #fee2e2; }
+    .badge-gray { color: #475467; background: #f2f4f7; }
+    .badge-purple { color: #6d28d9; background: #ede9fe; }
+
+    .empty {
+      text-align: center;
+      padding: 42px 16px;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 42px; margin-bottom: 12px; }
+    .empty h3 { color: var(--text); margin: 0 0 7px; }
+    .empty p { margin: 0 auto 15px; max-width: 440px; line-height: 1.55; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .summary-box {
+      background: var(--primary-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .summary-box div span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+    .summary-box div strong { font-size: 14px; }
+
+    .timeline { display: grid; gap: 0; }
+    .timeline-item { position: relative; padding: 0 0 18px 27px; border-left: 2px solid #dbeafe; margin-left: 6px; }
+    .timeline-item:last-child { border-left-color: transparent; }
+    .timeline-dot { position: absolute; left: -7px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px #dbeafe; }
+    .timeline-title { font-weight: 800; }
+    .timeline-meta { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .timeline-note { color: #475467; font-size: 13px; margin-top: 6px; line-height: 1.5; }
+
+    .info-card { padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .info-card h3 { margin: 0 0 8px; }
+    .info-card p, .info-card li { color: #475467; line-height: 1.65; font-size: 14px; }
+    .info-card ul, .info-card ol { padding-left: 20px; }
+    .info-card + .info-card { margin-top: 12px; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(16,24,40,.55);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: min(780px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 24px 64px rgba(16,24,40,.3);
+    }
+    .modal-head {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .modal-head h3 { margin: 0; }
+    .modal-body { padding: 16px; }
+    .modal-foot {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      padding: 14px 16px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+    }
+
+    .toast-wrap { position: fixed; right: 16px; bottom: 16px; z-index: 200; display: grid; gap: 8px; max-width: min(380px, calc(100vw - 32px)); }
+    .toast { background: #101828; color: #fff; border-radius: 13px; padding: 12px 14px; box-shadow: var(--shadow); font-size: 13px; animation: toastIn .2s ease-out; }
+    .toast.success { background: #166534; }
+    .toast.error { background: #991b1b; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } }
+
+    .confirm-box { text-align: center; padding: 5px 0; }
+    .confirm-box .confirm-icon { font-size: 44px; }
+    .confirm-box h3 { margin: 8px 0; }
+    .confirm-box p { color: var(--muted); line-height: 1.55; margin: 0; }
+
+    .progress {
+      height: 9px;
+      border-radius: 999px;
+      background: #eef2f6;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress > span { display: block; height: 100%; background: var(--success); border-radius: inherit; }
+
+    .notice {
+      border-radius: 14px;
+      padding: 13px 14px;
+      line-height: 1.55;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .notice-info { color: #075985; background: var(--info-soft); border: 1px solid #bae6fd; }
+    .notice-warning { color: #92400e; background: var(--warning-soft); border: 1px solid #fde68a; }
+
+    footer { color: var(--muted); text-align: center; font-size: 12px; padding: 22px 10px 4px; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: repeat(2, 1fr); }
+      .filters .search-field { grid-column: 1 / -1; }
+      .order-card { grid-template-columns: 1fr 1fr; }
+      .order-main { grid-column: 1 / -1; }
+      .order-actions { grid-column: 1 / -1; justify-content: flex-start; }
+      .summary-box { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .topbar-inner { padding: 10px 12px; }
+      .brand p { display: none; }
+      .container { padding: 14px 12px 36px; }
+      .hero { grid-template-columns: 1fr; padding: 18px; border-radius: 20px; }
+      .hero-actions { justify-content: flex-start; }
+      .stats-grid, .two-col, .three-col, .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: auto; }
+      .filters { grid-template-columns: 1fr; }
+      .filters .search-field { grid-column: auto; }
+      .order-card { grid-template-columns: 1fr; }
+      .order-main, .order-actions { grid-column: auto; }
+      .order-actions { justify-content: stretch; }
+      .order-actions .btn { flex: 1; }
+      .summary-box { grid-template-columns: 1fr 1fr; }
+      .modal-backdrop { padding: 0; }
+      .modal { width: 100%; border-radius: 22px 22px 0 0; max-height: 95vh; }
+      .header-actions .btn span { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark">AD</div>
+          <div>
+            <h1>Quản lý đơn hàng quảng cáo</h1>
+            <p>Theo dõi hợp đồng, thực hiện và thanh toán</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="exportBtn" type="button">Xuất CSV</button>
+          <button class="btn btn-primary" id="quickAddBtn" type="button">Thêm đơn</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <nav class="nav-tabs" aria-label="Điều hướng chính">
+        <button class="nav-btn active" data-page="dashboard" type="button">Tổng quan</button>
+        <button class="nav-btn" data-page="orders" type="button">Đơn hàng</button>
+        <button class="nav-btn" data-page="history" type="button">Lịch sử</button>
+        <button class="nav-btn" data-page="guide" type="button">Hướng dẫn</button>
+        <button class="nav-btn" data-page="info" type="button">Thông tin ứng dụng</button>
+      </nav>
+
+      <section class="page active" id="page-dashboard">
+        <div class="hero">
+          <div>
+            <h2>Quản lý toàn bộ đơn quảng cáo tại một nơi</h2>
+            <p>Tạo đơn, kiểm soát thời gian chạy, theo dõi giá trị hợp đồng, số tiền đã thu và công nợ còn lại.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="btn btn-light" id="heroAddBtn" type="button">Tạo đơn hàng mới</button>
+            <button class="btn btn-outline" id="goOrdersBtn" type="button">Xem danh sách</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Tổng số đơn</div>
+            <div class="stat-value" id="statOrders">0</div>
+            <div class="stat-note" id="statActiveNote">0 đơn đang thực hiện</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Giá trị hợp đồng</div>
+            <div class="stat-value" id="statRevenue">0 ₫</div>
+            <div class="stat-note">Không tính đơn đã hủy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Đã thu</div>
+            <div class="stat-value" id="statPaid">0 ₫</div>
+            <div class="stat-note" id="statPaidRate">Tỷ lệ thu 0%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Công nợ còn lại</div>
+            <div class="stat-value" id="statDue">0 ₫</div>
+            <div class="stat-note" id="statDueNote">0 đơn còn công nợ</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Đơn cần theo dõi</h3>
+                <p>Ưu tiên đơn đang chạy, sắp bắt đầu hoặc còn công nợ</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="order-list" id="attentionList"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Phân bổ theo trạng thái</h3>
+                <p>Số lượng đơn hiện tại</p>
+              </div>
+            </div>
+            <div class="panel-body" id="statusSummary"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-orders">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Danh sách đơn hàng</h3>
+              <p>Tìm kiếm, lọc, cập nhật và ghi nhận thanh toán</p>
+            </div>
+            <button class="btn btn-primary" id="ordersAddBtn" type="button">Thêm đơn hàng</button>
+          </div>
+          <div class="panel-body">
+            <div class="filters">
+              <div class="field search-field">
+                <label for="searchInput">Tìm kiếm</label>
+                <input id="searchInput" type="search" placeholder="Mã đơn, khách hàng, chiến dịch hoặc số điện thoại" />
+              </div>
+              <div class="field">
+                <label for="statusFilter">Trạng thái đơn</label>
+                <select id="statusFilter">
+                  <option value="all">Tất cả</option>
+                  <option value="draft">Nháp</option>
+                  <option value="confirmed">Đã xác nhận</option>
+                  <option value="running">Đang thực hiện</option>
+                  <option value="completed">Đã hoàn thành</option>
+                  <option value="cancelled">Đã hủy</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="paymentFilter">Thanh toán</label>
+                <select id="paymentFilter">
+                  <option value="all">Tất cả</option>
+                  <option value="unpaid">Chưa thanh toán</option>
+                  <option value="partial">Thanh toán một phần</option>
+                  <option value="paid">Đã thanh toán đủ</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="channelFilter">Kênh quảng cáo</label>
+                <select id="channelFilter">
+                  <option value="all">Tất cả</option>
+                </select>
+              </div>
+              <button class="btn btn-outline" id="resetFilterBtn" type="button">Đặt lại</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3 id="orderListTitle">Tất cả đơn hàng</h3>
+              <p id="orderListCount">0 kết quả</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="order-list" id="orderList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="page-history">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Lịch sử thao tác</h3>
+              <p>Các thay đổi được lưu trên thiết bị hiện tại</p>
+            </div>
+            <button class="btn btn-danger" id="clearHistoryBtn" type="button">Xóa lịch sử</button>
+          </div>
+          <div class="panel-body">
+            <div id="historyList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="page-guide">
+        <div class="notice notice-info">Dữ liệu được lưu cục bộ trên thiết bị. Hãy kiểm tra kỹ đơn hàng trước khi xóa dữ liệu trình duyệt hoặc đổi thiết bị.</div>
+        <div class="info-card">
+          <h3>Quy trình sử dụng</h3>
+          <ol>
+            <li>Chọn Thêm đơn hàng và nhập đầy đủ thông tin khách hàng, chiến dịch, thời gian thực hiện và giá trị đơn.</li>
+            <li>Kiểm tra phần tạm tính, giảm giá, thuế và tổng thanh toán trước khi lưu.</li>
+            <li>Cập nhật trạng thái đơn theo tiến độ thực tế từ nháp đến hoàn thành.</li>
+            <li>Dùng Ghi nhận thu tiền để cập nhật khoản đã thanh toán. Số tiền không được vượt quá công nợ còn lại.</li>
+            <li>Dùng bộ lọc để tìm đơn theo trạng thái, thanh toán hoặc kênh quảng cáo.</li>
+          </ol>
+        </div>
+        <div class="info-card">
+          <h3>Quy tắc nhập dữ liệu</h3>
+          <ul>
+            <li>Tên khách hàng, tên chiến dịch, kênh quảng cáo, ngày bắt đầu và ngày kết thúc là bắt buộc.</li>
+            <li>Số lượng và đơn giá phải lớn hơn 0.</li>
+            <li>Giảm giá và thuế phải từ 0 đến 100 phần trăm.</li>
+            <li>Ngày kết thúc không được sớm hơn ngày bắt đầu.</li>
+            <li>Đơn đã hủy không được tính vào tổng giá trị hợp đồng.</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>Dữ liệu mẫu</h3>
+          <p>Khi mở ứng dụng lần đầu, hệ thống tạo một số đơn mẫu có nhãn Dữ liệu mẫu để giúp kiểm tra đầy đủ giao diện và chức năng. Bạn có thể sửa hoặc xóa từng đơn mẫu.</p>
+        </div>
+      </section>
+
+      <section class="page" id="page-info">
+        <div class="info-card">
+          <h3>Giới thiệu ứng dụng</h3>
+          <p>Quản lý đơn hàng quảng cáo giúp ghi nhận thông tin khách hàng, chiến dịch quảng cáo, thời gian thực hiện, giá trị hợp đồng, trạng thái xử lý và thanh toán. Ứng dụng phù hợp cho đơn vị cung cấp dịch vụ quảng cáo cần theo dõi đơn hàng trên điện thoại.</p>
+        </div>
+        <div class="info-card">
+          <h3>Điều khoản sử dụng</h3>
+          <p>Người dùng chịu trách nhiệm về tính chính xác của dữ liệu đã nhập. Ứng dụng hỗ trợ quản lý nội bộ và không thay thế hợp đồng, hóa đơn, chứng từ kế toán hoặc xác nhận thanh toán chính thức. Không sử dụng ứng dụng để lưu thông tin trái pháp luật hoặc dữ liệu không có quyền xử lý.</p>
+          <p>Người dùng cần tự sao lưu dữ liệu quan trọng. Nhà cung cấp không chịu trách nhiệm đối với mất dữ liệu do xóa bộ nhớ trình duyệt, thay đổi thiết bị, lỗi hệ thống hoặc thao tác nhầm.</p>
+        </div>
+        <div class="info-card">
+          <h3>Chính sách quyền riêng tư</h3>
+          <p>Dữ liệu đơn hàng được lưu cục bộ trên thiết bị trong phiên bản này. Ứng dụng không yêu cầu đăng nhập và không tự động gửi dữ liệu đơn hàng đến máy chủ. Người dùng không nên nhập dữ liệu nhạy cảm không cần thiết.</p>
+        </div>
+        <div class="info-card">
+          <h3>Thông tin phiên bản</h3>
+          <p>Tên phiên bản: 1.0.0</p>
+          <p>Nội dung phiên bản: Hoàn thiện chức năng tạo sửa xóa và tìm kiếm đơn hàng quảng cáo. Bổ sung theo dõi trạng thái thực hiện thanh toán công nợ lịch sử thao tác hướng dẫn sử dụng điều khoản và quyền riêng tư.</p>
+        </div>
+        <div class="info-card">
+          <h3>Kiểm tra trước khi gửi xét duyệt</h3>
+          <ul>
+            <li>Xây dựng và tải lên đúng phiên bản mới nhất.</li>
+            <li>Kiểm tra tạo sửa xóa tìm kiếm lọc và thanh toán trên điện thoại thật.</li>
+            <li>Kiểm tra lưu dữ liệu sau khi đóng và mở lại Mini App.</li>
+            <li>Kiểm tra xuất dữ liệu trong Zalo Mini App WebView trước khi mô tả tính năng này trên trang xét duyệt.</li>
+            <li>Đảm bảo tên ứng dụng mô tả chức năng danh mục và ngành nghề doanh nghiệp phù hợp.</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>Quản lý đơn hàng quảng cáo phiên bản 1.0.0</footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h3 id="orderModalTitle">Thêm đơn hàng</h3>
+          <div class="field-help" id="orderModalSub">Nhập thông tin hợp đồng quảng cáo</div>
+        </div>
+        <button class="icon-btn" type="button" data-close="orderModal" aria-label="Đóng">×</button>
+      </div>
+      <form id="orderForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="orderId" />
+          <div class="form-grid">
+            <div class="field">
+              <label for="orderCode">Mã đơn</label>
+              <input id="orderCode" type="text" readonly />
+            </div>
+            <div class="field">
+              <label class="required" for="customerName">Tên khách hàng</label>
+              <input id="customerName" type="text" maxlength="100" placeholder="Ví dụ Công ty Minh Phát" />
+              <div class="error-text" data-error-for="customerName"></div>
+            </div>
+            <div class="field">
+              <label for="customerPhone">Số điện thoại</label>
+              <input id="customerPhone" type="tel" maxlength="20" inputmode="tel" placeholder="Ví dụ 0901234567" />
+              <div class="error-text" data-error-for="customerPhone"></div>
+            </div>
+            <div class="field">
+              <label for="customerEmail">Email</label>
+              <input id="customerEmail" type="email" maxlength="120" placeholder="Ví dụ lienhe@congty.vn" />
+              <div class="error-text" data-error-for="customerEmail"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="campaignName">Tên chiến dịch</label>
+              <input id="campaignName" type="text" maxlength="140" placeholder="Ví dụ Quảng bá khai trương" />
+              <div class="error-text" data-error-for="campaignName"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="adChannel">Kênh quảng cáo</label>
+              <select id="adChannel">
+                <option value="">Chọn kênh quảng cáo</option>
+                <option>Facebook</option>
+                <option>Zalo</option>
+                <option>Google</option>
+                <option>TikTok</option>
+                <option>Biển bảng ngoài trời</option>
+                <option>In ấn quảng cáo</option>
+                <option>Thiết kế nội dung</option>
+                <option>Khác</option>
+              </select>
+              <div class="error-text" data-error-for="adChannel"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="startDate">Ngày bắt đầu</label>
+              <input id="startDate" type="date" />
+              <div class="error-text" data-error-for="startDate"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="endDate">Ngày kết thúc</label>
+              <input id="endDate" type="date" />
+              <div class="error-text" data-error-for="endDate"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="quantity">Số lượng</label>
+              <input id="quantity" type="number" min="0.01" step="0.01" inputmode="decimal" value="1" />
+              <div class="error-text" data-error-for="quantity"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="unitPrice">Đơn giá</label>
+              <input id="unitPrice" type="number" min="1" step="1000" inputmode="numeric" placeholder="0" />
+              <div class="error-text" data-error-for="unitPrice"></div>
+            </div>
+            <div class="field">
+              <label for="discountRate">Giảm giá phần trăm</label>
+              <input id="discountRate" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="0" />
+              <div class="error-text" data-error-for="discountRate"></div>
+            </div>
+            <div class="field">
+              <label for="taxRate">Thuế phần trăm</label>
+              <input id="taxRate" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="0" />
+              <div class="error-text" data-error-for="taxRate"></div>
+            </div>
+            <div class="field">
+              <label for="orderStatus">Trạng thái đơn</label>
+              <select id="orderStatus">
+                <option value="draft">Nháp</option>
+                <option value="confirmed">Đã xác nhận</option>
+                <option value="running">Đang thực hiện</option>
+                <option value="completed">Đã hoàn thành</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="orderNote">Ghi chú</label>
+              <textarea id="orderNote" maxlength="500" placeholder="Nội dung yêu cầu, vị trí quảng cáo, thông tin bàn giao hoặc ghi chú khác"></textarea>
+            </div>
+            <div class="full summary-box" aria-live="polite">
+              <div><span>Tạm tính</span><strong id="calcSubtotal">0 ₫</strong></div>
+              <div><span>Giảm giá</span><strong id="calcDiscount">0 ₫</strong></div>
+              <div><span>Thuế</span><strong id="calcTax">0 ₫</strong></div>
+              <div><span>Tổng thanh toán</span><strong id="calcTotal">0 ₫</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-outline" type="button" data-close="orderModal">Hủy</button>
+          <button class="btn btn-primary" type="submit">Lưu đơn hàng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+    <div class="modal" style="max-width:560px">
+      <div class="modal-head">
+        <div>
+          <h3 id="paymentModalTitle">Ghi nhận thu tiền</h3>
+          <div class="field-help" id="paymentOrderInfo"></div>
+        </div>
+        <button class="icon-btn" type="button" data-close="paymentModal" aria-label="Đóng">×</button>
+      </div>
+      <form id="paymentForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="paymentOrderId" />
+          <div class="form-grid">
+            <div class="field">
+              <label for="currentPaid">Đã thu</label>
+              <input id="currentPaid" type="text" readonly />
+            </div>
+            <div class="field">
+              <label for="remainingDue">Còn lại</label>
+              <input id="remainingDue" type="text" readonly />
+            </div>
+            <div class="field full">
+              <label class="required" for="paymentAmount">Số tiền thu lần này</label>
+              <input id="paymentAmount" type="number" min="1" step="1000" inputmode="numeric" placeholder="0" />
+              <div class="error-text" data-error-for="paymentAmount"></div>
+            </div>
+            <div class="field">
+              <label class="required" for="paymentDate">Ngày thu tiền</label>
+              <input id="paymentDate" type="date" />
+              <div class="error-text" data-error-for="paymentDate"></div>
+            </div>
+            <div class="field">
+              <label for="paymentMethod">Phương thức</label>
+              <select id="paymentMethod">
+                <option value="Chuyển khoản">Chuyển khoản</option>
+                <option value="Tiền mặt">Tiền mặt</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="paymentNote">Ghi chú thanh toán</label>
+              <textarea id="paymentNote" maxlength="300" placeholder="Số tham chiếu hoặc nội dung thanh toán"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-outline" type="button" data-close="paymentModal">Hủy</button>
+          <button class="btn btn-success" type="submit">Xác nhận thu tiền</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal" style="max-width:700px">
+      <div class="modal-head">
+        <div>
+          <h3 id="detailTitle">Chi tiết đơn hàng</h3>
+          <div class="field-help" id="detailSubtitle"></div>
+        </div>
+        <button class="icon-btn" type="button" data-close="detailModal" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body" id="detailContent"></div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" type="button" data-close="detailModal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal" style="max-width:470px">
+      <div class="modal-body">
+        <div class="confirm-box">
+          <div class="confirm-icon">!</div>
+          <h3 id="confirmTitle">Xác nhận thao tác</h3>
+          <p id="confirmMessage"></p>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" type="button" data-close="confirmModal">Hủy</button>
+        <button class="btn btn-danger" id="confirmActionBtn" type="button">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const STORAGE_KEY = 'zalo_ad_order_manager_v1';
+      const HISTORY_KEY = 'zalo_ad_order_history_v1';
+      const INIT_KEY = 'zalo_ad_order_initialized_v1';
+      const MAX_HISTORY = 200;
+
+      const statusMap = {
+        draft: { label: 'Nháp', cls: 'badge-gray' },
+        confirmed: { label: 'Đã xác nhận', cls: 'badge-blue' },
+        running: { label: 'Đang thực hiện', cls: 'badge-yellow' },
+        completed: { label: 'Đã hoàn thành', cls: 'badge-green' },
+        cancelled: { label: 'Đã hủy', cls: 'badge-red' }
+      };
+
+      const paymentMap = {
+        unpaid: { label: 'Chưa thanh toán', cls: 'badge-red' },
+        partial: { label: 'Thanh toán một phần', cls: 'badge-yellow' },
+        paid: { label: 'Đã thanh toán đủ', cls: 'badge-green' }
+      };
+
+      let orders = [];
+      let history = [];
+      let pendingConfirm = null;
+      const memoryStorage = new Map();
+
+      function storageGet(key) {
+        try {
+          const value = window.localStorage.getItem(key);
+          if (value !== null) memoryStorage.set(String(key), value);
+          return value;
+        } catch (error) {
+          return memoryStorage.has(String(key)) ? memoryStorage.get(String(key)) : null;
+        }
+      }
+
+      function storageSet(key, value) {
+        const text = String(value);
+        memoryStorage.set(String(key), text);
+        try {
+          window.localStorage.setItem(key, text);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      const $ = (id) => document.getElementById(id);
+      const qsa = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+      function safeNumber(value, fallback = 0) {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : fallback;
+      }
+
+      function roundMoney(value) {
+        const n = safeNumber(value, 0);
+        return Math.max(0, Math.round(n));
+      }
+
+      function formatMoney(value) {
+        return new Intl.NumberFormat('vi-VN', {
+          style: 'currency',
+          currency: 'VND',
+          maximumFractionDigits: 0
+        }).format(roundMoney(value));
+      }
+
+      function formatDate(value) {
+        if (!value) return 'Chưa có';
+        const date = new Date(value + 'T00:00:00');
+        if (Number.isNaN(date.getTime())) return 'Không hợp lệ';
+        return new Intl.DateTimeFormat('vi-VN').format(date);
+      }
+
+      function formatDateTime(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'Không hợp lệ';
+        return new Intl.DateTimeFormat('vi-VN', {
+          dateStyle: 'short',
+          timeStyle: 'short'
+        }).format(date);
+      }
+
+      function todayISO() {
+        const d = new Date();
+        const tz = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - tz).toISOString().slice(0, 10);
+      }
+
+      function addDaysISO(days) {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        const tz = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - tz).toISOString().slice(0, 10);
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      function normalizeOrder(raw) {
+        const quantity = Math.max(0, safeNumber(raw.quantity));
+        const unitPrice = Math.max(0, safeNumber(raw.unitPrice));
+        const discountRate = Math.min(100, Math.max(0, safeNumber(raw.discountRate)));
+        const taxRate = Math.min(100, Math.max(0, safeNumber(raw.taxRate)));
+        const subtotal = roundMoney(quantity * unitPrice);
+        const discount = roundMoney(subtotal * discountRate / 100);
+        const taxable = Math.max(0, subtotal - discount);
+        const tax = roundMoney(taxable * taxRate / 100);
+        const total = roundMoney(taxable + tax);
+        const payments = Array.isArray(raw.payments) ? raw.payments.map(p => ({
+          id: String(p.id || cryptoId()),
+          amount: roundMoney(p.amount),
+          date: p.date || todayISO(),
+          method: String(p.method || 'Khác'),
+          note: String(p.note || ''),
+          createdAt: p.createdAt || new Date().toISOString()
+        })).filter(p => p.amount > 0) : [];
+        const paid = Math.min(total, payments.reduce((sum, p) => sum + p.amount, 0));
+        return {
+          id: String(raw.id || cryptoId()),
+          code: String(raw.code || nextOrderCode()),
+          customerName: String(raw.customerName || '').trim(),
+          customerPhone: String(raw.customerPhone || '').trim(),
+          customerEmail: String(raw.customerEmail || '').trim(),
+          campaignName: String(raw.campaignName || '').trim(),
+          channel: String(raw.channel || '').trim(),
+          startDate: String(raw.startDate || ''),
+          endDate: String(raw.endDate || ''),
+          quantity,
+          unitPrice,
+          discountRate,
+          taxRate,
+          subtotal,
+          discount,
+          tax,
+          total,
+          status: statusMap[raw.status] ? raw.status : 'draft',
+          note: String(raw.note || '').trim(),
+          payments,
+          paid,
+          due: Math.max(0, total - paid),
+          isSample: Boolean(raw.isSample),
+          createdAt: raw.createdAt || new Date().toISOString(),
+          updatedAt: raw.updatedAt || new Date().toISOString()
+        };
+      }
+
+      function cryptoId() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+        return 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+      }
+
+      function nextOrderCode() {
+        const stamp = todayISO().replaceAll('-', '').slice(2);
+        const sameDay = orders.filter(o => String(o.code).startsWith('AD-' + stamp + '-')).length + 1;
+        return `AD-${stamp}-${String(sameDay).padStart(3, '0')}`;
+      }
+
+      function createSampleOrders() {
+        const now = new Date().toISOString();
+        return [
+          normalizeOrder({
+            id: cryptoId(), code: 'AD-MAU-001', customerName: 'Công ty Minh Phát', customerPhone: '0901234567', customerEmail: 'lienhe@minhphat.vn',
+            campaignName: 'Quảng bá khai trương chi nhánh', channel: 'Facebook', startDate: addDaysISO(-3), endDate: addDaysISO(10),
+            quantity: 1, unitPrice: 12000000, discountRate: 5, taxRate: 8, status: 'running', note: 'Theo dõi nội dung và ngân sách mỗi ngày.',
+            payments: [{ id: cryptoId(), amount: 6000000, date: addDaysISO(-2), method: 'Chuyển khoản', note: 'Thanh toán đợt một', createdAt: now }],
+            isSample: true, createdAt: now, updatedAt: now
+          }),
+          normalizeOrder({
+            id: cryptoId(), code: 'AD-MAU-002', customerName: 'Cửa hàng An Nhiên', customerPhone: '0912345678', customerEmail: '',
+            campaignName: 'Thiết kế và in bộ nhận diện cửa hàng', channel: 'In ấn quảng cáo', startDate: addDaysISO(2), endDate: addDaysISO(14),
+            quantity: 350, unitPrice: 28000, discountRate: 0, taxRate: 8, status: 'confirmed', note: 'Bàn giao theo hai đợt.',
+            payments: [], isSample: true, createdAt: now, updatedAt: now
+          }),
+          normalizeOrder({
+            id: cryptoId(), code: 'AD-MAU-003', customerName: 'Nhà hàng Hương Việt', customerPhone: '0987654321', customerEmail: '',
+            campaignName: 'Quảng cáo Zalo trong tháng', channel: 'Zalo', startDate: addDaysISO(-20), endDate: addDaysISO(-2),
+            quantity: 1, unitPrice: 8500000, discountRate: 0, taxRate: 0, status: 'completed', note: 'Đã bàn giao báo cáo kết quả.',
+            payments: [{ id: cryptoId(), amount: 8500000, date: addDaysISO(-3), method: 'Tiền mặt', note: 'Đã thanh toán đủ', createdAt: now }],
+            isSample: true, createdAt: now, updatedAt: now
+          })
+        ];
+      }
+
+      function loadData() {
+        try {
+          const savedOrders = JSON.parse(storageGet(STORAGE_KEY) || '[]');
+          const savedHistory = JSON.parse(storageGet(HISTORY_KEY) || '[]');
+          orders = Array.isArray(savedOrders) ? savedOrders.map(normalizeOrder) : [];
+          history = Array.isArray(savedHistory) ? savedHistory.slice(0, MAX_HISTORY) : [];
+          if (!storageGet(INIT_KEY)) {
+            orders = createSampleOrders();
+            history = [{
+              id: cryptoId(),
+              type: 'init',
+              title: 'Đã tạo dữ liệu mẫu',
+              note: 'Ba đơn mẫu được thêm để kiểm tra đầy đủ chức năng ứng dụng.',
+              time: new Date().toISOString()
+            }];
+            storageSet(INIT_KEY, '1');
+            saveData();
+          }
+        } catch (error) {
+          orders = createSampleOrders();
+          history = [];
+          saveData();
+          showToast('Không thể đọc dữ liệu cũ. Hệ thống đã khởi tạo lại dữ liệu mẫu.', 'error');
+        }
+      }
+
+      function saveData() {
+        try {
+          storageSet(STORAGE_KEY, JSON.stringify(orders));
+          storageSet(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)));
+        } catch (error) {
+          return;
+        }
+      }
+
+      function addHistory(type, title, note = '') {
+        history.unshift({ id: cryptoId(), type, title, note, time: new Date().toISOString() });
+        history = history.slice(0, MAX_HISTORY);
+        saveData();
+      }
+
+      function getPaymentStatus(order) {
+        if (order.total <= 0 || order.paid <= 0) return 'unpaid';
+        if (order.paid >= order.total) return 'paid';
+        return 'partial';
+      }
+
+      function getOrderById(id) {
+        return orders.find(o => o.id === id) || null;
+      }
+
+      function calculateFormAmounts() {
+        const quantity = Math.max(0, safeNumber($('quantity').value));
+        const unitPrice = Math.max(0, safeNumber($('unitPrice').value));
+        const discountRate = Math.min(100, Math.max(0, safeNumber($('discountRate').value)));
+        const taxRate = Math.min(100, Math.max(0, safeNumber($('taxRate').value)));
+        const subtotal = roundMoney(quantity * unitPrice);
+        const discount = roundMoney(subtotal * discountRate / 100);
+        const taxable = Math.max(0, subtotal - discount);
+        const tax = roundMoney(taxable * taxRate / 100);
+        const total = roundMoney(taxable + tax);
+        $('calcSubtotal').textContent = formatMoney(subtotal);
+        $('calcDiscount').textContent = formatMoney(discount);
+        $('calcTax').textContent = formatMoney(tax);
+        $('calcTotal').textContent = formatMoney(total);
+        return { quantity, unitPrice, discountRate, taxRate, subtotal, discount, tax, total };
+      }
+
+      function setFieldError(fieldId, message) {
+        const el = document.querySelector(`[data-error-for="${fieldId}"]`);
+        if (el) el.textContent = message || '';
+        const field = $(fieldId);
+        if (field) field.setAttribute('aria-invalid', message ? 'true' : 'false');
+      }
+
+      function clearErrors(form) {
+        qsa('.error-text', form).forEach(el => el.textContent = '');
+        qsa('[aria-invalid="true"]', form).forEach(el => el.setAttribute('aria-invalid', 'false'));
+      }
+
+      function validateOrderForm() {
+        clearErrors($('orderForm'));
+        let valid = true;
+        const customerName = $('customerName').value.trim();
+        const customerPhone = $('customerPhone').value.trim();
+        const customerEmail = $('customerEmail').value.trim();
+        const campaignName = $('campaignName').value.trim();
+        const channel = $('adChannel').value.trim();
+        const startDate = $('startDate').value;
+        const endDate = $('endDate').value;
+        const amounts = calculateFormAmounts();
+
+        if (!customerName) { setFieldError('customerName', 'Vui lòng nhập tên khách hàng.'); valid = false; }
+        if (!campaignName) { setFieldError('campaignName', 'Vui lòng nhập tên chiến dịch.'); valid = false; }
+        if (!channel) { setFieldError('adChannel', 'Vui lòng chọn kênh quảng cáo.'); valid = false; }
+        if (!startDate) { setFieldError('startDate', 'Vui lòng chọn ngày bắt đầu.'); valid = false; }
+        if (!endDate) { setFieldError('endDate', 'Vui lòng chọn ngày kết thúc.'); valid = false; }
+        if (startDate && endDate && endDate < startDate) { setFieldError('endDate', 'Ngày kết thúc không được sớm hơn ngày bắt đầu.'); valid = false; }
+        if (!Number.isFinite(Number($('quantity').value)) || amounts.quantity <= 0) { setFieldError('quantity', 'Số lượng phải lớn hơn 0.'); valid = false; }
+        if (!Number.isFinite(Number($('unitPrice').value)) || amounts.unitPrice <= 0) { setFieldError('unitPrice', 'Đơn giá phải lớn hơn 0.'); valid = false; }
+        if (!Number.isFinite(Number($('discountRate').value)) || amounts.discountRate < 0 || amounts.discountRate > 100) { setFieldError('discountRate', 'Giảm giá phải từ 0 đến 100.'); valid = false; }
+        if (!Number.isFinite(Number($('taxRate').value)) || amounts.taxRate < 0 || amounts.taxRate > 100) { setFieldError('taxRate', 'Thuế phải từ 0 đến 100.'); valid = false; }
+        if (amounts.total <= 0) { setFieldError('unitPrice', 'Tổng thanh toán phải lớn hơn 0.'); valid = false; }
+        if (customerPhone && !/^[0-9+().\s-]{8,20}$/.test(customerPhone)) { setFieldError('customerPhone', 'Số điện thoại không hợp lệ.'); valid = false; }
+        if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) { setFieldError('customerEmail', 'Email không hợp lệ.'); valid = false; }
+
+        return { valid, amounts };
+      }
+
+      function resetOrderForm() {
+        $('orderForm').reset();
+        clearErrors($('orderForm'));
+        $('orderId').value = '';
+        $('orderCode').value = nextOrderCode();
+        $('quantity').value = '1';
+        $('discountRate').value = '0';
+        $('taxRate').value = '0';
+        $('startDate').value = todayISO();
+        $('endDate').value = addDaysISO(7);
+        $('orderStatus').value = 'draft';
+        calculateFormAmounts();
+      }
+
+      function openOrderModal(order = null) {
+        clearErrors($('orderForm'));
+        if (!order) {
+          resetOrderForm();
+          $('orderModalTitle').textContent = 'Thêm đơn hàng';
+          $('orderModalSub').textContent = 'Nhập thông tin hợp đồng quảng cáo';
+        } else {
+          $('orderModalTitle').textContent = 'Sửa đơn hàng';
+          $('orderModalSub').textContent = `${order.code} · ${order.customerName}`;
+          $('orderId').value = order.id;
+          $('orderCode').value = order.code;
+          $('customerName').value = order.customerName;
+          $('customerPhone').value = order.customerPhone;
+          $('customerEmail').value = order.customerEmail;
+          $('campaignName').value = order.campaignName;
+          $('adChannel').value = order.channel;
+          $('startDate').value = order.startDate;
+          $('endDate').value = order.endDate;
+          $('quantity').value = order.quantity;
+          $('unitPrice').value = order.unitPrice;
+          $('discountRate').value = order.discountRate;
+          $('taxRate').value = order.taxRate;
+          $('orderStatus').value = order.status;
+          $('orderNote').value = order.note;
+          calculateFormAmounts();
+        }
+        openModal('orderModal');
+      }
+
+      function openPaymentModal(order) {
+        if (!order || order.status === 'cancelled') {
+          showToast('Không thể ghi nhận thanh toán cho đơn đã hủy.', 'error');
+          return;
+        }
+        if (order.due <= 0) {
+          showToast('Đơn hàng đã được thanh toán đủ.', 'success');
+          return;
+        }
+        clearErrors($('paymentForm'));
+        $('paymentForm').reset();
+        $('paymentOrderId').value = order.id;
+        $('paymentOrderInfo').textContent = `${order.code} · ${order.customerName}`;
+        $('currentPaid').value = formatMoney(order.paid);
+        $('remainingDue').value = formatMoney(order.due);
+        $('paymentAmount').value = order.due;
+        $('paymentDate').value = todayISO();
+        $('paymentMethod').value = 'Chuyển khoản';
+        openModal('paymentModal');
+      }
+
+      function openDetailModal(order) {
+        const paymentStatus = paymentMap[getPaymentStatus(order)];
+        const paymentsHtml = order.payments.length ? order.payments
+          .slice().sort((a, b) => String(b.date).localeCompare(String(a.date)))
+          .map(p => `
+            <div class="info-card" style="margin-top:8px">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:start">
+                <div>
+                  <strong>${formatMoney(p.amount)}</strong>
+                  <div class="field-help">${escapeHtml(p.method)} · ${formatDate(p.date)}</div>
+                </div>
+                <span class="badge badge-green">Đã thu</span>
+              </div>
+              ${p.note ? `<div class="field-help" style="margin-top:8px">${escapeHtml(p.note)}</div>` : ''}
+            </div>`).join('') : '<div class="empty" style="padding:22px 10px"><p>Chưa có giao dịch thanh toán.</p></div>';
+
+        $('detailTitle').textContent = order.campaignName;
+        $('detailSubtitle').textContent = `${order.code} · Cập nhật ${formatDateTime(order.updatedAt)}`;
+        $('detailContent').innerHTML = `
+          <div class="two-col">
+            <div class="info-card">
+              <h3>Thông tin khách hàng</h3>
+              <p><strong>Tên:</strong> ${escapeHtml(order.customerName)}</p>
+              <p><strong>Điện thoại:</strong> ${escapeHtml(order.customerPhone || 'Chưa có')}</p>
+              <p><strong>Email:</strong> ${escapeHtml(order.customerEmail || 'Chưa có')}</p>
+            </div>
+            <div class="info-card" style="margin-top:0">
+              <h3>Thông tin thực hiện</h3>
+              <p><strong>Kênh:</strong> ${escapeHtml(order.channel)}</p>
+              <p><strong>Thời gian:</strong> ${formatDate(order.startDate)} đến ${formatDate(order.endDate)}</p>
+              <p><strong>Trạng thái:</strong> <span class="badge ${statusMap[order.status].cls}">${statusMap[order.status].label}</span></p>
+            </div>
+          </div>
+          <div class="info-card">
+            <h3>Giá trị đơn hàng</h3>
+            <div class="summary-box">
+              <div><span>Tạm tính</span><strong>${formatMoney(order.subtotal)}</strong></div>
+              <div><span>Giảm giá</span><strong>${formatMoney(order.discount)}</strong></div>
+              <div><span>Thuế</span><strong>${formatMoney(order.tax)}</strong></div>
+              <div><span>Tổng thanh toán</span><strong>${formatMoney(order.total)}</strong></div>
+            </div>
+            <div style="margin-top:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+              <span class="badge ${paymentStatus.cls}">${paymentStatus.label}</span>
+              <strong>Đã thu ${formatMoney(order.paid)} · Còn lại ${formatMoney(order.due)}</strong>
+            </div>
+            <div class="progress"><span style="width:${order.total > 0 ? Math.min(100, Math.round(order.paid / order.total * 100)) : 0}%"></span></div>
+          </div>
+          <div class="info-card">
+            <h3>Ghi chú đơn hàng</h3>
+            <p>${escapeHtml(order.note || 'Không có ghi chú.')}</p>
+          </div>
+          <div class="info-card">
+            <h3>Lịch sử thanh toán</h3>
+            ${paymentsHtml}
+          </div>`;
+        openModal('detailModal');
+      }
+
+      function openModal(id) {
+        $(id).classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal(id) {
+        $(id).classList.remove('show');
+        if (!document.querySelector('.modal-backdrop.show')) document.body.style.overflow = '';
+      }
+
+      function showConfirm(title, message, action) {
+        $('confirmTitle').textContent = title;
+        $('confirmMessage').textContent = message;
+        pendingConfirm = action;
+        openModal('confirmModal');
+      }
+
+      function showToast(message, type = '') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        $('toastWrap').appendChild(toast);
+        setTimeout(() => toast.remove(), 3200);
+      }
+
+      function saveOrderFromForm(event) {
+        event.preventDefault();
+        const { valid, amounts } = validateOrderForm();
+        if (!valid) {
+          showToast('Vui lòng kiểm tra lại các trường chưa hợp lệ.', 'error');
+          const firstError = $('orderForm').querySelector('[aria-invalid="true"]');
+          if (firstError) firstError.focus();
+          return;
+        }
+
+        const existingId = $('orderId').value;
+        const existing = existingId ? getOrderById(existingId) : null;
+        const existingPaidTotal = existing
+          ? existing.payments.reduce((sum, payment) => sum + roundMoney(payment.amount), 0)
+          : 0;
+        if (existingPaidTotal > amounts.total) {
+          showToast('Tổng mới thấp hơn số tiền đã thu. Vui lòng kiểm tra giá trị đơn hàng.', 'error');
+          setFieldError('unitPrice', `Tổng thanh toán phải từ ${formatMoney(existingPaidTotal)} trở lên.`);
+          $('unitPrice').focus();
+          return;
+        }
+        const orderData = normalizeOrder({
+          id: existing ? existing.id : cryptoId(),
+          code: $('orderCode').value || nextOrderCode(),
+          customerName: $('customerName').value,
+          customerPhone: $('customerPhone').value,
+          customerEmail: $('customerEmail').value,
+          campaignName: $('campaignName').value,
+          channel: $('adChannel').value,
+          startDate: $('startDate').value,
+          endDate: $('endDate').value,
+          quantity: amounts.quantity,
+          unitPrice: amounts.unitPrice,
+          discountRate: amounts.discountRate,
+          taxRate: amounts.taxRate,
+          status: $('orderStatus').value,
+          note: $('orderNote').value,
+          payments: existing ? existing.payments : [],
+          isSample: existing ? existing.isSample : false,
+          createdAt: existing ? existing.createdAt : new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+
+        if (existing) {
+          const index = orders.findIndex(o => o.id === existing.id);
+          orders[index] = orderData;
+          addHistory('edit', `Đã cập nhật ${orderData.code}`, `${orderData.customerName} · ${orderData.campaignName}`);
+          showToast('Đã cập nhật đơn hàng.', 'success');
+        } else {
+          orders.unshift(orderData);
+          addHistory('create', `Đã tạo ${orderData.code}`, `${orderData.customerName} · ${formatMoney(orderData.total)}`);
+          showToast('Đã tạo đơn hàng mới.', 'success');
+        }
+        saveData();
+        closeModal('orderModal');
+        renderAll();
+      }
+
+      function savePayment(event) {
+        event.preventDefault();
+        clearErrors($('paymentForm'));
+        const order = getOrderById($('paymentOrderId').value);
+        if (!order) {
+          showToast('Không tìm thấy đơn hàng.', 'error');
+          closeModal('paymentModal');
+          return;
+        }
+        const amount = roundMoney($('paymentAmount').value);
+        const date = $('paymentDate').value;
+        let valid = true;
+        if (!Number.isFinite(Number($('paymentAmount').value)) || amount <= 0) {
+          setFieldError('paymentAmount', 'Số tiền phải lớn hơn 0.');
+          valid = false;
+        } else if (amount > order.due) {
+          setFieldError('paymentAmount', `Số tiền không được vượt quá ${formatMoney(order.due)}.`);
+          valid = false;
+        }
+        if (!date) { setFieldError('paymentDate', 'Vui lòng chọn ngày thu tiền.'); valid = false; }
+        if (!valid) return;
+
+        order.payments.push({
+          id: cryptoId(),
+          amount,
+          date,
+          method: $('paymentMethod').value,
+          note: $('paymentNote').value.trim(),
+          createdAt: new Date().toISOString()
+        });
+        const updated = normalizeOrder({ ...order, updatedAt: new Date().toISOString() });
+        orders[orders.findIndex(o => o.id === order.id)] = updated;
+        addHistory('payment', `Đã thu ${formatMoney(amount)} cho ${updated.code}`, `${updated.customerName} · Còn lại ${formatMoney(updated.due)}`);
+        saveData();
+        closeModal('paymentModal');
+        renderAll();
+        showToast('Đã ghi nhận thanh toán.', 'success');
+      }
+
+      function deleteOrder(order) {
+        showConfirm(
+          'Xóa đơn hàng',
+          `Bạn có chắc muốn xóa ${order.code}? Toàn bộ thông tin và lịch sử thanh toán của đơn này sẽ bị xóa.`,
+          () => {
+            orders = orders.filter(o => o.id !== order.id);
+            addHistory('delete', `Đã xóa ${order.code}`, `${order.customerName} · ${order.campaignName}`);
+            saveData();
+            renderAll();
+            showToast('Đã xóa đơn hàng.', 'success');
+          }
+        );
+      }
+
+      function clearHistory() {
+        if (!history.length) {
+          showToast('Lịch sử hiện đang trống.');
+          return;
+        }
+        showConfirm('Xóa lịch sử', 'Bạn có chắc muốn xóa toàn bộ lịch sử thao tác? Dữ liệu đơn hàng sẽ không bị xóa.', () => {
+          history = [];
+          saveData();
+          renderHistory();
+          showToast('Đã xóa lịch sử.', 'success');
+        });
+      }
+
+      function renderOrderCard(order, compact = false) {
+        const status = statusMap[order.status];
+        const paymentStatus = paymentMap[getPaymentStatus(order)];
+        const card = document.createElement('article');
+        card.className = `order-card${order.isSample ? ' sample' : ''}`;
+        const dateText = `${formatDate(order.startDate)} đến ${formatDate(order.endDate)}`;
+        card.innerHTML = `
+          <div class="order-main">
+            <div class="order-topline">
+              <span class="order-code">${escapeHtml(order.code)}</span>
+              <span class="badge ${status.cls}">${status.label}</span>
+              <span class="badge ${paymentStatus.cls}">${paymentStatus.label}</span>
+              ${order.isSample ? '<span class="badge badge-purple">Dữ liệu mẫu</span>' : ''}
+            </div>
+            <div class="order-title">${escapeHtml(order.campaignName)}</div>
+            <div class="order-sub">${escapeHtml(order.customerName)} · ${escapeHtml(order.channel)} · ${dateText}</div>
+          </div>
+          <div class="order-metric">
+            <strong>${formatMoney(order.total)}</strong>
+            <span>Tổng thanh toán</span>
+          </div>
+          <div class="order-metric">
+            <strong>${formatMoney(order.due)}</strong>
+            <span>Công nợ còn lại</span>
+          </div>
+          <div class="order-actions">
+            <button class="btn btn-outline btn-sm" data-action="detail" type="button">Chi tiết</button>
+            ${compact ? '' : '<button class="btn btn-outline btn-sm" data-action="edit" type="button">Sửa</button>'}
+            ${!compact && order.status !== 'cancelled' && order.due > 0 ? '<button class="btn btn-success btn-sm" data-action="pay" type="button">Thu tiền</button>' : ''}
+            ${compact ? '' : '<button class="btn btn-danger btn-sm" data-action="delete" type="button">Xóa</button>'}
+          </div>`;
+        card.addEventListener('click', (event) => {
+          const action = event.target.closest('[data-action]')?.dataset.action;
+          if (!action) return;
+          if (action === 'detail') openDetailModal(order);
+          if (action === 'edit') openOrderModal(order);
+          if (action === 'pay') openPaymentModal(order);
+          if (action === 'delete') deleteOrder(order);
+        });
+        return card;
+      }
+
+      function renderDashboard() {
+        const validOrders = orders.filter(o => o.status !== 'cancelled');
+        const revenue = validOrders.reduce((sum, o) => sum + o.total, 0);
+        const paid = validOrders.reduce((sum, o) => sum + o.paid, 0);
+        const due = validOrders.reduce((sum, o) => sum + o.due, 0);
+        const activeCount = orders.filter(o => ['confirmed', 'running'].includes(o.status)).length;
+        const dueCount = validOrders.filter(o => o.due > 0).length;
+        const paidRate = revenue > 0 ? Math.round(paid / revenue * 100) : 0;
+
+        $('statOrders').textContent = orders.length;
+        $('statActiveNote').textContent = `${activeCount} đơn đang chờ hoặc thực hiện`;
+        $('statRevenue').textContent = formatMoney(revenue);
+        $('statPaid').textContent = formatMoney(paid);
+        $('statPaidRate').textContent = `Tỷ lệ thu ${paidRate}%`;
+        $('statDue').textContent = formatMoney(due);
+        $('statDueNote').textContent = `${dueCount} đơn còn công nợ`;
+
+        const priority = orders
+          .filter(o => o.status !== 'cancelled' && (o.status === 'running' || o.status === 'confirmed' || o.due > 0))
+          .sort((a, b) => {
+            const aRank = a.status === 'running' ? 0 : a.status === 'confirmed' ? 1 : 2;
+            const bRank = b.status === 'running' ? 0 : b.status === 'confirmed' ? 1 : 2;
+            return aRank - bRank || String(a.endDate).localeCompare(String(b.endDate));
+          })
+          .slice(0, 4);
+        const attention = $('attentionList');
+        attention.innerHTML = '';
+        if (!priority.length) {
+          attention.innerHTML = '<div class="empty"><div class="empty-icon">✓</div><h3>Không có đơn cần ưu tiên</h3><p>Các đơn hiện tại không có công nợ hoặc trạng thái cần theo dõi.</p></div>';
+        } else {
+          priority.forEach(o => attention.appendChild(renderOrderCard(o, true)));
+        }
+
+        const counts = Object.keys(statusMap).map(key => ({ key, count: orders.filter(o => o.status === key).length }));
+        const max = Math.max(1, ...counts.map(x => x.count));
+        $('statusSummary').innerHTML = counts.map(item => `
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;gap:10px">
+              <span>${statusMap[item.key].label}</span><strong>${item.count}</strong>
+            </div>
+            <div class="progress"><span style="width:${Math.round(item.count / max * 100)}%;background:${item.key === 'cancelled' ? '#b91c1c' : item.key === 'completed' ? '#15803d' : '#2563eb'}"></span></div>
+          </div>`).join('');
+      }
+
+      function filteredOrders() {
+        const query = $('searchInput').value.trim().toLowerCase();
+        const status = $('statusFilter').value;
+        const payment = $('paymentFilter').value;
+        const channel = $('channelFilter').value;
+        return orders.filter(order => {
+          const haystack = [order.code, order.customerName, order.customerPhone, order.campaignName, order.channel].join(' ').toLowerCase();
+          return (!query || haystack.includes(query)) &&
+            (status === 'all' || order.status === status) &&
+            (payment === 'all' || getPaymentStatus(order) === payment) &&
+            (channel === 'all' || order.channel === channel);
+        }).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+      }
+
+      function renderChannels() {
+        const current = $('channelFilter').value;
+        const channels = [...new Set(orders.map(o => o.channel).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'));
+        $('channelFilter').innerHTML = '<option value="all">Tất cả</option>' + channels.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+        $('channelFilter').value = channels.includes(current) ? current : 'all';
+      }
+
+      function renderOrders() {
+        renderChannels();
+        const list = filteredOrders();
+        $('orderListCount').textContent = `${list.length} kết quả`;
+        const container = $('orderList');
+        container.innerHTML = '';
+        if (!list.length) {
+          container.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">⌕</div>
+              <h3>Không tìm thấy đơn hàng</h3>
+              <p>Hãy thay đổi điều kiện tìm kiếm hoặc tạo một đơn hàng mới.</p>
+              <button class="btn btn-primary" id="emptyAddBtn" type="button">Thêm đơn hàng</button>
+            </div>`;
+          $('emptyAddBtn').addEventListener('click', () => openOrderModal());
+          return;
+        }
+        list.forEach(order => container.appendChild(renderOrderCard(order)));
+      }
+
+      function renderHistory() {
+        const container = $('historyList');
+        if (!history.length) {
+          container.innerHTML = '<div class="empty"><div class="empty-icon">○</div><h3>Chưa có lịch sử</h3><p>Các thao tác tạo, sửa, xóa và thanh toán sẽ xuất hiện tại đây.</p></div>';
+          return;
+        }
+        container.innerHTML = `<div class="timeline">${history.map(item => `
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-title">${escapeHtml(item.title)}</div>
+            <div class="timeline-meta">${formatDateTime(item.time)}</div>
+            ${item.note ? `<div class="timeline-note">${escapeHtml(item.note)}</div>` : ''}
+          </div>`).join('')}</div>`;
+      }
+
+      function renderAll() {
+        orders = orders.map(normalizeOrder);
+        renderDashboard();
+        renderOrders();
+        renderHistory();
+      }
+
+      function switchPage(pageName) {
+        qsa('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === pageName));
+        qsa('.page').forEach(page => page.classList.toggle('active', page.id === `page-${pageName}`));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function resetFilters() {
+        $('searchInput').value = '';
+        $('statusFilter').value = 'all';
+        $('paymentFilter').value = 'all';
+        $('channelFilter').value = 'all';
+        renderOrders();
+      }
+
+      function csvCell(value) {
+        const text = String(value ?? '').replaceAll('"', '""');
+        return `"${text}"`;
+      }
+
+      function exportCSV() {
+        if (!orders.length) {
+          showToast('Không có dữ liệu để xuất.', 'error');
+          return;
+        }
+        const headers = ['Mã đơn','Khách hàng','Số điện thoại','Email','Chiến dịch','Kênh quảng cáo','Ngày bắt đầu','Ngày kết thúc','Trạng thái','Số lượng','Đơn giá','Giảm giá phần trăm','Thuế phần trăm','Tổng thanh toán','Đã thu','Còn lại','Ghi chú'];
+        const rows = orders.map(o => [
+          o.code, o.customerName, o.customerPhone, o.customerEmail, o.campaignName, o.channel,
+          o.startDate, o.endDate, statusMap[o.status].label, o.quantity, o.unitPrice, o.discountRate,
+          o.taxRate, o.total, o.paid, o.due, o.note
+        ]);
+        const csv = '\uFEFF' + [headers, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n');
+        try {
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `don-hang-quang-cao-${todayISO()}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          addHistory('export', 'Đã xuất dữ liệu CSV', `${orders.length} đơn hàng`);
+          renderHistory();
+          showToast('Đã tạo tệp CSV.', 'success');
+        } catch (error) {
+          showToast('Thiết bị hiện tại không hỗ trợ xuất tệp.', 'error');
+        }
+      }
+
+      function bindEvents() {
+        qsa('.nav-btn').forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.page)));
+        ['quickAddBtn','heroAddBtn','ordersAddBtn'].forEach(id => $(id).addEventListener('click', () => openOrderModal()));
+        $('goOrdersBtn').addEventListener('click', () => switchPage('orders'));
+        $('exportBtn').addEventListener('click', exportCSV);
+        $('clearHistoryBtn').addEventListener('click', clearHistory);
+        $('resetFilterBtn').addEventListener('click', resetFilters);
+        ['searchInput','statusFilter','paymentFilter','channelFilter'].forEach(id => {
+          $(id).addEventListener(id === 'searchInput' ? 'input' : 'change', renderOrders);
+        });
+        ['quantity','unitPrice','discountRate','taxRate'].forEach(id => $(id).addEventListener('input', calculateFormAmounts));
+        $('orderForm').addEventListener('submit', saveOrderFromForm);
+        $('paymentForm').addEventListener('submit', savePayment);
+        qsa('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
+        qsa('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', (event) => {
+          if (event.target === backdrop) closeModal(backdrop.id);
+        }));
+        $('confirmActionBtn').addEventListener('click', () => {
+          const action = pendingConfirm;
+          pendingConfirm = null;
+          closeModal('confirmModal');
+          if (typeof action === 'function') action();
+        });
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            const opened = document.querySelector('.modal-backdrop.show');
+            if (opened) closeModal(opened.id);
+          }
+        });
+      }
+
+      loadData();
+      bindEvents();
+      renderAll();
+    })();
+  </script>
+</body>
+</html>

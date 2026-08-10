@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Dự toán chi phí sửa chữa Siêu Xe</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;--card:#fff;--text:#142033;--muted:#667085;--line:#e4e9f0;
+      --primary:#1746a2;--primary2:#0f6fdc;--danger:#c92a2a;--ok:#14804a;
+      --shadow:0 10px 30px rgba(26,40,69,.08);--radius:18px
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:980px;margin:auto;min-height:100vh;padding-bottom:96px}
+    .hero{padding:22px 18px 16px;background:linear-gradient(135deg,#0f172a,#1746a2);color:#fff;border-radius:0 0 26px 26px;box-shadow:var(--shadow)}
+    .brand{display:flex;gap:13px;align-items:center}
+    .logo{width:50px;height:50px;border-radius:16px;background:#fff;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+    .logo svg{width:32px;height:32px}
+    h1{font-size:21px;line-height:1.25;margin:0 0 4px}
+    .hero p{margin:0;color:#d7e6ff;font-size:13px}
+    .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}
+    .quick .q{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 12px}
+    .q b{display:block;font-size:17px}.q span{font-size:12px;color:#d7e6ff}
+    .tabs{display:flex;gap:8px;overflow:auto;padding:14px 14px 2px;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{white-space:nowrap;border:1px solid var(--line);background:#fff;color:#344054;border-radius:999px;padding:9px 13px}
+    .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    main{padding:12px 14px}
+    .page{display:none}.page.active{display:block}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .card h2{margin:0 0 4px;font-size:18px}
+    .card h3{font-size:15px;margin:0 0 10px}
+    .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    label{display:block;font-size:13px;font-weight:650;color:#344054;margin-bottom:6px}
+    .field{margin-bottom:12px}
+    input,select,textarea{width:100%;border:1px solid #d6dde7;background:#fff;color:#101828;border-radius:12px;padding:11px 12px;outline:none}
+    input:focus,select:focus,textarea:focus{border-color:#7aa7e8;box-shadow:0 0 0 3px rgba(23,70,162,.1)}
+    textarea{min-height:82px;resize:vertical}
+    .hint{font-size:12px;color:var(--muted);margin-top:5px}
+    .items{display:grid;gap:10px}
+    .item{border:1px solid var(--line);background:#fbfcfe;border-radius:15px;padding:12px;position:relative}
+    .item-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
+    .item-title{font-weight:750}.badge{font-size:11px;background:#e8f1ff;color:#1746a2;padding:4px 8px;border-radius:999px}
+    .item-grid{display:grid;grid-template-columns:1.4fr .8fr 1fr .7fr;gap:8px}
+    .item .mini label{font-size:11px;margin-bottom:4px}.item .mini input,.item .mini select{padding:9px 9px;border-radius:10px}
+    .remove{border:0;background:#fff0f0;color:var(--danger);border-radius:10px;padding:7px 9px;font-weight:700}
+    .actions{display:flex;gap:9px;flex-wrap:wrap}
+    .btn{border:0;border-radius:12px;padding:11px 14px;font-weight:750}
+    .btn.primary{background:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary2)}
+    .btn.secondary{background:#eef3f9;color:#23324d}.btn.danger{background:#fff0f0;color:var(--danger)}
+    .btn.outline{background:#fff;border:1px solid var(--line);color:#344054}
+    .summary{display:grid;gap:8px}
+    .sumrow{display:flex;justify-content:space-between;gap:14px;padding:7px 0;border-bottom:1px dashed #e5e7eb}
+    .sumrow:last-child{border-bottom:0}.sumrow.total{font-size:20px;font-weight:850;color:#0f3d88;padding-top:12px}
+    .status{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:13px;display:none}
+    .status.show{display:block}.status.ok{background:#eaf8f0;color:#11643b}.status.err{background:#fff0f0;color:#9f1f1f}
+    .history-tools{display:flex;gap:8px;margin-bottom:12px}.history-tools input{flex:1}
+    .history-list{display:grid;gap:10px}
+    .history-card{border:1px solid var(--line);border-radius:15px;padding:13px;background:#fff}
+    .history-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .history-name{font-weight:800}.history-meta{color:var(--muted);font-size:12px;margin-top:3px}
+    .money{font-weight:850;color:#0f3d88;white-space:nowrap}
+    .history-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+    .empty{text-align:center;padding:30px 14px;color:var(--muted)}
+    .empty strong{display:block;color:#344054;margin-bottom:6px}
+    .notice{background:#f6f8fc;border:1px solid var(--line);border-radius:14px;padding:12px;color:#475467;font-size:13px}
+    .steps{counter-reset:s}.step{position:relative;padding-left:38px;margin:16px 0;min-height:30px}
+    .step:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e8f1ff;color:#1746a2;font-weight:800}
+    .legal p,.legal li{color:#475467}.legal h3{margin-top:18px}
+    .kv{display:grid;grid-template-columns:145px 1fr;gap:8px 12px;padding:8px 0;border-bottom:1px solid var(--line)}
+    .kv:last-child{border-bottom:0}.kv span:first-child{color:var(--muted)}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.56);display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:30}
+    .modal.show{display:flex}.modal-box{width:min(720px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:22px 22px 16px 16px;padding:16px}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-16px;background:#fff;padding:10px 0;z-index:2}
+    .close{border:0;background:#eef2f6;border-radius:10px;width:36px;height:36px;font-size:20px}
+    .detail-item{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+    .footer-note{text-align:center;color:#98a2b3;font-size:12px;padding:8px 0 18px}
+    @media(max-width:700px){
+      .quick{grid-template-columns:1fr 1fr 1fr}.q b{font-size:15px}
+      .grid2,.grid3{grid-template-columns:1fr}
+      .item-grid{grid-template-columns:1fr 1fr}
+      .history-top{display:block}.money{margin-top:7px}
+      .kv{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M14 37h36l-5-13a6 6 0 0 0-5.6-3.8H24.6A6 6 0 0 0 19 24L14 37Z" fill="#1746A2"/>
+          <path d="M18 37h28a6 6 0 0 1 6 6v4H12v-4a6 6 0 0 1 6-6Z" fill="#0F172A"/>
+          <circle cx="20" cy="47" r="5" fill="#1746A2"/><circle cx="44" cy="47" r="5" fill="#1746A2"/>
+          <path d="M26 14l12 12M38 14 26 26" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Dự toán chi phí sửa chữa Siêu Xe</h1>
+        <p>Lập dự toán chi tiết, lưu lịch sử và kiểm tra tổng chi phí ngay trên thiết bị.</p>
+      </div>
+    </div>
+    <div class="quick">
+      <div class="q"><b id="statCount">0</b><span>Dự toán đã lưu</span></div>
+      <div class="q"><b id="statItems">0</b><span>Hạng mục hiện tại</span></div>
+      <div class="q"><b id="statTotal">0 đ</b><span>Tổng dự toán</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Điều hướng">
+    <button class="tab active" data-page="estimate">Dự toán</button>
+    <button class="tab" data-page="history">Lịch sử</button>
+    <button class="tab" data-page="guide">Hướng dẫn</button>
+    <button class="tab" data-page="info">Thông tin</button>
+  </nav>
+
+  <main>
+    <section class="page active" id="estimate">
+      <div class="card">
+        <h2>Thông tin dự toán</h2>
+        <p class="sub">Nhập thông tin cơ bản để dễ nhận biết khi xem lại lịch sử.</p>
+        <div class="grid2">
+          <div class="field">
+            <label for="estimateName">Tên dự toán</label>
+            <input id="estimateName" maxlength="80" placeholder="Ví dụ: Sửa chữa xe tháng 8" />
+          </div>
+          <div class="field">
+            <label for="estimateDate">Ngày dự toán</label>
+            <input id="estimateDate" type="date" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="vehicleNote">Ghi chú phương tiện hoặc công việc</label>
+          <input id="vehicleNote" maxlength="120" placeholder="Ví dụ: Bảo dưỡng định kỳ và thay phụ tùng" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Hạng mục sửa chữa</h2>
+        <p class="sub">Mỗi hạng mục có số lượng, đơn giá và mức giảm giá riêng.</p>
+        <div class="items" id="items"></div>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn secondary" id="addItem">Thêm hạng mục</button>
+          <button class="btn outline" id="addSampleItem">Thêm hạng mục mẫu</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Chi phí bổ sung</h2>
+        <div class="grid3">
+          <div class="field">
+            <label for="serviceFee">Phí dịch vụ khác</label>
+            <input id="serviceFee" type="number" min="0" step="1000" inputmode="decimal" value="0" />
+          </div>
+          <div class="field">
+            <label for="taxRate">Thuế dự kiến phần trăm</label>
+            <input id="taxRate" type="number" min="0" max="20" step="0.1" inputmode="decimal" value="0" />
+          </div>
+          <div class="field">
+            <label for="reserveRate">Dự phòng phần trăm</label>
+            <input id="reserveRate" type="number" min="0" max="30" step="0.1" inputmode="decimal" value="5" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="note">Ghi chú</label>
+          <textarea id="note" maxlength="500" placeholder="Ghi chú thêm về dự toán, vật tư hoặc công việc cần thực hiện"></textarea>
+          <div class="hint">Dữ liệu được lưu cục bộ trên thiết bị khi bạn bấm Lưu dự toán.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Kết quả dự toán</h2>
+        <div class="summary">
+          <div class="sumrow"><span>Tiền hạng mục trước giảm giá</span><b id="sumGross">0 đ</b></div>
+          <div class="sumrow"><span>Tổng giảm giá</span><b id="sumDiscount">0 đ</b></div>
+          <div class="sumrow"><span>Phí dịch vụ khác</span><b id="sumFee">0 đ</b></div>
+          <div class="sumrow"><span>Thuế dự kiến</span><b id="sumTax">0 đ</b></div>
+          <div class="sumrow"><span>Chi phí dự phòng</span><b id="sumReserve">0 đ</b></div>
+          <div class="sumrow total"><span>Tổng dự toán</span><span id="sumTotal">0 đ</span></div>
+        </div>
+        <div id="formStatus" class="status"></div>
+        <div class="actions" style="margin-top:14px">
+          <button class="btn primary" id="saveEstimate">Lưu dự toán</button>
+          <button class="btn secondary" id="resetEstimate">Làm mới</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="history">
+      <div class="card">
+        <h2>Lịch sử dự toán</h2>
+        <p class="sub">Tối đa 100 bản ghi được lưu trên thiết bị.</p>
+        <div class="history-tools">
+          <input id="historySearch" placeholder="Tìm theo tên hoặc ghi chú" />
+          <button class="btn outline" id="clearSearch">Xóa lọc</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+        <div class="actions" style="margin-top:14px">
+          <button class="btn outline" id="createSampleHistory">Tạo dữ liệu mẫu</button>
+          <button class="btn danger" id="clearHistory">Xóa toàn bộ lịch sử</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="guide">
+      <div class="card">
+        <h2>Hướng dẫn sử dụng</h2>
+        <div class="step"><b>Tạo dự toán mới</b><div class="sub">Nhập tên dự toán, ngày và ghi chú để dễ nhận biết.</div></div>
+        <div class="step"><b>Thêm hạng mục sửa chữa</b><div class="sub">Chọn nhóm chi phí, nhập tên hạng mục, số lượng, đơn giá và giảm giá nếu có.</div></div>
+        <div class="step"><b>Kiểm tra chi phí bổ sung</b><div class="sub">Có thể nhập phí dịch vụ, thuế dự kiến và tỷ lệ dự phòng. Các trường này có thể để bằng không.</div></div>
+        <div class="step"><b>Xem tổng dự toán</b><div class="sub">Kết quả được tính tự động và không cho phép tạo giá trị âm hoặc dữ liệu không hợp lệ.</div></div>
+        <div class="step"><b>Lưu và quản lý lịch sử</b><div class="sub">Bấm Lưu dự toán để lưu trên thiết bị. Trong Lịch sử, bạn có thể xem chi tiết, dùng lại hoặc xóa từng bản ghi.</div></div>
+        <div class="notice">Ứng dụng chỉ hỗ trợ lập dự toán tham khảo. Chi phí thực tế có thể thay đổi theo tình trạng phương tiện, vật tư, nhân công và đơn vị thực hiện.</div>
+      </div>
+
+      <div class="card">
+        <h2>Quy tắc nhập dữ liệu</h2>
+        <p class="sub">Để kết quả ổn định, ứng dụng tự kiểm tra các trường số trước khi lưu.</p>
+        <div class="kv"><span>Số lượng</span><span>Lớn hơn 0 và không vượt quá 100000.</span></div>
+        <div class="kv"><span>Đơn giá</span><span>Từ 0 đến 100000000000 đồng.</span></div>
+        <div class="kv"><span>Giảm giá</span><span>Từ 0 đến 100 phần trăm.</span></div>
+        <div class="kv"><span>Thuế dự kiến</span><span>Từ 0 đến 20 phần trăm.</span></div>
+        <div class="kv"><span>Dự phòng</span><span>Từ 0 đến 30 phần trăm.</span></div>
+      </div>
+    </section>
+
+    <section class="page" id="info">
+      <div class="card">
+        <h2>Thông tin ứng dụng</h2>
+        <div class="kv"><span>Tên ứng dụng</span><span>Dự toán chi phí sửa chữa Siêu Xe</span></div>
+        <div class="kv"><span>Chức năng chính</span><span>Lập dự toán chi phí sửa chữa theo từng hạng mục và lưu lịch sử trên thiết bị.</span></div>
+        <div class="kv"><span>Phiên bản</span><span>1.0.0</span></div>
+        <div class="kv"><span>Dữ liệu</span><span>Lưu cục bộ trên thiết bị của người dùng.</span></div>
+      </div>
+
+      <div class="card legal">
+        <h2>Điều khoản sử dụng</h2>
+        <p>Bằng việc sử dụng ứng dụng, người dùng đồng ý tự chịu trách nhiệm về dữ liệu đã nhập và quyết định dựa trên kết quả dự toán.</p>
+        <h3>Mục đích sử dụng</h3>
+        <p>Ứng dụng hỗ trợ tổng hợp và ước tính chi phí sửa chữa. Kết quả chỉ mang tính tham khảo và không phải báo giá chính thức từ đơn vị sửa chữa.</p>
+        <h3>Trách nhiệm của người dùng</h3>
+        <p>Người dùng cần kiểm tra số lượng, đơn giá, mức giảm giá, thuế và các khoản phát sinh trước khi sử dụng kết quả.</p>
+        <h3>Giới hạn trách nhiệm</h3>
+        <p>Ứng dụng không chịu trách nhiệm cho chênh lệch giữa dự toán và chi phí thực tế do thay đổi giá, tình trạng phương tiện hoặc các yếu tố khác.</p>
+      </div>
+
+      <div class="card legal">
+        <h2>Chính sách quyền riêng tư</h2>
+        <p>Ứng dụng không yêu cầu tạo tài khoản và không tự động gửi dữ liệu dự toán đến máy chủ bên ngoài.</p>
+        <h3>Dữ liệu được lưu</h3>
+        <p>Các dự toán đã lưu được giữ trong bộ nhớ cục bộ của trình duyệt hoặc WebView trên thiết bị.</p>
+        <h3>Kiểm soát dữ liệu</h3>
+        <p>Người dùng có thể xóa từng dự toán hoặc xóa toàn bộ lịch sử ngay trong ứng dụng.</p>
+        <h3>Lưu ý khi xóa dữ liệu ứng dụng</h3>
+        <p>Nếu người dùng xóa dữ liệu trình duyệt, xóa dữ liệu Mini App hoặc đổi thiết bị, lịch sử cục bộ có thể bị mất.</p>
+      </div>
+
+      <div class="card legal">
+        <h2>Thông tin phiên bản</h2>
+        <p>Phiên bản 1.0.0 cung cấp chức năng tạo dự toán nhiều hạng mục, tính giảm giá, phí bổ sung, thuế dự kiến, chi phí dự phòng, lưu lịch sử, tìm kiếm, xem chi tiết, dùng lại dữ liệu và xóa bản ghi.</p>
+      </div>
+    </section>
+    <div class="footer-note">Dự toán chi phí sửa chữa Siêu Xe phiên bản 1.0.0</div>
+  </main>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div><b id="detailTitle">Chi tiết dự toán</b><div class="sub" id="detailMeta" style="margin:2px 0 0"></div></div>
+      <button class="close" id="closeModal" aria-label="Đóng">×</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const STORAGE_KEY = "sieu_xe_repair_estimates_v1";
+  const MAX_RECORDS = 100;
+  const categories = ["Phụ tùng","Sơn và vật tư","Nhân công","Điện và điện tử","Lốp và mâm","Khác"];
+  const $ = id => document.getElementById(id);
+  const safeNumber = (v, fallback=0) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  };
+  const clamp = (n,min,max) => Math.min(max,Math.max(min,n));
+  const money = n => Math.max(0, safeNumber(n)).toLocaleString("vi-VN",{maximumFractionDigits:0}) + " đ";
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+  const today = () => new Date().toISOString().slice(0,10);
+
+  let items = [];
+  let calculations = {gross:0,discount:0,net:0,fee:0,tax:0,reserve:0,total:0};
+
+  function showStatus(message, type="ok"){
+    const el=$("formStatus");
+    el.textContent=message;
+    el.className="status show "+type;
+    setTimeout(()=>{el.className="status";},3500);
+  }
+
+  function getRecords(){
+    try{
+      const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+      return Array.isArray(data) ? data : [];
+    }catch(e){ return []; }
+  }
+  function setRecords(records){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records.slice(0,MAX_RECORDS)));
+      return true;
+    }catch(e){
+      showStatus("Không thể lưu dữ liệu trên thiết bị. Vui lòng kiểm tra dung lượng lưu trữ.", "err");
+      return false;
+    }
+  }
+
+  function newItem(data={}){
+    return {
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now()+"_"+Math.random().toString(36).slice(2),
+      category: categories.includes(data.category) ? data.category : "Phụ tùng",
+      name: String(data.name||"").slice(0,80),
+      qty: clamp(safeNumber(data.qty,1),0.01,100000),
+      price: clamp(safeNumber(data.price,0),0,100000000000),
+      discount: clamp(safeNumber(data.discount,0),0,100)
+    };
+  }
+
+  function renderItems(){
+    const root=$("items");
+    if(!items.length){
+      root.innerHTML='<div class="empty"><strong>Chưa có hạng mục</strong>Hãy thêm ít nhất một hạng mục để tạo dự toán.</div>';
+    }else{
+      root.innerHTML=items.map((it,i)=>`
+        <div class="item" data-id="${esc(it.id)}">
+          <div class="item-head">
+            <div><span class="item-title">Hạng mục ${i+1}</span> <span class="badge">${esc(it.category)}</span></div>
+            <button class="remove" data-action="remove" data-id="${esc(it.id)}">Xóa</button>
+          </div>
+          <div class="field">
+            <label>Tên hạng mục</label>
+            <input data-key="name" data-id="${esc(it.id)}" maxlength="80" value="${esc(it.name)}" placeholder="Ví dụ: Thay má phanh trước" />
+          </div>
+          <div class="item-grid">
+            <div class="mini">
+              <label>Nhóm chi phí</label>
+              <select data-key="category" data-id="${esc(it.id)}">
+                ${categories.map(c=>`<option ${c===it.category?"selected":""}>${esc(c)}</option>`).join("")}
+              </select>
+            </div>
+            <div class="mini">
+              <label>Số lượng</label>
+              <input data-key="qty" data-id="${esc(it.id)}" type="number" min="0.01" max="100000" step="0.01" value="${it.qty}" inputmode="decimal" />
+            </div>
+            <div class="mini">
+              <label>Đơn giá</label>
+              <input data-key="price" data-id="${esc(it.id)}" type="number" min="0" max="100000000000" step="1000" value="${it.price}" inputmode="decimal" />
+            </div>
+            <div class="mini">
+              <label>Giảm giá phần trăm</label>
+              <input data-key="discount" data-id="${esc(it.id)}" type="number" min="0" max="100" step="0.1" value="${it.discount}" inputmode="decimal" />
+            </div>
+          </div>
+          <div class="hint">Thành tiền sau giảm giá: <b>${money(it.qty*it.price*(1-it.discount/100))}</b></div>
+        </div>`).join("");
+    }
+    $("statItems").textContent=items.length;
+    calculate();
+  }
+
+  function validateNumberInput(el, min, max){
+    let n=safeNumber(el.value,min);
+    n=clamp(n,min,max);
+    if(String(el.value).trim()==="" || !Number.isFinite(Number(el.value))) n=min;
+    el.value=n;
+    return n;
+  }
+
+  function calculate(){
+    let gross=0,discount=0;
+    items.forEach(it=>{
+      const lineGross=Math.max(0,it.qty)*Math.max(0,it.price);
+      const lineDiscount=lineGross*clamp(it.discount,0,100)/100;
+      gross+=lineGross; discount+=lineDiscount;
+    });
+    const net=Math.max(0,gross-discount);
+    const fee=clamp(safeNumber($("serviceFee").value,0),0,100000000000);
+    const taxRate=clamp(safeNumber($("taxRate").value,0),0,20);
+    const reserveRate=clamp(safeNumber($("reserveRate").value,0),0,30);
+    const base=Math.max(0,net+fee);
+    const tax=Math.max(0,base*taxRate/100);
+    const reserve=Math.max(0,(base+tax)*reserveRate/100);
+    const total=Math.max(0,base+tax+reserve);
+    calculations={gross,discount,net,fee,tax,reserve,total};
+    $("sumGross").textContent=money(gross);
+    $("sumDiscount").textContent=money(discount);
+    $("sumFee").textContent=money(fee);
+    $("sumTax").textContent=money(tax);
+    $("sumReserve").textContent=money(reserve);
+    $("sumTotal").textContent=money(total);
+    $("statTotal").textContent=money(total);
+  }
+
+  function updateStats(){
+    $("statCount").textContent=getRecords().length;
+  }
+
+  function resetForm(){
+    $("estimateName").value="";
+    $("estimateDate").value=today();
+    $("vehicleNote").value="";
+    $("serviceFee").value="0";
+    $("taxRate").value="0";
+    $("reserveRate").value="5";
+    $("note").value="";
+    items=[newItem()];
+    renderItems();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function validateForm(){
+    const name=$("estimateName").value.trim();
+    if(!name) return "Vui lòng nhập tên dự toán.";
+    if(name.length>80) return "Tên dự toán quá dài.";
+    if(!$("estimateDate").value) return "Vui lòng chọn ngày dự toán.";
+    if(!items.length) return "Vui lòng thêm ít nhất một hạng mục.";
+    for(let i=0;i<items.length;i++){
+      const it=items[i];
+      if(!it.name.trim()) return `Vui lòng nhập tên cho hạng mục ${i+1}.`;
+      if(!Number.isFinite(it.qty) || it.qty<=0 || it.qty>100000) return `Số lượng của hạng mục ${i+1} không hợp lệ.`;
+      if(!Number.isFinite(it.price) || it.price<0 || it.price>100000000000) return `Đơn giá của hạng mục ${i+1} không hợp lệ.`;
+      if(!Number.isFinite(it.discount) || it.discount<0 || it.discount>100) return `Giảm giá của hạng mục ${i+1} không hợp lệ.`;
+    }
+    validateNumberInput($("serviceFee"),0,100000000000);
+    validateNumberInput($("taxRate"),0,20);
+    validateNumberInput($("reserveRate"),0,30);
+    calculate();
+    if(!Number.isFinite(calculations.total) || calculations.total<0) return "Tổng dự toán không hợp lệ.";
+    return "";
+  }
+
+  function saveEstimate(){
+    const err=validateForm();
+    if(err){showStatus(err,"err");return;}
+    const record={
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now()+"_"+Math.random().toString(36).slice(2),
+      createdAt:new Date().toISOString(),
+      name:$("estimateName").value.trim(),
+      date:$("estimateDate").value,
+      vehicleNote:$("vehicleNote").value.trim(),
+      note:$("note").value.trim(),
+      serviceFee:clamp(safeNumber($("serviceFee").value,0),0,100000000000),
+      taxRate:clamp(safeNumber($("taxRate").value,0),0,20),
+      reserveRate:clamp(safeNumber($("reserveRate").value,0),0,30),
+      items:items.map(x=>({...x})),
+      totals:{...calculations},
+      sample:false
+    };
+    const records=getRecords();
+    records.unshift(record);
+    if(setRecords(records)){
+      updateStats(); renderHistory();
+      showStatus("Đã lưu dự toán trên thiết bị.","ok");
+    }
+  }
+
+  function renderHistory(){
+    const root=$("historyList");
+    const q=$("historySearch").value.trim().toLowerCase();
+    const records=getRecords().filter(r=>{
+      const hay=(String(r.name||"")+" "+String(r.vehicleNote||"")+" "+String(r.note||"")).toLowerCase();
+      return !q || hay.includes(q);
+    });
+    if(!records.length){
+      root.innerHTML=`<div class="empty"><strong>${q?"Không tìm thấy dữ liệu":"Chưa có dự toán đã lưu"}</strong>${q?"Hãy thử từ khóa khác.":"Bạn có thể tạo dự toán mới hoặc tạo một bản ghi mẫu để xem đầy đủ giao diện lịch sử."}</div>`;
+      return;
+    }
+    root.innerHTML=records.map(r=>`
+      <div class="history-card">
+        <div class="history-top">
+          <div>
+            <div class="history-name">${esc(r.name||"Dự toán")}${r.sample?' <span class="badge">Dữ liệu mẫu</span>':''}</div>
+            <div class="history-meta">Ngày dự toán: ${esc(r.date||"")} · ${Array.isArray(r.items)?r.items.length:0} hạng mục</div>
+            ${r.vehicleNote?`<div class="history-meta">${esc(r.vehicleNote)}</div>`:""}
+          </div>
+          <div class="money">${money(r.totals?.total)}</div>
+        </div>
+        <div class="history-actions">
+          <button class="btn outline" data-action="view" data-id="${esc(r.id)}">Xem chi tiết</button>
+          <button class="btn secondary" data-action="reuse" data-id="${esc(r.id)}">Dùng lại</button>
+          <button class="btn danger" data-action="delete" data-id="${esc(r.id)}">Xóa</button>
+        </div>
+      </div>`).join("");
+  }
+
+  function findRecord(id){return getRecords().find(r=>r.id===id);}
+
+  function showDetail(r){
+    if(!r)return;
+    $("detailMeta").textContent=(r.sample?"Dữ liệu mẫu · ":"")+"Ngày dự toán: "+(r.date||"");
+    const t=r.totals||{};
+    $("detailContent").innerHTML=`
+      <div class="kv"><span>Tên dự toán</span><span>${esc(r.name)}</span></div>
+      <div class="kv"><span>Ghi chú công việc</span><span>${esc(r.vehicleNote||"Không có")}</span></div>
+      <h3 style="margin-top:18px">Hạng mục</h3>
+      ${(r.items||[]).map(it=>`
+        <div class="detail-item">
+          <div><b>${esc(it.name)}</b><div class="history-meta">${esc(it.category)} · ${safeNumber(it.qty)} x ${money(it.price)} · Giảm ${safeNumber(it.discount)} phần trăm</div></div>
+          <b>${money(safeNumber(it.qty)*safeNumber(it.price)*(1-safeNumber(it.discount)/100))}</b>
+        </div>`).join("") || '<div class="empty">Không có hạng mục.</div>'}
+      <div class="summary" style="margin-top:14px">
+        <div class="sumrow"><span>Tiền trước giảm giá</span><b>${money(t.gross)}</b></div>
+        <div class="sumrow"><span>Giảm giá</span><b>${money(t.discount)}</b></div>
+        <div class="sumrow"><span>Phí dịch vụ khác</span><b>${money(t.fee)}</b></div>
+        <div class="sumrow"><span>Thuế dự kiến</span><b>${money(t.tax)}</b></div>
+        <div class="sumrow"><span>Dự phòng</span><b>${money(t.reserve)}</b></div>
+        <div class="sumrow total"><span>Tổng dự toán</span><span>${money(t.total)}</span></div>
+      </div>
+      <div class="notice" style="margin-top:14px">${esc(r.note||"Không có ghi chú thêm.")}</div>`;
+    $("detailModal").classList.add("show");
+  }
+
+  function reuseRecord(r){
+    if(!r)return;
+    $("estimateName").value=(r.name||"")+" bản sao";
+    $("estimateDate").value=today();
+    $("vehicleNote").value=r.vehicleNote||"";
+    $("serviceFee").value=clamp(safeNumber(r.serviceFee,0),0,100000000000);
+    $("taxRate").value=clamp(safeNumber(r.taxRate,0),0,20);
+    $("reserveRate").value=clamp(safeNumber(r.reserveRate,5),0,30);
+    $("note").value=r.note||"";
+    items=(Array.isArray(r.items)&&r.items.length?r.items:[newItem()]).map(newItem);
+    renderItems();
+    switchPage("estimate");
+    showStatus("Đã nạp dữ liệu từ lịch sử. Bạn có thể chỉnh sửa và lưu thành dự toán mới.","ok");
+  }
+
+  function deleteRecord(id){
+    const r=findRecord(id); if(!r)return;
+    if(!confirm("Bạn có chắc muốn xóa dự toán này?")) return;
+    setRecords(getRecords().filter(x=>x.id!==id));
+    updateStats(); renderHistory();
+  }
+
+  function clearHistory(){
+    if(!getRecords().length){alert("Lịch sử đang trống.");return;}
+    if(!confirm("Xóa toàn bộ lịch sử dự toán trên thiết bị?")) return;
+    setRecords([]); updateStats(); renderHistory();
+  }
+
+  function createSampleHistory(){
+    const records=getRecords();
+    if(records.some(r=>r.sample)){alert("Dữ liệu mẫu đã có trong lịch sử.");return;}
+    const sampleItems=[
+      newItem({category:"Phụ tùng",name:"Má phanh trước",qty:1,price:1800000,discount:5}),
+      newItem({category:"Nhân công",name:"Công thay thế và kiểm tra",qty:2,price:450000,discount:0}),
+      newItem({category:"Sơn và vật tư",name:"Vật tư vệ sinh và hoàn thiện",qty:1,price:350000,discount:0})
+    ];
+    let gross=0, discount=0;
+    sampleItems.forEach(it=>{const g=it.qty*it.price;gross+=g;discount+=g*it.discount/100});
+    const net=gross-discount, fee=200000, tax=0, reserve=(net+fee)*0.05, total=net+fee+reserve;
+    records.unshift({
+      id:"sample_"+Date.now(),createdAt:new Date().toISOString(),name:"Dự toán mẫu sửa chữa",
+      date:today(),vehicleNote:"Dữ liệu mẫu để minh họa đầy đủ chức năng lịch sử",
+      note:"Bản ghi này chỉ dùng để minh họa và có thể xóa bất cứ lúc nào.",
+      serviceFee:fee,taxRate:0,reserveRate:5,items:sampleItems,
+      totals:{gross,discount,net,fee,tax,reserve,total},sample:true
+    });
+    if(setRecords(records)){updateStats();renderHistory();}
+  }
+
+  function switchPage(id){
+    document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
+    document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.page===id));
+    if(id==="history")renderHistory();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  document.querySelector(".tabs").addEventListener("click",e=>{
+    const t=e.target.closest(".tab"); if(t)switchPage(t.dataset.page);
+  });
+  $("addItem").addEventListener("click",()=>{items.push(newItem());renderItems();});
+  $("addSampleItem").addEventListener("click",()=>{
+    items.push(newItem({category:"Nhân công",name:"Kiểm tra và sửa chữa",qty:1,price:500000,discount:0}));
+    renderItems();
+  });
+  $("items").addEventListener("click",e=>{
+    const b=e.target.closest("[data-action='remove']");
+    if(b){items=items.filter(x=>x.id!==b.dataset.id);renderItems();}
+  });
+  $("items").addEventListener("input",e=>{
+    const el=e.target, id=el.dataset.id, key=el.dataset.key;
+    if(!id||!key)return;
+    const it=items.find(x=>x.id===id); if(!it)return;
+    if(key==="name")it.name=el.value.slice(0,80);
+    else if(key==="category")it.category=categories.includes(el.value)?el.value:"Khác";
+    else if(key==="qty")it.qty=clamp(safeNumber(el.value,0),0,100000);
+    else if(key==="price")it.price=clamp(safeNumber(el.value,0),0,100000000000);
+    else if(key==="discount")it.discount=clamp(safeNumber(el.value,0),0,100);
+    calculate();
+    const hint=el.closest(".item")?.querySelector(".hint b");
+    if(hint)hint.textContent=money(it.qty*it.price*(1-it.discount/100));
+  });
+  $("items").addEventListener("change",e=>{
+    const el=e.target, id=el.dataset.id, key=el.dataset.key;
+    if(!id||!key)return;
+    const it=items.find(x=>x.id===id); if(!it)return;
+    if(key==="qty"){it.qty=validateNumberInput(el,0.01,100000);}
+    if(key==="price"){it.price=validateNumberInput(el,0,100000000000);}
+    if(key==="discount"){it.discount=validateNumberInput(el,0,100);}
+    if(key==="category"){it.category=categories.includes(el.value)?el.value:"Khác";renderItems();}
+    else renderItems();
+  });
+  ["serviceFee","taxRate","reserveRate"].forEach(id=>{
+    $(id).addEventListener("input",calculate);
+    $(id).addEventListener("change",()=>{
+      if(id==="serviceFee")validateNumberInput($(id),0,100000000000);
+      if(id==="taxRate")validateNumberInput($(id),0,20);
+      if(id==="reserveRate")validateNumberInput($(id),0,30);
+      calculate();
+    });
+  });
+  $("saveEstimate").addEventListener("click",saveEstimate);
+  $("resetEstimate").addEventListener("click",()=>{if(confirm("Làm mới toàn bộ dữ liệu đang nhập?"))resetForm();});
+  $("historySearch").addEventListener("input",renderHistory);
+  $("clearSearch").addEventListener("click",()=>{$("historySearch").value="";renderHistory();});
+  $("historyList").addEventListener("click",e=>{
+    const b=e.target.closest("[data-action]"); if(!b)return;
+    const r=findRecord(b.dataset.id);
+    if(b.dataset.action==="view")showDetail(r);
+    if(b.dataset.action==="reuse")reuseRecord(r);
+    if(b.dataset.action==="delete")deleteRecord(b.dataset.id);
+  });
+  $("createSampleHistory").addEventListener("click",createSampleHistory);
+  $("clearHistory").addEventListener("click",clearHistory);
+  $("closeModal").addEventListener("click",()=>$("detailModal").classList.remove("show"));
+  $("detailModal").addEventListener("click",e=>{if(e.target===$("detailModal"))$("detailModal").classList.remove("show")});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")$("detailModal").classList.remove("show")});
+
+  $("estimateDate").value=today();
+  items=[newItem()];
+  renderItems();
+  updateStats();
+  renderHistory();
+})();
+</script>
+</body>
+</html>

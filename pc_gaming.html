@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <title>PC Gaming Linh Kiện Chơi Game WILD BOUNTY 2</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --panel:#0e1a2c;
+      --panel2:#13233a;
+      --line:#233956;
+      --text:#f4f8ff;
+      --muted:#9fb0c7;
+      --accent:#37d5ff;
+      --accent2:#7c8cff;
+      --danger:#ff6b7a;
+      --ok:#59d98e;
+      --warn:#ffc861;
+      --shadow:0 14px 36px rgba(0,0,0,.22);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top right,rgba(55,213,255,.11),transparent 30%),
+        radial-gradient(circle at bottom left,rgba(124,140,255,.10),transparent 32%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;padding:0 14px 96px}
+    header{
+      position:sticky;top:0;z-index:20;
+      margin:0 -14px 14px;padding:14px;
+      background:rgba(7,17,31,.91);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(255,255,255,.06)
+    }
+    .title{font-weight:850;font-size:18px;line-height:1.3}
+    .sub{font-size:12px;color:var(--muted);margin-top:4px}
+    .tabs{
+      display:flex;gap:8px;overflow:auto;padding:4px 0 2px;
+      scrollbar-width:none
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab-btn{
+      border:1px solid var(--line);background:var(--panel);color:var(--muted);
+      border-radius:999px;padding:9px 13px;white-space:nowrap;font-weight:700;font-size:13px
+    }
+    .tab-btn.active{color:#05131d;background:var(--accent);border-color:var(--accent)}
+    .section{display:none}
+    .section.active{display:block}
+    .card{
+      background:linear-gradient(180deg,rgba(19,35,58,.96),rgba(14,26,44,.96));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      padding:16px;margin-bottom:14px;box-shadow:var(--shadow)
+    }
+    .card h2,.card h3{margin:0 0 12px}
+    .card h2{font-size:18px}
+    .card h3{font-size:15px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .full{grid-column:1/-1}
+    label{display:block;font-size:13px;font-weight:750;margin-bottom:7px;color:#dce8f7}
+    input,select{
+      width:100%;border:1px solid var(--line);background:#091727;color:var(--text);
+      border-radius:12px;padding:12px 13px;outline:none
+    }
+    input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(55,213,255,.10)}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+    .error{display:none;color:#ffd6db;background:rgba(255,107,122,.12);border:1px solid rgba(255,107,122,.35);padding:10px 12px;border-radius:12px;margin-top:12px;font-size:13px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      border:0;border-radius:12px;padding:11px 14px;font-weight:800;
+      background:var(--accent);color:#05131d;min-height:44px
+    }
+    .btn.secondary{background:#1b2d48;color:#eaf3ff;border:1px solid var(--line)}
+    .btn.danger{background:rgba(255,107,122,.12);color:#ffb4be;border:1px solid rgba(255,107,122,.34)}
+    .result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .badge{
+      display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;
+      background:rgba(89,217,142,.12);border:1px solid rgba(89,217,142,.3);color:#9bf0bd;font-size:12px;font-weight:800
+    }
+    .budget{
+      font-size:27px;font-weight:900;letter-spacing:-.02em;margin:6px 0 3px;
+      color:#dff8ff
+    }
+    .result-list{display:grid;gap:10px;margin-top:14px}
+    .part{
+      display:grid;grid-template-columns:94px 1fr auto;gap:10px;align-items:center;
+      padding:12px;border:1px solid var(--line);border-radius:14px;background:#0a1728
+    }
+    .part .k{color:var(--muted);font-size:12px;font-weight:750}
+    .part .v{font-size:13px;font-weight:780;line-height:1.4}
+    .part .p{font-size:12px;color:#bfefff;font-weight:800;white-space:nowrap}
+    .summary{
+      margin-top:12px;padding:12px;border-radius:14px;background:rgba(55,213,255,.08);
+      border:1px solid rgba(55,213,255,.2);color:#dff8ff;font-size:13px;line-height:1.6
+    }
+    .empty{
+      border:1px dashed var(--line);border-radius:16px;padding:26px 16px;text-align:center;
+      color:var(--muted);line-height:1.6
+    }
+    .history-item{
+      border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:10px;background:#0a1728
+    }
+    .history-top{display:flex;justify-content:space-between;gap:10px}
+    .history-name{font-weight:850}
+    .history-meta{font-size:12px;color:var(--muted);margin-top:5px}
+    .history-total{font-weight:900;color:#bff4ff;white-space:nowrap}
+    .history-actions{display:flex;gap:8px;margin-top:11px}
+    .mini-btn{
+      border:1px solid var(--line);background:#13233a;color:#dce8f7;border-radius:10px;
+      padding:8px 10px;font-size:12px;font-weight:800
+    }
+    .mini-btn.danger{color:#ffb4be;border-color:rgba(255,107,122,.3);background:rgba(255,107,122,.08)}
+    .text{color:#c7d5e7;line-height:1.75;font-size:14px}
+    .text p{margin:0 0 12px}
+    .text strong{color:#fff}
+    .info-row{
+      display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06)
+    }
+    .info-row:last-child{border-bottom:0}
+    .info-row span:first-child{color:var(--muted)}
+    .info-row span:last-child{text-align:right;font-weight:750}
+    .notice{
+      padding:12px;border:1px solid rgba(255,200,97,.3);background:rgba(255,200,97,.08);
+      color:#ffe6ad;border-radius:14px;font-size:13px;line-height:1.6
+    }
+    footer{color:#71859f;text-align:center;font-size:12px;padding:12px 0 18px}
+    @media(max-width:560px){
+      .grid{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .part{grid-template-columns:78px 1fr}
+      .part .p{grid-column:2}
+      .title{font-size:16px}
+      .budget{font-size:24px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="title">PC Gaming Linh Kiện Chơi Game WILD BOUNTY 2</div>
+    <div class="sub">Công cụ gợi ý cấu hình PC Gaming theo ngân sách và nhu cầu sử dụng</div>
+  </header>
+
+  <div class="tabs" aria-label="Điều hướng">
+    <button class="tab-btn active" data-tab="main">Cấu hình PC</button>
+    <button class="tab-btn" data-tab="history">Lịch sử</button>
+    <button class="tab-btn" data-tab="guide">Hướng dẫn</button>
+    <button class="tab-btn" data-tab="about">Thông tin</button>
+    <button class="tab-btn" data-tab="terms">Điều khoản</button>
+    <button class="tab-btn" data-tab="privacy">Quyền riêng tư</button>
+  </div>
+
+  <section id="main" class="section active">
+    <div class="card">
+      <h2>Chọn nhu cầu của bạn</h2>
+      <div class="grid">
+        <div>
+          <label for="budget">Ngân sách dự kiến</label>
+          <select id="budget">
+            <option value="12000000">12.000.000 VND</option>
+            <option value="18000000" selected>18.000.000 VND</option>
+            <option value="25000000">25.000.000 VND</option>
+            <option value="35000000">35.000.000 VND</option>
+            <option value="custom">Nhập ngân sách khác</option>
+          </select>
+        </div>
+        <div id="customBudgetWrap" style="display:none">
+          <label for="customBudget">Ngân sách tùy chỉnh</label>
+          <input id="customBudget" inputmode="numeric" type="number" min="8000000" max="100000000" step="100000" placeholder="Ví dụ 20000000">
+          <div class="hint">Từ 8.000.000 đến 100.000.000 VND</div>
+        </div>
+        <div>
+          <label for="purpose">Mục đích chính</label>
+          <select id="purpose">
+            <option value="esports">Game eSports và FPS</option>
+            <option value="balanced" selected>Chơi game cân bằng</option>
+            <option value="aaa">Game đồ họa nặng</option>
+            <option value="stream">Chơi game và phát trực tiếp</option>
+          </select>
+        </div>
+        <div>
+          <label for="resolution">Độ phân giải ưu tiên</label>
+          <select id="resolution">
+            <option value="1080">Full HD 1080p</option>
+            <option value="1440" selected>2K 1440p</option>
+            <option value="2160">4K 2160p</option>
+          </select>
+        </div>
+        <div>
+          <label for="storage">Dung lượng lưu trữ</label>
+          <select id="storage">
+            <option value="500">SSD 500 GB</option>
+            <option value="1000" selected>SSD 1 TB</option>
+            <option value="2000">SSD 2 TB</option>
+          </select>
+        </div>
+        <div>
+          <label for="memory">Dung lượng RAM</label>
+          <select id="memory">
+            <option value="16" selected>16 GB</option>
+            <option value="32">32 GB</option>
+            <option value="64">64 GB</option>
+          </select>
+        </div>
+      </div>
+      <div id="formError" class="error"></div>
+      <div class="actions">
+        <button id="generateBtn" class="btn">Tạo cấu hình đề xuất</button>
+        <button id="resetBtn" class="btn secondary">Đặt lại</button>
+      </div>
+    </div>
+
+    <div id="resultCard" class="card" style="display:none">
+      <div class="result-head">
+        <div>
+          <div class="badge">Cấu hình tham khảo</div>
+          <div id="resultBudget" class="budget"></div>
+          <div id="resultProfile" class="sub"></div>
+        </div>
+      </div>
+      <div id="resultList" class="result-list"></div>
+      <div id="resultSummary" class="summary"></div>
+      <div class="notice" style="margin-top:12px">
+        Giá trị linh kiện là mức phân bổ ngân sách tham khảo để hỗ trợ lựa chọn. Giá bán thực tế có thể thay đổi theo cửa hàng, thương hiệu và thời điểm mua.
+      </div>
+      <div class="actions">
+        <button id="saveBtn" class="btn">Lưu cấu hình</button>
+        <button id="newBtn" class="btn secondary">Tạo cấu hình mới</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="history" class="section">
+    <div class="card">
+      <h2>Lịch sử cấu hình</h2>
+      <div id="historyList"></div>
+      <div class="actions">
+        <button id="clearHistoryBtn" class="btn danger">Xóa toàn bộ lịch sử</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide" class="section">
+    <div class="card text">
+      <h2>Hướng dẫn sử dụng</h2>
+      <p><strong>Bước 1.</strong> Chọn ngân sách dự kiến cho bộ máy tính.</p>
+      <p><strong>Bước 2.</strong> Chọn mục đích sử dụng, độ phân giải, dung lượng lưu trữ và RAM.</p>
+      <p><strong>Bước 3.</strong> Nhấn Tạo cấu hình đề xuất để nhận danh sách phân bổ linh kiện.</p>
+      <p><strong>Bước 4.</strong> Kiểm tra CPU, GPU, bo mạch chủ, RAM, SSD, nguồn, vỏ máy và tản nhiệt.</p>
+      <p><strong>Bước 5.</strong> Nhấn Lưu cấu hình để lưu kết quả trên thiết bị và xem lại trong mục Lịch sử.</p>
+      <p>Công cụ không thay thế tư vấn kỹ thuật tại cửa hàng. Trước khi mua, cần kiểm tra khả năng tương thích thực tế giữa CPU, bo mạch chủ, RAM, nguồn điện, kích thước GPU và vỏ máy.</p>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="card">
+      <h2>Thông tin ứng dụng</h2>
+      <div class="info-row"><span>Tên ứng dụng</span><span>PC Gaming Linh Kiện Chơi Game WILD BOUNTY 2</span></div>
+      <div class="info-row"><span>Chức năng</span><span>Gợi ý phân bổ linh kiện PC Gaming</span></div>
+      <div class="info-row"><span>Phiên bản</span><span>1.0.0</span></div>
+      <div class="info-row"><span>Lưu dữ liệu</span><span>Trên thiết bị người dùng</span></div>
+    </div>
+    <div class="card text">
+      <h3>Giới thiệu ứng dụng</h3>
+      <p>Ứng dụng hỗ trợ người dùng tham khảo cấu hình máy tính chơi game theo ngân sách mục đích sử dụng độ phân giải dung lượng RAM và dung lượng lưu trữ. Kết quả gồm mức phân bổ chi phí cho các nhóm linh kiện chính và có thể lưu lại trên thiết bị để xem lại.</p>
+    </div>
+    <div class="card text">
+      <h3>Nội dung phiên bản 1.0.0</h3>
+      <p>Ra mắt chức năng tạo cấu hình PC Gaming theo ngân sách và nhu cầu. Hỗ trợ lựa chọn độ phân giải RAM dung lượng lưu trữ lưu lịch sử xem lại cấu hình xóa từng bản ghi xóa toàn bộ lịch sử và đặt lại dữ liệu nhập.</p>
+    </div>
+  </section>
+
+  <section id="terms" class="section">
+    <div class="card text">
+      <h2>Điều khoản sử dụng</h2>
+      <p>Ứng dụng cung cấp công cụ tham khảo để hỗ trợ người dùng lập ngân sách và lựa chọn nhóm linh kiện cho máy tính chơi game.</p>
+      <p>Người dùng tự chịu trách nhiệm kiểm tra giá bán thông số kỹ thuật và khả năng tương thích của linh kiện trước khi mua hoặc lắp ráp.</p>
+      <p>Kết quả trong ứng dụng không phải là cam kết về hiệu năng giá bán hoặc khả năng tương thích của bất kỳ sản phẩm cụ thể nào.</p>
+      <p>Người dùng không được sử dụng ứng dụng cho mục đích vi phạm pháp luật hoặc gây ảnh hưởng đến hoạt động bình thường của dịch vụ.</p>
+      <p>Chức năng và nội dung có thể được cập nhật để cải thiện độ ổn định và trải nghiệm sử dụng.</p>
+    </div>
+  </section>
+
+  <section id="privacy" class="section">
+    <div class="card text">
+      <h2>Chính sách quyền riêng tư</h2>
+      <p>Ứng dụng không yêu cầu người dùng nhập họ tên số điện thoại địa chỉ hoặc thông tin thanh toán để sử dụng chức năng chính.</p>
+      <p>Các cấu hình đã lưu được lưu trên thiết bị của người dùng bằng bộ nhớ cục bộ của trình duyệt hoặc WebView.</p>
+      <p>Ứng dụng không tự động gửi lịch sử cấu hình đến máy chủ bên ngoài trong phiên bản này.</p>
+      <p>Người dùng có thể xóa từng cấu hình hoặc xóa toàn bộ lịch sử bất kỳ lúc nào trong mục Lịch sử.</p>
+      <p>Khi xóa dữ liệu trình duyệt hoặc dữ liệu Mini App các cấu hình đã lưu trên thiết bị có thể bị mất và không thể khôi phục.</p>
+    </div>
+  </section>
+
+  <footer>Phiên bản 1.0.0</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_KEY = "pc_gaming_wild_bounty_2_history_v1";
+  const MAX_HISTORY = 50;
+
+  const $ = (id) => document.getElementById(id);
+  const budget = $("budget");
+  const customBudget = $("customBudget");
+  const customBudgetWrap = $("customBudgetWrap");
+  const purpose = $("purpose");
+  const resolution = $("resolution");
+  const storage = $("storage");
+  const memory = $("memory");
+  const errorBox = $("formError");
+  const resultCard = $("resultCard");
+  const resultBudget = $("resultBudget");
+  const resultProfile = $("resultProfile");
+  const resultList = $("resultList");
+  const resultSummary = $("resultSummary");
+  const historyList = $("historyList");
+
+  let currentResult = null;
+
+  function formatVND(value){
+    const n = Number(value);
+    if(!Number.isFinite(n) || n < 0) return "0 VND";
+    return Math.round(n).toLocaleString("vi-VN") + " VND";
+  }
+
+  function safeNumber(value, fallback){
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function getBudget(){
+    if(budget.value === "custom"){
+      return safeNumber(customBudget.value, 0);
+    }
+    return safeNumber(budget.value, 0);
+  }
+
+  function showError(message){
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
+  }
+
+  function clearError(){
+    errorBox.textContent = "";
+    errorBox.style.display = "none";
+  }
+
+  function validate(){
+    clearError();
+    const total = getBudget();
+    if(!Number.isFinite(total) || total <= 0){
+      showError("Vui lòng nhập ngân sách hợp lệ.");
+      return false;
+    }
+    if(total < 8000000){
+      showError("Ngân sách tối thiểu để tạo cấu hình là 8.000.000 VND.");
+      return false;
+    }
+    if(total > 100000000){
+      showError("Ngân sách tối đa hỗ trợ là 100.000.000 VND.");
+      return false;
+    }
+    const ram = safeNumber(memory.value, 0);
+    const ssd = safeNumber(storage.value, 0);
+    if(ram <= 0 || ssd <= 0){
+      showError("Thông số RAM hoặc lưu trữ không hợp lệ.");
+      return false;
+    }
+    return true;
+  }
+
+  function getProfileLabel(){
+    const purposeLabels = {
+      esports:"Game eSports và FPS",
+      balanced:"Chơi game cân bằng",
+      aaa:"Game đồ họa nặng",
+      stream:"Chơi game và phát trực tiếp"
+    };
+    const resLabels = {
+      "1080":"Full HD 1080p",
+      "1440":"2K 1440p",
+      "2160":"4K 2160p"
+    };
+    return (purposeLabels[purpose.value] || "Chơi game cân bằng") + " • " + (resLabels[resolution.value] || "Full HD 1080p");
+  }
+
+  function buildWeights(){
+    let weights = {
+      cpu:0.20,
+      gpu:0.34,
+      mainboard:0.10,
+      ram:0.09,
+      ssd:0.08,
+      psu:0.08,
+      case:0.06,
+      cooling:0.05
+    };
+
+    if(purpose.value === "esports"){
+      weights.cpu += 0.03;
+      weights.gpu -= 0.02;
+      weights.cooling -= 0.01;
+    }else if(purpose.value === "aaa"){
+      weights.gpu += 0.05;
+      weights.cpu -= 0.02;
+      weights.mainboard -= 0.01;
+      weights.case -= 0.01;
+      weights.cooling -= 0.01;
+    }else if(purpose.value === "stream"){
+      weights.cpu += 0.04;
+      weights.ram += 0.02;
+      weights.gpu -= 0.03;
+      weights.case -= 0.01;
+      weights.cooling -= 0.02;
+    }
+
+    if(resolution.value === "2160"){
+      weights.gpu += 0.05;
+      weights.cpu -= 0.02;
+      weights.mainboard -= 0.01;
+      weights.case -= 0.01;
+      weights.cooling -= 0.01;
+    }else if(resolution.value === "1080"){
+      weights.cpu += 0.02;
+      weights.gpu -= 0.02;
+    }
+
+    const ramGB = safeNumber(memory.value,16);
+    if(ramGB >= 32){
+      weights.ram += 0.03;
+      weights.gpu -= 0.02;
+      weights.case -= 0.01;
+    }
+    if(ramGB >= 64){
+      weights.ram += 0.04;
+      weights.gpu -= 0.02;
+      weights.cpu -= 0.01;
+      weights.case -= 0.01;
+    }
+
+    const storageGB = safeNumber(storage.value,1000);
+    if(storageGB >= 2000){
+      weights.ssd += 0.03;
+      weights.gpu -= 0.02;
+      weights.case -= 0.01;
+    }
+
+    const sum = Object.values(weights).reduce((a,b)=>a+b,0);
+    Object.keys(weights).forEach(k => {
+      weights[k] = Math.max(0, weights[k] / sum);
+    });
+    return weights;
+  }
+
+  function componentAdvice(total){
+    let cpuText, gpuText, boardText, psuText, coolingText;
+    if(total < 14000000){
+      cpuText = "CPU 6 nhân hiệu năng tốt trong tầm giá";
+      gpuText = "GPU phổ thông ưu tiên hiệu năng Full HD";
+      boardText = "Bo mạch chủ phổ thông đủ khe nâng cấp";
+      psuText = "Nguồn công suất thực khoảng 550 W";
+      coolingText = "Tản nhiệt khí cơ bản";
+    }else if(total < 22000000){
+      cpuText = "CPU 6 đến 8 nhân cho gaming cân bằng";
+      gpuText = "GPU tầm trung ưu tiên Full HD hoặc 2K";
+      boardText = "Bo mạch chủ tầm trung có khả năng nâng cấp";
+      psuText = "Nguồn công suất thực khoảng 650 W";
+      coolingText = "Tản nhiệt khí hiệu suất tốt";
+    }else if(total < 32000000){
+      cpuText = "CPU 8 nhân hoặc tương đương cho gaming và đa nhiệm";
+      gpuText = "GPU tầm trung cao phù hợp 2K";
+      boardText = "Bo mạch chủ tầm trung cao có kết nối đầy đủ";
+      psuText = "Nguồn công suất thực khoảng 750 W";
+      coolingText = "Tản nhiệt khí cao cấp hoặc tản nhiệt nước cơ bản";
+    }else{
+      cpuText = "CPU hiệu năng cao cho gaming và đa nhiệm nặng";
+      gpuText = "GPU hiệu năng cao ưu tiên 2K tốc độ cao hoặc 4K";
+      boardText = "Bo mạch chủ cao cấp có khả năng mở rộng tốt";
+      psuText = "Nguồn công suất thực từ khoảng 850 W";
+      coolingText = "Tản nhiệt hiệu năng cao phù hợp CPU đã chọn";
+    }
+
+    if(purpose.value === "stream"){
+      cpuText += " và ưu tiên khả năng xử lý đa luồng";
+    }
+    if(resolution.value === "2160"){
+      gpuText += " với ưu tiên dung lượng bộ nhớ đồ họa lớn";
+    }
+
+    return {cpuText,gpuText,boardText,psuText,coolingText};
+  }
+
+  function generate(){
+    if(!validate()) return;
+    const total = getBudget();
+    const weights = buildWeights();
+    const advice = componentAdvice(total);
+    const parts = [
+      {key:"CPU", name:advice.cpuText, value:total*weights.cpu},
+      {key:"GPU", name:advice.gpuText, value:total*weights.gpu},
+      {key:"Mainboard", name:advice.boardText, value:total*weights.mainboard},
+      {key:"RAM", name:"RAM " + memory.value + " GB ưu tiên bộ đôi tương thích", value:total*weights.ram},
+      {key:"SSD", name:"SSD NVMe " + storage.value + " GB", value:total*weights.ssd},
+      {key:"Nguồn", name:advice.psuText, value:total*weights.psu},
+      {key:"Vỏ máy", name:"Vỏ máy thoáng khí và phù hợp kích thước linh kiện", value:total*weights.case},
+      {key:"Tản nhiệt", name:advice.coolingText, value:total*weights.cooling}
+    ];
+
+    const roundedParts = parts.map((p, index) => {
+      const value = index === parts.length - 1
+        ? total - parts.slice(0, -1).reduce((s, x) => s + Math.round(x.value / 10000) * 10000, 0)
+        : Math.round(p.value / 10000) * 10000;
+      return {...p, value:Math.max(0, value)};
+    });
+
+    currentResult = {
+      id: Date.now(),
+      createdAt:new Date().toISOString(),
+      budget:total,
+      purpose:purpose.value,
+      resolution:resolution.value,
+      storage:safeNumber(storage.value,1000),
+      memory:safeNumber(memory.value,16),
+      profile:getProfileLabel(),
+      parts:roundedParts
+    };
+
+    renderResult(currentResult);
+    resultCard.style.display = "block";
+    resultCard.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  function renderResult(data){
+    resultBudget.textContent = formatVND(data.budget);
+    resultProfile.textContent = data.profile;
+    resultList.innerHTML = "";
+    data.parts.forEach(part => {
+      const row = document.createElement("div");
+      row.className = "part";
+      const k = document.createElement("div");
+      k.className = "k";
+      k.textContent = part.key;
+      const v = document.createElement("div");
+      v.className = "v";
+      v.textContent = part.name;
+      const p = document.createElement("div");
+      p.className = "p";
+      p.textContent = formatVND(part.value);
+      row.append(k,v,p);
+      resultList.appendChild(row);
+    });
+
+    const gpuPart = data.parts.find(x => x.key === "GPU");
+    const gpuPercent = gpuPart && data.budget > 0 ? Math.round((gpuPart.value / data.budget) * 100) : 0;
+    resultSummary.textContent =
+      "Cấu hình ưu tiên " + data.profile.toLowerCase() +
+      ". Khoảng " + gpuPercent + " phần trăm ngân sách được phân bổ cho GPU. " +
+      "Trước khi mua cần kiểm tra socket CPU bo mạch chủ loại RAM kích thước GPU công suất nguồn và kích thước vỏ máy.";
+  }
+
+  function readHistory(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function writeHistory(items){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0,MAX_HISTORY)));
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function saveCurrent(){
+    if(!currentResult){
+      showError("Chưa có cấu hình để lưu.");
+      return;
+    }
+    const items = readHistory();
+    const duplicate = items.some(x =>
+      x &&
+      x.budget === currentResult.budget &&
+      x.purpose === currentResult.purpose &&
+      x.resolution === currentResult.resolution &&
+      x.storage === currentResult.storage &&
+      x.memory === currentResult.memory
+    );
+    if(duplicate){
+      alert("Cấu hình tương tự đã có trong lịch sử.");
+      return;
+    }
+    items.unshift({...currentResult,id:Date.now(),createdAt:new Date().toISOString()});
+    if(writeHistory(items)){
+      renderHistory();
+      alert("Đã lưu cấu hình vào lịch sử.");
+    }else{
+      alert("Không thể lưu dữ liệu trên thiết bị này.");
+    }
+  }
+
+  function escapeText(value){
+    return String(value == null ? "" : value);
+  }
+
+  function renderHistory(){
+    const items = readHistory();
+    historyList.innerHTML = "";
+    if(items.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "Chưa có cấu hình đã lưu. Hãy tạo một cấu hình ở mục Cấu hình PC và nhấn Lưu cấu hình.";
+      historyList.appendChild(empty);
+      $("clearHistoryBtn").style.display = "none";
+      return;
+    }
+
+    $("clearHistoryBtn").style.display = "inline-flex";
+
+    items.forEach(item => {
+      const box = document.createElement("div");
+      box.className = "history-item";
+
+      const top = document.createElement("div");
+      top.className = "history-top";
+
+      const left = document.createElement("div");
+      const name = document.createElement("div");
+      name.className = "history-name";
+      name.textContent = escapeText(item.profile || "Cấu hình PC Gaming");
+      const meta = document.createElement("div");
+      meta.className = "history-meta";
+      let dt = "";
+      try{
+        dt = new Date(item.createdAt).toLocaleString("vi-VN");
+      }catch(e){
+        dt = "";
+      }
+      meta.textContent = "RAM " + safeNumber(item.memory,16) + " GB • SSD " + safeNumber(item.storage,1000) + " GB" + (dt ? " • " + dt : "");
+      left.append(name,meta);
+
+      const total = document.createElement("div");
+      total.className = "history-total";
+      total.textContent = formatVND(safeNumber(item.budget,0));
+
+      top.append(left,total);
+
+      const actions = document.createElement("div");
+      actions.className = "history-actions";
+
+      const viewBtn = document.createElement("button");
+      viewBtn.className = "mini-btn";
+      viewBtn.textContent = "Xem lại";
+      viewBtn.addEventListener("click", function(){
+        currentResult = item;
+        renderResult(item);
+        resultCard.style.display = "block";
+        switchTab("main");
+        setTimeout(()=>resultCard.scrollIntoView({behavior:"smooth",block:"start"}),30);
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "mini-btn danger";
+      deleteBtn.textContent = "Xóa";
+      deleteBtn.addEventListener("click", function(){
+        if(!confirm("Bạn có chắc muốn xóa cấu hình này không?")) return;
+        const next = readHistory().filter(x => String(x.id) !== String(item.id));
+        writeHistory(next);
+        renderHistory();
+      });
+
+      actions.append(viewBtn,deleteBtn);
+      box.append(top,actions);
+      historyList.appendChild(box);
+    });
+  }
+
+  function resetForm(){
+    budget.value = "18000000";
+    customBudget.value = "";
+    customBudgetWrap.style.display = "none";
+    purpose.value = "balanced";
+    resolution.value = "1440";
+    storage.value = "1000";
+    memory.value = "16";
+    clearError();
+    currentResult = null;
+    resultCard.style.display = "none";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function switchTab(tabId){
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    const section = document.getElementById(tabId);
+    const btn = document.querySelector('.tab-btn[data-tab="'+tabId+'"]');
+    if(section) section.classList.add("active");
+    if(btn) btn.classList.add("active");
+    if(tabId === "history") renderHistory();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  budget.addEventListener("change", function(){
+    customBudgetWrap.style.display = this.value === "custom" ? "block" : "none";
+    clearError();
+  });
+
+  $("generateBtn").addEventListener("click", generate);
+  $("saveBtn").addEventListener("click", saveCurrent);
+  $("resetBtn").addEventListener("click", resetForm);
+  $("newBtn").addEventListener("click", resetForm);
+
+  $("clearHistoryBtn").addEventListener("click", function(){
+    const items = readHistory();
+    if(items.length === 0) return;
+    if(!confirm("Bạn có chắc muốn xóa toàn bộ lịch sử không?")) return;
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    renderHistory();
+  });
+
+  customBudget.addEventListener("input", clearError);
+
+  renderHistory();
+})();
+</script>
+</body>
+</html>

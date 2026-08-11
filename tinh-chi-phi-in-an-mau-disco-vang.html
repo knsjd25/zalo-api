@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#b7791f" />
+  <title>Tính chi phí in ấn màu Disco vàng</title>
+  <style>
+    :root{
+      --bg:#f7f4ed;
+      --surface:#ffffff;
+      --surface-2:#fbf8f0;
+      --text:#1f2937;
+      --muted:#667085;
+      --line:#e8e1d2;
+      --gold:#b7791f;
+      --gold-2:#d69e2e;
+      --gold-soft:#fff4d6;
+      --danger:#b42318;
+      --danger-soft:#fff1f0;
+      --success:#027a48;
+      --shadow:0 10px 30px rgba(70,55,20,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#fffaf0 0,#f7f4ed 240px,#f7f4ed 100%);
+      -webkit-tap-highlight-color:transparent;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:860px;margin:0 auto;padding:18px 16px 96px}
+    .hero{
+      padding:22px;
+      border:1px solid #ecd8a2;
+      border-radius:24px;
+      background:linear-gradient(135deg,#fffaf0,#fff0bd);
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
+    }
+    .eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a5b11;margin-bottom:7px}
+    h1{font-size:25px;line-height:1.2;margin:0 0 8px}
+    .hero p{margin:0;color:#6f5b2c;line-height:1.55}
+    .nav{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:8px;
+      position:sticky;
+      top:8px;
+      z-index:20;
+      padding:8px;
+      margin-bottom:16px;
+      border:1px solid rgba(232,225,210,.95);
+      border-radius:18px;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);
+      box-shadow:0 8px 24px rgba(40,30,10,.06);
+    }
+    .nav button{
+      border:0;
+      background:transparent;
+      color:#667085;
+      border-radius:12px;
+      min-height:42px;
+      padding:8px 6px;
+      font-weight:700;
+      font-size:13px;
+    }
+    .nav button.active{background:var(--gold-soft);color:#7a4e0c}
+    .page{display:none}
+    .page.active{display:block}
+    .card{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:0 8px 22px rgba(48,39,16,.045);
+      padding:18px;
+      margin-bottom:14px;
+    }
+    .card h2{font-size:18px;margin:0 0 14px}
+    .card h3{font-size:15px;margin:0 0 10px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field.full{grid-column:1/-1}
+    label{font-size:13px;font-weight:750;color:#344054}
+    input,select{
+      width:100%;
+      min-height:46px;
+      border:1px solid #d9d3c7;
+      border-radius:12px;
+      background:#fff;
+      color:#111827;
+      padding:10px 12px;
+      outline:none;
+      transition:border .15s,box-shadow .15s;
+    }
+    input:focus,select:focus{border-color:#c78b25;box-shadow:0 0 0 3px rgba(199,139,37,.14)}
+    .hint{font-size:12px;color:var(--muted);line-height:1.45}
+    .error{font-size:12px;color:var(--danger);min-height:16px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+    .btn{
+      border:1px solid transparent;
+      min-height:44px;
+      border-radius:12px;
+      padding:10px 16px;
+      font-weight:800;
+    }
+    .btn.primary{background:linear-gradient(135deg,#a86f16,#ca932b);color:#fff}
+    .btn.secondary{background:#fff;border-color:#d8d2c7;color:#344054}
+    .btn.soft{background:var(--gold-soft);color:#80540e}
+    .btn.danger{background:var(--danger-soft);color:var(--danger);border-color:#ffd3cf}
+    .btn.small{min-height:36px;padding:7px 11px;font-size:12px}
+    .result-wrap{display:none}
+    .result-wrap.show{display:block}
+    .result-main{
+      padding:18px;
+      border-radius:16px;
+      background:linear-gradient(135deg,#fff7df,#ffedb3);
+      border:1px solid #efd48b;
+      margin-bottom:12px;
+    }
+    .result-main .label{font-size:13px;color:#75551d;font-weight:750}
+    .result-main .value{font-size:30px;line-height:1.25;font-weight:900;color:#704706;margin-top:5px;word-break:break-word}
+    .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .metric{border:1px solid var(--line);border-radius:14px;padding:13px;background:var(--surface-2)}
+    .metric span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+    .metric strong{font-size:16px;word-break:break-word}
+    .notice{padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid #e4e7ec;color:#475467;font-size:13px;line-height:1.55}
+    .success{color:var(--success);font-size:13px;font-weight:700;min-height:18px;margin-top:8px}
+    .history-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+    .history-toolbar input{flex:1}
+    .empty{text-align:center;padding:34px 18px;color:var(--muted)}
+    .empty strong{display:block;color:#475467;margin-bottom:6px}
+    .history-list{display:grid;gap:10px}
+    .history-item{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}
+    .history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .history-title{font-weight:850;line-height:1.35}
+    .history-time{font-size:11px;color:var(--muted);margin-top:4px}
+    .history-cost{font-weight:900;color:#7b520d;text-align:right;white-space:nowrap}
+    .history-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;margin-top:11px;font-size:12px;color:#475467}
+    .history-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .section-text{line-height:1.7;color:#475467;font-size:14px}
+    .section-text p{margin:0 0 12px}
+    .steps{counter-reset:step;display:grid;gap:10px}
+    .step{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+    .step:before{counter-increment:step;content:counter(step);flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--gold-soft);color:#7d530e;font-weight:900;font-size:13px}
+    .info-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #f0ece4;font-size:14px}
+    .info-row:last-child{border-bottom:0}
+    .info-row span:first-child{color:var(--muted)}
+    details{border:1px solid var(--line);border-radius:14px;background:#fff;padding:0 14px;margin-bottom:10px}
+    summary{cursor:pointer;font-weight:800;padding:14px 0}
+    details .section-text{padding-bottom:12px}
+    .footer{font-size:12px;color:#98a2b3;text-align:center;padding:10px}
+    @media(max-width:640px){
+      .app{padding:12px 12px 94px}
+      h1{font-size:22px}
+      .hero{padding:18px}
+      .grid,.metrics{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .nav{top:6px}
+      .nav button{font-size:11px;padding:7px 3px}
+      .history-head{flex-direction:column}
+      .history-cost{text-align:left}
+      .history-meta{grid-template-columns:1fr}
+      .actions .btn{flex:1 1 140px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="eyebrow">Công cụ dự toán in ấn</div>
+      <h1>Tính chi phí in ấn màu Disco vàng</h1>
+      <p>Tính diện tích in, hao hụt vật liệu, phụ phí màu và chi phí gia công để lập dự toán cho ấn phẩm quảng cáo.</p>
+    </section>
+
+    <nav class="nav" aria-label="Điều hướng chính">
+      <button type="button" class="active" data-page="calc">Tính toán</button>
+      <button type="button" data-page="history">Lịch sử</button>
+      <button type="button" data-page="guide">Hướng dẫn</button>
+      <button type="button" data-page="info">Thông tin</button>
+    </nav>
+
+    <section id="calc" class="page active">
+      <div class="card">
+        <h2>Thông tin đơn in</h2>
+        <div class="grid">
+          <div class="field full">
+            <label for="jobName">Tên đơn in</label>
+            <input id="jobName" maxlength="60" placeholder="Ví dụ: Poster khai trương" />
+            <div class="error" id="jobNameError"></div>
+          </div>
+
+          <div class="field">
+            <label for="width">Chiều rộng mỗi sản phẩm cm</label>
+            <input id="width" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Ví dụ: 60" />
+            <div class="error" id="widthError"></div>
+          </div>
+
+          <div class="field">
+            <label for="height">Chiều cao mỗi sản phẩm cm</label>
+            <input id="height" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Ví dụ: 90" />
+            <div class="error" id="heightError"></div>
+          </div>
+
+          <div class="field">
+            <label for="quantity">Số lượng</label>
+            <input id="quantity" inputmode="numeric" type="number" min="1" step="1" placeholder="Ví dụ: 20" />
+            <div class="error" id="quantityError"></div>
+          </div>
+
+          <div class="field">
+            <label for="material">Vật liệu in</label>
+            <select id="material">
+              <option value="Giấy couche">Giấy couche</option>
+              <option value="Giấy mỹ thuật">Giấy mỹ thuật</option>
+              <option value="Decal">Decal</option>
+              <option value="PP">PP</option>
+              <option value="Bạt quảng cáo">Bạt quảng cáo</option>
+              <option value="Mica">Mica</option>
+              <option value="Vật liệu khác">Vật liệu khác</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="unitPrice">Đơn giá vật liệu trên mét vuông</label>
+            <input id="unitPrice" inputmode="decimal" type="number" min="0" step="100" placeholder="Ví dụ: 85000" />
+            <div class="error" id="unitPriceError"></div>
+          </div>
+
+          <div class="field">
+            <label for="waste">Tỷ lệ hao hụt phần trăm</label>
+            <input id="waste" inputmode="decimal" type="number" min="0" max="100" step="0.1" value="5" />
+            <div class="error" id="wasteError"></div>
+          </div>
+
+          <div class="field">
+            <label for="colorType">Loại màu</label>
+            <select id="colorType">
+              <option value="Màu tiêu chuẩn">Màu tiêu chuẩn</option>
+              <option value="Nhiều màu">Nhiều màu</option>
+              <option value="Disco vàng">Disco vàng</option>
+            </select>
+            <div class="hint">Disco vàng dùng để đánh dấu đơn in theo chủ đề màu vàng nổi bật.</div>
+          </div>
+
+          <div class="field">
+            <label for="colorSurcharge">Phụ phí màu phần trăm</label>
+            <input id="colorSurcharge" inputmode="decimal" type="number" min="0" max="100" step="0.1" value="0" />
+            <div class="error" id="colorSurchargeError"></div>
+          </div>
+
+          <div class="field full">
+            <label for="finishingCost">Chi phí gia công khác</label>
+            <input id="finishingCost" inputmode="decimal" type="number" min="0" step="1000" value="0" placeholder="Cán màng, cắt, bế hoặc gia công khác" />
+            <div class="error" id="finishingCostError"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="button" id="calculateBtn">Tính chi phí</button>
+          <button class="btn secondary" type="button" id="resetBtn">Đặt lại</button>
+        </div>
+      </div>
+
+      <div class="card result-wrap" id="resultCard">
+        <h2>Kết quả dự toán</h2>
+        <div class="result-main">
+          <div class="label">Tổng chi phí dự kiến</div>
+          <div class="value" id="totalCost">0 đ</div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Tổng diện tích in</span><strong id="baseArea">0 m²</strong></div>
+          <div class="metric"><span>Diện tích sau hao hụt</span><strong id="wasteArea">0 m²</strong></div>
+          <div class="metric"><span>Chi phí vật liệu</span><strong id="materialCost">0 đ</strong></div>
+          <div class="metric"><span>Phụ phí màu</span><strong id="colorCost">0 đ</strong></div>
+          <div class="metric"><span>Chi phí gia công</span><strong id="finishCost">0 đ</strong></div>
+          <div class="metric"><span>Chi phí trung bình mỗi sản phẩm</span><strong id="costPerItem">0 đ</strong></div>
+        </div>
+        <div class="notice" style="margin-top:12px">Kết quả là dự toán theo dữ liệu đã nhập. Giá thực tế có thể thay đổi theo nhà cung cấp, chất lượng vật liệu và yêu cầu gia công.</div>
+        <div class="actions">
+          <button class="btn soft" type="button" id="saveBtn">Lưu vào lịch sử</button>
+        </div>
+        <div class="success" id="saveMessage"></div>
+      </div>
+    </section>
+
+    <section id="history" class="page">
+      <div class="card">
+        <h2>Lịch sử dự toán</h2>
+        <div class="history-toolbar">
+          <input id="historySearch" placeholder="Tìm theo tên đơn in hoặc vật liệu" />
+          <button class="btn danger small" type="button" id="clearHistoryBtn">Xóa tất cả</button>
+        </div>
+        <div id="historyContainer"></div>
+      </div>
+    </section>
+
+    <section id="guide" class="page">
+      <div class="card">
+        <h2>Hướng dẫn sử dụng</h2>
+        <div class="steps">
+          <div class="step"><div class="section-text">Nhập tên đơn in để dễ nhận biết khi lưu lịch sử.</div></div>
+          <div class="step"><div class="section-text">Nhập chiều rộng, chiều cao và số lượng sản phẩm cần in.</div></div>
+          <div class="step"><div class="section-text">Chọn vật liệu và nhập đơn giá theo mét vuông.</div></div>
+          <div class="step"><div class="section-text">Nhập tỷ lệ hao hụt, loại màu, phụ phí màu và chi phí gia công nếu có.</div></div>
+          <div class="step"><div class="section-text">Chọn Tính chi phí để xem diện tích và tổng dự toán.</div></div>
+          <div class="step"><div class="section-text">Chọn Lưu vào lịch sử để lưu kết quả trên thiết bị. Có thể nạp lại hoặc xóa từng bản ghi.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Cách tính</h2>
+        <div class="section-text">
+          <p>Tổng diện tích in được tính từ chiều rộng nhân chiều cao nhân số lượng và đổi sang mét vuông.</p>
+          <p>Diện tích sau hao hụt bằng tổng diện tích in cộng thêm tỷ lệ hao hụt đã nhập.</p>
+          <p>Chi phí vật liệu bằng diện tích sau hao hụt nhân đơn giá vật liệu.</p>
+          <p>Tổng chi phí bằng chi phí vật liệu cộng phụ phí màu và chi phí gia công khác.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="info" class="page">
+      <div class="card">
+        <h2>Thông tin ứng dụng</h2>
+        <div class="info-row"><span>Tên ứng dụng</span><strong>Tính chi phí in ấn màu Disco vàng</strong></div>
+        <div class="info-row"><span>Phiên bản</span><strong>1.0.0</strong></div>
+        <div class="info-row"><span>Dữ liệu</span><strong>Lưu cục bộ trên thiết bị</strong></div>
+        <div class="section-text" style="margin-top:12px">
+          <p>Ứng dụng hỗ trợ ước tính chi phí in ấn dựa trên kích thước, số lượng, vật liệu, đơn giá, hao hụt, loại màu và chi phí gia công.</p>
+        </div>
+      </div>
+
+      <details open>
+        <summary>Điều khoản sử dụng</summary>
+        <div class="section-text">
+          <p>Người dùng chịu trách nhiệm về tính chính xác của dữ liệu nhập vào ứng dụng. Kết quả tính toán chỉ có mục đích tham khảo cho việc lập dự toán in ấn và không thay thế báo giá chính thức từ nhà cung cấp.</p>
+          <p>Ứng dụng không cam kết giá vật liệu, chi phí gia công hoặc phụ phí màu tại từng thời điểm. Người dùng cần kiểm tra lại giá thực tế trước khi đặt hàng hoặc ký kết giao dịch.</p>
+          <p>Người dùng không được sử dụng ứng dụng cho mục đích trái pháp luật hoặc gây ảnh hưởng đến quyền và lợi ích hợp pháp của tổ chức, cá nhân khác.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Chính sách riêng tư</summary>
+        <div class="section-text">
+          <p>Ứng dụng không yêu cầu người dùng cung cấp tài khoản cá nhân để thực hiện chức năng tính toán.</p>
+          <p>Dữ liệu lịch sử dự toán được lưu cục bộ trên thiết bị của người dùng. Người dùng có thể xóa từng bản ghi hoặc xóa toàn bộ lịch sử bất kỳ lúc nào.</p>
+          <p>Ứng dụng không tự động gửi dữ liệu lịch sử dự toán đến máy chủ bên ngoài.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Thông tin phiên bản</summary>
+        <div class="section-text">
+          <p>Phiên bản 1.0.0 hỗ trợ tính diện tích in, hao hụt vật liệu, phụ phí màu, chi phí gia công, tổng chi phí, chi phí trung bình mỗi sản phẩm và lưu lịch sử trên thiết bị.</p>
+        </div>
+      </details>
+    </section>
+
+    <div class="footer">Tính chi phí in ấn màu Disco vàng</div>
+  </main>
+
+<script>
+(function(){
+  'use strict';
+  const STORAGE_KEY = 'disco_vang_print_cost_history_v1';
+  const MAX_HISTORY = 100;
+  let lastResult = null;
+
+  const $ = (id) => document.getElementById(id);
+  const navButtons = Array.from(document.querySelectorAll('.nav button'));
+  const pages = Array.from(document.querySelectorAll('.page'));
+
+  function setPage(pageId){
+    pages.forEach(p => p.classList.toggle('active', p.id === pageId));
+    navButtons.forEach(b => b.classList.toggle('active', b.dataset.page === pageId));
+    if(pageId === 'history') renderHistory();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  navButtons.forEach(btn => btn.addEventListener('click', () => setPage(btn.dataset.page)));
+
+  function numberValue(id){
+    const raw = $(id).value.trim();
+    if(raw === '') return NaN;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : NaN;
+  }
+
+  function clearErrors(){
+    ['jobName','width','height','quantity','unitPrice','waste','colorSurcharge','finishingCost'].forEach(id => {
+      const e = $(id + 'Error');
+      if(e) e.textContent = '';
+    });
+  }
+
+  function setError(id, message){
+    const e = $(id + 'Error');
+    if(e) e.textContent = message;
+  }
+
+  function validate(){
+    clearErrors();
+    let valid = true;
+    const jobName = $('jobName').value.trim();
+    const width = numberValue('width');
+    const height = numberValue('height');
+    const quantity = numberValue('quantity');
+    const unitPrice = numberValue('unitPrice');
+    const waste = numberValue('waste');
+    const colorSurcharge = numberValue('colorSurcharge');
+    const finishingCost = numberValue('finishingCost');
+
+    if(!jobName){ setError('jobName','Vui lòng nhập tên đơn in.'); valid = false; }
+    if(!Number.isFinite(width) || width <= 0){ setError('width','Chiều rộng phải lớn hơn 0.'); valid = false; }
+    if(!Number.isFinite(height) || height <= 0){ setError('height','Chiều cao phải lớn hơn 0.'); valid = false; }
+    if(!Number.isInteger(quantity) || quantity <= 0){ setError('quantity','Số lượng phải là số nguyên lớn hơn 0.'); valid = false; }
+    if(!Number.isFinite(unitPrice) || unitPrice < 0){ setError('unitPrice','Đơn giá phải là số không âm.'); valid = false; }
+    if(!Number.isFinite(waste) || waste < 0 || waste > 100){ setError('waste','Tỷ lệ hao hụt phải từ 0 đến 100.'); valid = false; }
+    if(!Number.isFinite(colorSurcharge) || colorSurcharge < 0 || colorSurcharge > 100){ setError('colorSurcharge','Phụ phí màu phải từ 0 đến 100.'); valid = false; }
+    if(!Number.isFinite(finishingCost) || finishingCost < 0){ setError('finishingCost','Chi phí gia công phải là số không âm.'); valid = false; }
+
+    return valid ? {jobName,width,height,quantity,unitPrice,waste,colorSurcharge,finishingCost} : null;
+  }
+
+  function formatMoney(value){
+    const n = Number.isFinite(value) && value >= 0 ? value : 0;
+    return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0}).format(Math.round(n)) + ' đ';
+  }
+
+  function formatArea(value){
+    const n = Number.isFinite(value) && value >= 0 ? value : 0;
+    return new Intl.NumberFormat('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:3}).format(n) + ' m²';
+  }
+
+  function calculate(){
+    $('saveMessage').textContent = '';
+    const data = validate();
+    if(!data){
+      lastResult = null;
+      $('resultCard').classList.remove('show');
+      return;
+    }
+
+    const baseArea = (data.width * data.height * data.quantity) / 10000;
+    const wasteArea = baseArea * (1 + data.waste / 100);
+    const materialCost = wasteArea * data.unitPrice;
+    const colorCost = materialCost * (data.colorSurcharge / 100);
+    const totalCost = Math.max(0, materialCost + colorCost + data.finishingCost);
+    const costPerItem = data.quantity > 0 ? totalCost / data.quantity : 0;
+
+    lastResult = {
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      jobName: data.jobName,
+      width: data.width,
+      height: data.height,
+      quantity: data.quantity,
+      material: $('material').value,
+      unitPrice: data.unitPrice,
+      waste: data.waste,
+      colorType: $('colorType').value,
+      colorSurcharge: data.colorSurcharge,
+      finishingCost: data.finishingCost,
+      baseArea,
+      wasteArea,
+      materialCost,
+      colorCost,
+      totalCost,
+      costPerItem
+    };
+
+    $('baseArea').textContent = formatArea(baseArea);
+    $('wasteArea').textContent = formatArea(wasteArea);
+    $('materialCost').textContent = formatMoney(materialCost);
+    $('colorCost').textContent = formatMoney(colorCost);
+    $('finishCost').textContent = formatMoney(data.finishingCost);
+    $('costPerItem').textContent = formatMoney(costPerItem);
+    $('totalCost').textContent = formatMoney(totalCost);
+    $('resultCard').classList.add('show');
+    $('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function resetForm(){
+    $('jobName').value = '';
+    $('width').value = '';
+    $('height').value = '';
+    $('quantity').value = '';
+    $('material').value = 'Giấy couche';
+    $('unitPrice').value = '';
+    $('waste').value = '5';
+    $('colorType').value = 'Màu tiêu chuẩn';
+    $('colorSurcharge').value = '0';
+    $('finishingCost').value = '0';
+    clearErrors();
+    lastResult = null;
+    $('resultCard').classList.remove('show');
+    $('saveMessage').textContent = '';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function getHistory(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function setHistory(items){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, MAX_HISTORY)));
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function saveCurrent(){
+    if(!lastResult){
+      $('saveMessage').textContent = 'Vui lòng tính chi phí trước khi lưu.';
+      return;
+    }
+    const history = getHistory();
+    const item = {...lastResult, id: Date.now(), createdAt: new Date().toISOString()};
+    history.unshift(item);
+    if(setHistory(history)){
+      $('saveMessage').textContent = 'Đã lưu kết quả vào lịch sử trên thiết bị.';
+    }else{
+      $('saveMessage').textContent = 'Không thể lưu dữ liệu trên thiết bị này.';
+    }
+  }
+
+  function escapeHtml(value){
+    return String(value ?? '')
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#039;');
+  }
+
+  function formatDate(iso){
+    const d = new Date(iso);
+    if(Number.isNaN(d.getTime())) return '';
+    return new Intl.DateTimeFormat('vi-VN',{dateStyle:'short',timeStyle:'short'}).format(d);
+  }
+
+  function renderHistory(){
+    const container = $('historyContainer');
+    const keyword = $('historySearch').value.trim().toLowerCase();
+    const all = getHistory();
+    const items = all.filter(item => {
+      if(!keyword) return true;
+      return String(item.jobName || '').toLowerCase().includes(keyword) || String(item.material || '').toLowerCase().includes(keyword) || String(item.colorType || '').toLowerCase().includes(keyword);
+    });
+
+    if(items.length === 0){
+      container.innerHTML = '<div class="empty"><strong>Chưa có dữ liệu lịch sử</strong>Hãy tính chi phí và lưu kết quả để xem lại tại đây.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="history-list">' + items.map(item => `
+      <div class="history-item">
+        <div class="history-head">
+          <div>
+            <div class="history-title">${escapeHtml(item.jobName || 'Đơn in')}</div>
+            <div class="history-time">${escapeHtml(formatDate(item.createdAt))}</div>
+          </div>
+          <div class="history-cost">${formatMoney(Number(item.totalCost))}</div>
+        </div>
+        <div class="history-meta">
+          <div>Vật liệu: <strong>${escapeHtml(item.material || '')}</strong></div>
+          <div>Loại màu: <strong>${escapeHtml(item.colorType || '')}</strong></div>
+          <div>Kích thước: <strong>${escapeHtml(item.width)} x ${escapeHtml(item.height)} cm</strong></div>
+          <div>Số lượng: <strong>${escapeHtml(item.quantity)}</strong></div>
+          <div>Diện tích sau hao hụt: <strong>${formatArea(Number(item.wasteArea))}</strong></div>
+          <div>Chi phí mỗi sản phẩm: <strong>${formatMoney(Number(item.costPerItem))}</strong></div>
+        </div>
+        <div class="history-actions">
+          <button class="btn soft small" type="button" data-action="load" data-id="${escapeHtml(item.id)}">Nạp lại</button>
+          <button class="btn danger small" type="button" data-action="delete" data-id="${escapeHtml(item.id)}">Xóa</button>
+        </div>
+      </div>`).join('') + '</div>';
+  }
+
+  function loadHistoryItem(id){
+    const item = getHistory().find(x => String(x.id) === String(id));
+    if(!item) return;
+    $('jobName').value = item.jobName || '';
+    $('width').value = Number(item.width) || '';
+    $('height').value = Number(item.height) || '';
+    $('quantity').value = Number(item.quantity) || '';
+    $('material').value = item.material || 'Giấy couche';
+    $('unitPrice').value = Number(item.unitPrice) || 0;
+    $('waste').value = Number(item.waste) || 0;
+    $('colorType').value = item.colorType || 'Màu tiêu chuẩn';
+    $('colorSurcharge').value = Number(item.colorSurcharge) || 0;
+    $('finishingCost').value = Number(item.finishingCost) || 0;
+    setPage('calc');
+    calculate();
+  }
+
+  function deleteHistoryItem(id){
+    const next = getHistory().filter(x => String(x.id) !== String(id));
+    setHistory(next);
+    renderHistory();
+  }
+
+  $('historyContainer').addEventListener('click', (event) => {
+    const btn = event.target.closest('button[data-action]');
+    if(!btn) return;
+    const id = btn.dataset.id;
+    if(btn.dataset.action === 'load') loadHistoryItem(id);
+    if(btn.dataset.action === 'delete') deleteHistoryItem(id);
+  });
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', resetForm);
+  $('saveBtn').addEventListener('click', saveCurrent);
+  $('historySearch').addEventListener('input', renderHistory);
+  $('clearHistoryBtn').addEventListener('click', () => {
+    const history = getHistory();
+    if(history.length === 0){ renderHistory(); return; }
+    if(confirm('Bạn có chắc muốn xóa toàn bộ lịch sử dự toán không?')){
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+    }
+  });
+
+  $('colorType').addEventListener('change', () => {
+    if($('colorType').value === 'Disco vàng' && Number($('colorSurcharge').value) === 0){
+      $('colorSurcharge').focus();
+    }
+  });
+
+  renderHistory();
+})();
+</script>
+</body>
+</html>

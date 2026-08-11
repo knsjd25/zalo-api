@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Dự toán vật tư sự kiện FIREWORK BURST</title>
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --text:#172033; --muted:#64748b;
+      --line:#e7ebf1; --primary:#ef5a32; --primary2:#ff835f;
+      --dark:#0f172a; --good:#14866d; --danger:#d64545; --warn:#b7791f;
+      --shadow:0 12px 28px rgba(15,23,42,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text); background:
+      radial-gradient(circle at top right,rgba(255,131,95,.13),transparent 28rem),
+      var(--bg);
+      min-height:100vh;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:920px;margin:0 auto;padding:18px 14px 110px}
+    .hero{
+      background:linear-gradient(135deg,#121c31,#202f4e 62%,#3a2430);
+      color:white;border-radius:26px;padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+    }
+    .hero:after{
+      content:"";position:absolute;width:190px;height:190px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,160,115,.95) 0 2%,rgba(255,104,64,.55) 3% 9%,transparent 10%),
+                 radial-gradient(circle,rgba(255,212,122,.9) 0 1.5%,transparent 2%);
+      background-size:26px 26px,18px 18px;right:-60px;top:-55px;opacity:.42;transform:rotate(18deg);
+    }
+    .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.76}
+    h1{font-size:26px;line-height:1.18;margin:7px 0 8px;max-width:650px}
+    .hero p{margin:0;max-width:690px;color:#d9e2ef;font-size:14px;line-height:1.55}
+    .heroStats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+    .heroStat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);padding:11px;border-radius:14px}
+    .heroStat b{display:block;font-size:18px}.heroStat span{font-size:11px;color:#cbd5e1}
+    .tabs{
+      position:sticky;top:0;z-index:10;margin:14px 0;background:rgba(246,248,251,.93);
+      backdrop-filter:blur(10px);display:flex;gap:8px;overflow:auto;padding:8px 2px;
+    }
+    .tabs button{
+      border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;
+      white-space:nowrap;color:#475569;font-weight:700;font-size:13px;
+    }
+    .tabs button.active{background:var(--dark);border-color:var(--dark);color:white}
+    .panel{display:none}.panel.active{display:block}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:18px;margin-bottom:14px;
+    }
+    .card h2,.card h3{margin:0 0 6px}.card h2{font-size:19px}.card h3{font-size:16px}
+    .sub{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 14px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .field label{display:block;font-size:12px;font-weight:800;color:#475569;margin-bottom:6px}
+    .field input,.field select,.field textarea{
+      width:100%;border:1px solid #dce2ea;background:#fbfcfe;border-radius:13px;padding:12px;color:var(--text);outline:none;
+    }
+    .field textarea{resize:vertical;min-height:78px}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#f18a6b;box-shadow:0 0 0 3px rgba(239,90,50,.1)}
+    .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .pill{font-size:11px;background:#fff0eb;color:#a83e22;border:1px solid #ffd8cc;padding:5px 9px;border-radius:999px;font-weight:800}
+    .btn{
+      border:0;border-radius:13px;padding:11px 14px;font-weight:800;transition:.15s;
+    }
+    .btn:active{transform:scale(.98)}
+    .btnPrimary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white}
+    .btnDark{background:var(--dark);color:white}
+    .btnSoft{background:#f1f5f9;color:#334155}
+    .btnDanger{background:#fff1f1;color:#b42323;border:1px solid #ffd1d1}
+    .btnGood{background:#eaf8f3;color:#10715d}
+    .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+    .actions .btn{flex:1;min-width:135px}
+    .material{
+      border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:10px;background:#fcfdff;
+    }
+    .materialHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+    .materialHead b{font-size:14px}
+    .remove{border:0;background:#fff0f0;color:#b42323;border-radius:10px;padding:7px 9px;font-weight:800}
+    .result{
+      background:linear-gradient(135deg,#fff8f4,#fff);border:1px solid #ffddd2;border-radius:18px;padding:16px;margin-top:14px;
+    }
+    .resultGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .metric{background:white;border:1px solid #f0e4df;border-radius:14px;padding:12px}
+    .metric span{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+    .metric strong{font-size:17px}
+    .total{margin-top:10px;background:var(--dark);color:white;border-radius:16px;padding:16px;display:flex;justify-content:space-between;gap:10px;align-items:end}
+    .total span{font-size:12px;color:#cbd5e1}.total strong{font-size:24px}
+    .historyItem{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:#fff}
+    .historyTop{display:flex;justify-content:space-between;gap:10px}
+    .historyTop b{font-size:15px}.historyTop small{color:var(--muted)}
+    .historyMeta{margin:9px 0;color:#64748b;font-size:12px;line-height:1.55}
+    .historyTotal{font-size:19px;font-weight:900;color:#172033}
+    .empty{text-align:center;padding:34px 15px;color:#64748b}
+    .emptyIcon{width:54px;height:54px;border-radius:18px;background:#f1f5f9;margin:0 auto 12px;display:grid;place-items:center;font-size:24px}
+    .infoList{display:grid;gap:10px}
+    .infoRow{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fcfdff}
+    .infoRow b{display:block;margin-bottom:4px}.infoRow span{font-size:13px;color:var(--muted);line-height:1.55}
+    .legal{font-size:13px;color:#475569;line-height:1.7}
+    .legal h3{color:#172033;margin-top:18px}
+    .notice{border-left:4px solid #f59e0b;background:#fff8e7;padding:12px 14px;border-radius:10px;font-size:12px;color:#77591e}
+    .toast{
+      position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);
+      background:#111827;color:white;padding:10px 14px;border-radius:12px;font-size:13px;
+      opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:88%;text-align:center;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .footer{text-align:center;color:#94a3b8;font-size:11px;margin-top:24px}
+    @media(max-width:650px){
+      .app{padding:12px 10px 96px}.hero{padding:18px;border-radius:22px}
+      h1{font-size:22px}.heroStats{grid-template-columns:1fr 1fr}.heroStat:last-child{grid-column:1/-1}
+      .grid,.grid3,.resultGrid{grid-template-columns:1fr}.card{padding:15px;border-radius:18px}
+      .total{align-items:flex-start;flex-direction:column}.actions .btn{min-width:0;flex:1 1 100%}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="eyebrow">Công cụ lập dự toán sự kiện</div>
+    <h1>Dự toán vật tư sự kiện FIREWORK BURST</h1>
+    <p>Lập danh sách vật tư, tính chi phí theo kích thước và số lượng, cộng chi phí nhân công, vận chuyển và dự phòng để tạo tổng ngân sách cho từng sự kiện.</p>
+    <div class="heroStats">
+      <div class="heroStat"><b id="heroProjects">0</b><span>Dự án đã lưu</span></div>
+      <div class="heroStat"><b id="heroMaterials">0</b><span>Hạng mục hiện tại</span></div>
+      <div class="heroStat"><b id="heroBudget">0 đ</b><span>Dự toán hiện tại</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-tab="estimate">Dự toán</button>
+    <button data-tab="history">Lịch sử</button>
+    <button data-tab="guide">Hướng dẫn</button>
+    <button data-tab="about">Thông tin</button>
+    <button data-tab="terms">Điều khoản</button>
+    <button data-tab="privacy">Quyền riêng tư</button>
+    <button data-tab="version">Phiên bản</button>
+  </nav>
+
+  <main>
+    <section class="panel active" id="estimate">
+      <div class="card">
+        <h2>Thông tin dự án</h2>
+        <p class="sub">Nhập thông tin cơ bản để dễ tìm lại dự toán sau khi lưu.</p>
+        <div class="grid">
+          <div class="field"><label>Tên dự án</label><input id="projectName" maxlength="80" placeholder="Ví dụ: Sự kiện khai trương cửa hàng" /></div>
+          <div class="field"><label>Ngày tổ chức</label><input id="eventDate" type="date" /></div>
+        </div>
+        <div class="field" style="margin-top:12px"><label>Ghi chú</label><textarea id="projectNote" maxlength="300" placeholder="Địa điểm, yêu cầu thi công hoặc thông tin cần nhớ"></textarea></div>
+      </div>
+
+      <div class="card">
+        <div class="sectionTitle">
+          <div><h2>Danh sách vật tư</h2><p class="sub" style="margin:3px 0 0">Có thể thêm nhiều hạng mục cho cùng một sự kiện.</p></div>
+          <span class="pill" id="itemCount">0 hạng mục</span>
+        </div>
+        <div id="materials"></div>
+        <button class="btn btnSoft" id="addMaterial" style="width:100%">Thêm hạng mục vật tư</button>
+      </div>
+
+      <div class="card">
+        <h2>Chi phí bổ sung</h2>
+        <p class="sub">Các khoản này được cộng sau tổng chi phí vật tư.</p>
+        <div class="grid3">
+          <div class="field"><label>Chi phí nhân công</label><input id="labor" inputmode="decimal" placeholder="0" /></div>
+          <div class="field"><label>Chi phí vận chuyển</label><input id="transport" inputmode="decimal" placeholder="0" /></div>
+          <div class="field"><label>Dự phòng phần trăm</label><input id="contingency" inputmode="decimal" placeholder="0" /></div>
+        </div>
+
+        <div class="result">
+          <div class="resultGrid">
+            <div class="metric"><span>Tổng chi phí vật tư</span><strong id="materialsTotal">0 đ</strong></div>
+            <div class="metric"><span>Chi phí bổ sung</span><strong id="extraTotal">0 đ</strong></div>
+            <div class="metric"><span>Tiền dự phòng</span><strong id="contingencyTotal">0 đ</strong></div>
+            <div class="metric"><span>Số hạng mục hợp lệ</span><strong id="validItems">0</strong></div>
+          </div>
+          <div class="total"><div><span>Tổng ngân sách dự kiến</span><br><strong id="grandTotal">0 đ</strong></div><span id="budgetHint">Chưa có dữ liệu chi phí</span></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btnPrimary" id="calculateBtn">Tính dự toán</button>
+          <button class="btn btnGood" id="saveBtn">Lưu dự án</button>
+          <button class="btn btnDanger" id="resetBtn">Đặt lại</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="history">
+      <div class="card">
+        <div class="sectionTitle">
+          <div><h2>Lịch sử dự án</h2><p class="sub" style="margin:3px 0 0">Dữ liệu được lưu trên thiết bị hiện tại.</p></div>
+          <button class="btn btnDanger" id="clearHistoryBtn">Xóa tất cả</button>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="guide">
+      <div class="card">
+        <h2>Hướng dẫn sử dụng</h2>
+        <div class="infoList">
+          <div class="infoRow"><b>Bước 1. Tạo dự án</b><span>Nhập tên dự án, ngày tổ chức và ghi chú cần thiết.</span></div>
+          <div class="infoRow"><b>Bước 2. Thêm vật tư</b><span>Chọn loại vật tư như backdrop, banner, đèn, bảng quảng cáo, kệ trưng bày hoặc ấn phẩm. Nhập số lượng, kích thước và đơn giá.</span></div>
+          <div class="infoRow"><b>Bước 3. Kiểm tra chi phí</b><span>Hệ thống tự tính diện tích, thành tiền của từng hạng mục và tổng chi phí vật tư.</span></div>
+          <div class="infoRow"><b>Bước 4. Thêm chi phí bổ sung</b><span>Nhập chi phí nhân công, vận chuyển và tỷ lệ dự phòng nếu có.</span></div>
+          <div class="infoRow"><b>Bước 5. Lưu dự toán</b><span>Kiểm tra tổng ngân sách rồi lưu dự án. Dự án đã lưu có thể xem lại, nạp lại để chỉnh sửa hoặc xóa.</span></div>
+        </div>
+        <div class="notice" style="margin-top:14px">Kết quả là dự toán tham khảo dựa trên dữ liệu người dùng nhập. Giá thực tế có thể thay đổi theo vật liệu, địa điểm, nhà cung cấp và điều kiện thi công.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="about">
+      <div class="card">
+        <h2>Thông tin ứng dụng</h2>
+        <p class="legal">Dự toán vật tư sự kiện FIREWORK BURST là công cụ hỗ trợ lập ngân sách vật tư cho hoạt động quảng cáo và sự kiện. Ứng dụng giúp tổng hợp các hạng mục như sân khấu, backdrop, banner, hệ thống đèn, bảng quảng cáo, kệ trưng bày và ấn phẩm, đồng thời tính thêm chi phí nhân công, vận chuyển và dự phòng.</p>
+        <h3>Phạm vi sử dụng</h3>
+        <p class="legal">Ứng dụng phù hợp cho việc chuẩn bị báo giá nội bộ, ước tính chi phí sơ bộ và lưu lịch sử các dự án sự kiện. Ứng dụng không thay thế báo giá chính thức hoặc hợp đồng với nhà cung cấp.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="terms">
+      <div class="card legal">
+        <h2>Điều khoản sử dụng</h2>
+        <h3>1. Mục đích sử dụng</h3>
+        <p>Ứng dụng cung cấp công cụ hỗ trợ tính toán và lưu dự toán vật tư sự kiện dựa trên dữ liệu do người dùng nhập.</p>
+        <h3>2. Trách nhiệm dữ liệu</h3>
+        <p>Người dùng chịu trách nhiệm kiểm tra số lượng, kích thước, đơn giá và các chi phí trước khi sử dụng kết quả cho hoạt động kinh doanh.</p>
+        <h3>3. Kết quả dự toán</h3>
+        <p>Kết quả chỉ có giá trị tham khảo và có thể khác với chi phí thực tế do biến động giá, vật liệu, vận chuyển, nhân công và yêu cầu thi công.</p>
+        <h3>4. Lưu trữ</h3>
+        <p>Dữ liệu dự án được lưu cục bộ trên thiết bị. Việc xóa dữ liệu trình duyệt hoặc gỡ ứng dụng có thể làm mất lịch sử đã lưu.</p>
+        <h3>5. Sử dụng hợp lệ</h3>
+        <p>Người dùng không được sử dụng ứng dụng cho hành vi trái pháp luật hoặc gây ảnh hưởng đến quyền và lợi ích hợp pháp của tổ chức, cá nhân khác.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="privacy">
+      <div class="card legal">
+        <h2>Chính sách quyền riêng tư</h2>
+        <h3>1. Dữ liệu nhập vào</h3>
+        <p>Ứng dụng xử lý tên dự án, ngày sự kiện, ghi chú, thông tin vật tư và chi phí do người dùng tự nhập.</p>
+        <h3>2. Phương thức lưu trữ</h3>
+        <p>Lịch sử dự toán được lưu cục bộ trên thiết bị bằng bộ nhớ của trình duyệt. Phiên bản này không yêu cầu người dùng tạo tài khoản.</p>
+        <h3>3. Chia sẻ dữ liệu</h3>
+        <p>Ứng dụng không tự động gửi dữ liệu dự toán cho bên thứ ba.</p>
+        <h3>4. Quyền của người dùng</h3>
+        <p>Người dùng có thể xóa từng dự án hoặc xóa toàn bộ lịch sử bất cứ lúc nào trong mục Lịch sử.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="version">
+      <div class="card">
+        <h2>Thông tin phiên bản</h2>
+        <div class="infoList">
+          <div class="infoRow"><b>Phiên bản</b><span>1.0.0</span></div>
+          <div class="infoRow"><b>Chức năng chính</b><span>Lập dự toán vật tư sự kiện, tính chi phí theo số lượng và kích thước, tính nhân công, vận chuyển, dự phòng và lưu lịch sử dự án.</span></div>
+          <div class="infoRow"><b>Trạng thái dữ liệu</b><span>Dữ liệu lịch sử được lưu trên thiết bị hiện tại.</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Dự toán vật tư sự kiện FIREWORK BURST</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const STORE = "firework_burst_event_budget_v1";
+  let materials = [];
+  let lastCalculation = null;
+
+  const categories = [
+    "Sân khấu",
+    "Backdrop",
+    "Banner",
+    "Hệ thống đèn",
+    "Bảng quảng cáo",
+    "Kệ trưng bày",
+    "Ấn phẩm",
+    "Vật tư khác"
+  ];
+
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+  function safeNumber(value){
+    const cleaned = String(value ?? "").replace(/\s/g,"").replace(/,/g,".");
+    const n = Number(cleaned);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  }
+
+  function money(n){
+    n = Number.isFinite(n) && n >= 0 ? n : 0;
+    return new Intl.NumberFormat("vi-VN",{maximumFractionDigits:0}).format(Math.round(n))+" đ";
+  }
+
+  function dec(n){
+    n = Number.isFinite(n) && n >= 0 ? n : 0;
+    return new Intl.NumberFormat("vi-VN",{maximumFractionDigits:2}).format(n);
+  }
+
+  function toast(msg){
+    const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer=setTimeout(()=>t.classList.remove("show"),2200);
+  }
+
+  function escapeHtml(s){
+    return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  }
+
+  function addMaterial(seed={}){
+    materials.push({
+      id:uid(),
+      category:seed.category || "Backdrop",
+      name:seed.name || "",
+      quantity:seed.quantity ?? 1,
+      width:seed.width ?? "",
+      height:seed.height ?? "",
+      unitPrice:seed.unitPrice ?? ""
+    });
+    renderMaterials();
+    calculate(false);
+  }
+
+  function renderMaterials(){
+    const box=$("#materials");
+    box.innerHTML = materials.map((m,i)=>`
+      <div class="material" data-id="${m.id}">
+        <div class="materialHead">
+          <b>Hạng mục ${i+1}</b>
+          <button class="remove" data-remove="${m.id}">Xóa</button>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label>Loại vật tư</label>
+            <select data-key="category">
+              ${categories.map(c=>`<option ${c===m.category?"selected":""}>${c}</option>`).join("")}
+            </select>
+          </div>
+          <div class="field">
+            <label>Tên hoặc mô tả</label>
+            <input data-key="name" maxlength="80" value="${escapeHtml(m.name)}" placeholder="Ví dụ: Backdrop khu vực sân khấu" />
+          </div>
+        </div>
+        <div class="grid3" style="margin-top:10px">
+          <div class="field"><label>Số lượng</label><input data-key="quantity" inputmode="decimal" value="${escapeHtml(m.quantity)}" placeholder="1" /></div>
+          <div class="field"><label>Chiều rộng mét</label><input data-key="width" inputmode="decimal" value="${escapeHtml(m.width)}" placeholder="0" /></div>
+          <div class="field"><label>Chiều cao mét</label><input data-key="height" inputmode="decimal" value="${escapeHtml(m.height)}" placeholder="0" /></div>
+        </div>
+        <div class="grid" style="margin-top:10px">
+          <div class="field"><label>Đơn giá theo mét vuông</label><input data-key="unitPrice" inputmode="decimal" value="${escapeHtml(m.unitPrice)}" placeholder="0" /></div>
+          <div class="field"><label>Thành tiền tạm tính</label><input disabled value="${money(itemTotal(m))}" /></div>
+        </div>
+      </div>
+    `).join("");
+    $("#itemCount").textContent = materials.length+" hạng mục";
+    $("#heroMaterials").textContent = materials.length;
+
+    $$("[data-remove]").forEach(btn=>btn.onclick=()=>{
+      const id=btn.dataset.remove;
+      materials=materials.filter(x=>x.id!==id);
+      if(!materials.length) addMaterial();
+      else {renderMaterials(); calculate(false);}
+    });
+
+    $$(".material input,.material select").forEach(el=>{
+      el.addEventListener("input",e=>{
+        const wrap=e.target.closest(".material");
+        const m=materials.find(x=>x.id===wrap.dataset.id);
+        if(!m) return;
+        m[e.target.dataset.key]=e.target.value;
+        calculate(false);
+        const disabled=wrap.querySelector("input[disabled]");
+        if(disabled) disabled.value=money(itemTotal(m));
+      });
+      el.addEventListener("change",e=>e.target.dispatchEvent(new Event("input",{bubbles:true})));
+    });
+  }
+
+  function itemTotal(m){
+    const q=safeNumber(m.quantity), w=safeNumber(m.width), h=safeNumber(m.height), p=safeNumber(m.unitPrice);
+    const area = (w>0 && h>0) ? w*h : 1;
+    const total=q*area*p;
+    return Number.isFinite(total) && total>=0 ? total : 0;
+  }
+
+  function validate(showMessage=true){
+    if(!materials.length){
+      if(showMessage) toast("Vui lòng thêm ít nhất một hạng mục vật tư");
+      return false;
+    }
+    const hasValid = materials.some(m => safeNumber(m.quantity)>0 && safeNumber(m.unitPrice)>0);
+    if(!hasValid){
+      if(showMessage) toast("Vui lòng nhập số lượng và đơn giá hợp lệ");
+      return false;
+    }
+    const invalid = materials.some(m=>{
+      const q=safeNumber(m.quantity), p=safeNumber(m.unitPrice);
+      const rawQ=String(m.quantity??"").trim(), rawP=String(m.unitPrice??"").trim();
+      return (rawQ!=="" && q<=0) || (rawP!=="" && p<0);
+    });
+    if(invalid){
+      if(showMessage) toast("Dữ liệu vật tư không hợp lệ");
+      return false;
+    }
+    const c=safeNumber($("#contingency").value);
+    if(c>100){
+      if(showMessage) toast("Tỷ lệ dự phòng phải từ 0 đến 100 phần trăm");
+      return false;
+    }
+    return true;
+  }
+
+  function calculate(showMessage=true){
+    const materialsTotal=materials.reduce((s,m)=>s+itemTotal(m),0);
+    const labor=safeNumber($("#labor").value);
+    const transport=safeNumber($("#transport").value);
+    const contingency=safeNumber($("#contingency").value);
+    const base=Math.max(0,materialsTotal+labor+transport);
+    const contingencyTotal=Math.max(0,base*Math.min(contingency,100)/100);
+    const grand=Math.max(0,base+contingencyTotal);
+    const validItems=materials.filter(m=>safeNumber(m.quantity)>0 && safeNumber(m.unitPrice)>0).length;
+
+    lastCalculation={materialsTotal,labor,transport,contingency,contingencyTotal,grand,validItems};
+    $("#materialsTotal").textContent=money(materialsTotal);
+    $("#extraTotal").textContent=money(labor+transport);
+    $("#contingencyTotal").textContent=money(contingencyTotal);
+    $("#grandTotal").textContent=money(grand);
+    $("#validItems").textContent=validItems;
+    $("#heroBudget").textContent=money(grand);
+    $("#budgetHint").textContent=grand>0 ? "Đã tính theo dữ liệu hiện tại" : "Chưa có dữ liệu chi phí";
+
+    if(showMessage){
+      if(validate(true)) toast("Đã cập nhật dự toán");
+    }
+    return lastCalculation;
+  }
+
+  function getHistory(){
+    try{
+      const x=JSON.parse(localStorage.getItem(STORE)||"[]");
+      return Array.isArray(x)?x:[];
+    }catch(e){ return []; }
+  }
+
+  function setHistory(arr){
+    try{ localStorage.setItem(STORE,JSON.stringify(arr.slice(0,100))); return true; }
+    catch(e){ toast("Không thể lưu dữ liệu trên thiết bị này"); return false; }
+  }
+
+  function saveProject(){
+    if(!validate(true)) return;
+    const calc=calculate(false);
+    const name=$("#projectName").value.trim();
+    if(!name){ toast("Vui lòng nhập tên dự án trước khi lưu"); return; }
+
+    const record={
+      id:uid(),
+      createdAt:new Date().toISOString(),
+      name,
+      eventDate:$("#eventDate").value || "",
+      note:$("#projectNote").value.trim(),
+      materials:materials.map(m=>({...m})),
+      labor:safeNumber($("#labor").value),
+      transport:safeNumber($("#transport").value),
+      contingency:safeNumber($("#contingency").value),
+      total:calc.grand
+    };
+    const h=getHistory();
+    h.unshift(record);
+    if(setHistory(h)){
+      renderHistory();
+      refreshStats();
+      toast("Đã lưu dự án vào lịch sử");
+    }
+  }
+
+  function renderHistory(){
+    const list=$("#historyList");
+    const h=getHistory();
+    if(!h.length){
+      list.innerHTML=`<div class="empty"><div class="emptyIcon">□</div><b>Chưa có dự án đã lưu</b><p>Hãy tạo một dự toán ở mục Dự toán và chọn Lưu dự án.</p></div>`;
+      return;
+    }
+    list.innerHTML=h.map(r=>{
+      const date=r.eventDate ? new Date(r.eventDate+"T00:00:00").toLocaleDateString("vi-VN") : "Chưa đặt ngày";
+      const count=Array.isArray(r.materials)?r.materials.length:0;
+      return `<div class="historyItem">
+        <div class="historyTop"><div><b>${escapeHtml(r.name)}</b><br><small>${date}</small></div><div class="historyTotal">${money(safeNumber(r.total))}</div></div>
+        <div class="historyMeta">${count} hạng mục vật tư${r.note?`<br>${escapeHtml(r.note)}`:""}</div>
+        <div class="actions" style="margin-top:8px">
+          <button class="btn btnSoft" data-load="${r.id}">Nạp lại dự án</button>
+          <button class="btn btnDanger" data-delete="${r.id}">Xóa</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    $$("[data-delete]").forEach(btn=>btn.onclick=()=>{
+      const h=getHistory().filter(r=>r.id!==btn.dataset.delete);
+      setHistory(h); renderHistory(); refreshStats(); toast("Đã xóa dự án");
+    });
+    $$("[data-load]").forEach(btn=>btn.onclick=()=>{
+      const r=getHistory().find(x=>x.id===btn.dataset.load);
+      if(!r){ toast("Không tìm thấy dữ liệu dự án"); return; }
+      $("#projectName").value=r.name||"";
+      $("#eventDate").value=r.eventDate||"";
+      $("#projectNote").value=r.note||"";
+      materials=(Array.isArray(r.materials)&&r.materials.length?r.materials:[{}]).map(x=>({...x,id:uid()}));
+      $("#labor").value=safeNumber(r.labor)||"";
+      $("#transport").value=safeNumber(r.transport)||"";
+      $("#contingency").value=safeNumber(r.contingency)||"";
+      renderMaterials(); calculate(false); switchTab("estimate"); toast("Đã nạp lại dự án");
+    });
+  }
+
+  function resetForm(){
+    $("#projectName").value="";
+    $("#eventDate").value="";
+    $("#projectNote").value="";
+    $("#labor").value="";
+    $("#transport").value="";
+    $("#contingency").value="";
+    materials=[];
+    addMaterial();
+    calculate(false);
+    toast("Đã đặt lại dữ liệu hiện tại");
+  }
+
+  function clearHistory(){
+    const h=getHistory();
+    if(!h.length){ toast("Lịch sử đang trống"); return; }
+    if(confirm("Bạn có chắc muốn xóa toàn bộ lịch sử dự án không?")){
+      setHistory([]); renderHistory(); refreshStats(); toast("Đã xóa toàn bộ lịch sử");
+    }
+  }
+
+  function refreshStats(){
+    $("#heroProjects").textContent=getHistory().length;
+    $("#heroMaterials").textContent=materials.length;
+    if(lastCalculation) $("#heroBudget").textContent=money(lastCalculation.grand);
+  }
+
+  function switchTab(id){
+    $$(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+    $$(".panel").forEach(p=>p.classList.toggle("active",p.id===id));
+    if(id==="history") renderHistory();
+    window.scrollTo({top:document.querySelector(".tabs").offsetTop-4,behavior:"smooth"});
+  }
+
+  $$(".tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+  $("#addMaterial").onclick=()=>addMaterial();
+  $("#calculateBtn").onclick=()=>calculate(true);
+  $("#saveBtn").onclick=saveProject;
+  $("#resetBtn").onclick=resetForm;
+  $("#clearHistoryBtn").onclick=clearHistory;
+  ["labor","transport","contingency"].forEach(id=>$("#"+id).addEventListener("input",()=>calculate(false)));
+
+  addMaterial({category:"Backdrop",quantity:1});
+  renderHistory();
+  refreshStats();
+})();
+</script>
+</body>
+</html>

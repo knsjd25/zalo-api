@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#5b38d1" />
+  <title>Dự toán thiết bị sự kiện Rave Party Fever</title>
+  <style>
+    :root{
+      --bg:#f6f5fb;
+      --card:#ffffff;
+      --text:#222238;
+      --muted:#74748a;
+      --line:#e9e7f2;
+      --primary:#5b38d1;
+      --primary-2:#7b5be6;
+      --soft:#f0ecff;
+      --danger:#d43b52;
+      --success:#1c8f66;
+      --warning:#b06d13;
+      --shadow:0 10px 30px rgba(45,35,90,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+    body{min-height:100vh}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:780px;margin:0 auto;min-height:100vh;padding-bottom:94px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      padding:calc(14px + env(safe-area-inset-top)) 16px 14px;
+      background:rgba(246,245,251,.94);backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(233,231,242,.85)
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-icon{
+      width:44px;height:44px;border-radius:14px;
+      display:grid;place-items:center;color:white;font-weight:800;
+      background:linear-gradient(145deg,var(--primary),var(--primary-2));
+      box-shadow:0 10px 20px rgba(91,56,209,.24)
+    }
+    .brand h1{font-size:17px;line-height:1.22;margin:0}
+    .brand p{font-size:12px;margin:4px 0 0;color:var(--muted)}
+    main{padding:16px}
+    .page{display:none}
+    .page.active{display:block}
+    .hero{
+      background:linear-gradient(135deg,#5b38d1,#7c55dc 56%,#9a72e8);
+      color:white;border-radius:22px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px
+    }
+    .hero h2{margin:0 0 8px;font-size:23px}
+    .hero p{margin:0;color:rgba(255,255,255,.86);line-height:1.5;font-size:14px}
+    .hero .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+    .hero .summary div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);padding:12px;border-radius:14px}
+    .hero .summary span{display:block;font-size:12px;color:rgba(255,255,255,.78)}
+    .hero .summary strong{display:block;margin-top:3px;font-size:17px;word-break:break-word}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+    .card-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .card-title h3{font-size:16px;margin:0}
+    .hint{font-size:12px;color:var(--muted);line-height:1.45}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{margin-bottom:12px}
+    .field:last-child{margin-bottom:0}
+    label{display:block;font-size:13px;font-weight:650;margin-bottom:7px}
+    input,select,textarea{
+      width:100%;border:1px solid #dcd8eb;border-radius:12px;padding:12px 13px;
+      background:#fff;color:var(--text);outline:none;min-height:45px
+    }
+    textarea{min-height:86px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,56,209,.10)}
+    .error{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(212,59,82,.09)!important}
+    .field-error{font-size:12px;color:var(--danger);margin-top:5px;display:none}
+    .field-error.show{display:block}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:0;border-radius:12px;padding:11px 15px;font-weight:700;min-height:43px}
+    .btn-primary{background:var(--primary);color:white}
+    .btn-secondary{background:var(--soft);color:var(--primary)}
+    .btn-ghost{background:#f4f3f8;color:var(--text)}
+    .btn-danger{background:#fff0f2;color:var(--danger)}
+    .btn-small{padding:8px 11px;min-height:36px;font-size:12px}
+    .equipment-list{display:flex;flex-direction:column;gap:12px}
+    .equipment{
+      border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfaff
+    }
+    .equipment-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+    .equipment-head strong{font-size:14px}
+    .equipment-head span{font-size:12px;color:var(--muted);display:block;margin-top:3px}
+    .equipment-total{
+      margin-top:10px;padding-top:10px;border-top:1px dashed #dcd8eb;
+      display:flex;justify-content:space-between;gap:12px;font-size:13px
+    }
+    .equipment-total strong{color:var(--primary)}
+    .totals{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .total-box{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fcfbff}
+    .total-box span{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+    .total-box strong{font-size:16px}
+    .grand{grid-column:1/-1;background:var(--soft);border-color:#d8cffc}
+    .grand strong{font-size:22px;color:var(--primary)}
+    .category-row{display:flex;gap:8px;overflow:auto;padding-bottom:4px}
+    .chip{white-space:nowrap;border:1px solid #ded9f1;background:white;color:var(--text);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:650}
+    .chip.active{background:var(--primary);border-color:var(--primary);color:white}
+    .empty{text-align:center;padding:32px 16px;color:var(--muted)}
+    .empty strong{display:block;color:var(--text);margin-bottom:6px}
+    .history-item{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:white}
+    .history-top{display:flex;justify-content:space-between;gap:14px}
+    .history-title{font-weight:800;font-size:14px}
+    .history-date{font-size:11px;color:var(--muted);white-space:nowrap}
+    .history-meta{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+    .history-price{font-size:17px;color:var(--primary);font-weight:800;margin-top:9px}
+    .history-actions{display:flex;gap:8px;margin-top:11px}
+    .info-list{display:flex;flex-direction:column;gap:10px}
+    .info-row{padding:12px 0;border-bottom:1px solid var(--line)}
+    .info-row:last-child{border-bottom:0}
+    .info-row strong{display:block;font-size:14px;margin-bottom:4px}
+    .info-row p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+    .article h3{font-size:17px;margin:8px 0 10px}
+    .article h4{font-size:14px;margin:18px 0 7px}
+    .article p,.article li{font-size:13px;color:#5e5e70;line-height:1.65}
+    .article ul{padding-left:20px}
+    .notice{padding:12px 13px;border-radius:12px;background:#fff8ec;border:1px solid #f0dfbf;color:#7e5a22;font-size:12px;line-height:1.5;margin-top:12px}
+    .toast{
+      position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+      max-width:calc(100vw - 32px);background:#262432;color:#fff;padding:10px 14px;border-radius:12px;
+      font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:50;text-align:center
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .bottom-nav{
+      position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:30;
+      width:min(780px,100%);padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+      display:grid;grid-template-columns:repeat(4,1fr)
+    }
+    .nav-btn{border:0;background:transparent;border-radius:13px;padding:8px 4px;color:var(--muted);font-size:11px;font-weight:700}
+    .nav-btn .ico{display:block;font-size:18px;line-height:1;margin-bottom:4px}
+    .nav-btn.active{color:var(--primary);background:var(--soft)}
+    .section-links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .link-card{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;text-align:left}
+    .link-card strong{font-size:13px;display:block;margin-bottom:4px}
+    .link-card span{font-size:11px;color:var(--muted)}
+    .badge{display:inline-block;border-radius:999px;padding:4px 8px;background:var(--soft);color:var(--primary);font-size:11px;font-weight:800}
+    .modal{
+      position:fixed;inset:0;background:rgba(28,26,40,.50);z-index:60;display:none;align-items:flex-end;justify-content:center
+    }
+    .modal.show{display:flex}
+    .modal-box{
+      width:min(780px,100%);background:white;border-radius:22px 22px 0 0;padding:18px;
+      max-height:88vh;overflow:auto
+    }
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .modal-head h3{margin:0;font-size:17px}
+    .close{width:36px;height:36px;border-radius:10px;border:0;background:#f1eff6;font-size:20px}
+    @media (max-width:560px){
+      .grid2{grid-template-columns:1fr}
+      .hero .summary{grid-template-columns:1fr 1fr}
+      .totals{grid-template-columns:1fr 1fr}
+      .section-links{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">RP</div>
+      <div>
+        <h1>Dự toán thiết bị sự kiện Rave Party Fever</h1>
+        <p>Công cụ lập ngân sách thiết bị và nhân sự sự kiện</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <h2>Lập dự toán sự kiện</h2>
+        <p>Tạo danh sách thiết bị, nhập số lượng, số ngày thuê và đơn giá để tính ngân sách dự kiến cho từng hạng mục.</p>
+        <div class="summary">
+          <div><span>Số hạng mục</span><strong id="heroItemCount">0</strong></div>
+          <div><span>Tổng dự toán</span><strong id="heroGrandTotal">0 đ</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h3>Thông tin dự án</h3>
+          <span class="badge">Bắt buộc</span>
+        </div>
+        <div class="field">
+          <label for="projectName">Tên sự kiện</label>
+          <input id="projectName" maxlength="80" placeholder="Ví dụ: Sự kiện giới thiệu sản phẩm" />
+          <div id="projectNameError" class="field-error">Vui lòng nhập tên sự kiện.</div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="eventDate">Ngày tổ chức</label>
+            <input id="eventDate" type="date" />
+            <div id="eventDateError" class="field-error">Vui lòng chọn ngày tổ chức hợp lệ.</div>
+          </div>
+          <div class="field">
+            <label for="location">Địa điểm</label>
+            <input id="location" maxlength="100" placeholder="Ví dụ: Trung tâm hội nghị" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="note">Ghi chú</label>
+          <textarea id="note" maxlength="300" placeholder="Ghi chú yêu cầu về sân khấu, âm thanh, ánh sáng hoặc thời gian thi công"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h3>Danh mục nhanh</h3>
+          <button class="btn btn-secondary btn-small" id="addCustomBtn">Thêm hạng mục</button>
+        </div>
+        <div class="category-row" id="categoryChips"></div>
+        <p class="hint" style="margin:10px 0 0">Chọn một danh mục để thêm hạng mục mẫu. Có thể sửa tên, số lượng, số ngày và đơn giá sau khi thêm.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h3>Chi tiết dự toán</h3>
+          <span id="itemCountLabel" class="hint">0 hạng mục</span>
+        </div>
+        <div id="equipmentList" class="equipment-list"></div>
+        <div id="equipmentEmpty" class="empty">
+          <strong>Chưa có hạng mục nào</strong>
+          Chọn danh mục nhanh hoặc thêm hạng mục mới để bắt đầu lập dự toán.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><h3>Tổng hợp ngân sách</h3></div>
+        <div class="totals">
+          <div class="total-box"><span>Thiết bị</span><strong id="totalEquipment">0 đ</strong></div>
+          <div class="total-box"><span>Vận chuyển</span><strong id="totalTransport">0 đ</strong></div>
+          <div class="total-box"><span>Nhân công</span><strong id="totalLabor">0 đ</strong></div>
+          <div class="total-box"><span>Hạng mục khác</span><strong id="totalOther">0 đ</strong></div>
+          <div class="total-box grand"><span>Tổng dự toán</span><strong id="grandTotal">0 đ</strong></div>
+        </div>
+        <div class="notice">Kết quả là giá trị dự toán dựa trên dữ liệu bạn nhập. Chi phí thực tế có thể thay đổi theo nhà cung cấp, địa điểm, thời gian thi công và điều kiện tổ chức.</div>
+      </div>
+
+      <div class="card">
+        <div class="actions">
+          <button class="btn btn-primary" id="saveBtn">Lưu dự toán</button>
+          <button class="btn btn-secondary" id="duplicateBtn">Tạo bản sao</button>
+          <button class="btn btn-ghost" id="resetBtn">Đặt lại</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-history" class="page">
+      <div class="card">
+        <div class="card-title">
+          <h3>Lịch sử dự toán</h3>
+          <button class="btn btn-danger btn-small" id="clearHistoryBtn">Xóa tất cả</button>
+        </div>
+        <p class="hint">Các dự toán đã lưu được lưu trên thiết bị hiện tại.</p>
+      </div>
+      <div id="historyList"></div>
+      <div id="historyEmpty" class="card empty">
+        <strong>Chưa có dữ liệu lịch sử</strong>
+        Sau khi hoàn thành dự toán, chọn Lưu dự toán để tạo bản ghi.
+      </div>
+    </section>
+
+    <section id="page-guide" class="page">
+      <div class="card article">
+        <h3>Hướng dẫn sử dụng</h3>
+        <h4>1. Nhập thông tin sự kiện</h4>
+        <p>Nhập tên sự kiện, ngày tổ chức, địa điểm và ghi chú cần thiết. Tên sự kiện và ngày tổ chức là thông tin bắt buộc khi lưu.</p>
+        <h4>2. Thêm thiết bị và dịch vụ</h4>
+        <p>Chọn các danh mục như sân khấu, ánh sáng, âm thanh, màn hình LED, backdrop, bàn ghế, vận chuyển hoặc nhân công. Bạn cũng có thể tự tạo hạng mục riêng.</p>
+        <h4>3. Nhập số lượng và đơn giá</h4>
+        <p>Mỗi hạng mục cần có số lượng lớn hơn không và đơn giá không âm. Với hạng mục thuê theo ngày, nhập số ngày thuê phù hợp.</p>
+        <h4>4. Kiểm tra tổng dự toán</h4>
+        <p>Hệ thống tự động cộng chi phí theo từng nhóm và hiển thị tổng ngân sách dự kiến.</p>
+        <h4>5. Lưu và quản lý lịch sử</h4>
+        <p>Chọn Lưu dự toán để lưu dữ liệu trên thiết bị. Trong Lịch sử, bạn có thể mở lại, tạo bản sao hoặc xóa từng bản ghi.</p>
+      </div>
+    </section>
+
+    <section id="page-more" class="page">
+      <div class="card">
+        <div class="card-title"><h3>Thông tin và chính sách</h3></div>
+        <div class="section-links">
+          <button class="link-card" data-modal="about"><strong>Thông tin ứng dụng</strong><span>Mục đích và chức năng chính</span></button>
+          <button class="link-card" data-modal="terms"><strong>Điều khoản sử dụng</strong><span>Quy định khi sử dụng công cụ</span></button>
+          <button class="link-card" data-modal="privacy"><strong>Chính sách quyền riêng tư</strong><span>Cách dữ liệu được xử lý</span></button>
+          <button class="link-card" data-modal="version"><strong>Thông tin phiên bản</strong><span>Phiên bản hiện tại và nội dung đã hoàn thiện</span></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="info-list">
+          <div class="info-row">
+            <strong>Tên ứng dụng</strong>
+            <p>Dự toán thiết bị sự kiện Rave Party Fever</p>
+          </div>
+          <div class="info-row">
+            <strong>Loại công cụ</strong>
+            <p>Lập dự toán thiết bị, vật tư và nhân sự phục vụ sự kiện.</p>
+          </div>
+          <div class="info-row">
+            <strong>Lưu trữ</strong>
+            <p>Dữ liệu lịch sử được lưu cục bộ trên thiết bị của người dùng.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home"><span class="ico">⌂</span>Dự toán</button>
+    <button class="nav-btn" data-page="history"><span class="ico">≡</span>Lịch sử</button>
+    <button class="nav-btn" data-page="guide"><span class="ico">?</span>Hướng dẫn</button>
+    <button class="nav-btn" data-page="more"><span class="ico">⋯</span>Thông tin</button>
+  </nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div id="itemModal" class="modal" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="itemModalTitle">Thêm hạng mục</h3>
+      <button class="close" data-close="itemModal">×</button>
+    </div>
+    <div class="field">
+      <label for="modalCategory">Nhóm chi phí</label>
+      <select id="modalCategory">
+        <option value="equipment">Thiết bị và vật tư</option>
+        <option value="transport">Vận chuyển</option>
+        <option value="labor">Nhân công</option>
+        <option value="other">Hạng mục khác</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="modalName">Tên hạng mục</label>
+      <input id="modalName" maxlength="60" placeholder="Ví dụ: Đèn moving head" />
+      <div id="modalNameError" class="field-error">Vui lòng nhập tên hạng mục.</div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label for="modalQty">Số lượng</label>
+        <input id="modalQty" type="number" min="0.01" step="0.01" inputmode="decimal" value="1" />
+      </div>
+      <div class="field">
+        <label for="modalDays">Số ngày</label>
+        <input id="modalDays" type="number" min="1" step="1" inputmode="numeric" value="1" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="modalPrice">Đơn giá</label>
+      <input id="modalPrice" type="number" min="0" step="1000" inputmode="decimal" value="0" />
+      <div id="modalPriceError" class="field-error">Đơn giá không được là số âm.</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="confirmAddBtn">Thêm vào dự toán</button>
+      <button class="btn btn-ghost" data-close="itemModal">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div id="contentModal" class="modal" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="contentTitle">Thông tin</h3>
+      <button class="close" data-close="contentModal">×</button>
+    </div>
+    <div id="contentBody" class="article"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_KEY = "rpf_event_budget_history_v1";
+  const DRAFT_KEY = "rpf_event_budget_draft_v1";
+
+  const presets = [
+    {key:"stage", label:"Sân khấu", name:"Sân khấu lắp ghép", category:"equipment", qty:1, days:1, price:0},
+    {key:"lighting", label:"Ánh sáng", name:"Bộ đèn sân khấu", category:"equipment", qty:1, days:1, price:0},
+    {key:"sound", label:"Âm thanh", name:"Hệ thống âm thanh", category:"equipment", qty:1, days:1, price:0},
+    {key:"led", label:"Màn hình LED", name:"Màn hình LED", category:"equipment", qty:1, days:1, price:0},
+    {key:"backdrop", label:"Backdrop", name:"Backdrop sự kiện", category:"equipment", qty:1, days:1, price:0},
+    {key:"furniture", label:"Bàn ghế", name:"Bàn ghế sự kiện", category:"equipment", qty:1, days:1, price:0},
+    {key:"transport", label:"Vận chuyển", name:"Chi phí vận chuyển", category:"transport", qty:1, days:1, price:0},
+    {key:"labor", label:"Nhân công", name:"Nhân công lắp đặt", category:"labor", qty:1, days:1, price:0}
+  ];
+
+  const categoryNames = {
+    equipment:"Thiết bị và vật tư",
+    transport:"Vận chuyển",
+    labor:"Nhân công",
+    other:"Hạng mục khác"
+  };
+
+  let items = [];
+  let editingHistoryId = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function safeNumber(value, fallback=0){
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function money(value){
+    const n = Math.max(0, safeNumber(value,0));
+    return new Intl.NumberFormat("vi-VN", {
+      style:"currency",
+      currency:"VND",
+      maximumFractionDigits:0
+    }).format(n);
+  }
+
+  function uid(){
+    return "i_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+  }
+
+  function nowText(){
+    return new Intl.DateTimeFormat("vi-VN", {
+      year:"numeric", month:"2-digit", day:"2-digit",
+      hour:"2-digit", minute:"2-digit"
+    }).format(new Date());
+  }
+
+  function todayISO(){
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  }
+
+  function showToast(text){
+    const t = $("toast");
+    t.textContent = text;
+    t.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(()=>t.classList.remove("show"),2200);
+  }
+
+  function calcItem(item){
+    const qty = Math.max(0, safeNumber(item.qty,0));
+    const days = Math.max(1, safeNumber(item.days,1));
+    const price = Math.max(0, safeNumber(item.price,0));
+    return qty * days * price;
+  }
+
+  function sanitizeItem(raw){
+    return {
+      id: raw.id || uid(),
+      name: String(raw.name || "").trim().slice(0,60) || "Hạng mục",
+      category: categoryNames[raw.category] ? raw.category : "other",
+      qty: Math.max(0.01, safeNumber(raw.qty,1)),
+      days: Math.max(1, Math.round(safeNumber(raw.days,1))),
+      price: Math.max(0, safeNumber(raw.price,0))
+    };
+  }
+
+  function totals(){
+    const result = {equipment:0,transport:0,labor:0,other:0,grand:0};
+    items.forEach(item=>{
+      const v = calcItem(item);
+      result[item.category] += v;
+      result.grand += v;
+    });
+    return result;
+  }
+
+  function renderChips(){
+    const wrap = $("categoryChips");
+    wrap.innerHTML = "";
+    presets.forEach(p=>{
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.textContent = p.label;
+      b.addEventListener("click",()=>addPreset(p));
+      wrap.appendChild(b);
+    });
+  }
+
+  function addPreset(p){
+    items.push(sanitizeItem({...p,id:uid()}));
+    renderItems();
+    saveDraft();
+    showToast("Đã thêm " + p.label + ".");
+  }
+
+  function renderItems(){
+    const list = $("equipmentList");
+    list.innerHTML = "";
+    $("equipmentEmpty").style.display = items.length ? "none" : "block";
+    $("itemCountLabel").textContent = items.length + " hạng mục";
+    $("heroItemCount").textContent = String(items.length);
+
+    items.forEach((item,index)=>{
+      const box = document.createElement("div");
+      box.className = "equipment";
+      box.innerHTML = `
+        <div class="equipment-head">
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <span>${categoryNames[item.category]}</span>
+          </div>
+          <button class="btn btn-danger btn-small" data-remove="${item.id}">Xóa</button>
+        </div>
+        <div class="field">
+          <label>Tên hạng mục</label>
+          <input data-field="name" data-id="${item.id}" maxlength="60" value="${escapeAttr(item.name)}" />
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>Số lượng</label>
+            <input data-field="qty" data-id="${item.id}" type="number" min="0.01" step="0.01" inputmode="decimal" value="${item.qty}" />
+          </div>
+          <div class="field">
+            <label>Số ngày thuê hoặc sử dụng</label>
+            <input data-field="days" data-id="${item.id}" type="number" min="1" step="1" inputmode="numeric" value="${item.days}" />
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>Đơn giá</label>
+            <input data-field="price" data-id="${item.id}" type="number" min="0" step="1000" inputmode="decimal" value="${item.price}" />
+          </div>
+          <div class="field">
+            <label>Nhóm chi phí</label>
+            <select data-field="category" data-id="${item.id}">
+              <option value="equipment" ${item.category==="equipment"?"selected":""}>Thiết bị và vật tư</option>
+              <option value="transport" ${item.category==="transport"?"selected":""}>Vận chuyển</option>
+              <option value="labor" ${item.category==="labor"?"selected":""}>Nhân công</option>
+              <option value="other" ${item.category==="other"?"selected":""}>Hạng mục khác</option>
+            </select>
+          </div>
+        </div>
+        <div class="equipment-total">
+          <span>Thành tiền</span>
+          <strong id="rowTotal_${item.id}">${money(calcItem(item))}</strong>
+        </div>
+      `;
+      list.appendChild(box);
+    });
+
+    list.querySelectorAll("[data-remove]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        items = items.filter(x=>x.id !== btn.dataset.remove);
+        renderItems();
+        saveDraft();
+        showToast("Đã xóa hạng mục.");
+      });
+    });
+
+    list.querySelectorAll("[data-field]").forEach(el=>{
+      const eventName = el.tagName === "SELECT" ? "change" : "input";
+      el.addEventListener(eventName,()=>{
+        updateItemFromInput(el);
+      });
+      el.addEventListener("blur",()=>{
+        normalizeInput(el);
+      });
+    });
+
+    renderTotals();
+  }
+
+  function updateItemFromInput(el){
+    const item = items.find(x=>x.id===el.dataset.id);
+    if(!item) return;
+
+    const field = el.dataset.field;
+    if(field==="name"){
+      item.name = String(el.value || "").slice(0,60);
+    }else if(field==="category"){
+      item.category = categoryNames[el.value] ? el.value : "other";
+    }else if(field==="qty"){
+      const n = safeNumber(el.value,0);
+      item.qty = n > 0 ? n : 0;
+    }else if(field==="days"){
+      const n = safeNumber(el.value,1);
+      item.days = n >= 1 ? Math.round(n) : 1;
+    }else if(field==="price"){
+      const n = safeNumber(el.value,0);
+      item.price = n >= 0 ? n : 0;
+    }
+    const rt = $("rowTotal_"+item.id);
+    if(rt) rt.textContent = money(calcItem(item));
+    renderTotals();
+    saveDraft();
+  }
+
+  function normalizeInput(el){
+    const item = items.find(x=>x.id===el.dataset.id);
+    if(!item) return;
+    const field = el.dataset.field;
+
+    if(field==="name"){
+      item.name = String(item.name || "").trim().slice(0,60) || "Hạng mục";
+      el.value = item.name;
+    }else if(field==="qty"){
+      item.qty = Math.max(0.01, safeNumber(item.qty,1));
+      el.value = item.qty;
+    }else if(field==="days"){
+      item.days = Math.max(1, Math.round(safeNumber(item.days,1)));
+      el.value = item.days;
+    }else if(field==="price"){
+      item.price = Math.max(0, safeNumber(item.price,0));
+      el.value = item.price;
+    }
+    const rt = $("rowTotal_"+item.id);
+    if(rt) rt.textContent = money(calcItem(item));
+    renderTotals();
+    saveDraft();
+  }
+
+  function renderTotals(){
+    const t = totals();
+    $("totalEquipment").textContent = money(t.equipment);
+    $("totalTransport").textContent = money(t.transport);
+    $("totalLabor").textContent = money(t.labor);
+    $("totalOther").textContent = money(t.other);
+    $("grandTotal").textContent = money(t.grand);
+    $("heroGrandTotal").textContent = money(t.grand);
+  }
+
+  function validateProject(){
+    let ok = true;
+    const name = $("projectName").value.trim();
+    const date = $("eventDate").value;
+
+    setError("projectName", !name, "projectNameError");
+    if(!name) ok = false;
+
+    const validDate = /^\d{4}-\d{2}-\d{2}$/.test(date || "");
+    setError("eventDate", !validDate, "eventDateError");
+    if(!validDate) ok = false;
+
+    if(items.length===0){
+      showToast("Vui lòng thêm ít nhất một hạng mục.");
+      ok = false;
+    }
+
+    items = items.map(sanitizeItem);
+    renderItems();
+    return ok;
+  }
+
+  function setError(inputId, isError, errorId){
+    $(inputId).classList.toggle("error",isError);
+    $(errorId).classList.toggle("show",isError);
+  }
+
+  function getHistory(){
+    try{
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(raw) ? raw : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function setHistory(list){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0,100)));
+      return true;
+    }catch(e){
+      showToast("Không thể lưu dữ liệu trên thiết bị.");
+      return false;
+    }
+  }
+
+  function currentProject(){
+    return {
+      id: editingHistoryId || ("p_" + Date.now()),
+      projectName: $("projectName").value.trim(),
+      eventDate: $("eventDate").value,
+      location: $("location").value.trim().slice(0,100),
+      note: $("note").value.trim().slice(0,300),
+      items: items.map(sanitizeItem),
+      total: totals().grand,
+      savedAt: nowText()
+    };
+  }
+
+  function saveProject(){
+    if(!validateProject()) return;
+    const project = currentProject();
+    const history = getHistory();
+    const existingIndex = history.findIndex(x=>x.id===project.id);
+    if(existingIndex>=0){
+      history.splice(existingIndex,1);
+    }
+    history.unshift(project);
+    if(setHistory(history)){
+      editingHistoryId = project.id;
+      renderHistory();
+      showToast("Đã lưu dự toán.");
+    }
+  }
+
+  function duplicateCurrent(){
+    if(items.length===0){
+      showToast("Chưa có dữ liệu để tạo bản sao.");
+      return;
+    }
+    editingHistoryId = null;
+    $("projectName").value = ($("projectName").value.trim() || "Dự toán sự kiện") + " bản sao";
+    items = items.map(x=>({...sanitizeItem(x),id:uid()}));
+    saveDraft();
+    renderItems();
+    showToast("Đã tạo bản sao. Chỉnh sửa và lưu khi hoàn tất.");
+  }
+
+  function loadProject(id, duplicate=false){
+    const history = getHistory();
+    const p = history.find(x=>x.id===id);
+    if(!p){
+      showToast("Không tìm thấy dữ liệu.");
+      return;
+    }
+    editingHistoryId = duplicate ? null : p.id;
+    $("projectName").value = duplicate ? (String(p.projectName||"Dự toán sự kiện") + " bản sao") : String(p.projectName||"");
+    $("eventDate").value = p.eventDate || todayISO();
+    $("location").value = String(p.location||"");
+    $("note").value = String(p.note||"");
+    items = Array.isArray(p.items) ? p.items.map(x=>({...sanitizeItem(x),id:uid()})) : [];
+    saveDraft();
+    renderItems();
+    goPage("home");
+    showToast(duplicate ? "Đã tạo bản sao từ lịch sử." : "Đã mở dự toán.");
+  }
+
+  function deleteHistory(id){
+    const history = getHistory().filter(x=>x.id!==id);
+    setHistory(history);
+    if(editingHistoryId===id) editingHistoryId=null;
+    renderHistory();
+    showToast("Đã xóa bản ghi.");
+  }
+
+  function clearHistory(){
+    const history = getHistory();
+    if(history.length===0){
+      showToast("Lịch sử đang trống.");
+      return;
+    }
+    if(confirm("Bạn có chắc muốn xóa toàn bộ lịch sử dự toán không?")){
+      localStorage.removeItem(STORAGE_KEY);
+      editingHistoryId=null;
+      renderHistory();
+      showToast("Đã xóa toàn bộ lịch sử.");
+    }
+  }
+
+  function renderHistory(){
+    const wrap = $("historyList");
+    const empty = $("historyEmpty");
+    const history = getHistory();
+    wrap.innerHTML = "";
+    empty.style.display = history.length ? "none" : "block";
+
+    history.forEach(p=>{
+      const itemCount = Array.isArray(p.items) ? p.items.length : 0;
+      const box = document.createElement("div");
+      box.className = "history-item";
+      box.innerHTML = `
+        <div class="history-top">
+          <div class="history-title">${escapeHtml(String(p.projectName||"Dự toán sự kiện"))}</div>
+          <div class="history-date">${escapeHtml(String(p.savedAt||""))}</div>
+        </div>
+        <div class="history-meta">
+          Ngày tổ chức: ${escapeHtml(String(p.eventDate||"Chưa xác định"))}<br>
+          Địa điểm: ${escapeHtml(String(p.location||"Chưa nhập"))}<br>
+          Số hạng mục: ${itemCount}
+        </div>
+        <div class="history-price">${money(p.total)}</div>
+        <div class="history-actions">
+          <button class="btn btn-primary btn-small" data-open="${escapeAttr(p.id)}">Mở</button>
+          <button class="btn btn-secondary btn-small" data-copy="${escapeAttr(p.id)}">Tạo bản sao</button>
+          <button class="btn btn-danger btn-small" data-del="${escapeAttr(p.id)}">Xóa</button>
+        </div>
+      `;
+      wrap.appendChild(box);
+    });
+
+    wrap.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>loadProject(b.dataset.open,false)));
+    wrap.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>loadProject(b.dataset.copy,true)));
+    wrap.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{
+      if(confirm("Bạn có chắc muốn xóa bản ghi này không?")) deleteHistory(b.dataset.del);
+    }));
+  }
+
+  function saveDraft(){
+    const data = {
+      projectName:$("projectName").value,
+      eventDate:$("eventDate").value,
+      location:$("location").value,
+      note:$("note").value,
+      items:items.map(sanitizeItem)
+    };
+    try{ localStorage.setItem(DRAFT_KEY,JSON.stringify(data)); }catch(e){}
+  }
+
+  function restoreDraft(){
+    try{
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+      if(!d || typeof d!=="object") throw new Error("no draft");
+      $("projectName").value = String(d.projectName||"");
+      $("eventDate").value = /^\d{4}-\d{2}-\d{2}$/.test(d.eventDate||"") ? d.eventDate : todayISO();
+      $("location").value = String(d.location||"");
+      $("note").value = String(d.note||"");
+      items = Array.isArray(d.items) ? d.items.map(sanitizeItem) : [];
+    }catch(e){
+      $("eventDate").value = todayISO();
+      items = [];
+    }
+  }
+
+  function resetProject(){
+    if(!confirm("Bạn có chắc muốn đặt lại toàn bộ dữ liệu đang nhập không?")) return;
+    editingHistoryId=null;
+    $("projectName").value="";
+    $("eventDate").value=todayISO();
+    $("location").value="";
+    $("note").value="";
+    items=[];
+    localStorage.removeItem(DRAFT_KEY);
+    setError("projectName",false,"projectNameError");
+    setError("eventDate",false,"eventDateError");
+    renderItems();
+    showToast("Đã đặt lại dữ liệu.");
+  }
+
+  function goPage(page){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+    $("page-"+page).classList.add("active");
+    const btn = document.querySelector('.nav-btn[data-page="'+page+'"]');
+    if(btn) btn.classList.add("active");
+    if(page==="history") renderHistory();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function openItemModal(){
+    $("modalCategory").value="equipment";
+    $("modalName").value="";
+    $("modalQty").value="1";
+    $("modalDays").value="1";
+    $("modalPrice").value="0";
+    $("modalNameError").classList.remove("show");
+    $("modalName").classList.remove("error");
+    $("modalPriceError").classList.remove("show");
+    $("modalPrice").classList.remove("error");
+    $("itemModal").classList.add("show");
+    $("itemModal").setAttribute("aria-hidden","false");
+  }
+
+  function closeModal(id){
+    $(id).classList.remove("show");
+    $(id).setAttribute("aria-hidden","true");
+  }
+
+  function confirmAdd(){
+    const name = $("modalName").value.trim();
+    const category = $("modalCategory").value;
+    const qty = safeNumber($("modalQty").value,0);
+    const days = safeNumber($("modalDays").value,0);
+    const price = safeNumber($("modalPrice").value,-1);
+
+    let ok=true;
+    const nameBad=!name;
+    $("modalName").classList.toggle("error",nameBad);
+    $("modalNameError").classList.toggle("show",nameBad);
+    if(nameBad) ok=false;
+
+    const priceBad=price<0;
+    $("modalPrice").classList.toggle("error",priceBad);
+    $("modalPriceError").classList.toggle("show",priceBad);
+    if(priceBad) ok=false;
+
+    if(!(qty>0)){
+      showToast("Số lượng phải lớn hơn không.");
+      ok=false;
+    }
+    if(!(days>=1)){
+      showToast("Số ngày phải từ một ngày trở lên.");
+      ok=false;
+    }
+    if(!ok) return;
+
+    items.push(sanitizeItem({
+      id:uid(),name,category,qty,days:Math.round(days),price
+    }));
+    closeModal("itemModal");
+    renderItems();
+    saveDraft();
+    showToast("Đã thêm hạng mục.");
+  }
+
+  const modalContent = {
+    about:{
+      title:"Thông tin ứng dụng",
+      body:`
+        <h3>Dự toán thiết bị sự kiện Rave Party Fever</h3>
+        <p>Ứng dụng hỗ trợ lập dự toán cho các hạng mục thiết bị, vật tư, vận chuyển và nhân công phục vụ sự kiện.</p>
+        <p>Người dùng có thể thêm sân khấu, ánh sáng, âm thanh, màn hình LED, backdrop, bàn ghế và các hạng mục tùy chỉnh; nhập số lượng, số ngày và đơn giá; xem tổng ngân sách; lưu và quản lý lịch sử dự toán trên thiết bị.</p>
+      `
+    },
+    terms:{
+      title:"Điều khoản sử dụng",
+      body:`
+        <h3>Điều khoản sử dụng</h3>
+        <p>Bằng việc sử dụng ứng dụng, người dùng đồng ý tự chịu trách nhiệm về dữ liệu đã nhập và mục đích sử dụng kết quả dự toán.</p>
+        <h4>Phạm vi sử dụng</h4>
+        <p>Ứng dụng là công cụ hỗ trợ tính toán ngân sách dự kiến cho hoạt động tổ chức sự kiện. Kết quả không phải báo giá chính thức và không thay thế hợp đồng với nhà cung cấp.</p>
+        <h4>Trách nhiệm của người dùng</h4>
+        <p>Người dùng cần kiểm tra số lượng, thời gian thuê, đơn giá và các yêu cầu kỹ thuật trước khi sử dụng kết quả để lập kế hoạch thực tế.</p>
+        <h4>Giới hạn trách nhiệm</h4>
+        <p>Chi phí thực tế có thể thay đổi theo địa điểm, thời gian, nhà cung cấp, điều kiện vận chuyển, lắp đặt và yêu cầu của từng sự kiện.</p>
+      `
+    },
+    privacy:{
+      title:"Chính sách quyền riêng tư",
+      body:`
+        <h3>Chính sách quyền riêng tư</h3>
+        <p>Ứng dụng không yêu cầu người dùng nhập thông tin tài khoản để sử dụng chức năng lập dự toán.</p>
+        <h4>Dữ liệu được lưu</h4>
+        <p>Tên sự kiện, ngày tổ chức, địa điểm, ghi chú, danh sách hạng mục và kết quả dự toán được lưu cục bộ trên thiết bị khi người dùng chọn lưu.</p>
+        <h4>Quyền kiểm soát dữ liệu</h4>
+        <p>Người dùng có thể xóa từng bản ghi hoặc xóa toàn bộ lịch sử trong ứng dụng. Việc xóa dữ liệu trên thiết bị có thể làm mất lịch sử đã lưu.</p>
+        <h4>Chia sẻ dữ liệu</h4>
+        <p>Phiên bản này không tự động gửi dữ liệu dự toán đến dịch vụ bên ngoài.</p>
+      `
+    },
+    version:{
+      title:"Thông tin phiên bản",
+      body:`
+        <h3>Phiên bản 1.0.0</h3>
+        <p>Hoàn thiện chức năng lập dự toán thiết bị sự kiện theo số lượng, số ngày và đơn giá.</p>
+        <p>Hoàn thiện nhóm chi phí sân khấu, ánh sáng, âm thanh, màn hình LED, backdrop, bàn ghế, vận chuyển và nhân công.</p>
+        <p>Hoàn thiện chức năng thêm, sửa, xóa, đặt lại, lưu lịch sử, mở lại và tạo bản sao dự toán.</p>
+        <p>Hoàn thiện hướng dẫn sử dụng, thông tin ứng dụng, điều khoản sử dụng và chính sách quyền riêng tư.</p>
+      `
+    }
+  };
+
+  function openContentModal(type){
+    const c = modalContent[type];
+    if(!c) return;
+    $("contentTitle").textContent=c.title;
+    $("contentBody").innerHTML=c.body;
+    $("contentModal").classList.add("show");
+    $("contentModal").setAttribute("aria-hidden","false");
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+  }
+  function escapeAttr(s){ return escapeHtml(s); }
+
+  document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>goPage(b.dataset.page)));
+  document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
+  document.querySelectorAll("[data-modal]").forEach(b=>b.addEventListener("click",()=>openContentModal(b.dataset.modal)));
+
+  $("addCustomBtn").addEventListener("click",openItemModal);
+  $("confirmAddBtn").addEventListener("click",confirmAdd);
+  $("saveBtn").addEventListener("click",saveProject);
+  $("duplicateBtn").addEventListener("click",duplicateCurrent);
+  $("resetBtn").addEventListener("click",resetProject);
+  $("clearHistoryBtn").addEventListener("click",clearHistory);
+
+  ["projectName","eventDate","location","note"].forEach(id=>{
+    $(id).addEventListener("input",saveDraft);
+    $(id).addEventListener("change",saveDraft);
+  });
+
+  document.querySelectorAll(".modal").forEach(m=>{
+    m.addEventListener("click",e=>{
+      if(e.target===m) closeModal(m.id);
+    });
+  });
+
+  renderChips();
+  restoreDraft();
+  renderItems();
+  renderHistory();
+})();
+</script>
+</body>
+</html>

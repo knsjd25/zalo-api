@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f45b32">
+  <title>Danh mục vật tư quảng cáo Wild Fireworks</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --primary: #f45b32;
+      --primary-dark: #d94320;
+      --secondary: #ffb347;
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #1d2433;
+      --sub: #6f7785;
+      --line: #e9ebef;
+      --green: #1ca66a;
+      --red: #d94a4a;
+      --yellow: #db9717;
+      --blue: #3778d4;
+      --radius: 18px;
+      --shadow: 0 7px 24px rgba(31, 39, 51, 0.07);
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: calc(84px + env(safe-area-inset-bottom));
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .header {
+      padding: calc(18px + env(safe-area-inset-top)) 18px 18px;
+      color: white;
+      background:
+        radial-gradient(circle at 90% 0%, rgba(255,255,255,.22), transparent 34%),
+        linear-gradient(135deg, #ff7247, #f04422);
+      border-radius: 0 0 28px 28px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .app-title {
+      font-size: 22px;
+      line-height: 1.3;
+      font-weight: 800;
+    }
+
+    .app-subtitle {
+      margin-top: 7px;
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .header-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.18);
+      font-size: 24px;
+      flex: 0 0 auto;
+    }
+
+    .container {
+      padding: 16px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: -4px;
+    }
+
+    .summary-card {
+      padding: 15px 12px;
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .summary-label {
+      margin-top: 5px;
+      font-size: 11px;
+      color: var(--sub);
+      line-height: 1.35;
+    }
+
+    .toolbar {
+      margin-top: 16px;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fafbfc;
+      border-radius: 14px;
+      padding: 13px 14px;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+
+    .category-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-top: 12px;
+      scrollbar-width: none;
+    }
+
+    .category-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #555e6d;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 2px 10px;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .section-count {
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .material-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .material-card {
+      border-radius: var(--radius);
+      background: white;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .material-top {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .material-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: #fff1ec;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+
+    .material-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .material-name {
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .material-meta {
+      margin-top: 5px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .favorite-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: #f6f7f8;
+      color: #a1a8b3;
+      font-size: 20px;
+    }
+
+    .favorite-btn.active {
+      color: #e89a1a;
+      background: #fff7e4;
+    }
+
+    .stock-row {
+      margin-top: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .stock-info {
+      font-size: 12px;
+      color: var(--sub);
+    }
+
+    .stock-info strong {
+      display: block;
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 3px;
+    }
+
+    .status {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .status.ok {
+      background: #e9f8f1;
+      color: var(--green);
+    }
+
+    .status.low {
+      background: #fff5df;
+      color: var(--yellow);
+    }
+
+    .status.empty {
+      background: #fdeaea;
+      color: var(--red);
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border-radius: 13px;
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-light {
+      background: #f3f4f6;
+      color: #404857;
+    }
+
+    .btn-danger {
+      background: #fdeaea;
+      color: var(--red);
+    }
+
+    .btn-green {
+      background: #e8f8f0;
+      color: var(--green);
+    }
+
+    .btn-blue {
+      background: #eaf2ff;
+      color: var(--blue);
+    }
+
+    .wide {
+      width: 100%;
+    }
+
+    .empty-state {
+      background: white;
+      border-radius: var(--radius);
+      padding: 30px 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--sub);
+    }
+
+    .empty-state strong {
+      display: block;
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 7px;
+    }
+
+    .floating-add {
+      position: fixed;
+      bottom: calc(90px + env(safe-area-inset-bottom));
+      right: max(18px, calc((100vw - 760px) / 2 + 18px));
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(135deg, #ff794d, #ed4320);
+      box-shadow: 0 12px 28px rgba(228, 72, 32, .33);
+      font-size: 28px;
+      z-index: 20;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 760px;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: #8a919e;
+      padding: 6px 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .nav-symbol {
+      display: block;
+      font-size: 20px;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+    }
+
+    .panel {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 13px;
+    }
+
+    .panel h2 {
+      font-size: 17px;
+      margin-bottom: 10px;
+    }
+
+    .panel h3 {
+      font-size: 14px;
+      margin: 15px 0 7px;
+    }
+
+    .panel p,
+    .panel li {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #59616f;
+    }
+
+    .panel ul {
+      padding-left: 20px;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-item {
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .history-title {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .history-time {
+      color: var(--sub);
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .history-note {
+      color: #59616f;
+      font-size: 12px;
+      margin-top: 7px;
+      line-height: 1.5;
+    }
+
+    .history-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .info-row:last-child {
+      border-bottom: 0;
+    }
+
+    .info-row span:first-child {
+      color: var(--sub);
+    }
+
+    .info-row span:last-child {
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #424a58;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fafbfc;
+      border-radius: 13px;
+      padding: 12px 13px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background: white;
+    }
+
+    textarea.form-control {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .modal-wrap {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 22, 31, .5);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-wrap.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 760px;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 26px 26px 0 0;
+      padding: 18px 16px calc(20px + env(safe-area-inset-bottom));
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #4e5664;
+      font-size: 18px;
+    }
+
+    .message {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(94px + env(safe-area-inset-bottom));
+      width: calc(100% - 32px);
+      max-width: 500px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: #202631;
+      color: white;
+      font-size: 13px;
+      text-align: center;
+      z-index: 200;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .alert-box {
+      padding: 13px;
+      border-radius: 14px;
+      margin-top: 13px;
+      background: #fff7e7;
+      color: #845d13;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 480px) {
+      .app-title {
+        font-size: 19px;
+      }
+
+      .summary-value {
+        font-size: 20px;
+      }
+
+      .summary-card {
+        padding: 13px 9px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header class="header">
+    <div class="header-top">
+      <div>
+        <div class="app-title">Danh mục vật tư quảng cáo Wild Fireworks</div>
+        <div class="app-subtitle">
+          Quản lý danh mục, tồn kho và lịch sử thay đổi vật tư quảng cáo.
+        </div>
+      </div>
+      <div class="header-icon">WF</div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section id="pageCatalog" class="page active">
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-value" id="summaryMaterials">0</div>
+          <div class="summary-label">Loại vật tư</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-value" id="summaryStock">0</div>
+          <div class="summary-label">Tổng số lượng</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-value" id="summaryLow">0</div>
+          <div class="summary-label">Sắp hết hàng</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Tìm theo tên, mã hoặc ghi chú"
+            autocomplete="off">
+        </div>
+
+        <div class="category-scroll" id="categoryFilters"></div>
+      </div>
+
+      <div class="section-head">
+        <div class="section-title">Danh sách vật tư</div>
+        <div class="section-count" id="materialCount">0 vật tư</div>
+      </div>
+
+      <div id="materialList" class="material-list"></div>
+    </section>
+
+    <section id="pageFavorites" class="page">
+      <div class="section-head">
+        <div class="section-title">Vật tư yêu thích</div>
+        <div class="section-count" id="favoriteCount">0 vật tư</div>
+      </div>
+      <div id="favoriteList" class="material-list"></div>
+    </section>
+
+    <section id="pageHistory" class="page">
+      <div class="history-toolbar">
+        <button class="btn btn-danger" onclick="clearHistory()">
+          Xóa lịch sử
+        </button>
+      </div>
+
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <section id="pageMore" class="page">
+
+      <div class="panel">
+        <h2>Hướng dẫn sử dụng</h2>
+
+        <h3>Quản lý vật tư</h3>
+        <p>
+          Chọn Thêm vật tư để tạo vật tư mới. Người dùng cần nhập tên,
+          danh mục, đơn vị, số lượng tồn kho và mức cảnh báo tối thiểu.
+        </p>
+
+        <h3>Tìm kiếm và phân loại</h3>
+        <p>
+          Có thể tìm vật tư theo tên, mã hoặc ghi chú và lọc theo từng
+          nhóm vật tư.
+        </p>
+
+        <h3>Nhập và xuất kho</h3>
+        <p>
+          Chọn Cập nhật kho tại từng vật tư để nhập thêm hoặc xuất bớt
+          số lượng. Hệ thống không cho phép xuất vượt quá tồn kho hiện tại.
+        </p>
+
+        <h3>Yêu thích</h3>
+        <p>
+          Đánh dấu vật tư thường dùng để xem nhanh trong mục Yêu thích.
+        </p>
+
+        <h3>Lịch sử</h3>
+        <p>
+          Các thao tác thêm, chỉnh sửa, nhập kho, xuất kho và xóa vật tư
+          được ghi lại trong mục Lịch sử.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>Thông tin ứng dụng</h2>
+
+        <div class="info-grid">
+          <div class="info-row">
+            <span>Tên ứng dụng</span>
+            <span>Danh mục vật tư quảng cáo Wild Fireworks</span>
+          </div>
+
+          <div class="info-row">
+            <span>Chức năng</span>
+            <span>Quản lý vật tư quảng cáo và tồn kho</span>
+          </div>
+
+          <div class="info-row">
+            <span>Phiên bản</span>
+            <span>1.0.0</span>
+          </div>
+
+          <div class="info-row">
+            <span>Lưu trữ dữ liệu</span>
+            <span>Trên thiết bị của người dùng</span>
+          </div>
+        </div>
+
+        <div class="alert-box">
+          Dữ liệu trong ứng dụng dùng để hỗ trợ quản lý nội bộ vật tư.
+          Người dùng cần kiểm tra số lượng thực tế trước khi sử dụng dữ liệu
+          cho hoạt động kinh doanh.
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Điều khoản sử dụng</h2>
+
+        <p>
+          Ứng dụng cung cấp công cụ ghi nhận và quản lý danh mục vật tư quảng cáo.
+          Người dùng chịu trách nhiệm về tính chính xác của dữ liệu đã nhập.
+        </p>
+
+        <p style="margin-top:10px;">
+          Không sử dụng ứng dụng để lưu thông tin trái pháp luật hoặc nội dung
+          không liên quan đến mục đích quản lý vật tư.
+        </p>
+
+        <p style="margin-top:10px;">
+          Dữ liệu tồn kho trên ứng dụng chỉ có giá trị tham khảo theo dữ liệu
+          được người dùng ghi nhận và không thay thế việc kiểm kê thực tế.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>Chính sách quyền riêng tư</h2>
+
+        <p>
+          Ứng dụng không yêu cầu người dùng nhập thông tin cá nhân để sử dụng
+          các chức năng quản lý vật tư cơ bản.
+        </p>
+
+        <p style="margin-top:10px;">
+          Danh mục vật tư và lịch sử thao tác được lưu trên thiết bị của người dùng.
+          Ứng dụng không tự động gửi dữ liệu này đến bên thứ ba.
+        </p>
+
+        <p style="margin-top:10px;">
+          Người dùng có thể xóa lịch sử hoặc đặt lại dữ liệu mẫu trực tiếp
+          trong ứng dụng.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>Dữ liệu ứng dụng</h2>
+
+        <button class="btn btn-blue wide" onclick="restoreSampleData()">
+          Khôi phục dữ liệu mẫu
+        </button>
+
+        <button
+          class="btn btn-danger wide"
+          style="margin-top:9px;"
+          onclick="resetAllData()">
+          Xóa toàn bộ dữ liệu
+        </button>
+      </div>
+
+      <div class="panel">
+        <h2>Thông tin phiên bản</h2>
+        <p>
+          Phiên bản 1.0.0 cung cấp quản lý danh mục vật tư quảng cáo,
+          tìm kiếm, phân loại, yêu thích, kiểm soát tồn kho, cảnh báo tồn kho,
+          lịch sử thao tác và lưu dữ liệu trên thiết bị.
+        </p>
+      </div>
+
+    </section>
+  </main>
+
+  <button
+    id="floatingAdd"
+    class="floating-add"
+    onclick="openMaterialModal()"
+    aria-label="Thêm vật tư">
+    +
+  </button>
+
+  <nav class="bottom-nav">
+
+    <button class="nav-btn active" data-page="Catalog"
+            onclick="switchPage('Catalog', this)">
+      <span class="nav-symbol">▦</span>
+      Danh mục
+    </button>
+
+    <button class="nav-btn" data-page="Favorites"
+            onclick="switchPage('Favorites', this)">
+      <span class="nav-symbol">★</span>
+      Yêu thích
+    </button>
+
+    <button class="nav-btn" data-page="History"
+            onclick="switchPage('History', this)">
+      <span class="nav-symbol">↺</span>
+      Lịch sử
+    </button>
+
+    <button class="nav-btn" data-page="More"
+            onclick="switchPage('More', this)">
+      <span class="nav-symbol">i</span>
+      Thông tin
+    </button>
+
+  </nav>
+
+</div>
+
+<!-- Modal vật tư -->
+<div id="materialModal" class="modal-wrap">
+  <div class="modal">
+
+    <div class="modal-head">
+      <div class="modal-title" id="materialModalTitle">Thêm vật tư</div>
+      <button class="modal-close" onclick="closeMaterialModal()">×</button>
+    </div>
+
+    <input type="hidden" id="materialId">
+
+    <div class="form-group">
+      <label>Tên vật tư</label>
+      <input id="materialName"
+             class="form-control"
+             type="text"
+             maxlength="80"
+             placeholder="Ví dụ Banner sự kiện">
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Danh mục</label>
+        <select id="materialCategory" class="form-control">
+          <option value="">Chọn danh mục</option>
+          <option>Banner</option>
+          <option>Backdrop</option>
+          <option>Biển quảng cáo</option>
+          <option>Hộp đèn</option>
+          <option>Kệ trưng bày</option>
+          <option>Ấn phẩm</option>
+          <option>Khác</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Mã vật tư</label>
+        <input id="materialCode"
+               class="form-control"
+               type="text"
+               maxlength="30"
+               placeholder="Ví dụ VT001">
+      </div>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Đơn vị</label>
+        <select id="materialUnit" class="form-control">
+          <option value="">Chọn đơn vị</option>
+          <option>Cái</option>
+          <option>Bộ</option>
+          <option>Tấm</option>
+          <option>Cuộn</option>
+          <option>Mét</option>
+          <option>Mét vuông</option>
+          <option>Hộp</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Số lượng hiện có</label>
+        <input id="materialStock"
+               class="form-control"
+               type="number"
+               inputmode="decimal"
+               min="0"
+               step="0.01"
+               placeholder="0">
+      </div>
+
+    </div>
+
+    <div class="form-group">
+      <label>Mức cảnh báo tồn kho</label>
+      <input id="materialMinimum"
+             class="form-control"
+             type="number"
+             inputmode="decimal"
+             min="0"
+             step="0.01"
+             placeholder="Ví dụ 5">
+    </div>
+
+    <div class="form-group">
+      <label>Ghi chú</label>
+      <textarea id="materialNote"
+                class="form-control"
+                maxlength="300"
+                placeholder="Kích thước, màu sắc hoặc thông tin sử dụng"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-light" onclick="closeMaterialModal()">
+        Hủy
+      </button>
+
+      <button class="btn btn-primary" onclick="saveMaterial()">
+        Lưu vật tư
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal nhập xuất kho -->
+<div id="stockModal" class="modal-wrap">
+  <div class="modal">
+
+    <div class="modal-head">
+      <div class="modal-title">Cập nhật tồn kho</div>
+      <button class="modal-close" onclick="closeStockModal()">×</button>
+    </div>
+
+    <input type="hidden" id="stockMaterialId">
+
+    <div class="panel" style="box-shadow:none;background:#f7f8fa;">
+      <div class="material-name" id="stockMaterialName"></div>
+      <div class="material-meta" id="stockCurrentValue"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Loại thao tác</label>
+      <select id="stockAction" class="form-control">
+        <option value="in">Nhập kho</option>
+        <option value="out">Xuất kho</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Số lượng</label>
+      <input id="stockQuantity"
+             class="form-control"
+             type="number"
+             min="0"
+             step="0.01"
+             inputmode="decimal"
+             placeholder="Nhập số lượng">
+    </div>
+
+    <div class="form-group">
+      <label>Ghi chú</label>
+      <textarea id="stockNote"
+                class="form-control"
+                maxlength="200"
+                placeholder="Ví dụ nhập vật tư mới hoặc sử dụng cho sự kiện"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-light" onclick="closeStockModal()">
+        Hủy
+      </button>
+
+      <button class="btn btn-primary" onclick="updateStock()">
+        Xác nhận
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div id="message" class="message"></div>
+
+<script>
+  const STORAGE_KEY = "wildFireworksMaterialsV1";
+  const HISTORY_KEY = "wildFireworksHistoryV1";
+
+  const sampleMaterials = [
+    {
+      id: "m1",
+      name: "Banner sự kiện ngoài trời",
+      category: "Banner",
+      code: "BN001",
+      unit: "Tấm",
+      stock: 18,
+      minimum: 5,
+      favorite: true,
+      note: "Dùng cho khu vực cổng và khu vực quảng bá."
+    },
+    {
+      id: "m2",
+      name: "Backdrop sân khấu",
+      category: "Backdrop",
+      code: "BD002",
+      unit: "Bộ",
+      stock: 7,
+      minimum: 3,
+      favorite: false,
+      note: "Backdrop khung lắp ráp dùng cho sự kiện."
+    },
+    {
+      id: "m3",
+      name: "Biển quảng cáo trưng bày",
+      category: "Biển quảng cáo",
+      code: "BQ003",
+      unit: "Tấm",
+      stock: 10,
+      minimum: 4,
+      favorite: true,
+      note: "Biển dùng cho khu vực giới thiệu sản phẩm."
+    },
+    {
+      id: "m4",
+      name: "Hộp đèn quảng cáo",
+      category: "Hộp đèn",
+      code: "HD004",
+      unit: "Cái",
+      stock: 3,
+      minimum: 4,
+      favorite: false,
+      note: "Cần kiểm tra nguồn điện trước khi sử dụng."
+    },
+    {
+      id: "m5",
+      name: "Kệ trưng bày sản phẩm",
+      category: "Kệ trưng bày",
+      code: "KT005",
+      unit: "Bộ",
+      stock: 12,
+      minimum: 4,
+      favorite: false,
+      note: "Kệ tháo lắp dùng cho khu vực triển lãm."
+    },
+    {
+      id: "m6",
+      name: "Tờ giới thiệu in màu",
+      category: "Ấn phẩm",
+      code: "AP006",
+      unit: "Cái",
+      stock: 250,
+      minimum: 100,
+      favorite: true,
+      note: "Ấn phẩm giới thiệu dùng tại sự kiện."
+    }
+  ];
+
+  let materials = [];
+  let historyData = [];
+  let currentCategory = "Tất cả";
+  let currentSearch = "";
+
+  function loadData() {
+    const storedMaterials = localStorage.getItem(STORAGE_KEY);
+    const storedHistory = localStorage.getItem(HISTORY_KEY);
+
+    if (storedMaterials) {
+      try {
+        const parsed = JSON.parse(storedMaterials);
+        materials = Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        materials = [];
+      }
+    } else {
+      materials = cloneSampleMaterials();
+      saveMaterials();
+    }
+
+    if (storedHistory) {
+      try {
+        const parsed = JSON.parse(storedHistory);
+        historyData = Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        historyData = [];
+      }
+    }
+
+    sanitizeData();
+  }
+
+  function cloneSampleMaterials() {
+    return JSON.parse(JSON.stringify(sampleMaterials));
+  }
+
+  function sanitizeData() {
+    materials = materials.map(item => ({
+      id: safeText(item.id) || generateId(),
+      name: safeText(item.name) || "Vật tư chưa đặt tên",
+      category: safeText(item.category) || "Khác",
+      code: safeText(item.code),
+      unit: safeText(item.unit) || "Cái",
+      stock: safeNumber(item.stock),
+      minimum: safeNumber(item.minimum),
+      favorite: Boolean(item.favorite),
+      note: safeText(item.note)
+    }));
+
+    saveMaterials();
+  }
+
+  function safeText(value) {
+    if (value === undefined || value === null) return "";
+    return String(value).trim();
+  }
+
+  function safeNumber(value) {
+    const num = Number(value);
+
+    if (!Number.isFinite(num) || num < 0) {
+      return 0;
+    }
+
+    return Math.round(num * 100) / 100;
+  }
+
+  function formatNumber(value) {
+    const num = safeNumber(value);
+
+    return num.toLocaleString("vi-VN", {
+      maximumFractionDigits: 2
+    });
+  }
+
+  function generateId() {
+    return "m_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+  }
+
+  function saveMaterials() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
+  }
+
+  function saveHistory() {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
+  }
+
+  function showMessage(text) {
+    const el = document.getElementById("message");
+    el.textContent = text;
+    el.classList.add("show");
+
+    clearTimeout(showMessage.timer);
+
+    showMessage.timer = setTimeout(() => {
+      el.classList.remove("show");
+    }, 2200);
+  }
+
+  function escapeHtml(text) {
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getCategories() {
+    const categories = materials
+      .map(item => item.category)
+      .filter(Boolean);
+
+    return ["Tất cả", ...new Set(categories)];
+  }
+
+  function renderCategoryFilters() {
+    const container = document.getElementById("categoryFilters");
+    const categories = getCategories();
+
+    if (!categories.includes(currentCategory)) {
+      currentCategory = "Tất cả";
+    }
+
+    container.innerHTML = categories.map(category => `
+      <button
+        class="chip ${category === currentCategory ? "active" : ""}"
+        onclick="selectCategory('${escapeJs(category)}')">
+        ${escapeHtml(category)}
+      </button>
+    `).join("");
+  }
+
+  function escapeJs(text) {
+    return String(text)
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
+  }
+
+  function selectCategory(category) {
+    currentCategory = category;
+    renderAll();
+  }
+
+  function getFilteredMaterials() {
+    const keyword = currentSearch.trim().toLowerCase();
+
+    return materials.filter(item => {
+      const categoryMatch =
+        currentCategory === "Tất cả" ||
+        item.category === currentCategory;
+
+      const searchText = [
+        item.name,
+        item.code,
+        item.note,
+        item.category
+      ].join(" ").toLowerCase();
+
+      return categoryMatch &&
+        (!keyword || searchText.includes(keyword));
+    });
+  }
+
+  function getStockStatus(item) {
+    const stock = safeNumber(item.stock);
+    const minimum = safeNumber(item.minimum);
+
+    if (stock <= 0) {
+      return {
+        className: "empty",
+        text: "Hết hàng"
+      };
+    }
+
+    if (stock <= minimum) {
+      return {
+        className: "low",
+        text: "Sắp hết"
+      };
+    }
+
+    return {
+      className: "ok",
+      text: "Đủ tồn kho"
+    };
+  }
+
+  function getMaterialIcon(category) {
+    const map = {
+      "Banner": "BN",
+      "Backdrop": "BD",
+      "Biển quảng cáo": "BQ",
+      "Hộp đèn": "HD",
+      "Kệ trưng bày": "KT",
+      "Ấn phẩm": "AP",
+      "Khác": "VT"
+    };
+
+    return map[category] || "VT";
+  }
+
+  function renderMaterialCards(list, targetId) {
+    const container = document.getElementById(targetId);
+
+    if (!list.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <strong>Không có dữ liệu phù hợp</strong>
+          Chưa tìm thấy vật tư theo điều kiện hiện tại.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list.map(item => {
+      const status = getStockStatus(item);
+
+      return `
+        <div class="material-card">
+
+          <div class="material-top">
+
+            <div class="material-icon">
+              ${escapeHtml(getMaterialIcon(item.category))}
+            </div>
+
+            <div class="material-main">
+              <div class="material-name">
+                ${escapeHtml(item.name)}
+              </div>
+
+              <div class="material-meta">
+                ${escapeHtml(item.category)}
+                ${item.code ? " · " + escapeHtml(item.code) : ""}
+                ${item.note ? "<br>" + escapeHtml(item.note) : ""}
+              </div>
+            </div>
+
+            <button
+              class="favorite-btn ${item.favorite ? "active" : ""}"
+              onclick="toggleFavorite('${item.id}')">
+              ★
+            </button>
+
+          </div>
+
+          <div class="stock-row">
+            <div class="stock-info">
+              <strong>
+                ${formatNumber(item.stock)} ${escapeHtml(item.unit)}
+              </strong>
+              Cảnh báo khi còn ${formatNumber(item.minimum)}
+              ${escapeHtml(item.unit)}
+            </div>
+
+            <span class="status ${status.className}">
+              ${status.text}
+            </span>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-green"
+                    onclick="openStockModal('${item.id}')">
+              Cập nhật kho
+            </button>
+
+            <button class="btn btn-light"
+                    onclick="editMaterial('${item.id}')">
+              Chỉnh sửa
+            </button>
+
+            <button class="btn btn-danger"
+                    onclick="deleteMaterial('${item.id}')">
+              Xóa
+            </button>
+          </div>
+
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderSummary() {
+    const totalTypes = materials.length;
+    const totalStock = materials.reduce(
+      (sum, item) => sum + safeNumber(item.stock),
+      0
+    );
+
+    const lowCount = materials.filter(item => {
+      return safeNumber(item.stock) <= safeNumber(item.minimum);
+    }).length;
+
+    document.getElementById("summaryMaterials").textContent =
+      formatNumber(totalTypes);
+
+    document.getElementById("summaryStock").textContent =
+      formatNumber(totalStock);
+
+    document.getElementById("summaryLow").textContent =
+      formatNumber(lowCount);
+  }
+
+  function renderHistory() {
+    const container = document.getElementById("historyList");
+
+    if (!historyData.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <strong>Chưa có lịch sử thao tác</strong>
+          Các thao tác quản lý vật tư sẽ được ghi lại tại đây.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = historyData.map(item => `
+      <div class="history-item">
+        <div class="history-title">
+          ${escapeHtml(item.title)}
+        </div>
+        <div class="history-time">
+          ${escapeHtml(item.time)}
+        </div>
+        ${
+          item.note
+            ? `<div class="history-note">${escapeHtml(item.note)}</div>`
+            : ""
+        }
+      </div>
+    `).join("");
+  }
+
+  function renderFavorites() {
+    const favorites = materials.filter(item => item.favorite);
+
+    document.getElementById("favoriteCount").textContent =
+      favorites.length + " vật tư";
+
+    renderMaterialCards(favorites, "favoriteList");
+  }
+
+  function renderAll() {
+    renderCategoryFilters();
+    renderSummary();
+
+    const filtered = getFilteredMaterials();
+
+    document.getElementById("materialCount").textContent =
+      filtered.length + " vật tư";
+
+    renderMaterialCards(filtered, "materialList");
+    renderFavorites();
+    renderHistory();
+  }
+
+  function switchPage(page, button) {
+    document.querySelectorAll(".page").forEach(el => {
+      el.classList.remove("active");
+    });
+
+    document.querySelectorAll(".nav-btn").forEach(el => {
+      el.classList.remove("active");
+    });
+
+    document.getElementById("page" + page).classList.add("active");
+    button.classList.add("active");
+
+    document.getElementById("floatingAdd").style.display =
+      page === "Catalog" ? "block" : "none";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  function openMaterialModal() {
+    document.getElementById("materialModalTitle").textContent =
+      "Thêm vật tư";
+
+    document.getElementById("materialId").value = "";
+    document.getElementById("materialName").value = "";
+    document.getElementById("materialCategory").value = "";
+    document.getElementById("materialCode").value = "";
+    document.getElementById("materialUnit").value = "";
+    document.getElementById("materialStock").value = "";
+    document.getElementById("materialMinimum").value = "";
+    document.getElementById("materialNote").value = "";
+
+    document.getElementById("materialModal").classList.add("open");
+  }
+
+  function closeMaterialModal() {
+    document.getElementById("materialModal").classList.remove("open");
+  }
+
+  function editMaterial(id) {
+    const item = materials.find(material => material.id === id);
+
+    if (!item) {
+      showMessage("Không tìm thấy vật tư.");
+      return;
+    }
+
+    document.getElementById("materialModalTitle").textContent =
+      "Chỉnh sửa vật tư";
+
+    document.getElementById("materialId").value = item.id;
+    document.getElementById("materialName").value = item.name;
+    document.getElementById("materialCategory").value = item.category;
+    document.getElementById("materialCode").value = item.code;
+    document.getElementById("materialUnit").value = item.unit;
+    document.getElementById("materialStock").value = item.stock;
+    document.getElementById("materialMinimum").value = item.minimum;
+    document.getElementById("materialNote").value = item.note;
+
+    document.getElementById("materialModal").classList.add("open");
+  }
+
+  function validateNonNegativeNumber(value, fieldName) {
+    if (value === "") {
+      return {
+        valid: false,
+        message: "Vui lòng nhập " + fieldName + "."
+      };
+    }
+
+    const num = Number(value);
+
+    if (!Number.isFinite(num)) {
+      return {
+        valid: false,
+        message: fieldName + " không hợp lệ."
+      };
+    }
+
+    if (num < 0) {
+      return {
+        valid: false,
+        message: fieldName + " không được nhỏ hơn 0."
+      };
+    }
+
+    return {
+      valid: true,
+      value: Math.round(num * 100) / 100
+    };
+  }
+
+  function saveMaterial() {
+    const id = document.getElementById("materialId").value;
+    const name = safeText(document.getElementById("materialName").value);
+    const category =
+      safeText(document.getElementById("materialCategory").value);
+    const code =
+      safeText(document.getElementById("materialCode").value);
+    const unit =
+      safeText(document.getElementById("materialUnit").value);
+    const note =
+      safeText(document.getElementById("materialNote").value);
+
+    const stockCheck = validateNonNegativeNumber(
+      document.getElementById("materialStock").value,
+      "số lượng hiện có"
+    );
+
+    const minimumCheck = validateNonNegativeNumber(
+      document.getElementById("materialMinimum").value,
+      "mức cảnh báo tồn kho"
+    );
+
+    if (!name) {
+      showMessage("Vui lòng nhập tên vật tư.");
+      return;
+    }
+
+    if (!category) {
+      showMessage("Vui lòng chọn danh mục.");
+      return;
+    }
+
+    if (!unit) {
+      showMessage("Vui lòng chọn đơn vị.");
+      return;
+    }
+
+    if (!stockCheck.valid) {
+      showMessage(stockCheck.message);
+      return;
+    }
+
+    if (!minimumCheck.valid) {
+      showMessage(minimumCheck.message);
+      return;
+    }
+
+    if (id) {
+      const index = materials.findIndex(item => item.id === id);
+
+      if (index < 0) {
+        showMessage("Không tìm thấy vật tư cần chỉnh sửa.");
+        return;
+      }
+
+      const oldFavorite = materials[index].favorite;
+
+      materials[index] = {
+        id,
+        name,
+        category,
+        code,
+        unit,
+        stock: stockCheck.value,
+        minimum: minimumCheck.value,
+        favorite: oldFavorite,
+        note
+      };
+
+      addHistory(
+        "Đã chỉnh sửa vật tư",
+        name
+      );
+
+      showMessage("Đã cập nhật vật tư.");
+    } else {
+
+      const newMaterial = {
+        id: generateId(),
+        name,
+        category,
+        code,
+        unit,
+        stock: stockCheck.value,
+        minimum: minimumCheck.value,
+        favorite: false,
+        note
+      };
+
+      materials.unshift(newMaterial);
+
+      addHistory(
+        "Đã thêm vật tư",
+        name + " với số lượng ban đầu " +
+        formatNumber(stockCheck.value) + " " + unit
+      );
+
+      showMessage("Đã thêm vật tư mới.");
+    }
+
+    saveMaterials();
+    closeMaterialModal();
+    renderAll();
+  }
+
+  function deleteMaterial(id) {
+    const item = materials.find(material => material.id === id);
+
+    if (!item) {
+      showMessage("Không tìm thấy vật tư.");
+      return;
+    }
+
+    const ok = confirm(
+      'Bạn có chắc muốn xóa vật tư "' + item.name + '" không?'
+    );
+
+    if (!ok) {
+      return;
+    }
+
+    materials = materials.filter(material => material.id !== id);
+
+    addHistory(
+      "Đã xóa vật tư",
+      item.name
+    );
+
+    saveMaterials();
+    renderAll();
+    showMessage("Đã xóa vật tư.");
+  }
+
+  function toggleFavorite(id) {
+    const item = materials.find(material => material.id === id);
+
+    if (!item) {
+      showMessage("Không tìm thấy vật tư.");
+      return;
+    }
+
+    item.favorite = !item.favorite;
+
+    saveMaterials();
+    renderAll();
+
+    showMessage(
+      item.favorite
+        ? "Đã thêm vào yêu thích."
+        : "Đã bỏ khỏi yêu thích."
+    );
+  }
+
+  function openStockModal(id) {
+    const item = materials.find(material => material.id === id);
+
+    if (!item) {
+      showMessage("Không tìm thấy vật tư.");
+      return;
+    }
+
+    document.getElementById("stockMaterialId").value = item.id;
+    document.getElementById("stockMaterialName").textContent = item.name;
+
+    document.getElementById("stockCurrentValue").textContent =
+      "Tồn kho hiện tại: " +
+      formatNumber(item.stock) +
+      " " +
+      item.unit;
+
+    document.getElementById("stockQuantity").value = "";
+    document.getElementById("stockNote").value = "";
+    document.getElementById("stockAction").value = "in";
+
+    document.getElementById("stockModal").classList.add("open");
+  }
+
+  function closeStockModal() {
+    document.getElementById("stockModal").classList.remove("open");
+  }
+
+  function updateStock() {
+    const id = document.getElementById("stockMaterialId").value;
+    const action = document.getElementById("stockAction").value;
+    const quantityValue =
+      document.getElementById("stockQuantity").value;
+    const note =
+      safeText(document.getElementById("stockNote").value);
+
+    const item = materials.find(material => material.id === id);
+
+    if (!item) {
+      showMessage("Không tìm thấy vật tư.");
+      return;
+    }
+
+    if (quantityValue === "") {
+      showMessage("Vui lòng nhập số lượng.");
+      return;
+    }
+
+    const quantity = Number(quantityValue);
+
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      showMessage("Số lượng phải lớn hơn 0.");
+      return;
+    }
+
+    const safeQuantity = Math.round(quantity * 100) / 100;
+    const currentStock = safeNumber(item.stock);
+
+    if (action === "out" && safeQuantity > currentStock) {
+      showMessage("Số lượng xuất không được vượt quá tồn kho.");
+      return;
+    }
+
+    if (action === "in") {
+      item.stock = safeNumber(currentStock + safeQuantity);
+
+      addHistory(
+        "Đã nhập kho",
+        item.name +
+        " thêm " +
+        formatNumber(safeQuantity) +
+        " " +
+        item.unit +
+        (note ? ". " + note : "")
+      );
+
+      showMessage("Đã nhập kho thành công.");
+    } else {
+      item.stock = safeNumber(currentStock - safeQuantity);
+
+      addHistory(
+        "Đã xuất kho",
+        item.name +
+        " giảm " +
+        formatNumber(safeQuantity) +
+        " " +
+        item.unit +
+        (note ? ". " + note : "")
+      );
+
+      showMessage("Đã xuất kho thành công.");
+    }
+
+    saveMaterials();
+    closeStockModal();
+    renderAll();
+  }
+
+  function addHistory(title, note) {
+    historyData.unshift({
+      id: "h_" + Date.now(),
+      title: safeText(title),
+      note: safeText(note),
+      time: new Date().toLocaleString("vi-VN")
+    });
+
+    if (historyData.length > 300) {
+      historyData = historyData.slice(0, 300);
+    }
+
+    saveHistory();
+  }
+
+  function clearHistory() {
+    if (!historyData.length) {
+      showMessage("Chưa có lịch sử để xóa.");
+      return;
+    }
+
+    const ok = confirm("Bạn có chắc muốn xóa toàn bộ lịch sử không?");
+
+    if (!ok) {
+      return;
+    }
+
+    historyData = [];
+    saveHistory();
+    renderHistory();
+    showMessage("Đã xóa lịch sử.");
+  }
+
+  function restoreSampleData() {
+    const ok = confirm(
+      "Khôi phục dữ liệu mẫu sẽ thay thế danh mục hiện tại. Bạn có muốn tiếp tục không?"
+    );
+
+    if (!ok) {
+      return;
+    }
+
+    materials = cloneSampleMaterials();
+
+    addHistory(
+      "Đã khôi phục dữ liệu mẫu",
+      "Danh mục vật tư mẫu đã được tạo lại."
+    );
+
+    saveMaterials();
+    renderAll();
+    showMessage("Đã khôi phục dữ liệu mẫu.");
+  }
+
+  function resetAllData() {
+    const ok = confirm(
+      "Bạn có chắc muốn xóa toàn bộ vật tư và lịch sử không?"
+    );
+
+    if (!ok) {
+      return;
+    }
+
+    materials = [];
+    historyData = [];
+
+    saveMaterials();
+    saveHistory();
+
+    currentCategory = "Tất cả";
+    currentSearch = "";
+    document.getElementById("searchInput").value = "";
+
+    renderAll();
+
+    showMessage("Đã xóa toàn bộ dữ liệu.");
+  }
+
+  document.getElementById("searchInput").addEventListener("input", function () {
+    currentSearch = this.value || "";
+    renderAll();
+  });
+
+  document.getElementById("materialModal").addEventListener(
+    "click",
+    function (event) {
+      if (event.target === this) {
+        closeMaterialModal();
+      }
+    }
+  );
+
+  document.getElementById("stockModal").addEventListener(
+    "click",
+    function (event) {
+      if (event.target === this) {
+        closeStockModal();
+      }
+    }
+  );
+
+  loadData();
+  renderAll();
+</script>
+
+</body>
+</html>

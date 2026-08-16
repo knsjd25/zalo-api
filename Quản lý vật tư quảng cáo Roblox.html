@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f6f8" />
+  <title>Quản lý vật tư quảng cáo Roblox</title>
+  <style>
+    :root{
+      --bg:#f4f6f8;--card:#ffffff;--text:#1f2937;--muted:#6b7280;
+      --line:#e5e7eb;--primary:#2563eb;--primary-dark:#1d4ed8;
+      --danger:#dc2626;--warning:#b45309;--success:#15803d;
+      --radius:16px;--shadow:0 8px 24px rgba(15,23,42,.07);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    body{min-height:100vh}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:820px;margin:0 auto;padding-bottom:92px}
+    header{
+      position:sticky;top:0;z-index:20;background:rgba(244,246,248,.96);
+      backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+      padding:14px 16px 10px
+    }
+    .title{font-weight:800;font-size:20px;line-height:1.25}
+    .subtitle{font-size:13px;color:var(--muted);margin-top:4px}
+    main{padding:14px}
+    .view{display:none}
+    .view.active{display:block}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .stat,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stat{padding:14px}
+    .stat .label{color:var(--muted);font-size:12px}
+    .stat .value{font-size:24px;font-weight:800;margin-top:6px}
+    .card{padding:14px;margin-bottom:12px}
+    .section-title{font-size:16px;font-weight:800;margin:0 0 12px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .toolbar input,.toolbar select{flex:1;min-width:130px}
+    input,select,textarea{
+      width:100%;border:1px solid #cfd5dd;background:#fff;border-radius:12px;
+      padding:11px 12px;color:var(--text);outline:none
+    }
+    textarea{min-height:90px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .btn{
+      border:0;border-radius:12px;padding:10px 13px;font-weight:700;
+      background:#e9eef7;color:#1f2937
+    }
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.primary:active{background:var(--primary-dark)}
+    .btn.danger{background:#fee2e2;color:#991b1b}
+    .btn.secondary{background:#eef2f7;color:#334155}
+    .btn.success{background:#dcfce7;color:#166534}
+    .btn.warning{background:#fef3c7;color:#92400e}
+    .btn.small{padding:7px 10px;font-size:12px}
+    .item{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;background:#fff}
+    .item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .item-name{font-weight:800;font-size:15px}
+    .meta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.6}
+    .tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}
+    .tag.low{background:#fee2e2;color:#991b1b}
+    .tag.ok{background:#dcfce7;color:#166534}
+    .tag.sample{background:#e0e7ff;color:#3730a3}
+    .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .empty{text-align:center;padding:28px 14px;color:var(--muted)}
+    .notice{border-left:4px solid var(--warning);background:#fff7ed;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.5;margin-bottom:12px}
+    .info-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+    .info-row:last-child{border-bottom:0}
+    .info-row span:last-child{text-align:right;font-weight:700}
+    .history-row{padding:10px 0;border-bottom:1px solid var(--line)}
+    .history-row:last-child{border-bottom:0}
+    .history-title{font-size:14px;font-weight:700}
+    .history-meta{font-size:12px;color:var(--muted);margin-top:4px}
+    nav{
+      position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:30;
+      width:min(820px,100%);background:#fff;border-top:1px solid var(--line);
+      display:grid;grid-template-columns:repeat(5,1fr);padding:7px 6px calc(7px + env(safe-area-inset-bottom))
+    }
+    nav button{border:0;background:transparent;color:var(--muted);font-size:11px;padding:9px 3px;border-radius:10px;font-weight:700}
+    nav button.active{background:#eff6ff;color:var(--primary)}
+    .modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(15,23,42,.45);z-index:100}
+    .modal.show{display:flex}
+    .sheet{width:min(820px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+    .sheet-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+    .sheet-title{font-weight:800;font-size:18px}
+    .close{border:0;background:#f1f5f9;border-radius:10px;padding:8px 10px}
+    .field{margin-bottom:12px}
+    .field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}
+    .form-actions{display:flex;gap:8px;margin-top:14px}
+    .form-actions .btn{flex:1}
+    .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:86%;text-align:center}
+    .toast.show{opacity:1}
+    .tabs{display:flex;gap:8px;overflow:auto;margin-bottom:12px}
+    .tabs button{white-space:nowrap}
+    .tabs button.active{background:var(--primary);color:#fff}
+    .danger-zone{border:1px solid #fecaca;background:#fff1f2}
+    .text-block{font-size:13px;line-height:1.65;color:#374151}
+    .kpi-note{font-size:12px;color:var(--muted);margin-top:8px}
+    @media (min-width:700px){
+      .grid{grid-template-columns:repeat(4,1fr)}
+      .modal{align-items:center;padding:20px}
+      .sheet{border-radius:20px;max-height:88vh}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="title">Quản lý vật tư quảng cáo Roblox</div>
+    <div class="subtitle">Theo dõi vật tư, tồn kho và lịch sử nhập xuất</div>
+  </header>
+
+  <main>
+    <section id="view-dashboard" class="view active">
+      <div class="notice">Ứng dụng có dữ liệu mẫu để kiểm tra chức năng. Bạn có thể xóa dữ liệu mẫu hoặc tạo dữ liệu riêng bất cứ lúc nào.</div>
+      <div class="grid">
+        <div class="stat"><div class="label">Loại vật tư</div><div class="value" id="statItems">0</div></div>
+        <div class="stat"><div class="label">Tổng tồn kho</div><div class="value" id="statStock">0</div></div>
+        <div class="stat"><div class="label">Sắp hết hàng</div><div class="value" id="statLow">0</div></div>
+        <div class="stat"><div class="label">Giá trị tồn kho</div><div class="value" id="statValue">0</div></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="section-title">Vật tư cần chú ý</div>
+        <div id="lowStockList"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Thao tác nhanh</div>
+        <div class="toolbar">
+          <button class="btn primary" onclick="openItemModal()">Thêm vật tư</button>
+          <button class="btn success" onclick="openTransactionModal('in')">Nhập kho</button>
+          <button class="btn warning" onclick="openTransactionModal('out')">Xuất kho</button>
+          <button class="btn secondary" onclick="switchView('history')">Xem lịch sử</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-items" class="view">
+      <div class="card">
+        <div class="section-title">Danh sách vật tư</div>
+        <div class="toolbar">
+          <input id="searchInput" type="search" placeholder="Tìm theo tên hoặc mã vật tư" oninput="renderItems()" />
+          <select id="categoryFilter" onchange="renderItems()">
+            <option value="">Tất cả danh mục</option>
+          </select>
+        </div>
+        <div class="toolbar">
+          <button class="btn primary" onclick="openItemModal()">Thêm vật tư mới</button>
+          <button class="btn secondary" onclick="clearFilters()">Đặt lại bộ lọc</button>
+        </div>
+        <div id="itemsList"></div>
+      </div>
+    </section>
+
+    <section id="view-transactions" class="view">
+      <div class="card">
+        <div class="section-title">Quản lý nhập xuất kho</div>
+        <div class="toolbar">
+          <button class="btn success" onclick="openTransactionModal('in')">Tạo phiếu nhập</button>
+          <button class="btn warning" onclick="openTransactionModal('out')">Tạo phiếu xuất</button>
+          <button class="btn secondary" onclick="openTransactionModal('adjust')">Điều chỉnh tồn kho</button>
+        </div>
+        <div class="text-block">Mỗi giao dịch được kiểm tra số lượng trước khi lưu. Xuất kho không thể làm tồn kho nhỏ hơn không.</div>
+      </div>
+      <div class="card">
+        <div class="section-title">Giao dịch gần đây</div>
+        <div id="transactionList"></div>
+      </div>
+    </section>
+
+    <section id="view-history" class="view">
+      <div class="card">
+        <div class="section-title">Lịch sử hoạt động</div>
+        <div class="toolbar">
+          <select id="historyFilter" onchange="renderHistory()">
+            <option value="">Tất cả hoạt động</option>
+            <option value="item">Vật tư</option>
+            <option value="transaction">Kho</option>
+            <option value="system">Hệ thống</option>
+          </select>
+          <button class="btn secondary" onclick="document.getElementById('historyFilter').value='';renderHistory()">Đặt lại</button>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <section id="view-info" class="view">
+      <div class="tabs">
+        <button class="btn active" data-info-tab="guide" onclick="showInfoTab('guide',this)">Hướng dẫn</button>
+        <button class="btn" data-info-tab="app" onclick="showInfoTab('app',this)">Ứng dụng</button>
+        <button class="btn" data-info-tab="terms" onclick="showInfoTab('terms',this)">Điều khoản</button>
+        <button class="btn" data-info-tab="privacy" onclick="showInfoTab('privacy',this)">Quyền riêng tư</button>
+        <button class="btn" data-info-tab="version" onclick="showInfoTab('version',this)">Phiên bản</button>
+      </div>
+
+      <div id="info-guide" class="info-panel card">
+        <div class="section-title">Hướng dẫn sử dụng</div>
+        <div class="text-block">
+          Tạo vật tư bằng cách nhập đầy đủ tên, mã, danh mục, đơn vị, số lượng ban đầu, mức tồn kho tối thiểu và đơn giá. Sau khi lưu, vật tư xuất hiện trong danh sách và được tính vào thống kê tổng quan.<br><br>
+          Khi nhập kho, chọn vật tư và nhập số lượng cần thêm. Khi xuất kho, hệ thống kiểm tra tồn kho hiện tại và không cho phép xuất vượt quá số lượng đang có. Chức năng điều chỉnh dùng để đặt lại số lượng tồn kho khi kiểm kê thực tế.<br><br>
+          Có thể tìm kiếm theo tên hoặc mã, lọc theo danh mục, chỉnh sửa thông tin, xóa vật tư và xem toàn bộ lịch sử thao tác. Dữ liệu được lưu trên thiết bị đang sử dụng.
+        </div>
+      </div>
+
+      <div id="info-app" class="info-panel card" style="display:none">
+        <div class="section-title">Thông tin ứng dụng</div>
+        <div class="info-row"><span>Tên ứng dụng</span><span>Quản lý vật tư quảng cáo Roblox</span></div>
+        <div class="info-row"><span>Chức năng chính</span><span>Quản lý vật tư quảng cáo và tồn kho</span></div>
+        <div class="info-row"><span>Phạm vi dữ liệu</span><span>Lưu trên thiết bị</span></div>
+        <div class="info-row"><span>Phiên bản</span><span>1.0.0</span></div>
+        <div class="text-block" style="margin-top:12px">Quản lý vật tư quảng cáo Roblox hỗ trợ tạo danh mục vật tư, theo dõi số lượng tồn kho, nhập kho, xuất kho, điều chỉnh số lượng, tìm kiếm, lọc và xem lịch sử thao tác. Dữ liệu được lưu trực tiếp trên thiết bị để người dùng có thể tiếp tục sử dụng trong các lần mở sau.</div>
+      </div>
+
+      <div id="info-terms" class="info-panel card" style="display:none">
+        <div class="section-title">Điều khoản sử dụng</div>
+        <div class="text-block">
+          Khi sử dụng Quản lý vật tư quảng cáo Roblox, người dùng đồng ý tự chịu trách nhiệm về tính chính xác của dữ liệu được nhập vào ứng dụng. Ứng dụng hỗ trợ quản lý và tham khảo dữ liệu vật tư, không thay thế chứng từ kế toán, hợp đồng hoặc hệ thống quản trị chuyên nghiệp của doanh nghiệp.<br><br>
+          Người dùng không được sử dụng ứng dụng cho mục đích trái pháp luật hoặc nhập dữ liệu gây ảnh hưởng đến quyền và lợi ích hợp pháp của bên khác. Người dùng có trách nhiệm kiểm tra thông tin trước khi thực hiện nhập kho, xuất kho, điều chỉnh hoặc xóa dữ liệu.<br><br>
+          Chức năng và nội dung của ứng dụng có thể được cập nhật để cải thiện tính ổn định và khả năng sử dụng. Việc tiếp tục sử dụng sau khi cập nhật được hiểu là người dùng chấp nhận phiên bản hiện hành của điều khoản này.
+        </div>
+      </div>
+
+      <div id="info-privacy" class="info-panel card" style="display:none">
+        <div class="section-title">Chính sách quyền riêng tư</div>
+        <div class="text-block">
+          Quản lý vật tư quảng cáo Roblox chỉ lưu dữ liệu vật tư và lịch sử thao tác trên thiết bị của người dùng thông qua bộ nhớ cục bộ của trình duyệt hoặc WebView. Phiên bản này không yêu cầu người dùng cung cấp số điện thoại, địa chỉ, giấy tờ định danh hoặc thông tin thanh toán.<br><br>
+          Dữ liệu được tạo trong ứng dụng không tự động gửi đến máy chủ bên ngoài. Người dùng có thể xóa từng vật tư, xóa lịch sử hoặc đặt lại toàn bộ dữ liệu bằng chức năng có sẵn trong ứng dụng.<br><br>
+          Người dùng nên bảo vệ thiết bị của mình và tránh để người không có quyền truy cập vào dữ liệu quản lý vật tư.
+        </div>
+      </div>
+
+      <div id="info-version" class="info-panel card" style="display:none">
+        <div class="section-title">Thông tin phiên bản</div>
+        <div class="info-row"><span>Phiên bản hiện tại</span><span>1.0.0</span></div>
+        <div class="text-block" style="margin-top:12px">Phiên bản 1.0.0 hoàn thiện chức năng quản lý vật tư quảng cáo, thêm sửa xóa vật tư, nhập kho, xuất kho, điều chỉnh tồn kho, cảnh báo tồn kho thấp, tìm kiếm, lọc, thống kê và lịch sử hoạt động. Dữ liệu mẫu được đánh dấu rõ ràng và có thể đặt lại trong ứng dụng.</div>
+      </div>
+
+      <div class="card danger-zone">
+        <div class="section-title">Quản lý dữ liệu</div>
+        <div class="toolbar">
+          <button class="btn secondary" onclick="resetSampleData()">Khôi phục dữ liệu mẫu</button>
+          <button class="btn danger" onclick="clearAllData()">Xóa toàn bộ dữ liệu</button>
+        </div>
+        <div class="text-block">Hành động xóa toàn bộ dữ liệu sẽ xóa vật tư, giao dịch và lịch sử trên thiết bị này.</div>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button class="active" data-view="dashboard" onclick="switchView('dashboard',this)">Tổng quan</button>
+    <button data-view="items" onclick="switchView('items',this)">Vật tư</button>
+    <button data-view="transactions" onclick="switchView('transactions',this)">Nhập xuất</button>
+    <button data-view="history" onclick="switchView('history',this)">Lịch sử</button>
+    <button data-view="info" onclick="switchView('info',this)">Thông tin</button>
+  </nav>
+</div>
+
+<div id="itemModal" class="modal" onclick="closeOnBackdrop(event,'itemModal')">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title" id="itemModalTitle">Thêm vật tư</div>
+      <button class="close" onclick="closeModal('itemModal')">Đóng</button>
+    </div>
+    <form id="itemForm" onsubmit="saveItem(event)">
+      <input type="hidden" id="itemId">
+      <div class="field"><label>Tên vật tư</label><input id="itemName" maxlength="80" required placeholder="Ví dụ: Bạt hiflex" /></div>
+      <div class="field"><label>Mã vật tư</label><input id="itemCode" maxlength="30" required placeholder="Ví dụ: VT001" /></div>
+      <div class="field"><label>Danh mục</label>
+        <select id="itemCategory" required>
+          <option value="">Chọn danh mục</option>
+          <option>Banner</option>
+          <option>Backdrop</option>
+          <option>Biển quảng cáo</option>
+          <option>Hộp đèn</option>
+          <option>Kệ trưng bày</option>
+          <option>Ấn phẩm</option>
+          <option>Khác</option>
+        </select>
+      </div>
+      <div class="field"><label>Đơn vị</label><input id="itemUnit" maxlength="20" required placeholder="Ví dụ: m2, tấm, cuộn" /></div>
+      <div class="field"><label>Số lượng ban đầu</label><input id="itemQty" type="number" inputmode="decimal" min="0" step="0.01" required /></div>
+      <div class="field"><label>Tồn kho tối thiểu</label><input id="itemMin" type="number" inputmode="decimal" min="0" step="0.01" required /></div>
+      <div class="field"><label>Đơn giá</label><input id="itemPrice" type="number" inputmode="decimal" min="0" step="0.01" required /></div>
+      <div class="field"><label>Ghi chú</label><textarea id="itemNote" maxlength="300" placeholder="Thông tin cần ghi nhớ"></textarea></div>
+      <div class="form-actions">
+        <button type="button" class="btn secondary" onclick="closeModal('itemModal')">Hủy</button>
+        <button type="submit" class="btn primary">Lưu vật tư</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="transactionModal" class="modal" onclick="closeOnBackdrop(event,'transactionModal')">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title" id="transactionTitle">Tạo giao dịch</div>
+      <button class="close" onclick="closeModal('transactionModal')">Đóng</button>
+    </div>
+    <form id="transactionForm" onsubmit="saveTransaction(event)">
+      <input type="hidden" id="transactionType">
+      <div class="field"><label>Vật tư</label><select id="transactionItem" required></select></div>
+      <div class="field"><label id="transactionQtyLabel">Số lượng</label><input id="transactionQty" type="number" inputmode="decimal" min="0" step="0.01" required /></div>
+      <div class="field"><label>Ghi chú</label><textarea id="transactionNote" maxlength="300" placeholder="Lý do hoặc nội dung giao dịch"></textarea></div>
+      <div id="currentStockHint" class="kpi-note"></div>
+      <div class="form-actions">
+        <button type="button" class="btn secondary" onclick="closeModal('transactionModal')">Hủy</button>
+        <button type="submit" class="btn primary">Lưu giao dịch</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  const KEY_ITEMS='qlvtqc_roblox_items_v1';
+  const KEY_TX='qlvtqc_roblox_tx_v1';
+  const KEY_HISTORY='qlvtqc_roblox_history_v1';
+
+  const sampleItems=[
+    {id:'i1',name:'Bạt hiflex 0.32 mm',code:'VT001',category:'Banner',unit:'m2',qty:120,min:30,price:45000,note:'Dữ liệu mẫu',sample:true},
+    {id:'i2',name:'Tấm formex 5 mm',code:'VT002',category:'Biển quảng cáo',unit:'tấm',qty:18,min:10,price:125000,note:'Dữ liệu mẫu',sample:true},
+    {id:'i3',name:'Decal PP cán mờ',code:'VT003',category:'Ấn phẩm',unit:'m2',qty:26,min:20,price:68000,note:'Dữ liệu mẫu',sample:true},
+    {id:'i4',name:'Khung backdrop nhôm',code:'VT004',category:'Backdrop',unit:'bộ',qty:4,min:5,price:1850000,note:'Dữ liệu mẫu',sample:true}
+  ];
+
+  function read(key, fallback){
+    try{
+      const raw=localStorage.getItem(key);
+      if(!raw) return fallback;
+      const data=JSON.parse(raw);
+      return Array.isArray(data)?data:fallback;
+    }catch(e){return fallback}
+  }
+  function write(key,data){
+    try{localStorage.setItem(key,JSON.stringify(data));return true}catch(e){showToast('Không thể lưu dữ liệu trên thiết bị');return false}
+  }
+  function now(){return new Date().toISOString()}
+  function uid(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+  function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
+  function fmt(v){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:2}).format(num(v))}
+  function money(v){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0}).format(num(v))+' đ'}
+  function dateText(iso){
+    const d=new Date(iso); if(isNaN(d.getTime())) return '';
+    return d.toLocaleString('vi-VN',{hour12:false})
+  }
+  function escapeHtml(s){
+    return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))
+  }
+
+  let items=read(KEY_ITEMS,null);
+  let transactions=read(KEY_TX,[]);
+  let history=read(KEY_HISTORY,[]);
+  if(!items){
+    items=JSON.parse(JSON.stringify(sampleItems));
+    write(KEY_ITEMS,items);
+    addHistory('system','Khởi tạo dữ liệu mẫu','Hệ thống đã tạo dữ liệu mẫu để kiểm tra chức năng.');
+  }
+
+  function addHistory(kind,title,detail){
+    history=read(KEY_HISTORY,[]);
+    history.unshift({id:uid('h'),kind,title,detail,createdAt:now()});
+    if(history.length>300) history=history.slice(0,300);
+    write(KEY_HISTORY,history);
+  }
+
+  window.switchView=function(name,btn){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    const target=document.getElementById('view-'+name);
+    if(target) target.classList.add('active');
+    document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+    if(name==='dashboard') renderDashboard();
+    if(name==='items') renderItems();
+    if(name==='transactions') renderTransactions();
+    if(name==='history') renderHistory();
+  }
+
+  window.showInfoTab=function(name,btn){
+    document.querySelectorAll('.info-panel').forEach(p=>p.style.display='none');
+    document.getElementById('info-'+name).style.display='block';
+    document.querySelectorAll('[data-info-tab]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function renderDashboard(){
+    items=read(KEY_ITEMS,[]);
+    const stock=items.reduce((s,i)=>s+num(i.qty),0);
+    const low=items.filter(i=>num(i.qty)<=num(i.min));
+    const value=items.reduce((s,i)=>s+num(i.qty)*num(i.price),0);
+    document.getElementById('statItems').textContent=items.length;
+    document.getElementById('statStock').textContent=fmt(stock);
+    document.getElementById('statLow').textContent=low.length;
+    document.getElementById('statValue').textContent=money(value);
+    const box=document.getElementById('lowStockList');
+    if(!low.length){box.innerHTML='<div class="empty">Không có vật tư nào dưới mức tồn kho tối thiểu.</div>';return}
+    box.innerHTML=low.map(i=>`<div class="item"><div class="item-head"><div><div class="item-name">${escapeHtml(i.name)}</div><div class="meta">Mã ${escapeHtml(i.code)} · Tồn ${fmt(i.qty)} ${escapeHtml(i.unit)} · Mức tối thiểu ${fmt(i.min)}</div></div><span class="tag low">Cần bổ sung</span></div></div>`).join('');
+  }
+
+  function refreshCategoryFilter(){
+    const sel=document.getElementById('categoryFilter');
+    const current=sel.value;
+    const cats=[...new Set(items.map(i=>i.category).filter(Boolean))].sort();
+    sel.innerHTML='<option value="">Tất cả danh mục</option>'+cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    if(cats.includes(current)) sel.value=current;
+  }
+
+  window.renderItems=function(){
+    items=read(KEY_ITEMS,[]);
+    refreshCategoryFilter();
+    const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+    const cat=document.getElementById('categoryFilter').value;
+    const filtered=items.filter(i=>{
+      const matchQ=!q || i.name.toLowerCase().includes(q) || i.code.toLowerCase().includes(q);
+      const matchC=!cat || i.category===cat;
+      return matchQ && matchC;
+    });
+    const box=document.getElementById('itemsList');
+    if(!filtered.length){
+      box.innerHTML='<div class="empty">Chưa có vật tư phù hợp. Hãy thêm vật tư mới hoặc thay đổi bộ lọc.</div>';return;
+    }
+    box.innerHTML=filtered.map(i=>{
+      const low=num(i.qty)<=num(i.min);
+      return `<div class="item">
+        <div class="item-head">
+          <div>
+            <div class="item-name">${escapeHtml(i.name)}</div>
+            <div class="meta">Mã ${escapeHtml(i.code)} · ${escapeHtml(i.category)} · ${fmt(i.qty)} ${escapeHtml(i.unit)}</div>
+            <div class="meta">Đơn giá ${money(i.price)} · Mức tối thiểu ${fmt(i.min)}</div>
+          </div>
+          <div>${i.sample?'<span class="tag sample">Dữ liệu mẫu</span> ':''}<span class="tag ${low?'low':'ok'}">${low?'Tồn kho thấp':'Đủ tồn kho'}</span></div>
+        </div>
+        ${i.note?`<div class="meta">Ghi chú: ${escapeHtml(i.note)}</div>`:''}
+        <div class="actions">
+          <button class="btn small secondary" onclick="editItem('${i.id}')">Sửa</button>
+          <button class="btn small success" onclick="openTransactionModal('in','${i.id}')">Nhập</button>
+          <button class="btn small warning" onclick="openTransactionModal('out','${i.id}')">Xuất</button>
+          <button class="btn small secondary" onclick="openTransactionModal('adjust','${i.id}')">Điều chỉnh</button>
+          <button class="btn small danger" onclick="deleteItem('${i.id}')">Xóa</button>
+        </div>
+      </div>`
+    }).join('');
+  }
+
+  window.clearFilters=function(){
+    document.getElementById('searchInput').value='';
+    document.getElementById('categoryFilter').value='';
+    renderItems();
+  }
+
+  window.openItemModal=function(){
+    document.getElementById('itemModalTitle').textContent='Thêm vật tư';
+    document.getElementById('itemForm').reset();
+    document.getElementById('itemId').value='';
+    document.getElementById('itemQty').value='0';
+    document.getElementById('itemMin').value='0';
+    document.getElementById('itemPrice').value='0';
+    document.getElementById('itemModal').classList.add('show');
+  }
+
+  window.editItem=function(id){
+    const i=items.find(x=>x.id===id); if(!i) return;
+    document.getElementById('itemModalTitle').textContent='Sửa vật tư';
+    document.getElementById('itemId').value=i.id;
+    document.getElementById('itemName').value=i.name;
+    document.getElementById('itemCode').value=i.code;
+    document.getElementById('itemCategory').value=i.category;
+    document.getElementById('itemUnit').value=i.unit;
+    document.getElementById('itemQty').value=num(i.qty);
+    document.getElementById('itemMin').value=num(i.min);
+    document.getElementById('itemPrice').value=num(i.price);
+    document.getElementById('itemNote').value=i.note||'';
+    document.getElementById('itemModal').classList.add('show');
+  }
+
+  window.saveItem=function(e){
+    e.preventDefault();
+    const id=document.getElementById('itemId').value;
+    const name=document.getElementById('itemName').value.trim();
+    const code=document.getElementById('itemCode').value.trim();
+    const category=document.getElementById('itemCategory').value;
+    const unit=document.getElementById('itemUnit').value.trim();
+    const qty=Number(document.getElementById('itemQty').value);
+    const min=Number(document.getElementById('itemMin').value);
+    const price=Number(document.getElementById('itemPrice').value);
+    const note=document.getElementById('itemNote').value.trim();
+
+    if(!name||!code||!category||!unit){showToast('Vui lòng nhập đầy đủ thông tin bắt buộc');return}
+    if(!Number.isFinite(qty)||qty<0||!Number.isFinite(min)||min<0||!Number.isFinite(price)||price<0){showToast('Số lượng và đơn giá phải là số không âm hợp lệ');return}
+    const duplicated=items.some(x=>x.code.toLowerCase()===code.toLowerCase()&&x.id!==id);
+    if(duplicated){showToast('Mã vật tư đã tồn tại');return}
+
+    if(id){
+      const idx=items.findIndex(x=>x.id===id); if(idx<0){showToast('Không tìm thấy vật tư');return}
+      const old=items[idx];
+      items[idx]={...old,name,code,category,unit,qty,min,price,note,sample:false};
+      write(KEY_ITEMS,items);
+      addHistory('item','Cập nhật vật tư',`${name} có tồn kho ${fmt(qty)} ${unit}.`);
+      showToast('Đã cập nhật vật tư');
+    }else{
+      const obj={id:uid('i'),name,code,category,unit,qty,min,price,note,sample:false};
+      items.unshift(obj); write(KEY_ITEMS,items);
+      addHistory('item','Thêm vật tư mới',`${name} có số lượng ban đầu ${fmt(qty)} ${unit}.`);
+      showToast('Đã thêm vật tư');
+    }
+    closeModal('itemModal'); renderAll();
+  }
+
+  window.deleteItem=function(id){
+    const i=items.find(x=>x.id===id); if(!i) return;
+    if(!confirm(`Xóa vật tư "${i.name}"?`)) return;
+    items=items.filter(x=>x.id!==id);
+    write(KEY_ITEMS,items);
+    addHistory('item','Xóa vật tư',`${i.name} đã được xóa khỏi danh sách.`);
+    showToast('Đã xóa vật tư');
+    renderAll();
+  }
+
+  function fillTransactionItems(selectedId){
+    const sel=document.getElementById('transactionItem');
+    if(!items.length){
+      sel.innerHTML='<option value="">Chưa có vật tư</option>'; return;
+    }
+    sel.innerHTML='<option value="">Chọn vật tư</option>'+items.map(i=>`<option value="${i.id}">${escapeHtml(i.name)} · ${fmt(i.qty)} ${escapeHtml(i.unit)}</option>`).join('');
+    if(selectedId) sel.value=selectedId;
+    updateStockHint();
+  }
+
+  window.openTransactionModal=function(type,selectedId=''){
+    items=read(KEY_ITEMS,[]);
+    if(!items.length){showToast('Hãy thêm vật tư trước khi tạo giao dịch');switchView('items');return}
+    document.getElementById('transactionForm').reset();
+    document.getElementById('transactionType').value=type;
+    document.getElementById('transactionQty').value='';
+    const title=type==='in'?'Tạo phiếu nhập kho':type==='out'?'Tạo phiếu xuất kho':'Điều chỉnh tồn kho';
+    document.getElementById('transactionTitle').textContent=title;
+    document.getElementById('transactionQtyLabel').textContent=type==='adjust'?'Số lượng tồn kho mới':'Số lượng';
+    fillTransactionItems(selectedId);
+    document.getElementById('transactionItem').onchange=updateStockHint;
+    document.getElementById('transactionModal').classList.add('show');
+  }
+
+  function updateStockHint(){
+    const id=document.getElementById('transactionItem').value;
+    const i=items.find(x=>x.id===id);
+    document.getElementById('currentStockHint').textContent=i?`Tồn kho hiện tại: ${fmt(i.qty)} ${i.unit}`:'';
+  }
+
+  window.saveTransaction=function(e){
+    e.preventDefault();
+    const type=document.getElementById('transactionType').value;
+    const itemId=document.getElementById('transactionItem').value;
+    const qty=Number(document.getElementById('transactionQty').value);
+    const note=document.getElementById('transactionNote').value.trim();
+    const idx=items.findIndex(x=>x.id===itemId);
+    if(idx<0){showToast('Vui lòng chọn vật tư hợp lệ');return}
+    if(!Number.isFinite(qty)||qty<0){showToast('Số lượng phải là số không âm hợp lệ');return}
+    if(type!=='adjust' && qty<=0){showToast('Số lượng nhập hoặc xuất phải lớn hơn không');return}
+
+    const i=items[idx];
+    const before=num(i.qty);
+    let after=before;
+    if(type==='in') after=before+qty;
+    else if(type==='out'){
+      if(qty>before){showToast('Số lượng xuất vượt quá tồn kho hiện tại');return}
+      after=before-qty;
+    }else if(type==='adjust') after=qty;
+    if(!Number.isFinite(after)||after<0){showToast('Tồn kho sau giao dịch không hợp lệ');return}
+
+    items[idx]={...i,qty:after,sample:false};
+    write(KEY_ITEMS,items);
+    const tx={id:uid('t'),type,itemId,itemName:i.name,unit:i.unit,qty,before,after,note,createdAt:now()};
+    transactions=read(KEY_TX,[]);
+    transactions.unshift(tx);
+    if(transactions.length>300) transactions=transactions.slice(0,300);
+    write(KEY_TX,transactions);
+
+    const label=type==='in'?'Nhập kho':type==='out'?'Xuất kho':'Điều chỉnh tồn kho';
+    addHistory('transaction',label,`${i.name}: từ ${fmt(before)} thành ${fmt(after)} ${i.unit}.`);
+    showToast('Đã lưu giao dịch');
+    closeModal('transactionModal'); renderAll();
+  }
+
+  function txLabel(type){return type==='in'?'Nhập kho':type==='out'?'Xuất kho':'Điều chỉnh'}
+  function renderTransactions(){
+    transactions=read(KEY_TX,[]);
+    const box=document.getElementById('transactionList');
+    if(!transactions.length){box.innerHTML='<div class="empty">Chưa có giao dịch nhập xuất kho.</div>';return}
+    box.innerHTML=transactions.slice(0,100).map(t=>`<div class="history-row">
+      <div class="history-title">${txLabel(t.type)} · ${escapeHtml(t.itemName)}</div>
+      <div class="history-meta">${dateText(t.createdAt)} · Trước ${fmt(t.before)} · Sau ${fmt(t.after)} ${escapeHtml(t.unit)}</div>
+      ${t.note?`<div class="history-meta">Ghi chú: ${escapeHtml(t.note)}</div>`:''}
+    </div>`).join('');
+  }
+
+  window.renderHistory=function(){
+    history=read(KEY_HISTORY,[]);
+    const kind=document.getElementById('historyFilter').value;
+    const list=kind?history.filter(h=>h.kind===kind):history;
+    const box=document.getElementById('historyList');
+    if(!list.length){box.innerHTML='<div class="empty">Chưa có lịch sử hoạt động phù hợp.</div>';return}
+    box.innerHTML=list.slice(0,200).map(h=>`<div class="history-row">
+      <div class="history-title">${escapeHtml(h.title)}</div>
+      <div class="history-meta">${dateText(h.createdAt)}</div>
+      <div class="history-meta">${escapeHtml(h.detail)}</div>
+    </div>`).join('');
+  }
+
+  window.resetSampleData=function(){
+    if(!confirm('Khôi phục dữ liệu mẫu sẽ thay thế toàn bộ vật tư hiện tại. Tiếp tục?')) return;
+    items=JSON.parse(JSON.stringify(sampleItems));
+    transactions=[];
+    history=[];
+    write(KEY_ITEMS,items);write(KEY_TX,transactions);write(KEY_HISTORY,history);
+    addHistory('system','Khôi phục dữ liệu mẫu','Dữ liệu mẫu đã được khôi phục.');
+    showToast('Đã khôi phục dữ liệu mẫu');
+    renderAll();
+  }
+
+  window.clearAllData=function(){
+    if(!confirm('Xóa toàn bộ vật tư, giao dịch và lịch sử trên thiết bị này?')) return;
+    items=[];transactions=[];history=[];
+    write(KEY_ITEMS,items);write(KEY_TX,transactions);write(KEY_HISTORY,history);
+    addHistory('system','Xóa toàn bộ dữ liệu','Toàn bộ dữ liệu người dùng đã được xóa.');
+    showToast('Đã xóa toàn bộ dữ liệu');
+    renderAll();
+  }
+
+  window.closeModal=function(id){document.getElementById(id).classList.remove('show')}
+  window.closeOnBackdrop=function(e,id){if(e.target.id===id) closeModal(id)}
+  function showToast(msg){
+    const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+    clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>el.classList.remove('show'),2200)
+  }
+  window.showToast=showToast;
+
+  function renderAll(){renderDashboard();renderItems();renderTransactions();renderHistory()}
+  renderAll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f8fa" />
+  <title>Theo dõi tiến độ công trình Diệp Linh</title>
+  <style>
+    :root{
+      --bg:#f5f7fa;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#6b7280;
+      --line:#e6e9ef;
+      --primary:#2563eb;
+      --primary-soft:#eaf1ff;
+      --success:#14804a;
+      --success-soft:#e8f7ef;
+      --warning:#b45309;
+      --warning-soft:#fff4df;
+      --danger:#b42318;
+      --danger-soft:#feeceb;
+      --shadow:0 10px 25px rgba(26,36,57,.06);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      padding-bottom:88px;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:780px;margin:0 auto;min-height:100vh}
+    .topbar{
+      position:sticky;top:0;z-index:10;
+      background:rgba(245,247,250,.94);
+      backdrop-filter:blur(12px);
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(230,233,239,.8)
+    }
+    .title{font-size:20px;font-weight:800;line-height:1.25;margin:0}
+    .subtitle{font-size:13px;color:var(--muted);margin-top:4px}
+    .content{padding:14px 14px 24px}
+    .grid{display:grid;gap:12px}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{
+      background:var(--card);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:16px
+    }
+    .stat-label{font-size:12px;color:var(--muted)}
+    .stat-value{font-size:24px;font-weight:800;margin-top:6px}
+    .section-title{font-size:17px;font-weight:800;margin:0 0 12px}
+    .section-desc{font-size:13px;color:var(--muted);margin:-4px 0 12px;line-height:1.5}
+    .form-grid{display:grid;grid-template-columns:1fr;gap:12px}
+    label{font-size:13px;font-weight:700;display:block;margin-bottom:6px}
+    input,select,textarea{
+      width:100%;padding:12px 13px;border:1px solid #d8dde7;
+      border-radius:12px;background:#fff;color:var(--text);outline:none
+    }
+    textarea{min-height:92px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:#93b4ff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      border:0;border-radius:12px;padding:11px 14px;font-weight:750
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-secondary{background:#eef1f6;color:#24324a}
+    .btn-danger{background:var(--danger-soft);color:var(--danger)}
+    .btn-success{background:var(--success-soft);color:var(--success)}
+    .btn-warning{background:var(--warning-soft);color:var(--warning)}
+    .btn-block{width:100%}
+    .project{padding:14px;border:1px solid var(--line);border-radius:15px;margin-bottom:10px;background:#fff}
+    .project:last-child{margin-bottom:0}
+    .project-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .project-name{font-weight:800;font-size:16px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.5}
+    .badge{
+      display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;
+      font-size:12px;font-weight:750;white-space:nowrap
+    }
+    .badge-plan{background:#eef1f6;color:#4b5563}
+    .badge-progress{background:var(--primary-soft);color:#1d4ed8}
+    .badge-pause{background:var(--warning-soft);color:var(--warning)}
+    .badge-done{background:var(--success-soft);color:var(--success)}
+    .progress{height:10px;background:#edf0f5;border-radius:999px;overflow:hidden;margin:10px 0 6px}
+    .progress > span{display:block;height:100%;background:var(--primary);border-radius:999px}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:10px 0}
+    .meta div{font-size:12px;color:var(--muted)}
+    .meta strong{display:block;color:var(--text);font-size:13px;margin-top:2px}
+    .toolbar{display:grid;grid-template-columns:1fr 120px;gap:8px;margin-bottom:12px}
+    .empty{text-align:center;padding:26px 16px;color:var(--muted);line-height:1.6}
+    .timeline{border-left:2px solid #dce3ef;margin-left:5px;padding-left:16px}
+    .log{position:relative;padding:0 0 15px}
+    .log:before{
+      content:"";position:absolute;left:-22px;top:4px;width:10px;height:10px;
+      border-radius:50%;background:var(--primary);box-shadow:0 0 0 4px #eef4ff
+    }
+    .log-title{font-size:14px;font-weight:800}
+    .log-date{font-size:12px;color:var(--muted);margin-top:3px}
+    .log-text{font-size:13px;line-height:1.5;margin-top:5px}
+    .notice{font-size:13px;line-height:1.6;background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:12px}
+    .bottom-nav{
+      position:fixed;left:50%;bottom:0;transform:translateX(-50%);
+      width:min(780px,100%);height:72px;background:#fff;border-top:1px solid var(--line);
+      display:grid;grid-template-columns:repeat(4,1fr);z-index:20;padding-bottom:env(safe-area-inset-bottom)
+    }
+    .nav-btn{border:0;background:transparent;color:#667085;font-size:11px;font-weight:700;padding:8px 4px}
+    .nav-btn.active{color:var(--primary)}
+    .nav-icon{font-size:20px;display:block;margin-bottom:2px}
+    .page{display:none}.page.active{display:block}
+    .stage-item{padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+    .stage-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .stage-name{font-weight:800;font-size:14px}
+    .small-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .small-actions .btn{padding:8px 10px;font-size:12px}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .info-list{display:grid;gap:10px}
+    .info-item{padding:12px;border:1px solid var(--line);border-radius:12px}
+    .info-item strong{display:block;margin-bottom:5px}
+    .danger-zone{border-color:#f4c7c3}
+    .toast{
+      position:fixed;left:50%;bottom:88px;transform:translateX(-50%);
+      background:#172033;color:white;padding:10px 14px;border-radius:11px;font-size:13px;
+      z-index:50;opacity:0;pointer-events:none;transition:.2s;max-width:90%;text-align:center
+    }
+    .toast.show{opacity:1}
+    .modal{
+      position:fixed;inset:0;background:rgba(14,20,34,.42);
+      display:none;align-items:flex-end;justify-content:center;z-index:40
+    }
+    .modal.show{display:flex}
+    .sheet{
+      width:min(780px,100%);max-height:90vh;overflow:auto;background:#fff;
+      border-radius:22px 22px 0 0;padding:18px 16px 28px
+    }
+    .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .sheet-title{font-size:18px;font-weight:800}
+    .close{border:0;background:#eef1f6;border-radius:10px;padding:7px 10px}
+    @media(min-width:680px){
+      .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .form-grid.two{grid-template-columns:1fr 1fr}
+      .form-grid.three{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <h1 class="title">Theo dõi tiến độ công trình Diệp Linh</h1>
+    <div class="subtitle">Quản lý dự án, giai đoạn thi công và nhật ký tiến độ</div>
+  </header>
+
+  <main class="content">
+    <section id="page-home" class="page active">
+      <div class="grid stats" id="stats"></div>
+
+      <div class="card" style="margin-top:12px">
+        <h2 class="section-title">Tạo dự án mới</h2>
+        <div class="section-desc">Nhập thông tin cơ bản để bắt đầu theo dõi tiến độ.</div>
+        <div class="form-grid two">
+          <div>
+            <label for="projectName">Tên dự án</label>
+            <input id="projectName" maxlength="80" placeholder="Ví dụ: Hoàn thiện văn phòng tầng 2" />
+          </div>
+          <div>
+            <label for="projectLocation">Địa điểm</label>
+            <input id="projectLocation" maxlength="100" placeholder="Ví dụ: Hà Nội" />
+          </div>
+          <div>
+            <label for="startDate">Ngày bắt đầu</label>
+            <input id="startDate" type="date" />
+          </div>
+          <div>
+            <label for="endDate">Ngày dự kiến hoàn thành</label>
+            <input id="endDate" type="date" />
+          </div>
+          <div>
+            <label for="manager">Người phụ trách</label>
+            <input id="manager" maxlength="60" placeholder="Tên người phụ trách" />
+          </div>
+          <div>
+            <label for="projectStatus">Trạng thái</label>
+            <select id="projectStatus">
+              <option value="planned">Đã lên kế hoạch</option>
+              <option value="progress">Đang thi công</option>
+              <option value="pause">Tạm dừng</option>
+              <option value="done">Đã hoàn thành</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <label for="projectNote">Ghi chú</label>
+          <textarea id="projectNote" maxlength="500" placeholder="Mô tả ngắn về phạm vi công việc"></textarea>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn-primary" onclick="createProject()">Lưu dự án</button>
+          <button class="btn btn-secondary" onclick="resetProjectForm()">Đặt lại</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h2 class="section-title">Dự án đang theo dõi</h2>
+        <div class="toolbar">
+          <input id="searchInput" placeholder="Tìm theo tên hoặc địa điểm" oninput="renderProjects()" />
+          <select id="statusFilter" onchange="renderProjects()">
+            <option value="all">Tất cả</option>
+            <option value="planned">Đã lên kế hoạch</option>
+            <option value="progress">Đang thi công</option>
+            <option value="pause">Tạm dừng</option>
+            <option value="done">Đã hoàn thành</option>
+          </select>
+        </div>
+        <div id="projectList"></div>
+      </div>
+    </section>
+
+    <section id="page-history" class="page">
+      <div class="card">
+        <h2 class="section-title">Lịch sử dự án</h2>
+        <div class="section-desc">Xem lại các dự án và nhật ký tiến độ đã lưu trên thiết bị.</div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <section id="page-guide" class="page">
+      <div class="card">
+        <h2 class="section-title">Hướng dẫn sử dụng</h2>
+        <div class="info-list">
+          <div class="info-item"><strong>Bước 1</strong>Tạo dự án mới và nhập ngày bắt đầu, ngày dự kiến hoàn thành cùng người phụ trách.</div>
+          <div class="info-item"><strong>Bước 2</strong>Mở chi tiết dự án để thêm các giai đoạn như chuẩn bị, thi công, hoàn thiện và nghiệm thu.</div>
+          <div class="info-item"><strong>Bước 3</strong>Cập nhật phần trăm hoàn thành, trạng thái và ghi chú cho từng giai đoạn.</div>
+          <div class="info-item"><strong>Bước 4</strong>Thêm nhật ký tiến độ theo ngày để ghi nhận công việc đã thực hiện, vấn đề phát sinh và kế hoạch tiếp theo.</div>
+          <div class="info-item"><strong>Bước 5</strong>Sử dụng trang lịch sử để xem lại toàn bộ dự án. Có thể chỉnh sửa hoặc xóa dữ liệu khi cần.</div>
+        </div>
+        <div class="notice" style="margin-top:12px">
+          Dữ liệu được lưu cục bộ trên thiết bị. Hãy kiểm tra lại thông tin trước khi dùng làm căn cứ quản lý thi công thực tế.
+        </div>
+      </div>
+    </section>
+
+    <section id="page-info" class="page">
+      <div class="card">
+        <h2 class="section-title">Thông tin ứng dụng</h2>
+        <div class="info-list">
+          <div class="info-item"><strong>Tên ứng dụng</strong>Theo dõi tiến độ công trình Diệp Linh</div>
+          <div class="info-item"><strong>Chức năng chính</strong>Quản lý dự án, giai đoạn thi công, tỷ lệ hoàn thành, trạng thái hiện tại và nhật ký tiến độ.</div>
+          <div class="info-item"><strong>Phiên bản</strong>1.0.0</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3 class="section-title">Điều khoản sử dụng</h3>
+        <div class="muted">
+          Ứng dụng hỗ trợ ghi nhận và theo dõi tiến độ công trình. Người dùng chịu trách nhiệm về tính chính xác của dữ liệu đã nhập. Thông tin trong ứng dụng chỉ phục vụ quản lý nội bộ và không thay thế hồ sơ pháp lý, biên bản nghiệm thu hoặc tài liệu chuyên môn bắt buộc theo quy định. Người dùng không được sử dụng ứng dụng cho mục đích trái pháp luật hoặc làm sai lệch thông tin dự án.
+        </div>
+
+        <div class="hr"></div>
+
+        <h3 class="section-title">Chính sách quyền riêng tư</h3>
+        <div class="muted">
+          Ứng dụng lưu dữ liệu dự án trên thiết bị của người dùng bằng bộ nhớ cục bộ. Phiên bản này không yêu cầu người dùng cung cấp tài khoản và không tự động gửi dữ liệu dự án đến máy chủ bên ngoài. Người dùng có thể xóa từng dự án hoặc xóa toàn bộ dữ liệu đã lưu bất cứ lúc nào trong ứng dụng.
+        </div>
+
+        <div class="hr"></div>
+
+        <h3 class="section-title">Thông tin phiên bản</h3>
+        <div class="muted">
+          Phiên bản 1.0.0 cung cấp chức năng tạo và chỉnh sửa dự án, quản lý giai đoạn thi công, cập nhật tỷ lệ hoàn thành, ghi nhật ký tiến độ, tìm kiếm, lọc trạng thái và lưu lịch sử trên thiết bị.
+        </div>
+
+        <div class="card danger-zone" style="margin-top:16px;box-shadow:none">
+          <h3 class="section-title">Quản lý dữ liệu</h3>
+          <div class="muted">Thao tác này sẽ xóa toàn bộ dự án và nhật ký đã lưu trên thiết bị.</div>
+          <button class="btn btn-danger" style="margin-top:10px" onclick="clearAllData()">Xóa toàn bộ dữ liệu</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home" onclick="switchPage('home',this)"><span class="nav-icon">⌂</span>Tổng quan</button>
+    <button class="nav-btn" data-page="history" onclick="switchPage('history',this)"><span class="nav-icon">◷</span>Lịch sử</button>
+    <button class="nav-btn" data-page="guide" onclick="switchPage('guide',this)"><span class="nav-icon">?</span>Hướng dẫn</button>
+    <button class="nav-btn" data-page="info" onclick="switchPage('info',this)"><span class="nav-icon">i</span>Thông tin</button>
+  </nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div id="projectModal" class="modal" onclick="modalBackdrop(event)">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title">Chi tiết dự án</div>
+      <button class="close" onclick="closeModal()">Đóng</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'diep_linh_construction_progress_v1';
+
+  const sampleData = [
+    {
+      id: 'sample-1',
+      name: 'Hoàn thiện khu vực lễ tân',
+      location: 'Hà Nội',
+      startDate: '2026-08-05',
+      endDate: '2026-08-25',
+      manager: 'Nguyễn Văn An',
+      status: 'progress',
+      note: 'Theo dõi các hạng mục trần, sơn, điện và hoàn thiện khu vực tiếp khách.',
+      stages: [
+        {id:'s1',name:'Chuẩn bị mặt bằng',startDate:'2026-08-05',endDate:'2026-08-07',progress:100,status:'done',note:'Đã hoàn thành vệ sinh và bàn giao mặt bằng.'},
+        {id:'s2',name:'Thi công điện và trần',startDate:'2026-08-08',endDate:'2026-08-15',progress:85,status:'progress',note:'Đang hoàn thiện các vị trí đèn và trần.'},
+        {id:'s3',name:'Sơn và hoàn thiện',startDate:'2026-08-16',endDate:'2026-08-22',progress:35,status:'progress',note:'Đã xử lý bề mặt, đang thi công lớp sơn đầu tiên.'},
+        {id:'s4',name:'Kiểm tra và bàn giao',startDate:'2026-08-23',endDate:'2026-08-25',progress:0,status:'planned',note:''}
+      ],
+      logs: [
+        {id:'l1',date:'2026-08-15',progress:62,status:'progress',text:'Hoàn thành phần lớn hệ thống trần và điện. Chuẩn bị chuyển sang sơn hoàn thiện.'},
+        {id:'l2',date:'2026-08-12',progress:48,status:'progress',text:'Thi công hệ thống điện âm trần và kiểm tra vị trí đèn.'}
+      ],
+      createdAt: Date.now() - 86400000 * 5,
+      updatedAt: Date.now() - 86400000
+    }
+  ];
+
+  let data = loadData();
+  let activeProjectId = null;
+
+  function loadData(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)) return parsed;
+      }
+    }catch(e){}
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleData));
+    return JSON.parse(JSON.stringify(sampleData));
+  }
+
+  function saveData(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    renderAll();
+  }
+
+  function toast(message){
+    const el = document.getElementById('toast');
+    el.textContent = message;
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'),1800);
+  }
+
+  function statusText(status){
+    return ({
+      planned:'Đã lên kế hoạch',
+      progress:'Đang thi công',
+      pause:'Tạm dừng',
+      done:'Đã hoàn thành'
+    })[status] || 'Đã lên kế hoạch';
+  }
+
+  function badgeClass(status){
+    return ({
+      planned:'badge-plan',
+      progress:'badge-progress',
+      pause:'badge-pause',
+      done:'badge-done'
+    })[status] || 'badge-plan';
+  }
+
+  function clampPercent(v){
+    const n = Number(v);
+    if(!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+  }
+
+  function validDateRange(start,end){
+    if(!start || !end) return false;
+    return new Date(start+'T00:00:00') <= new Date(end+'T00:00:00');
+  }
+
+  function projectProgress(project){
+    if(!project.stages || project.stages.length===0){
+      if(project.status==='done') return 100;
+      const last = (project.logs||[]).slice().sort((a,b)=>b.date.localeCompare(a.date))[0];
+      return last ? clampPercent(last.progress) : 0;
+    }
+    const total = project.stages.reduce((s,x)=>s+clampPercent(x.progress),0);
+    return clampPercent(total / project.stages.length);
+  }
+
+  function renderStats(){
+    const total = data.length;
+    const progress = data.filter(x=>x.status==='progress').length;
+    const done = data.filter(x=>x.status==='done').length;
+    const avg = total ? Math.round(data.reduce((s,x)=>s+projectProgress(x),0)/total) : 0;
+    document.getElementById('stats').innerHTML = `
+      <div class="card"><div class="stat-label">Tổng dự án</div><div class="stat-value">${total}</div></div>
+      <div class="card"><div class="stat-label">Đang thi công</div><div class="stat-value">${progress}</div></div>
+      <div class="card"><div class="stat-label">Đã hoàn thành</div><div class="stat-value">${done}</div></div>
+      <div class="card"><div class="stat-label">Tiến độ trung bình</div><div class="stat-value">${avg}%</div></div>
+    `;
+  }
+
+  function escapeHtml(v=''){
+    return String(v).replace(/[&<>"']/g, m=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    })[m]);
+  }
+
+  function renderProjects(){
+    const q = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
+    const filter = document.getElementById('statusFilter')?.value || 'all';
+    const filtered = data.filter(p=>{
+      const matchQ = !q || p.name.toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q);
+      const matchS = filter==='all' || p.status===filter;
+      return matchQ && matchS;
+    }).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+
+    const root = document.getElementById('projectList');
+    if(!root) return;
+    if(!filtered.length){
+      root.innerHTML = `<div class="empty">Chưa có dự án phù hợp. Hãy tạo dự án mới hoặc thay đổi điều kiện tìm kiếm.</div>`;
+      return;
+    }
+    root.innerHTML = filtered.map(p=>{
+      const percent = projectProgress(p);
+      return `
+        <div class="project">
+          <div class="project-head">
+            <div>
+              <div class="project-name">${escapeHtml(p.name)}</div>
+              <div class="muted">${escapeHtml(p.location||'Chưa nhập địa điểm')}</div>
+            </div>
+            <span class="badge ${badgeClass(p.status)}">${statusText(p.status)}</span>
+          </div>
+          <div class="progress"><span style="width:${percent}%"></span></div>
+          <div class="muted">Tiến độ tổng thể ${percent}%</div>
+          <div class="meta">
+            <div>Ngày bắt đầu<strong>${escapeHtml(p.startDate)}</strong></div>
+            <div>Ngày dự kiến<strong>${escapeHtml(p.endDate)}</strong></div>
+            <div>Người phụ trách<strong>${escapeHtml(p.manager||'Chưa nhập')}</strong></div>
+            <div>Số giai đoạn<strong>${(p.stages||[]).length}</strong></div>
+          </div>
+          <div class="small-actions">
+            <button class="btn btn-primary" onclick="openProject('${p.id}')">Xem chi tiết</button>
+            <button class="btn btn-secondary" onclick="editProject('${p.id}')">Chỉnh sửa</button>
+            <button class="btn btn-danger" onclick="deleteProject('${p.id}')">Xóa</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderHistory(){
+    const root = document.getElementById('historyList');
+    if(!root) return;
+    if(!data.length){
+      root.innerHTML = `<div class="empty">Chưa có lịch sử dự án. Dữ liệu sẽ xuất hiện sau khi bạn tạo dự án mới.</div>`;
+      return;
+    }
+    root.innerHTML = data.slice().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).map(p=>`
+      <div class="project">
+        <div class="project-head">
+          <div>
+            <div class="project-name">${escapeHtml(p.name)}</div>
+            <div class="muted">Cập nhật gần nhất: ${new Date(p.updatedAt||Date.now()).toLocaleString('vi-VN')}</div>
+          </div>
+          <span class="badge ${badgeClass(p.status)}">${statusText(p.status)}</span>
+        </div>
+        <div class="progress"><span style="width:${projectProgress(p)}%"></span></div>
+        <div class="muted">${(p.logs||[]).length} nhật ký tiến độ, ${(p.stages||[]).length} giai đoạn thi công</div>
+        <div class="small-actions">
+          <button class="btn btn-primary" onclick="openProject('${p.id}')">Mở dự án</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function createProject(){
+    const name = document.getElementById('projectName').value.trim();
+    const location = document.getElementById('projectLocation').value.trim();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const manager = document.getElementById('manager').value.trim();
+    const status = document.getElementById('projectStatus').value;
+    const note = document.getElementById('projectNote').value.trim();
+
+    if(!name){toast('Vui lòng nhập tên dự án.');return;}
+    if(!startDate || !endDate){toast('Vui lòng nhập đầy đủ ngày bắt đầu và ngày dự kiến hoàn thành.');return;}
+    if(!validDateRange(startDate,endDate)){toast('Ngày dự kiến hoàn thành không được trước ngày bắt đầu.');return;}
+
+    const now = Date.now();
+    const project = {
+      id:'p'+now,
+      name,location,startDate,endDate,manager,status,note,
+      stages:[],logs:[],createdAt:now,updatedAt:now
+    };
+    data.unshift(project);
+    saveData();
+    resetProjectForm();
+    toast('Đã lưu dự án mới.');
+  }
+
+  function resetProjectForm(){
+    ['projectName','projectLocation','startDate','endDate','manager','projectNote'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('projectStatus').value='planned';
+  }
+
+  function deleteProject(id){
+    const p = data.find(x=>x.id===id);
+    if(!p) return;
+    if(!confirm(`Bạn có chắc muốn xóa dự án "${p.name}" không?`)) return;
+    data = data.filter(x=>x.id!==id);
+    saveData();
+    closeModal();
+    toast('Đã xóa dự án.');
+  }
+
+  function editProject(id){
+    const p = data.find(x=>x.id===id);
+    if(!p) return;
+    const name = prompt('Tên dự án', p.name);
+    if(name===null) return;
+    const clean = name.trim();
+    if(!clean){toast('Tên dự án không được để trống.');return;}
+    const location = prompt('Địa điểm', p.location||'');
+    if(location===null) return;
+    const manager = prompt('Người phụ trách', p.manager||'');
+    if(manager===null) return;
+    p.name = clean;
+    p.location = location.trim();
+    p.manager = manager.trim();
+    p.updatedAt = Date.now();
+    saveData();
+    if(activeProjectId===id) openProject(id);
+    toast('Đã cập nhật dự án.');
+  }
+
+  function openProject(id){
+    const p = data.find(x=>x.id===id);
+    if(!p) return;
+    activeProjectId = id;
+    document.getElementById('projectModal').classList.add('show');
+    renderModal(p);
+  }
+
+  function closeModal(){
+    document.getElementById('projectModal').classList.remove('show');
+    activeProjectId = null;
+  }
+
+  function modalBackdrop(e){
+    if(e.target.id==='projectModal') closeModal();
+  }
+
+  function renderModal(p){
+    const stages = (p.stages||[]).map(s=>`
+      <div class="stage-item">
+        <div class="stage-top">
+          <div class="stage-name">${escapeHtml(s.name)}</div>
+          <span class="badge ${badgeClass(s.status)}">${statusText(s.status)}</span>
+        </div>
+        <div class="progress"><span style="width:${clampPercent(s.progress)}%"></span></div>
+        <div class="muted">Hoàn thành ${clampPercent(s.progress)}%</div>
+        <div class="meta">
+          <div>Bắt đầu<strong>${escapeHtml(s.startDate)}</strong></div>
+          <div>Dự kiến<strong>${escapeHtml(s.endDate)}</strong></div>
+        </div>
+        ${s.note ? `<div class="muted">${escapeHtml(s.note)}</div>`:''}
+        <div class="small-actions">
+          <button class="btn btn-secondary" onclick="updateStage('${p.id}','${s.id}')">Cập nhật</button>
+          <button class="btn btn-danger" onclick="deleteStage('${p.id}','${s.id}')">Xóa</button>
+        </div>
+      </div>
+    `).join('') || `<div class="empty">Chưa có giai đoạn thi công. Hãy thêm giai đoạn đầu tiên.</div>`;
+
+    const logs = (p.logs||[]).slice().sort((a,b)=>b.date.localeCompare(a.date)).map(l=>`
+      <div class="log">
+        <div class="log-title">Tiến độ ${clampPercent(l.progress)}% · ${statusText(l.status)}</div>
+        <div class="log-date">${escapeHtml(l.date)}</div>
+        <div class="log-text">${escapeHtml(l.text)}</div>
+      </div>
+    `).join('') || `<div class="empty">Chưa có nhật ký tiến độ.</div>`;
+
+    document.getElementById('modalContent').innerHTML = `
+      <div class="project">
+        <div class="project-head">
+          <div>
+            <div class="project-name">${escapeHtml(p.name)}</div>
+            <div class="muted">${escapeHtml(p.location||'Chưa nhập địa điểm')}</div>
+          </div>
+          <span class="badge ${badgeClass(p.status)}">${statusText(p.status)}</span>
+        </div>
+        <div class="progress"><span style="width:${projectProgress(p)}%"></span></div>
+        <div class="muted">Tiến độ tổng thể ${projectProgress(p)}%</div>
+        <div class="meta">
+          <div>Ngày bắt đầu<strong>${escapeHtml(p.startDate)}</strong></div>
+          <div>Ngày dự kiến<strong>${escapeHtml(p.endDate)}</strong></div>
+          <div>Người phụ trách<strong>${escapeHtml(p.manager||'Chưa nhập')}</strong></div>
+          <div>Trạng thái<strong>${statusText(p.status)}</strong></div>
+        </div>
+        ${p.note ? `<div class="notice">${escapeHtml(p.note)}</div>`:''}
+        <div class="small-actions">
+          <button class="btn btn-secondary" onclick="changeProjectStatus('${p.id}')">Đổi trạng thái</button>
+          <button class="btn btn-secondary" onclick="editProject('${p.id}')">Chỉnh sửa</button>
+        </div>
+      </div>
+
+      <div class="card" style="box-shadow:none;margin-top:12px">
+        <h3 class="section-title">Thêm giai đoạn thi công</h3>
+        <div class="form-grid two">
+          <div><label>Tên giai đoạn</label><input id="stageName" placeholder="Ví dụ: Sơn hoàn thiện" maxlength="80"></div>
+          <div><label>Trạng thái</label>
+            <select id="stageStatus">
+              <option value="planned">Đã lên kế hoạch</option>
+              <option value="progress">Đang thi công</option>
+              <option value="pause">Tạm dừng</option>
+              <option value="done">Đã hoàn thành</option>
+            </select>
+          </div>
+          <div><label>Ngày bắt đầu</label><input id="stageStart" type="date"></div>
+          <div><label>Ngày dự kiến hoàn thành</label><input id="stageEnd" type="date"></div>
+          <div><label>Tỷ lệ hoàn thành</label><input id="stageProgress" type="number" min="0" max="100" step="1" value="0"></div>
+          <div><label>Ghi chú</label><input id="stageNote" maxlength="180" placeholder="Nội dung cần theo dõi"></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="addStage('${p.id}')">Lưu giai đoạn</button>
+      </div>
+
+      <div class="card" style="box-shadow:none;margin-top:12px">
+        <h3 class="section-title">Danh sách giai đoạn</h3>
+        ${stages}
+      </div>
+
+      <div class="card" style="box-shadow:none;margin-top:12px">
+        <h3 class="section-title">Thêm nhật ký tiến độ</h3>
+        <div class="form-grid two">
+          <div><label>Ngày ghi nhận</label><input id="logDate" type="date"></div>
+          <div><label>Tiến độ tổng thể</label><input id="logProgress" type="number" min="0" max="100" step="1" value="${projectProgress(p)}"></div>
+          <div><label>Trạng thái</label>
+            <select id="logStatus">
+              <option value="progress">Đang thi công</option>
+              <option value="planned">Đã lên kế hoạch</option>
+              <option value="pause">Tạm dừng</option>
+              <option value="done">Đã hoàn thành</option>
+            </select>
+          </div>
+          <div><label>Nội dung</label><input id="logText" maxlength="300" placeholder="Công việc đã thực hiện và vấn đề cần theo dõi"></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="addLog('${p.id}')">Lưu nhật ký</button>
+      </div>
+
+      <div class="card" style="box-shadow:none;margin-top:12px">
+        <h3 class="section-title">Nhật ký tiến độ</h3>
+        <div class="timeline">${logs}</div>
+      </div>
+    `;
+  }
+
+  function addStage(projectId){
+    const p = data.find(x=>x.id===projectId);
+    if(!p) return;
+    const name = document.getElementById('stageName').value.trim();
+    const startDate = document.getElementById('stageStart').value;
+    const endDate = document.getElementById('stageEnd').value;
+    const progressRaw = document.getElementById('stageProgress').value;
+    const status = document.getElementById('stageStatus').value;
+    const note = document.getElementById('stageNote').value.trim();
+
+    if(!name){toast('Vui lòng nhập tên giai đoạn.');return;}
+    if(!startDate || !endDate){toast('Vui lòng nhập đầy đủ ngày của giai đoạn.');return;}
+    if(!validDateRange(startDate,endDate)){toast('Ngày hoàn thành giai đoạn không được trước ngày bắt đầu.');return;}
+    if(progressRaw==='' || !Number.isFinite(Number(progressRaw))){toast('Tỷ lệ hoàn thành không hợp lệ.');return;}
+    const progress = clampPercent(progressRaw);
+
+    p.stages.push({id:'s'+Date.now(),name,startDate,endDate,progress,status,note});
+    p.updatedAt = Date.now();
+    if(progress>0 && p.status==='planned') p.status='progress';
+    saveData();
+    openProject(projectId);
+    toast('Đã thêm giai đoạn.');
+  }
+
+  function updateStage(projectId,stageId){
+    const p = data.find(x=>x.id===projectId);
+    const s = p?.stages?.find(x=>x.id===stageId);
+    if(!s) return;
+    const progress = prompt('Nhập tỷ lệ hoàn thành từ 0 đến 100', String(s.progress));
+    if(progress===null) return;
+    if(progress.trim()==='' || !Number.isFinite(Number(progress))){toast('Tỷ lệ hoàn thành không hợp lệ.');return;}
+    s.progress = clampPercent(progress);
+    if(s.progress===100) s.status='done';
+    else if(s.progress>0 && s.status==='planned') s.status='progress';
+    p.updatedAt = Date.now();
+    saveData();
+    openProject(projectId);
+    toast('Đã cập nhật giai đoạn.');
+  }
+
+  function deleteStage(projectId,stageId){
+    const p = data.find(x=>x.id===projectId);
+    if(!p) return;
+    if(!confirm('Bạn có chắc muốn xóa giai đoạn này không?')) return;
+    p.stages = (p.stages||[]).filter(x=>x.id!==stageId);
+    p.updatedAt = Date.now();
+    saveData();
+    openProject(projectId);
+    toast('Đã xóa giai đoạn.');
+  }
+
+  function addLog(projectId){
+    const p = data.find(x=>x.id===projectId);
+    if(!p) return;
+    const date = document.getElementById('logDate').value;
+    const progressRaw = document.getElementById('logProgress').value;
+    const status = document.getElementById('logStatus').value;
+    const text = document.getElementById('logText').value.trim();
+
+    if(!date){toast('Vui lòng chọn ngày ghi nhận.');return;}
+    if(progressRaw==='' || !Number.isFinite(Number(progressRaw))){toast('Tiến độ tổng thể không hợp lệ.');return;}
+    if(!text){toast('Vui lòng nhập nội dung nhật ký.');return;}
+
+    const progress = clampPercent(progressRaw);
+    p.logs.push({id:'l'+Date.now(),date,progress,status,text});
+    p.status = status;
+    if(progress===100) p.status='done';
+    p.updatedAt = Date.now();
+    saveData();
+    openProject(projectId);
+    toast('Đã lưu nhật ký tiến độ.');
+  }
+
+  function changeProjectStatus(projectId){
+    const p = data.find(x=>x.id===projectId);
+    if(!p) return;
+    const choice = prompt(
+      'Nhập trạng thái: planned, progress, pause hoặc done',
+      p.status
+    );
+    if(choice===null) return;
+    const v = choice.trim();
+    if(!['planned','progress','pause','done'].includes(v)){
+      toast('Trạng thái không hợp lệ.');
+      return;
+    }
+    p.status=v;
+    p.updatedAt=Date.now();
+    saveData();
+    openProject(projectId);
+    toast('Đã cập nhật trạng thái dự án.');
+  }
+
+  function clearAllData(){
+    if(!confirm('Bạn có chắc muốn xóa toàn bộ dữ liệu không? Thao tác này không thể hoàn tác.')) return;
+    data = [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    renderAll();
+    toast('Đã xóa toàn bộ dữ liệu.');
+  }
+
+  function switchPage(name,btn){
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    if(name==='history') renderHistory();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function renderAll(){
+    renderStats();
+    renderProjects();
+    renderHistory();
+  }
+
+  renderAll();
+</script>
+</body>
+</html>

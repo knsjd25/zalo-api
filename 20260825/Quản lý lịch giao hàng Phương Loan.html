@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <title>Quản lý lịch giao hàng Phương Loan</title>
+  <style>
+    :root{
+      --bg:#f4f7f7;--card:#ffffff;--text:#17222b;--muted:#64748b;--line:#dbe4e6;
+      --primary:#0f766e;--primary2:#115e59;--soft:#e6f4f2;--danger:#b42318;
+      --warning:#9a6700;--success:#067647;--shadow:0 8px 24px rgba(15,23,42,.07);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg)}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;min-height:100vh;padding-bottom:92px}
+    .header{position:sticky;top:0;z-index:20;background:rgba(244,247,247,.96);backdrop-filter:blur(10px);padding:14px 16px 10px;border-bottom:1px solid rgba(219,228,230,.8)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-icon{width:46px;height:46px;border-radius:14px;background:var(--primary);display:grid;place-items:center;box-shadow:var(--shadow)}
+    .brand-icon svg{width:28px;height:28px;fill:none;stroke:white;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .brand h1{font-size:18px;line-height:1.25;margin:0}
+    .brand p{font-size:12px;color:var(--muted);margin:4px 0 0}
+    main{padding:16px}
+    .screen{display:none}.screen.active{display:block}
+    .hero{background:linear-gradient(135deg,#0f766e,#134e4a);color:#fff;border-radius:24px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+    .hero h2{margin:0 0 7px;font-size:22px}.hero p{margin:0;color:#d9f4ef;font-size:13px;line-height:1.55}
+    .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 18px}
+    .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 4px 12px rgba(15,23,42,.035)}
+    .stat strong{display:block;font-size:26px}.stat span{font-size:12px;color:var(--muted)}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px}
+    .section-title h2{font-size:17px;margin:0}.section-title small{color:var(--muted)}
+    .btn{border:0;border-radius:13px;padding:11px 14px;font-weight:700;background:var(--primary);color:#fff}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:var(--soft);color:var(--primary2)}
+    .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+    .btn.danger{background:#fff1f0;color:var(--danger);border:1px solid #f7c7c2}
+    .btn.small{padding:8px 10px;border-radius:10px;font-size:12px}
+    .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .toolbar .wide{grid-column:1/-1}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field label{font-size:12px;font-weight:700;color:#344054}
+    .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px;color:var(--text);outline:none}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#65aaa2;box-shadow:0 0 0 3px rgba(15,118,110,.09)}
+    .field textarea{min-height:80px;resize:vertical}
+    .cards{display:flex;flex-direction:column;gap:10px}
+    .delivery-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;box-shadow:0 4px 14px rgba(15,23,42,.035)}
+    .card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .card-top h3{font-size:15px;margin:0 0 5px}.card-top p{font-size:12px;color:var(--muted);margin:0}
+    .badge{font-size:11px;font-weight:800;padding:6px 8px;border-radius:999px;white-space:nowrap}
+    .status-pending{background:#fff7d6;color:#8a6100}
+    .status-delivering{background:#e9f2ff;color:#175cd3}
+    .status-done{background:#e9f7ef;color:#067647}
+    .status-cancelled{background:#fff0f0;color:#b42318}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+    .meta div{background:#f8fafb;border-radius:10px;padding:9px}
+    .meta span{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}.meta strong{font-size:12px}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .empty{background:#fff;border:1px dashed #b8c7ca;border-radius:18px;padding:28px 18px;text-align:center;color:var(--muted)}
+    .empty strong{display:block;color:var(--text);margin-bottom:6px}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+    .panel h3{font-size:15px;margin:0 0 10px}.panel p,.panel li{font-size:13px;line-height:1.65;color:#475467}
+    .panel ul,.panel ol{padding-left:20px;margin:8px 0}
+    .history-item{border-left:3px solid #9acdc7;padding:8px 0 8px 12px;margin:10px 0}
+    .history-item strong{font-size:13px}.history-item p{margin:3px 0;font-size:12px;color:var(--muted)}
+    .notice{background:#fff8e6;border:1px solid #f5d98b;color:#7a5a00;border-radius:14px;padding:12px;font-size:12px;line-height:1.55;margin-bottom:12px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-grid .full{grid-column:1/-1}
+    .error{font-size:12px;color:var(--danger);min-height:17px;margin-top:7px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.52);z-index:50;display:none;align-items:flex-end;justify-content:center}
+    .modal-backdrop.open{display:flex}
+    .modal{width:min(760px,100%);max-height:92vh;overflow:auto;background:var(--bg);border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-head h2{font-size:18px;margin:0}
+    .icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--text);font-weight:900}
+    .bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(760px,100%);z-index:30;background:rgba(255,255,255,.98);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+    .nav-btn{border:0;background:transparent;color:var(--muted);padding:7px 3px;font-size:10px;font-weight:700}.nav-btn.active{color:var(--primary)}
+    .nav-btn span{display:block;font-size:18px;margin-bottom:2px}
+    .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(16px);background:#17222b;color:#fff;border-radius:12px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:80;max-width:calc(100% - 32px);text-align:center}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .split{display:flex;gap:10px}.split>*{flex:1}
+    .version{font-size:12px;color:var(--muted)}
+    @media(max-width:520px){.form-grid,.toolbar{grid-template-columns:1fr}.toolbar .wide,.form-grid .full{grid-column:auto}.meta{grid-template-columns:1fr 1fr}.hero h2{font-size:20px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 6.5h10v10H3z"/><path d="M13 9h4l3 3v4.5h-7z"/>
+          <circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>
+          <path d="M5.5 10h5M5.5 13h3"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Quản lý lịch giao hàng Phương Loan</h1>
+        <p>Quản lý lịch, trạng thái và lịch sử giao hàng</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="screen-home" class="screen active">
+      <div class="hero">
+        <h2>Lịch giao hàng hôm nay</h2>
+        <p>Theo dõi nhiệm vụ giao hàng, khách hàng, hàng hóa, phương tiện, tài xế và trạng thái thực hiện tại một nơi.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="statTotal">0</strong><span>Tổng nhiệm vụ</span></div>
+        <div class="stat"><strong id="statToday">0</strong><span>Giao hôm nay</span></div>
+        <div class="stat"><strong id="statPending">0</strong><span>Chờ giao</span></div>
+        <div class="stat"><strong id="statDone">0</strong><span>Đã hoàn thành</span></div>
+      </div>
+      <div class="section-title">
+        <h2>Nhiệm vụ sắp tới</h2>
+        <button class="btn small" data-open-form>Thêm lịch giao</button>
+      </div>
+      <div id="upcomingList" class="cards"></div>
+    </section>
+
+    <section id="screen-schedule" class="screen">
+      <div class="section-title">
+        <h2>Quản lý lịch giao hàng</h2>
+        <button class="btn small" data-open-form>Thêm mới</button>
+      </div>
+      <div class="toolbar">
+        <div class="field wide">
+          <label for="searchInput">Tìm kiếm</label>
+          <input id="searchInput" type="search" placeholder="Khách hàng, hàng hóa, tài xế, xe" />
+        </div>
+        <div class="field">
+          <label for="filterStatus">Trạng thái</label>
+          <select id="filterStatus">
+            <option value="">Tất cả trạng thái</option>
+            <option value="pending">Chờ giao</option>
+            <option value="delivering">Đang giao</option>
+            <option value="done">Đã hoàn thành</option>
+            <option value="cancelled">Đã hủy</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filterDate">Ngày giao</label>
+          <input id="filterDate" type="date" />
+        </div>
+      </div>
+      <div class="split" style="margin-bottom:12px">
+        <button id="clearFilters" class="btn ghost">Xóa bộ lọc</button>
+        <button id="resetSample" class="btn secondary">Khôi phục dữ liệu mẫu</button>
+      </div>
+      <div class="notice">Các bản ghi có nhãn Dữ liệu mẫu chỉ dùng để minh họa chức năng. Bạn có thể chỉnh sửa, xóa hoặc thay thế bằng lịch giao hàng thực tế.</div>
+      <div id="scheduleList" class="cards"></div>
+    </section>
+
+    <section id="screen-stats" class="screen">
+      <div class="section-title"><h2>Thống kê giao hàng</h2><small>Cập nhật tự động</small></div>
+      <div class="stats">
+        <div class="stat"><strong id="sTotal">0</strong><span>Tổng nhiệm vụ</span></div>
+        <div class="stat"><strong id="sPending">0</strong><span>Chờ giao</span></div>
+        <div class="stat"><strong id="sDelivering">0</strong><span>Đang giao</span></div>
+        <div class="stat"><strong id="sDone">0</strong><span>Đã hoàn thành</span></div>
+      </div>
+      <div class="panel">
+        <h3>Tỷ lệ hoàn thành</h3>
+        <p id="completionText">Chưa có dữ liệu.</p>
+      </div>
+      <div class="panel">
+        <h3>Phân bố theo ngày giao</h3>
+        <div id="dateStats"></div>
+      </div>
+    </section>
+
+    <section id="screen-history" class="screen">
+      <div class="section-title">
+        <h2>Lịch sử thao tác</h2>
+        <button id="clearHistory" class="btn danger small">Xóa lịch sử</button>
+      </div>
+      <div id="historyList"></div>
+    </section>
+
+    <section id="screen-more" class="screen">
+      <div class="section-title"><h2>Hướng dẫn và thông tin</h2></div>
+      <div class="panel">
+        <h3>Hướng dẫn sử dụng</h3>
+        <ol>
+          <li>Chọn Thêm lịch giao để tạo nhiệm vụ mới.</li>
+          <li>Nhập đầy đủ khách hàng, hàng hóa, ngày giao, phương tiện, tài xế và trạng thái.</li>
+          <li>Dùng Tìm kiếm và Bộ lọc để tìm nhanh nhiệm vụ cần xử lý.</li>
+          <li>Chọn Cập nhật trạng thái để chuyển nhiệm vụ từ Chờ giao sang Đang giao hoặc Đã hoàn thành.</li>
+          <li>Dùng Chỉnh sửa để cập nhật thông tin và Xóa để loại bỏ nhiệm vụ không còn cần thiết.</li>
+          <li>Mọi thay đổi quan trọng được ghi lại tại mục Lịch sử thao tác.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h3>Thông tin ứng dụng</h3>
+        <p><strong>Tên ứng dụng:</strong> Quản lý lịch giao hàng Phương Loan</p>
+        <p><strong>Mục đích:</strong> Hỗ trợ quản lý lịch giao hàng, khách hàng, hàng hóa, ngày giao, phương tiện, tài xế, trạng thái, lịch sử hoàn thành, tìm kiếm, lọc và thống kê.</p>
+        <p><strong>Dữ liệu:</strong> Dữ liệu được lưu trên thiết bị đang sử dụng. Ứng dụng không yêu cầu người dùng nhập thông tin nhạy cảm.</p>
+      </div>
+      <div class="panel">
+        <h3>Điều khoản sử dụng</h3>
+        <p>Người dùng chịu trách nhiệm về tính chính xác của dữ liệu nhập vào ứng dụng. Ứng dụng được cung cấp nhằm hỗ trợ ghi nhận và quản lý lịch giao hàng nội bộ. Người dùng không được sử dụng ứng dụng cho mục đích trái pháp luật, gây ảnh hưởng đến quyền và lợi ích hợp pháp của tổ chức hoặc cá nhân khác.</p>
+        <p>Thông tin lịch giao hàng cần được kiểm tra lại trước khi thực hiện. Dữ liệu có thể bị mất nếu người dùng xóa dữ liệu trình duyệt, gỡ ứng dụng hoặc thay đổi thiết bị. Người dùng nên chủ động kiểm tra các bản ghi quan trọng.</p>
+      </div>
+      <div class="panel">
+        <h3>Chính sách quyền riêng tư</h3>
+        <p>Ứng dụng chỉ xử lý dữ liệu do người dùng chủ động nhập để phục vụ chức năng quản lý lịch giao hàng. Dữ liệu được lưu cục bộ trên thiết bị và không tự động gửi đến bên thứ ba.</p>
+        <p>Người dùng có thể chỉnh sửa hoặc xóa bản ghi bất cứ lúc nào. Không nên nhập mật khẩu, thông tin tài chính hoặc dữ liệu nhạy cảm không cần thiết vào phần ghi chú.</p>
+      </div>
+      <div class="panel">
+        <h3>Phiên bản</h3>
+        <p class="version">Phiên bản 1.0.0</p>
+        <p>Phiên bản đầu tiên đã hoàn thiện chức năng tạo, chỉnh sửa, xóa, tìm kiếm, lọc, cập nhật trạng thái, lịch sử thao tác, thống kê và dữ liệu mẫu.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Điều hướng chính">
+    <button class="nav-btn active" data-screen="home"><span>⌂</span>Trang chủ</button>
+    <button class="nav-btn" data-screen="schedule"><span>▣</span>Lịch giao</button>
+    <button class="nav-btn" data-screen="stats"><span>▥</span>Thống kê</button>
+    <button class="nav-btn" data-screen="history"><span>↺</span>Lịch sử</button>
+    <button class="nav-btn" data-screen="more"><span>i</span>Thông tin</button>
+  </nav>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="formTitle">Thêm lịch giao hàng</h2>
+      <button id="closeModal" class="icon-btn" aria-label="Đóng">×</button>
+    </div>
+    <form id="deliveryForm" novalidate>
+      <input id="editId" type="hidden" />
+      <div class="form-grid">
+        <div class="field">
+          <label for="customer">Khách hàng</label>
+          <input id="customer" maxlength="80" placeholder="Ví dụ: Công ty Minh Anh" required />
+        </div>
+        <div class="field">
+          <label for="goods">Hàng hóa</label>
+          <input id="goods" maxlength="120" placeholder="Ví dụ: Bảng quảng cáo" required />
+        </div>
+        <div class="field">
+          <label for="deliveryDate">Ngày giao</label>
+          <input id="deliveryDate" type="date" required />
+        </div>
+        <div class="field">
+          <label for="deliveryTime">Giờ dự kiến</label>
+          <input id="deliveryTime" type="time" required />
+        </div>
+        <div class="field">
+          <label for="vehicle">Phương tiện</label>
+          <input id="vehicle" maxlength="60" placeholder="Ví dụ: Xe tải 1,25 tấn" required />
+        </div>
+        <div class="field">
+          <label for="driver">Tài xế</label>
+          <input id="driver" maxlength="60" placeholder="Ví dụ: Nguyễn Văn An" required />
+        </div>
+        <div class="field">
+          <label for="status">Trạng thái</label>
+          <select id="status" required>
+            <option value="pending">Chờ giao</option>
+            <option value="delivering">Đang giao</option>
+            <option value="done">Đã hoàn thành</option>
+            <option value="cancelled">Đã hủy</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="quantity">Số kiện</label>
+          <input id="quantity" type="number" min="1" max="99999" step="1" placeholder="1" required />
+        </div>
+        <div class="field full">
+          <label for="address">Địa điểm giao</label>
+          <input id="address" maxlength="180" placeholder="Nhập địa điểm giao hàng" required />
+        </div>
+        <div class="field full">
+          <label for="note">Ghi chú</label>
+          <textarea id="note" maxlength="300" placeholder="Ghi chú thêm nếu cần"></textarea>
+        </div>
+      </div>
+      <div id="formError" class="error"></div>
+      <div class="split">
+        <button type="button" id="cancelForm" class="btn ghost">Hủy</button>
+        <button type="submit" class="btn">Lưu lịch giao</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  const STORAGE_KEY = "pl_delivery_tasks_v1";
+  const HISTORY_KEY = "pl_delivery_history_v1";
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  const uid = () => "d_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7);
+  const todayISO = () => {
+    const d = new Date();
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  };
+  const addDaysISO = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate()+days);
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  };
+  const formatDate = (iso) => {
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return "Không xác định";
+    const [y,m,d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  };
+  const statusLabel = {pending:"Chờ giao",delivering:"Đang giao",done:"Đã hoàn thành",cancelled:"Đã hủy"};
+  const statusClass = {pending:"status-pending",delivering:"status-delivering",done:"status-done",cancelled:"status-cancelled"};
+
+  function sampleData(){
+    return [
+      {id:uid(),customer:"Công ty Minh Anh",goods:"Backdrop sự kiện",date:todayISO(),time:"09:00",vehicle:"Xe tải 1,25 tấn",driver:"Nguyễn Văn An",status:"pending",quantity:3,address:"Quận Bình Thạnh, Thành phố Hồ Chí Minh",note:"Liên hệ khách trước khi đến.",sample:true,createdAt:Date.now()},
+      {id:uid(),customer:"Cửa hàng Hồng Phát",goods:"Biển quảng cáo và khung sắt",date:addDaysISO(1),time:"14:30",vehicle:"Xe tải 2,5 tấn",driver:"Trần Minh Khoa",status:"delivering",quantity:5,address:"Thành phố Thủ Đức, Thành phố Hồ Chí Minh",note:"Kiểm tra đủ phụ kiện trước khi xuất kho.",sample:true,createdAt:Date.now()+1},
+      {id:uid(),customer:"Công ty Nam Việt",goods:"Standee và vật phẩm trưng bày",date:addDaysISO(-1),time:"10:15",vehicle:"Xe bán tải",driver:"Lê Quốc Huy",status:"done",quantity:8,address:"Quận 7, Thành phố Hồ Chí Minh",note:"Đã bàn giao đủ số lượng.",sample:true,createdAt:Date.now()+2}
+    ];
+  }
+
+  function safeParse(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return fallback;
+      const val = JSON.parse(raw);
+      return Array.isArray(val) ? val : fallback;
+    }catch(e){ return fallback; }
+  }
+  let tasks = safeParse(STORAGE_KEY, null);
+  let history = safeParse(HISTORY_KEY, []);
+  if(!tasks || tasks.length===0){
+    tasks = sampleData();
+    saveTasks();
+    if(history.length===0){
+      addHistory("Khởi tạo dữ liệu mẫu","Hệ thống đã tạo 3 lịch giao hàng mẫu để minh họa chức năng.");
+    }
+  }
+
+  function saveTasks(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }catch(e){}
+  }
+  function saveHistory(){
+    try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0,200))); }catch(e){}
+  }
+  function addHistory(action, detail){
+    history.unshift({id:uid(),action:String(action),detail:String(detail),time:Date.now()});
+    history = history.slice(0,200);
+    saveHistory();
+  }
+  function toast(message){
+    const t=$("toast"); t.textContent=message; t.classList.add("show");
+    clearTimeout(toast._timer); toast._timer=setTimeout(()=>t.classList.remove("show"),1800);
+  }
+  function timeText(ts){
+    const d = new Date(Number(ts));
+    if(Number.isNaN(d.getTime())) return "Không xác định";
+    return d.toLocaleString("vi-VN",{hour12:false});
+  }
+
+  function taskCard(t){
+    const nextStatus = t.status==="pending" ? "delivering" : t.status==="delivering" ? "done" : null;
+    const nextLabel = t.status==="pending" ? "Bắt đầu giao" : t.status==="delivering" ? "Hoàn thành" : "";
+    return `
+      <article class="delivery-card">
+        <div class="card-top">
+          <div><h3>${esc(t.customer)}</h3><p>${esc(t.goods)}${t.sample?' · Dữ liệu mẫu':''}</p></div>
+          <span class="badge ${statusClass[t.status]||"status-pending"}">${esc(statusLabel[t.status]||"Chờ giao")}</span>
+        </div>
+        <div class="meta">
+          <div><span>Ngày và giờ</span><strong>${formatDate(t.date)} · ${esc(t.time)}</strong></div>
+          <div><span>Số kiện</span><strong>${Number.isFinite(Number(t.quantity))?Math.max(1,Math.floor(Number(t.quantity))):1}</strong></div>
+          <div><span>Phương tiện</span><strong>${esc(t.vehicle)}</strong></div>
+          <div><span>Tài xế</span><strong>${esc(t.driver)}</strong></div>
+        </div>
+        <p style="font-size:12px;margin:7px 0;color:#475467"><strong>Địa điểm:</strong> ${esc(t.address)}</p>
+        ${t.note?`<p style="font-size:12px;margin:7px 0;color:#475467"><strong>Ghi chú:</strong> ${esc(t.note)}</p>`:""}
+        <div class="actions">
+          ${nextStatus?`<button class="btn small" data-status-id="${esc(t.id)}" data-next-status="${nextStatus}">${nextLabel}</button>`:""}
+          <button class="btn secondary small" data-edit-id="${esc(t.id)}">Chỉnh sửa</button>
+          <button class="btn danger small" data-delete-id="${esc(t.id)}">Xóa</button>
+        </div>
+      </article>`;
+  }
+
+  function renderHome(){
+    const total=tasks.length, today=todayISO();
+    $("statTotal").textContent=String(total);
+    $("statToday").textContent=String(tasks.filter(t=>t.date===today).length);
+    $("statPending").textContent=String(tasks.filter(t=>t.status==="pending").length);
+    $("statDone").textContent=String(tasks.filter(t=>t.status==="done").length);
+    const upcoming = [...tasks].filter(t=>t.status!=="cancelled" && t.status!=="done")
+      .sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,4);
+    $("upcomingList").innerHTML = upcoming.length ? upcoming.map(taskCard).join("") :
+      `<div class="empty"><strong>Chưa có nhiệm vụ sắp tới</strong>Hãy thêm lịch giao hàng mới để bắt đầu quản lý.</div>`;
+  }
+
+  function renderSchedule(){
+    const q=$("searchInput").value.trim().toLowerCase();
+    const st=$("filterStatus").value;
+    const date=$("filterDate").value;
+    const list=tasks.filter(t=>{
+      const blob=[t.customer,t.goods,t.vehicle,t.driver,t.address,t.note].join(" ").toLowerCase();
+      return (!q||blob.includes(q)) && (!st||t.status===st) && (!date||t.date===date);
+    }).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+    $("scheduleList").innerHTML=list.length?list.map(taskCard).join(""):
+      `<div class="empty"><strong>Không tìm thấy lịch giao hàng</strong>Hãy thay đổi từ khóa hoặc bộ lọc, hoặc thêm nhiệm vụ mới.</div>`;
+  }
+
+  function renderStats(){
+    const total=tasks.length;
+    const pending=tasks.filter(t=>t.status==="pending").length;
+    const delivering=tasks.filter(t=>t.status==="delivering").length;
+    const done=tasks.filter(t=>t.status==="done").length;
+    $("sTotal").textContent=String(total);$("sPending").textContent=String(pending);
+    $("sDelivering").textContent=String(delivering);$("sDone").textContent=String(done);
+    const eligible=tasks.filter(t=>t.status!=="cancelled").length;
+    const rate=eligible>0 ? Math.round(done/eligible*100) : 0;
+    $("completionText").textContent=eligible>0?`${done} trên ${eligible} nhiệm vụ hợp lệ đã hoàn thành, tương đương ${rate} phần trăm.`:"Chưa có dữ liệu để tính tỷ lệ hoàn thành.";
+    const groups={};
+    tasks.forEach(t=>{ const key=t.date||"Không xác định"; groups[key]=(groups[key]||0)+1; });
+    const rows=Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0])).slice(-10).reverse();
+    $("dateStats").innerHTML=rows.length?rows.map(([d,n])=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:9px 0;font-size:13px"><span>${formatDate(d)}</span><strong>${n} nhiệm vụ</strong></div>`).join(""):`<p>Chưa có dữ liệu.</p>`;
+  }
+
+  function renderHistory(){
+    $("historyList").innerHTML=history.length?history.map(h=>`<div class="history-item"><strong>${esc(h.action)}</strong><p>${esc(h.detail)}</p><p>${timeText(h.time)}</p></div>`).join(""):
+      `<div class="empty"><strong>Chưa có lịch sử thao tác</strong>Các thay đổi sẽ được ghi lại tại đây.</div>`;
+  }
+  function renderAll(){renderHome();renderSchedule();renderStats();renderHistory();}
+
+  function openForm(id){
+    $("deliveryForm").reset(); $("formError").textContent=""; $("editId").value="";
+    $("status").value="pending"; $("quantity").value="1";
+    $("deliveryDate").value=todayISO(); $("deliveryTime").value="09:00";
+    $("formTitle").textContent="Thêm lịch giao hàng";
+    if(id){
+      const t=tasks.find(x=>x.id===id);
+      if(!t) return;
+      $("editId").value=t.id;$("customer").value=t.customer;$("goods").value=t.goods;
+      $("deliveryDate").value=t.date;$("deliveryTime").value=t.time;$("vehicle").value=t.vehicle;
+      $("driver").value=t.driver;$("status").value=t.status;$("quantity").value=t.quantity;
+      $("address").value=t.address;$("note").value=t.note||"";
+      $("formTitle").textContent="Chỉnh sửa lịch giao hàng";
+    }
+    $("modalBackdrop").classList.add("open");
+  }
+  function closeForm(){ $("modalBackdrop").classList.remove("open"); }
+
+  function getFormData(){
+    const customer=$("customer").value.trim(), goods=$("goods").value.trim(), date=$("deliveryDate").value,
+      time=$("deliveryTime").value, vehicle=$("vehicle").value.trim(), driver=$("driver").value.trim(),
+      status=$("status").value, quantityRaw=$("quantity").value.trim(), address=$("address").value.trim(),
+      note=$("note").value.trim();
+    if(!customer||!goods||!date||!time||!vehicle||!driver||!address) return {error:"Vui lòng nhập đầy đủ các trường bắt buộc."};
+    if(!["pending","delivering","done","cancelled"].includes(status)) return {error:"Trạng thái không hợp lệ."};
+    const quantity=Number(quantityRaw);
+    if(!Number.isFinite(quantity)||quantity<=0||!Number.isInteger(quantity)||quantity>99999) return {error:"Số kiện phải là số nguyên từ 1 đến 99999."};
+    if(customer.length>80||goods.length>120||vehicle.length>60||driver.length>60||address.length>180||note.length>300) return {error:"Một hoặc nhiều trường vượt quá độ dài cho phép."};
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^\d{2}:\d{2}$/.test(time)) return {error:"Ngày hoặc giờ giao hàng không hợp lệ."};
+    return {data:{customer,goods,date,time,vehicle,driver,status,quantity,address,note}};
+  }
+
+  $("deliveryForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const result=getFormData();
+    if(result.error){$("formError").textContent=result.error;return;}
+    const id=$("editId").value;
+    if(id){
+      const idx=tasks.findIndex(t=>t.id===id);
+      if(idx<0){$("formError").textContent="Không tìm thấy nhiệm vụ cần chỉnh sửa.";return;}
+      const old=tasks[idx];
+      tasks[idx]={...old,...result.data,sample:false,updatedAt:Date.now()};
+      addHistory("Chỉnh sửa lịch giao hàng",`Đã cập nhật nhiệm vụ của khách hàng ${result.data.customer}.`);
+      toast("Đã cập nhật lịch giao hàng.");
+    }else{
+      tasks.push({id:uid(),...result.data,sample:false,createdAt:Date.now()});
+      addHistory("Thêm lịch giao hàng",`Đã tạo nhiệm vụ mới cho khách hàng ${result.data.customer}.`);
+      toast("Đã thêm lịch giao hàng.");
+    }
+    saveTasks();closeForm();renderAll();
+  });
+
+  document.addEventListener("click",e=>{
+    const open=e.target.closest("[data-open-form]"); if(open){openForm();return;}
+    const edit=e.target.closest("[data-edit-id]"); if(edit){openForm(edit.dataset.editId);return;}
+    const del=e.target.closest("[data-delete-id]");
+    if(del){
+      const t=tasks.find(x=>x.id===del.dataset.deleteId); if(!t)return;
+      if(confirm(`Xóa lịch giao hàng của ${t.customer}?`)){
+        tasks=tasks.filter(x=>x.id!==t.id);saveTasks();addHistory("Xóa lịch giao hàng",`Đã xóa nhiệm vụ của khách hàng ${t.customer}.`);renderAll();toast("Đã xóa lịch giao hàng.");
+      } return;
+    }
+    const st=e.target.closest("[data-status-id]");
+    if(st){
+      const t=tasks.find(x=>x.id===st.dataset.statusId), next=st.dataset.nextStatus;
+      if(!t||!["delivering","done"].includes(next)) return;
+      t.status=next;t.sample=false;t.updatedAt=Date.now();saveTasks();
+      addHistory("Cập nhật trạng thái",`Nhiệm vụ của ${t.customer} chuyển sang ${statusLabel[next]}.`);
+      renderAll();toast("Đã cập nhật trạng thái.");return;
+    }
+  });
+
+  document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>{
+    document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+    $("screen-"+btn.dataset.screen).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }));
+
+  ["searchInput","filterStatus","filterDate"].forEach(id=>{
+    $(id).addEventListener(id==="searchInput"?"input":"change",renderSchedule);
+  });
+  $("clearFilters").addEventListener("click",()=>{$("searchInput").value="";$("filterStatus").value="";$("filterDate").value="";renderSchedule();toast("Đã xóa bộ lọc.");});
+  $("resetSample").addEventListener("click",()=>{
+    if(confirm("Khôi phục dữ liệu mẫu? Dữ liệu hiện tại sẽ bị thay thế.")){
+      tasks=sampleData();saveTasks();addHistory("Khôi phục dữ liệu mẫu","Đã thay thế danh sách hiện tại bằng dữ liệu mẫu.");renderAll();toast("Đã khôi phục dữ liệu mẫu.");
+    }
+  });
+  $("clearHistory").addEventListener("click",()=>{
+    if(history.length===0){toast("Lịch sử đang trống.");return;}
+    if(confirm("Xóa toàn bộ lịch sử thao tác?")){history=[];saveHistory();renderHistory();toast("Đã xóa lịch sử.");}
+  });
+  $("closeModal").addEventListener("click",closeForm);$("cancelForm").addEventListener("click",closeForm);
+  $("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeForm();});
+  renderAll();
+})();
+</script>
+</body>
+</html>

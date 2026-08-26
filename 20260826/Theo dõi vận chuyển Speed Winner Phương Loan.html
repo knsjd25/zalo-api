@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1630" />
+<title>Theo dõi vận chuyển Speed Winner Phương Loan</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --ink:#152238;
+  --muted:#738197;
+  --line:#e8edf4;
+  --nav:#0b1630;
+  --blue:#2f6df6;
+  --blue2:#5b8cff;
+  --green:#17a873;
+  --orange:#f59b36;
+  --red:#ef5c62;
+  --purple:#7457e8;
+  --shadow:0 14px 34px rgba(33,54,89,.10);
+  --soft:0 7px 20px rgba(35,55,88,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{border:0;cursor:pointer}
+.app{
+  width:min(100%,520px);
+  min-height:100vh;
+  margin:0 auto;
+  background:var(--bg);
+  position:relative;
+  overflow-x:hidden;
+  padding-bottom:88px;
+}
+.topbar{
+  position:sticky;top:0;z-index:30;
+  padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+  background:rgba(244,247,251,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(232,237,244,.85);
+}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brandmark{
+  width:42px;height:42px;border-radius:14px;flex:0 0 auto;
+  background:linear-gradient(145deg,#2f6df6,#7449e8);
+  position:relative;box-shadow:0 8px 18px rgba(47,109,246,.25);
+}
+.brandmark:before,.brandmark:after{
+  content:"";position:absolute;border-radius:999px;background:#fff;
+}
+.brandmark:before{width:21px;height:7px;left:9px;top:12px;transform:skewX(-28deg)}
+.brandmark:after{width:15px;height:7px;right:7px;bottom:11px;transform:skewX(-28deg);opacity:.82}
+.brandtext{min-width:0}
+.brandtitle{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brandsub{font-size:11px;color:var(--muted);margin-top:3px}
+.roundbtn{
+  width:42px;height:42px;border-radius:14px;background:#fff;
+  display:grid;place-items:center;box-shadow:var(--soft);color:var(--ink)
+}
+svg{display:block}
+.main{padding:16px 16px 10px}
+.page{display:none;animation:fade .18s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:.55;transform:translateY(3px)}to{opacity:1;transform:none}}
+.hero{
+  border-radius:26px;padding:21px;color:#fff;overflow:hidden;position:relative;
+  background:
+   radial-gradient(circle at 84% 16%,rgba(255,255,255,.20),transparent 28%),
+   linear-gradient(145deg,#101e42 0%,#173d87 51%,#2f6df6 100%);
+  box-shadow:0 17px 35px rgba(20,55,118,.25)
+}
+.hero:after{
+  content:"";position:absolute;width:190px;height:190px;border:32px solid rgba(255,255,255,.07);
+  border-radius:50%;right:-93px;bottom:-112px
+}
+.kicker{font-size:12px;opacity:.8;margin-bottom:6px}
+.hero h1{font-size:24px;line-height:1.18;margin:0 0 9px;max-width:310px}
+.hero p{font-size:12px;line-height:1.55;margin:0;opacity:.82;max-width:340px}
+.hero-actions{display:flex;gap:9px;margin-top:18px;position:relative;z-index:2}
+.btn{
+  border-radius:14px;padding:12px 14px;font-weight:800;font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px
+}
+.btn.primary{background:#fff;color:#173d87}
+.btn.ghost{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 9px 18px rgba(47,109,246,.22)}
+.btn.light{background:#eef3ff;color:var(--blue)}
+.btn.danger{background:#fff0f1;color:#c9444d}
+.btn.block{width:100%}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.stat{
+  background:var(--card);border-radius:20px;padding:15px;box-shadow:var(--soft);border:1px solid #edf1f6
+}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{width:38px;height:38px;border-radius:13px;display:grid;place-items:center}
+.stat-icon.blue{background:#edf3ff;color:var(--blue)}
+.stat-icon.green{background:#e9f8f2;color:var(--green)}
+.stat-icon.orange{background:#fff3e6;color:var(--orange)}
+.stat-icon.purple{background:#f1edff;color:var(--purple)}
+.stat-value{font-weight:900;font-size:24px;margin-top:13px}
+.stat-label{font-size:11px;color:var(--muted);margin-top:3px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 11px}
+.section-head h2{font-size:16px;margin:0}
+.linkbtn{background:transparent;color:var(--blue);font-size:12px;font-weight:800;padding:5px}
+.progress-card,.panel{
+  background:#fff;border:1px solid #edf1f6;border-radius:21px;padding:16px;box-shadow:var(--soft)
+}
+.progress-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-bottom:14px}
+.progress-row:last-child{margin-bottom:0}
+.progress-label{font-size:12px;font-weight:700}
+.progress-meta{font-size:11px;color:var(--muted);margin-top:4px}
+.progress-number{font-size:12px;font-weight:900}
+.bar{height:8px;border-radius:999px;background:#edf1f6;overflow:hidden;margin-top:8px}
+.bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#2f6df6,#7857eb)}
+.trip-list{display:flex;flex-direction:column;gap:11px}
+.trip{
+  background:#fff;border:1px solid #edf1f6;border-radius:21px;padding:15px;box-shadow:var(--soft)
+}
+.trip-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.trip-code{font-size:11px;color:var(--muted);font-weight:700}
+.trip-title{font-size:15px;font-weight:900;margin-top:4px}
+.badge{font-size:10px;font-weight:900;border-radius:999px;padding:7px 9px;white-space:nowrap}
+.badge.new{background:#edf3ff;color:#2f6df6}
+.badge.transit{background:#fff3e6;color:#d47b1a}
+.badge.done{background:#e9f8f2;color:#118058}
+.badge.cancel{background:#fff0f1;color:#c54850}
+.route{display:grid;grid-template-columns:18px 1fr;gap:10px;margin-top:15px}
+.route-line{position:relative}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--blue);position:absolute;top:4px;left:4px}
+.dot.end{top:43px;background:var(--green)}
+.route-line:after{content:"";position:absolute;width:2px;height:31px;background:#dfe6f1;left:8px;top:13px}
+.place{font-size:12px;font-weight:800}
+.addr{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
+.route-dest{margin-top:11px}
+.trip-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #edf1f6}
+.meta{font-size:11px;color:var(--muted)}
+.trip-actions{display:flex;gap:7px}
+.iconbtn{width:34px;height:34px;border-radius:11px;background:#f4f7fb;color:#536077;display:grid;place-items:center}
+.iconbtn.active{background:#edf3ff;color:var(--blue)}
+.filterbar{display:grid;grid-template-columns:1fr 124px;gap:9px;margin-bottom:12px}
+.searchwrap{position:relative}
+.searchwrap svg{position:absolute;left:13px;top:12px;color:#8190a5}
+.input,.select,.textarea{
+  width:100%;border:1px solid #dfe6ef;background:#fff;border-radius:14px;
+  padding:12px 13px;color:var(--ink);outline:none
+}
+.searchwrap .input{padding-left:40px}
+.input:focus,.select:focus,.textarea:focus{border-color:#8fb2ff;box-shadow:0 0 0 3px rgba(47,109,246,.10)}
+.formgrid{display:grid;gap:13px}
+.field label{display:block;font-size:12px;font-weight:800;margin:0 0 7px 2px}
+.field small{display:block;color:var(--muted);font-size:10px;margin-top:5px;line-height:1.4}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.textarea{min-height:90px;resize:vertical}
+.form-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px}
+.empty{
+  text-align:center;background:#fff;border:1px solid #edf1f6;border-radius:22px;padding:34px 20px;box-shadow:var(--soft)
+}
+.empty .emptyicon{width:64px;height:64px;border-radius:20px;margin:0 auto 13px;background:#f0f4fb;display:grid;place-items:center;color:#7f8ca1}
+.empty h3{margin:0 0 7px;font-size:15px}
+.empty p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.info-grid{display:grid;gap:11px}
+.info-card{background:#fff;border-radius:20px;padding:16px;border:1px solid #edf1f6;box-shadow:var(--soft)}
+.info-card h3{margin:0 0 8px;font-size:14px}
+.info-card p,.info-card li{font-size:12px;color:#65748a;line-height:1.65}
+.info-card ol,.info-card ul{margin:7px 0 0;padding-left:20px}
+.kv{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid #edf1f6;font-size:12px}
+.kv:last-child{border-bottom:0}
+.kv span:first-child{color:var(--muted)}
+.kv span:last-child{text-align:right;font-weight:800}
+.settings-list{display:flex;flex-direction:column;gap:10px}
+.setting{
+  width:100%;text-align:left;background:#fff;border:1px solid #edf1f6;border-radius:18px;
+  padding:14px 15px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--soft)
+}
+.setting-left{display:flex;align-items:center;gap:12px}
+.setting-icon{width:39px;height:39px;border-radius:13px;background:#eef3ff;color:var(--blue);display:grid;place-items:center}
+.setting-name{font-size:13px;font-weight:800}
+.setting-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.chev{color:#a1acba}
+.bottomnav{
+  position:fixed;left:50%;bottom:0;transform:translateX(-50%);
+  width:min(100%,520px);z-index:40;
+  padding:9px 8px calc(9px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.94);backdrop-filter:blur(18px);
+  border-top:1px solid #e7ecf3;display:grid;grid-template-columns:repeat(5,1fr)
+}
+.navitem{background:transparent;color:#8b98aa;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:800;padding:4px 0}
+.navitem.active{color:var(--blue)}
+.navcenter{position:relative;margin-top:-25px}
+.navcenter .plus{
+  width:54px;height:54px;border-radius:19px;background:linear-gradient(145deg,#2f6df6,#7357e8);
+  color:white;display:grid;place-items:center;box-shadow:0 10px 24px rgba(47,109,246,.34);border:5px solid #f6f8fb
+}
+.navcenter span{margin-top:1px}
+.toast{
+  position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);z-index:100;
+  background:#14213a;color:#fff;padding:11px 14px;border-radius:13px;font-size:11px;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:.22s
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal{
+  position:fixed;inset:0;z-index:80;background:rgba(9,18,38,.44);display:none;align-items:flex-end;justify-content:center
+}
+.modal.show{display:flex}
+.sheet{
+  width:min(100%,520px);max-height:86vh;overflow:auto;background:#f7f9fc;border-radius:28px 28px 0 0;
+  padding:15px 16px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -20px 60px rgba(5,20,50,.25)
+}
+.handle{width:46px;height:5px;border-radius:999px;background:#d8deea;margin:0 auto 14px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.sheet-head h2{font-size:17px;margin:0}
+.error{font-size:10px;color:#cf3d48;margin-top:5px;display:none}
+.error.show{display:block}
+.pills{display:flex;gap:8px;overflow:auto;padding:1px 1px 8px;margin-bottom:10px}
+.pill{white-space:nowrap;padding:9px 12px;border-radius:999px;background:#fff;border:1px solid #e5eaf1;font-size:11px;font-weight:800;color:#647186}
+.pill.active{background:#edf3ff;color:var(--blue);border-color:#cbdcff}
+.detail-hero{background:linear-gradient(145deg,#101e42,#2d64d9);border-radius:22px;padding:17px;color:#fff;margin-bottom:12px}
+.detail-hero .badge{display:inline-block;background:rgba(255,255,255,.14);color:#fff}
+.detail-hero h3{font-size:19px;margin:10px 0 5px}
+.detail-hero p{font-size:11px;opacity:.78;margin:0}
+.timeline{padding:2px 0}
+.titem{display:grid;grid-template-columns:26px 1fr;gap:10px;position:relative;padding-bottom:18px}
+.titem:not(:last-child):before{content:"";position:absolute;left:11px;top:23px;width:2px;height:calc(100% - 8px);background:#e2e8f1}
+.tdot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;color:var(--blue);z-index:1}
+.tcontent strong{font-size:12px}
+.tcontent div{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.45}
+.summaryline{display:flex;justify-content:space-between;gap:12px;font-size:11px;padding:9px 0;border-bottom:1px solid #edf1f6}
+.summaryline:last-child{border-bottom:0}
+.summaryline span:first-child{color:var(--muted)}
+.summaryline span:last-child{font-weight:800;text-align:right}
+.notice{
+  border-radius:16px;padding:12px 13px;background:#fff8e9;border:1px solid #fae5b8;color:#8c671c;
+  font-size:11px;line-height:1.5;margin-bottom:12px
+}
+@media (min-width:700px){
+ body{background:#e9eef6}
+ .app{box-shadow:0 0 55px rgba(20,35,65,.10)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="toprow">
+      <div class="brand">
+        <div class="brandmark" aria-hidden="true"></div>
+        <div class="brandtext">
+          <div class="brandtitle">Theo dõi vận chuyển</div>
+          <div class="brandsub">Speed Winner Phương Loan</div>
+        </div>
+      </div>
+      <button class="roundbtn" type="button" onclick="openSettings()" aria-label="Mở cài đặt">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.16.38.37.72.66 1 .29.28.67.42 1.07.42H21v4h-.09a1.7 1.7 0 0 0-1.51.58Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <div class="kicker">Trung tâm điều phối</div>
+        <h1>Quản lý hành trình rõ ràng và thuận tiện</h1>
+        <p>Theo dõi chuyến vận chuyển, phương tiện, lịch trình, trạng thái và lịch sử thao tác trên cùng một giao diện.</p>
+        <div class="hero-actions">
+          <button class="btn primary" onclick="openForm()">Tạo chuyến mới</button>
+          <button class="btn ghost" onclick="showPage('trips')">Xem danh sách</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-top"><div class="stat-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div></div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Tổng số chuyến</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><div class="stat-icon orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
+          <div class="stat-value" id="stat-transit">0</div>
+          <div class="stat-label">Đang vận chuyển</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg></div></div>
+          <div class="stat-value" id="stat-done">0</div>
+          <div class="stat-label">Đã hoàn thành</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><div class="stat-icon purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 7h10.5a3.5 3.5 0 0 1 0 7H8.5a3.5 3.5 0 0 0 0 7H19"/></svg></div></div>
+          <div class="stat-value" id="stat-value">0</div>
+          <div class="stat-label">Khối lượng hàng</div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Tình trạng vận chuyển</h2></div>
+      <div class="progress-card" id="progress-card"></div>
+
+      <div class="section-head"><h2>Chuyến gần đây</h2><button class="linkbtn" onclick="showPage('trips')">Xem tất cả</button></div>
+      <div class="trip-list" id="recent-list"></div>
+    </section>
+
+    <section class="page" id="page-trips">
+      <div class="section-head" style="margin-top:2px"><h2>Danh sách vận chuyển</h2><button class="linkbtn" onclick="openForm()">Tạo mới</button></div>
+      <div class="filterbar">
+        <div class="searchwrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" id="search-input" placeholder="Tìm mã chuyến, khách hàng..." oninput="renderTrips()">
+        </div>
+        <select class="select" id="status-filter" onchange="renderTrips()">
+          <option value="">Tất cả trạng thái</option>
+          <option value="new">Đã lên lịch</option>
+          <option value="transit">Đang vận chuyển</option>
+          <option value="done">Đã hoàn thành</option>
+          <option value="cancel">Đã hủy</option>
+        </select>
+      </div>
+      <div class="pills">
+        <button class="pill active" data-filter="" onclick="quickFilter(this,'')">Tất cả</button>
+        <button class="pill" data-filter="new" onclick="quickFilter(this,'new')">Đã lên lịch</button>
+        <button class="pill" data-filter="transit" onclick="quickFilter(this,'transit')">Đang vận chuyển</button>
+        <button class="pill" data-filter="done" onclick="quickFilter(this,'done')">Đã hoàn thành</button>
+      </div>
+      <div class="trip-list" id="trip-list"></div>
+    </section>
+
+    <section class="page" id="page-history">
+      <div class="section-head" style="margin-top:2px"><h2>Lịch sử hoạt động</h2><button class="linkbtn" onclick="clearHistory()">Xóa lịch sử</button></div>
+      <div id="history-list"></div>
+    </section>
+
+    <section class="page" id="page-more">
+      <div class="section-head" style="margin-top:2px"><h2>Tiện ích và thông tin</h2></div>
+      <div class="settings-list">
+        <button class="setting" onclick="openInfo('guide')">
+          <div class="setting-left"><div class="setting-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><div><div class="setting-name">Hướng dẫn sử dụng</div><div class="setting-sub">Quy trình quản lý chuyến vận chuyển</div></div></div><span class="chev">›</span>
+        </button>
+        <button class="setting" onclick="openInfo('app')">
+          <div class="setting-left"><div class="setting-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></div><div><div class="setting-name">Thông tin ứng dụng</div><div class="setting-sub">Mục đích và phạm vi chức năng</div></div></div><span class="chev">›</span>
+        </button>
+        <button class="setting" onclick="openInfo('terms')">
+          <div class="setting-left"><div class="setting-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/></svg></div><div><div class="setting-name">Điều khoản sử dụng</div><div class="setting-sub">Quy định khi sử dụng ứng dụng</div></div></div><span class="chev">›</span>
+        </button>
+        <button class="setting" onclick="openInfo('privacy')">
+          <div class="setting-left"><div class="setting-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v5c0 5 3.3 8.2 8 10 4.7-1.8 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></div><div><div class="setting-name">Chính sách quyền riêng tư</div><div class="setting-sub">Nguyên tắc xử lý dữ liệu trong ứng dụng</div></div></div><span class="chev">›</span>
+        </button>
+        <button class="setting" onclick="openInfo('version')">
+          <div class="setting-left"><div class="setting-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></div><div><div class="setting-name">Phiên bản ứng dụng</div><div class="setting-sub">Phiên bản 1.0.0</div></div></div><span class="chev">›</span>
+        </button>
+        <button class="setting" onclick="resetDemoData()">
+          <div class="setting-left"><div class="setting-icon" style="background:#fff0f1;color:#c54850"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6"/><path d="M5.5 15A8 8 0 1 0 6 7l-2 3"/></svg></div><div><div class="setting-name">Khôi phục dữ liệu mẫu</div><div class="setting-sub">Đặt lại danh sách vận chuyển ban đầu</div></div></div><span class="chev">›</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottomnav">
+    <button class="navitem active" data-page="home" onclick="showPage('home',this)">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 9-8 9 8v9H3z"/><path d="M9 20v-6h6v6"/></svg><span>Trang chủ</span>
+    </button>
+    <button class="navitem" data-page="trips" onclick="showPage('trips',this)">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span>Vận chuyển</span>
+    </button>
+    <button class="navitem navcenter" onclick="openForm()"><div class="plus"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></div><span>Tạo mới</span></button>
+    <button class="navitem" data-page="history" onclick="showPage('history',this)">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><span>Lịch sử</span>
+    </button>
+    <button class="navitem" data-page="more" onclick="showPage('more',this)">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>Thêm</span>
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="form-modal" onclick="backdropClose(event,'form-modal')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h2 id="form-title">Tạo chuyến vận chuyển</h2><button class="roundbtn" style="width:36px;height:36px" onclick="closeModal('form-modal')">×</button></div>
+    <div class="notice">Vui lòng nhập thông tin thực tế của chuyến vận chuyển. Các trường có dấu bắt buộc cần được điền đầy đủ.</div>
+    <form id="trip-form" class="formgrid" onsubmit="saveTrip(event)" novalidate>
+      <input type="hidden" id="trip-id">
+      <div class="field"><label>Mã chuyến bắt buộc</label><input class="input" id="code" maxlength="30" placeholder="Ví dụ PL26082601"><div class="error" id="err-code"></div></div>
+      <div class="field"><label>Khách hàng bắt buộc</label><input class="input" id="customer" maxlength="80" placeholder="Tên khách hàng hoặc đơn vị"><div class="error" id="err-customer"></div></div>
+      <div class="field"><label>Điểm lấy hàng bắt buộc</label><input class="input" id="from" maxlength="120" placeholder="Địa điểm lấy hàng"><div class="error" id="err-from"></div></div>
+      <div class="field"><label>Điểm giao hàng bắt buộc</label><input class="input" id="to" maxlength="120" placeholder="Địa điểm giao hàng"><div class="error" id="err-to"></div></div>
+      <div class="field-row">
+        <div class="field"><label>Ngày vận chuyển</label><input class="input" type="date" id="date"><div class="error" id="err-date"></div></div>
+        <div class="field"><label>Giờ dự kiến</label><input class="input" type="time" id="time"><div class="error" id="err-time"></div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Phương tiện</label><select class="select" id="vehicle"><option>Xe tải nhẹ</option><option>Xe tải trung</option><option>Xe tải lớn</option><option>Xe bán tải</option><option>Phương tiện khác</option></select></div>
+        <div class="field"><label>Trạng thái</label><select class="select" id="status"><option value="new">Đã lên lịch</option><option value="transit">Đang vận chuyển</option><option value="done">Đã hoàn thành</option><option value="cancel">Đã hủy</option></select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Khối lượng kg</label><input class="input" type="number" min="0" step="0.1" id="weight" placeholder="0"><div class="error" id="err-weight"></div></div>
+        <div class="field"><label>Chi phí dự kiến</label><input class="input" type="number" min="0" step="1000" id="cost" placeholder="0"><div class="error" id="err-cost"></div></div>
+      </div>
+      <div class="field"><label>Tài xế</label><input class="input" id="driver" maxlength="60" placeholder="Tên tài xế"></div>
+      <div class="field"><label>Biển số xe</label><input class="input" id="plate" maxlength="20" placeholder="Ví dụ 51C 12345"></div>
+      <div class="field"><label>Ghi chú</label><textarea class="textarea" id="note" maxlength="500" placeholder="Thông tin hàng hóa, yêu cầu giao nhận hoặc ghi chú khác"></textarea></div>
+      <div class="form-actions"><button class="btn light" type="button" onclick="resetForm()">Đặt lại</button><button class="btn blue" type="submit">Lưu chuyến</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="detail-modal" onclick="backdropClose(event,'detail-modal')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h2>Chi tiết chuyến vận chuyển</h2><button class="roundbtn" style="width:36px;height:36px" onclick="closeModal('detail-modal')">×</button></div>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<div class="modal" id="info-modal" onclick="backdropClose(event,'info-modal')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-head"><h2 id="info-title">Thông tin</h2><button class="roundbtn" style="width:36px;height:36px" onclick="closeModal('info-modal')">×</button></div>
+    <div id="info-content"></div>
+  </div>
+</div>
+
+<script>
+const STORE_KEY='pl_speed_winner_trips_v1';
+const HISTORY_KEY='pl_speed_winner_history_v1';
+
+const demoTrips=[
+ {id:'t1',code:'PL26082601',customer:'Công ty Minh Phát',from:'Quận 7, Thành phố Hồ Chí Minh',to:'Thủ Đức, Thành phố Hồ Chí Minh',date:'2026-08-26',time:'09:30',vehicle:'Xe tải nhẹ',status:'transit',weight:680,cost:850000,driver:'Nguyễn Văn Hùng',plate:'51C 48216',note:'Hàng quảng cáo đóng gói theo từng kiện.',createdAt:'2026-08-26T08:10:00'},
+ {id:'t2',code:'PL26082602',customer:'Cửa hàng Tân Lộc',from:'Bình Tân, Thành phố Hồ Chí Minh',to:'Quận 3, Thành phố Hồ Chí Minh',date:'2026-08-26',time:'14:00',vehicle:'Xe bán tải',status:'new',weight:220,cost:420000,driver:'Trần Quốc Nam',plate:'51D 21872',note:'Liên hệ khách hàng trước khi giao.',createdAt:'2026-08-26T08:35:00'},
+ {id:'t3',code:'PL25082507',customer:'Công ty An Gia',from:'Quận 12, Thành phố Hồ Chí Minh',to:'Tân Bình, Thành phố Hồ Chí Minh',date:'2026-08-25',time:'10:15',vehicle:'Xe tải trung',status:'done',weight:1250,cost:1350000,driver:'Lê Minh Tuấn',plate:'51C 90731',note:'Đã bàn giao đủ hàng.',createdAt:'2026-08-25T07:50:00'},
+ {id:'t4',code:'PL24082403',customer:'Nội thất Hoàng Gia',from:'Hóc Môn, Thành phố Hồ Chí Minh',to:'Gò Vấp, Thành phố Hồ Chí Minh',date:'2026-08-24',time:'08:40',vehicle:'Xe tải nhẹ',status:'done',weight:540,cost:760000,driver:'Phạm Văn Đức',plate:'51C 35682',note:'Hoàn thành đúng lịch.',createdAt:'2026-08-24T07:15:00'}
+];
+
+function loadTrips(){
+ try{
+  const raw=localStorage.getItem(STORE_KEY);
+  if(!raw){localStorage.setItem(STORE_KEY,JSON.stringify(demoTrips)); return [...demoTrips];}
+  const data=JSON.parse(raw); return Array.isArray(data)?data:[...demoTrips];
+ }catch(e){return [...demoTrips]}
+}
+function loadHistory(){
+ try{
+  const d=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'); return Array.isArray(d)?d:[];
+ }catch(e){return []}
+}
+let trips=loadTrips(), history=loadHistory();
+
+const statusText={new:'Đã lên lịch',transit:'Đang vận chuyển',done:'Đã hoàn thành',cancel:'Đã hủy'};
+function money(n){return new Intl.NumberFormat('vi-VN').format(Number(n)||0)+' đ'}
+function num(n){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:1}).format(Number(n)||0)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function fmtDate(v){if(!v)return 'Chưa xác định'; const p=v.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:v}
+function persist(){localStorage.setItem(STORE_KEY,JSON.stringify(trips))}
+function persistHistory(){localStorage.setItem(HISTORY_KEY,JSON.stringify(history))}
+function addHistory(action,detail){
+ history.unshift({id:Date.now()+Math.random(),action,detail,time:new Date().toISOString()});
+ history=history.slice(0,100); persistHistory(); renderHistory();
+}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>el.classList.remove('show'),2200)}
+
+function showPage(name,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById('page-'+name).classList.add('active');
+ document.querySelectorAll('.navitem[data-page]').forEach(b=>b.classList.remove('active'));
+ const activeBtn=btn||document.querySelector(`.navitem[data-page="${name}"]`);
+ if(activeBtn) activeBtn.classList.add('active');
+ if(name==='trips')renderTrips();
+ if(name==='history')renderHistory();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function tripCard(t){
+ return `<div class="trip">
+  <div class="trip-head">
+   <div><div class="trip-code">${esc(t.code)}</div><div class="trip-title">${esc(t.customer)}</div></div>
+   <span class="badge ${t.status}">${statusText[t.status]||'Chưa xác định'}</span>
+  </div>
+  <div class="route">
+   <div class="route-line"><span class="dot"></span><span class="dot end"></span></div>
+   <div><div><div class="place">Điểm lấy hàng</div><div class="addr">${esc(t.from)}</div></div><div class="route-dest"><div class="place">Điểm giao hàng</div><div class="addr">${esc(t.to)}</div></div></div>
+  </div>
+  <div class="trip-foot">
+   <div class="meta">${fmtDate(t.date)} · ${esc(t.time||'Chưa có giờ')}</div>
+   <div class="trip-actions">
+    <button class="iconbtn active" onclick="openDetail('${t.id}')" aria-label="Xem chi tiết"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+    <button class="iconbtn" onclick="editTrip('${t.id}')" aria-label="Sửa"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 16-1 5 5-1L19 9l-4-4z"/><path d="m13 7 4 4"/></svg></button>
+   </div>
+  </div>
+ </div>`
+}
+function renderDashboard(){
+ const total=trips.length;
+ const transit=trips.filter(x=>x.status==='transit').length;
+ const done=trips.filter(x=>x.status==='done').length;
+ const weight=trips.reduce((s,x)=>s+(Number(x.weight)||0),0);
+ document.getElementById('stat-total').textContent=total;
+ document.getElementById('stat-transit').textContent=transit;
+ document.getElementById('stat-done').textContent=done;
+ document.getElementById('stat-value').textContent=num(weight)+' kg';
+
+ const counts={new:0,transit:0,done:0,cancel:0};
+ trips.forEach(x=>{if(counts[x.status]!==undefined)counts[x.status]++});
+ const rows=[['Đã lên lịch','new'],['Đang vận chuyển','transit'],['Đã hoàn thành','done']];
+ document.getElementById('progress-card').innerHTML=rows.map(([label,key])=>{
+  const pct=total?Math.round(counts[key]*100/total):0;
+  return `<div class="progress-row"><div><div class="progress-label">${label}</div><div class="progress-meta">${counts[key]} chuyến trong tổng số ${total}</div><div class="bar"><span style="width:${pct}%"></span></div></div><div class="progress-number">${pct}%</div></div>`
+ }).join('');
+ const recent=[...trips].sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,3);
+ document.getElementById('recent-list').innerHTML=recent.length?recent.map(tripCard).join(''):`<div class="empty"><div class="emptyicon">○</div><h3>Chưa có chuyến vận chuyển</h3><p>Hãy tạo chuyến đầu tiên để bắt đầu theo dõi lịch trình.</p></div>`;
+}
+function renderTrips(){
+ const q=(document.getElementById('search-input')?.value||'').trim().toLowerCase();
+ const f=document.getElementById('status-filter')?.value||'';
+ const data=trips.filter(t=>{
+   const text=[t.code,t.customer,t.from,t.to,t.driver,t.plate].join(' ').toLowerCase();
+   return (!q||text.includes(q))&&(!f||t.status===f)
+ }).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+ document.getElementById('trip-list').innerHTML=data.length?data.map(tripCard).join(''):`<div class="empty"><div class="emptyicon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><h3>Không tìm thấy dữ liệu</h3><p>Hãy thay đổi từ khóa hoặc bộ lọc trạng thái.</p></div>`;
+}
+function quickFilter(btn,val){
+ document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+ document.getElementById('status-filter').value=val;renderTrips();
+}
+function renderHistory(){
+ const el=document.getElementById('history-list');
+ if(!history.length){el.innerHTML=`<div class="empty"><div class="emptyicon"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div><h3>Chưa có lịch sử hoạt động</h3><p>Các thao tác tạo, chỉnh sửa, đổi trạng thái và xóa chuyến sẽ được ghi lại tại đây.</p></div>`;return}
+ el.innerHTML=`<div class="panel"><div class="timeline">`+history.map(h=>`<div class="titem"><div class="tdot">•</div><div class="tcontent"><strong>${esc(h.action)}</strong><div>${esc(h.detail)}</div><div>${new Date(h.time).toLocaleString('vi-VN')}</div></div></div>`).join('')+`</div></div>`;
+}
+function clearHistory(){
+ if(!history.length){toast('Lịch sử đang trống');return}
+ if(confirm('Bạn có chắc muốn xóa toàn bộ lịch sử hoạt động?')){history=[];persistHistory();renderHistory();toast('Đã xóa lịch sử')}
+}
+
+function openForm(id=''){
+ resetErrors();document.getElementById('trip-id').value='';
+ document.getElementById('form-title').textContent='Tạo chuyến vận chuyển';
+ resetForm(false);
+ if(id){
+  const t=trips.find(x=>x.id===id); if(!t)return;
+  document.getElementById('form-title').textContent='Chỉnh sửa chuyến vận chuyển';
+  document.getElementById('trip-id').value=t.id;
+  ['code','customer','from','to','date','time','vehicle','status','weight','cost','driver','plate','note'].forEach(k=>document.getElementById(k).value=t[k]??'');
+ }
+ document.getElementById('form-modal').classList.add('show');
+}
+function editTrip(id){openForm(id)}
+function resetForm(clearId=true){
+ const id=clearId?'':document.getElementById('trip-id').value;
+ document.getElementById('trip-form').reset();
+ document.getElementById('trip-id').value=id;
+ const now=new Date(); const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+ document.getElementById('date').value=local;
+ document.getElementById('status').value='new';
+ resetErrors();
+}
+function resetErrors(){document.querySelectorAll('.error').forEach(e=>{e.textContent='';e.classList.remove('show')})}
+function error(id,msg){const e=document.getElementById('err-'+id);if(e){e.textContent=msg;e.classList.add('show')}}
+
+function saveTrip(ev){
+ ev.preventDefault(); resetErrors();
+ const ids=['code','customer','from','to','date','time','vehicle','status','weight','cost','driver','plate','note'];
+ const v={};ids.forEach(k=>v[k]=document.getElementById(k).value.trim());
+ let ok=true;
+ ['code','customer','from','to','date','time'].forEach(k=>{if(!v[k]){error(k,'Vui lòng nhập thông tin này');ok=false}});
+ const weight=Number(v.weight||0), cost=Number(v.cost||0);
+ if(!Number.isFinite(weight)||weight<0){error('weight','Khối lượng phải là số không âm');ok=false}
+ if(!Number.isFinite(cost)||cost<0){error('cost','Chi phí phải là số không âm');ok=false}
+ const editing=document.getElementById('trip-id').value;
+ if(trips.some(t=>t.code.toLowerCase()===v.code.toLowerCase()&&t.id!==editing)){error('code','Mã chuyến đã tồn tại');ok=false}
+ if(v.from&&v.to&&v.from.toLowerCase()===v.to.toLowerCase()){error('to','Điểm giao hàng cần khác điểm lấy hàng');ok=false}
+ if(!ok){toast('Vui lòng kiểm tra lại dữ liệu');return}
+ const data={...v,weight,cost};
+ if(editing){
+  const idx=trips.findIndex(x=>x.id===editing);
+  if(idx<0)return;
+  const old=trips[idx]; trips[idx]={...old,...data};
+  addHistory('Cập nhật chuyến',`${v.code} - ${v.customer}`);
+  toast('Đã cập nhật chuyến vận chuyển');
+ }else{
+  const item={...data,id:'t'+Date.now(),createdAt:new Date().toISOString()};
+  trips.unshift(item);
+  addHistory('Tạo chuyến mới',`${v.code} - ${v.customer}`);
+  toast('Đã lưu chuyến vận chuyển');
+ }
+ persist();renderAll();closeModal('form-modal');showPage('trips');
+}
+function deleteTrip(id){
+ const t=trips.find(x=>x.id===id);if(!t)return;
+ if(confirm(`Bạn có chắc muốn xóa chuyến ${t.code}?`)){
+  trips=trips.filter(x=>x.id!==id);persist();addHistory('Xóa chuyến',`${t.code} - ${t.customer}`);
+  renderAll();closeModal('detail-modal');toast('Đã xóa chuyến vận chuyển');
+ }
+}
+function setStatus(id,status){
+ const t=trips.find(x=>x.id===id);if(!t)return;
+ t.status=status;persist();addHistory('Cập nhật trạng thái',`${t.code} - ${statusText[status]}`);
+ renderAll();openDetail(id);toast('Đã cập nhật trạng thái');
+}
+function openDetail(id){
+ const t=trips.find(x=>x.id===id);if(!t)return;
+ document.getElementById('detail-content').innerHTML=`
+ <div class="detail-hero"><span class="badge">${statusText[t.status]}</span><h3>${esc(t.code)}</h3><p>${esc(t.customer)}</p></div>
+ <div class="panel">
+  <div class="summaryline"><span>Điểm lấy hàng</span><span>${esc(t.from)}</span></div>
+  <div class="summaryline"><span>Điểm giao hàng</span><span>${esc(t.to)}</span></div>
+  <div class="summaryline"><span>Thời gian</span><span>${fmtDate(t.date)} ${esc(t.time)}</span></div>
+  <div class="summaryline"><span>Phương tiện</span><span>${esc(t.vehicle)}</span></div>
+  <div class="summaryline"><span>Tài xế</span><span>${esc(t.driver||'Chưa nhập')}</span></div>
+  <div class="summaryline"><span>Biển số xe</span><span>${esc(t.plate||'Chưa nhập')}</span></div>
+  <div class="summaryline"><span>Khối lượng</span><span>${num(t.weight)} kg</span></div>
+  <div class="summaryline"><span>Chi phí dự kiến</span><span>${money(t.cost)}</span></div>
+  <div class="summaryline"><span>Ghi chú</span><span>${esc(t.note||'Không có')}</span></div>
+ </div>
+ <div class="section-head"><h2>Cập nhật trạng thái</h2></div>
+ <div class="pills">
+  <button class="pill ${t.status==='new'?'active':''}" onclick="setStatus('${t.id}','new')">Đã lên lịch</button>
+  <button class="pill ${t.status==='transit'?'active':''}" onclick="setStatus('${t.id}','transit')">Đang vận chuyển</button>
+  <button class="pill ${t.status==='done'?'active':''}" onclick="setStatus('${t.id}','done')">Đã hoàn thành</button>
+  <button class="pill ${t.status==='cancel'?'active':''}" onclick="setStatus('${t.id}','cancel')">Đã hủy</button>
+ </div>
+ <div class="form-actions"><button class="btn light" onclick="closeModal('detail-modal');editTrip('${t.id}')">Chỉnh sửa</button><button class="btn danger" onclick="deleteTrip('${t.id}')">Xóa chuyến</button></div>`;
+ document.getElementById('detail-modal').classList.add('show');
+}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function backdropClose(e,id){if(e.target.id===id)closeModal(id)}
+function openSettings(){showPage('more')}
+
+const infoData={
+ guide:{
+  title:'Hướng dẫn sử dụng',
+  html:`<div class="info-grid">
+   <div class="info-card"><h3>1. Tạo chuyến vận chuyển</h3><p>Chọn Tạo mới, nhập mã chuyến, khách hàng, điểm lấy hàng, điểm giao hàng, thời gian, phương tiện và các thông tin liên quan. Hệ thống kiểm tra dữ liệu trước khi lưu.</p></div>
+   <div class="info-card"><h3>2. Theo dõi trạng thái</h3><p>Mở chi tiết chuyến để chuyển giữa Đã lên lịch, Đang vận chuyển, Đã hoàn thành hoặc Đã hủy. Mỗi thay đổi được ghi vào lịch sử hoạt động.</p></div>
+   <div class="info-card"><h3>3. Tìm kiếm và chỉnh sửa</h3><p>Dùng ô tìm kiếm theo mã chuyến, khách hàng, địa điểm, tài xế hoặc biển số xe. Có thể chỉnh sửa hoặc xóa dữ liệu khi cần thiết.</p></div>
+   <div class="info-card"><h3>4. Xem lịch sử</h3><p>Mục Lịch sử hiển thị các thao tác tạo mới, cập nhật trạng thái, chỉnh sửa và xóa chuyến để hỗ trợ kiểm tra quá trình sử dụng.</p></div>
+  </div>`
+ },
+ app:{
+  title:'Thông tin ứng dụng',
+  html:`<div class="panel">
+   <div class="kv"><span>Tên ứng dụng</span><span>Theo dõi vận chuyển Speed Winner Phương Loan</span></div>
+   <div class="kv"><span>Chức năng chính</span><span>Quản lý và theo dõi chuyến vận chuyển</span></div>
+   <div class="kv"><span>Dữ liệu quản lý</span><span>Lịch trình, phương tiện, trạng thái và lịch sử</span></div>
+   <div class="kv"><span>Đơn vị nhận diện</span><span>Phương Loan</span></div>
+  </div><div class="info-card" style="margin-top:11px"><p>Ứng dụng hỗ trợ ghi nhận, tra cứu và cập nhật thông tin vận chuyển phục vụ công việc điều phối. Dữ liệu mẫu được cung cấp để minh họa đầy đủ quy trình sử dụng.</p></div>`
+ },
+ terms:{
+  title:'Điều khoản sử dụng',
+  html:`<div class="info-grid">
+   <div class="info-card"><h3>Phạm vi sử dụng</h3><p>Ứng dụng được dùng để ghi nhận và theo dõi thông tin các chuyến vận chuyển. Người dùng chịu trách nhiệm kiểm tra tính chính xác của dữ liệu đã nhập.</p></div>
+   <div class="info-card"><h3>Trách nhiệm dữ liệu</h3><p>Không nhập nội dung trái pháp luật, thông tin sai lệch hoặc dữ liệu không liên quan đến hoạt động vận chuyển. Người dùng cần cập nhật trạng thái chuyến đúng với tình hình thực tế.</p></div>
+   <div class="info-card"><h3>Giới hạn chức năng</h3><p>Ứng dụng hỗ trợ quản lý thông tin vận chuyển và không thay thế hợp đồng vận chuyển, chứng từ pháp lý hoặc hệ thống định vị chuyên dụng.</p></div>
+   <div class="info-card"><h3>Thay đổi điều khoản</h3><p>Nội dung điều khoản có thể được cập nhật khi chức năng ứng dụng thay đổi. Phiên bản mới sẽ được thể hiện trong mục thông tin phiên bản.</p></div>
+  </div>`
+ },
+ privacy:{
+  title:'Chính sách quyền riêng tư',
+  html:`<div class="info-grid">
+   <div class="info-card"><h3>Dữ liệu được sử dụng</h3><p>Ứng dụng xử lý các thông tin do người dùng nhập cho mục đích quản lý chuyến vận chuyển, bao gồm khách hàng, địa điểm, phương tiện, tài xế, lịch trình và ghi chú.</p></div>
+   <div class="info-card"><h3>Lưu trữ dữ liệu</h3><p>Trong bản giao diện này, dữ liệu được lưu trên thiết bị bằng bộ nhớ trình duyệt để duy trì danh sách và lịch sử thao tác.</p></div>
+   <div class="info-card"><h3>Quyền kiểm soát</h3><p>Người dùng có thể chỉnh sửa, xóa từng chuyến, xóa lịch sử hoạt động hoặc khôi phục dữ liệu mẫu từ mục tiện ích.</p></div>
+   <div class="info-card"><h3>Mục đích sử dụng</h3><p>Dữ liệu chỉ phục vụ các chức năng quản lý và theo dõi vận chuyển trong ứng dụng.</p></div>
+  </div>`
+ },
+ version:{
+  title:'Phiên bản ứng dụng',
+  html:`<div class="panel">
+   <div class="kv"><span>Phiên bản</span><span>1.0.0</span></div>
+   <div class="kv"><span>Ngày cập nhật</span><span>26/08/2026</span></div>
+   <div class="kv"><span>Trạng thái</span><span>Hoàn thiện chức năng cơ bản</span></div>
+  </div><div class="info-card" style="margin-top:11px"><h3>Nội dung phiên bản</h3><p>Hoàn thiện quản lý chuyến vận chuyển, tìm kiếm, lọc trạng thái, chỉnh sửa, xóa, cập nhật tiến độ, thống kê, lịch sử hoạt động, hướng dẫn sử dụng, thông tin ứng dụng, điều khoản và chính sách quyền riêng tư.</p></div>`
+ }
+};
+function openInfo(key){
+ const d=infoData[key];if(!d)return;
+ document.getElementById('info-title').textContent=d.title;document.getElementById('info-content').innerHTML=d.html;document.getElementById('info-modal').classList.add('show');
+}
+function resetDemoData(){
+ if(confirm('Bạn có chắc muốn khôi phục dữ liệu mẫu? Dữ liệu vận chuyển hiện tại sẽ được thay thế.')){
+  trips=[...demoTrips];persist();addHistory('Khôi phục dữ liệu','Đã khôi phục danh sách vận chuyển mẫu');renderAll();toast('Đã khôi phục dữ liệu mẫu')
+ }
+}
+function renderAll(){renderDashboard();renderTrips();renderHistory()}
+renderAll();
+</script>
+</body>
+</html>

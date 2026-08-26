@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Dự Toán Vật Tư Thi Công MONEY POT Diệp Linh</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;--surface:#ffffff;--surface2:#fbfdff;--text:#10233a;--muted:#6c7a90;
+      --primary:#0f766e;--primary2:#14b8a6;--primary3:#0ea5a0;--primary-soft:#e8faf7;
+      --line:#e5ebf2;--danger:#dc2626;--danger-soft:#fef2f2;--warn:#b45309;--warn-soft:#fff7ed;
+      --info:#2563eb;--info-soft:#eff6ff;--shadow:0 16px 38px rgba(15,23,42,.08);
+      --r:22px;--safe-bottom:env(safe-area-inset-bottom,0px)
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:920px;margin:0 auto;min-height:100vh;padding-bottom:calc(96px + var(--safe-bottom))}
+    .hero{
+      position:relative;overflow:hidden;padding:18px 18px 24px;border-radius:0 0 32px 32px;
+      background:linear-gradient(135deg,#0f766e 0%,#0e8a82 48%,#16baa8 100%);color:#fff
+    }
+    .hero:before,.hero:after{content:"";position:absolute;border-radius:999px;background:rgba(255,255,255,.08)}
+    .hero:before{width:200px;height:200px;right:-70px;top:-90px}
+    .hero:after{width:120px;height:120px;left:-40px;bottom:-40px}
+    .brand{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand-main{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand-mark{
+      width:52px;height:52px;border-radius:18px;background:rgba(255,255,255,.16);display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.2);box-shadow:0 10px 25px rgba(0,0,0,.08)
+    }
+    .brand h1{margin:0;font-size:18px;line-height:1.25;font-weight:800;letter-spacing:.04px}
+    .brand p{margin:4px 0 0;font-size:12px;color:rgba(255,255,255,.8)}
+    .tag-live{
+      flex:0 0 auto;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);
+      padding:8px 10px;border-radius:14px;font-size:11px;font-weight:800;color:#eafffb
+    }
+    .hero-grid{
+      position:relative;z-index:2;margin-top:18px;display:grid;grid-template-columns:1.15fr .85fr;gap:12px
+    }
+    .hero-panel,.hero-illustration{
+      border-radius:22px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);
+      backdrop-filter:blur(10px)
+    }
+    .hero-panel{padding:16px}
+    .hero-panel h2{margin:0 0 8px;font-size:16px}
+    .hero-panel p{margin:0;color:rgba(255,255,255,.82);font-size:12px;line-height:1.55}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .hero-stat{background:rgba(255,255,255,.12);border-radius:16px;padding:12px}
+    .hero-stat small{display:block;font-size:11px;color:rgba(255,255,255,.72)}
+    .hero-stat strong{display:block;margin-top:6px;font-size:17px}
+    .hero-illustration{display:flex;align-items:center;justify-content:center;padding:12px;min-height:208px}
+    .content{padding:14px}
+    .screen{display:none}
+    .screen.active{display:block}
+    .section-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:12px 2px 10px}
+    .section-title h2{font-size:17px;margin:0}
+    .section-title p{font-size:12px;color:var(--muted);margin:4px 0 0}
+    .card{background:var(--surface);border:1px solid rgba(229,235,242,.95);border-radius:var(--r);box-shadow:var(--shadow);padding:15px;margin-bottom:12px}
+    .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .kpi{
+      background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid var(--line);border-radius:18px;padding:14px
+    }
+    .kpi .cap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700}
+    .kpi .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary2))}
+    .kpi strong{display:block;margin-top:8px;font-size:17px}
+    .kpi small{display:block;margin-top:6px;color:#7c8a9a;font-size:11px}
+    .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .quick{
+      border:1px solid var(--line);background:#fff;border-radius:18px;padding:12px 10px;box-shadow:var(--shadow);
+      text-align:center;color:var(--text)
+    }
+    .quick .icon-wrap{
+      width:44px;height:44px;border-radius:14px;margin:0 auto 8px;display:grid;place-items:center;
+      background:linear-gradient(135deg,#ecfeff,#ecfdf5);color:var(--primary)
+    }
+    .quick span{display:block;font-size:12px;font-weight:800}
+    .quick small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+    .banner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .mini-banner{
+      position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line);
+      background:linear-gradient(135deg,#f8fbff,#eef8ff);padding:12px;min-height:148px
+    }
+    .mini-banner h3{margin:0 0 6px;font-size:14px}
+    .mini-banner p{margin:0;font-size:11px;color:var(--muted);line-height:1.55}
+    .mini-banner .svg-box{position:absolute;right:8px;bottom:6px;opacity:.96}
+    .status-line{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+    .status-pill{
+      display:inline-flex;align-items:center;gap:6px;background:var(--primary-soft);color:var(--primary);
+      font-size:11px;font-weight:800;padding:7px 10px;border-radius:999px
+    }
+    .progress{height:8px;background:#edf2f7;border-radius:999px;overflow:hidden;margin-top:10px}
+    .progress span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));width:0}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field.full{grid-column:1/-1}
+    label{font-size:12px;color:#4f5e73;font-weight:800}
+    input,select,textarea{
+      width:100%;border:1px solid #dfe5ed;border-radius:14px;background:#fff;padding:12px;color:var(--text);outline:none;transition:.2s
+    }
+    input:focus,select:focus,textarea:focus{border-color:#58cabd;box-shadow:0 0 0 3px rgba(20,184,166,.12)}
+    textarea{min-height:84px;resize:vertical}
+    .btn-row{display:flex;gap:9px;flex-wrap:wrap}
+    .btn{border:0;border-radius:14px;padding:11px 14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.soft{background:var(--primary-soft);color:var(--primary)}
+    .btn.light{background:#f2f5f8;color:#415069}
+    .btn.danger{background:var(--danger-soft);color:var(--danger)}
+    .btn.info{background:var(--info-soft);color:var(--info)}
+    .btn.block{width:100%}
+    .material-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .material-head h3{margin:0;font-size:15px}
+    .material-head p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .badge{font-size:11px;font-weight:800;border-radius:999px;padding:6px 9px;background:var(--primary-soft);color:var(--primary)}
+    .materials{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+    .material{
+      border:1px solid var(--line);border-radius:18px;padding:12px;background:linear-gradient(180deg,#fff,#fbfcff)
+    }
+    .material-top{display:flex;justify-content:space-between;gap:10px}
+    .material-name{font-weight:800;font-size:14px}
+    .material-meta{font-size:11px;color:var(--muted);margin-top:4px}
+    .price{font-size:14px;font-weight:900;white-space:nowrap}
+    .material-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+    .icon-btn{border:0;background:#eef3f7;color:#405168;border-radius:11px;padding:8px 10px;font-size:12px;font-weight:700}
+    .icon-btn.danger{background:var(--danger-soft);color:var(--danger)}
+    .empty{padding:28px 16px;text-align:center;color:var(--muted)}
+    .empty svg{opacity:.45;margin-bottom:9px}
+    .empty strong{display:block;color:#526176;margin-bottom:4px}
+    .summary-line{display:flex;justify-content:space-between;gap:15px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+    .summary-line:last-child{border:0}
+    .summary-line strong{white-space:nowrap}
+    .summary-line.total{font-size:16px;padding-top:13px}
+    .tips-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .tip{
+      border-radius:18px;padding:13px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfcff)
+    }
+    .tip .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .tip .head .ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
+    .tip h3{margin:0;font-size:14px}
+    .tip p{margin:0;color:var(--muted);font-size:12px;line-height:1.58}
+    .history-toolbar{display:flex;gap:9px;margin-bottom:11px}
+    .history-toolbar input{flex:1}
+    .switcher{display:flex;background:#f0f3f7;border-radius:12px;padding:3px;gap:3px}
+    .switcher button{flex:1;border:0;background:transparent;border-radius:9px;padding:8px 7px;font-size:11px;font-weight:800;color:#68768a}
+    .switcher button.active{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(15,23,42,.07)}
+    .history-item{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;margin-bottom:10px}
+    .history-title{display:flex;justify-content:space-between;gap:10px}
+    .history-title h3{font-size:14px;margin:0}
+    .history-title strong{font-size:14px;white-space:nowrap}
+    .history-meta{display:flex;flex-wrap:wrap;gap:6px 12px;color:var(--muted);font-size:11px;margin-top:8px}
+    .sample{background:var(--warn-soft);color:var(--warn)}
+    .guide-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .guide-card{
+      display:flex;gap:12px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff
+    }
+    .guide-card .step{
+      width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);
+      font-weight:900;flex:0 0 auto
+    }
+    .guide-card h3{margin:0 0 5px;font-size:14px}
+    .guide-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.56}
+    .info-list{display:flex;flex-direction:column;gap:10px}
+    .info-row{display:flex;gap:12px;padding:13px;border:1px solid var(--line);border-radius:16px;background:#fbfcfe}
+    .info-row .ico{width:38px;height:38px;border-radius:13px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;flex:0 0 auto}
+    .info-row h3{margin:0 0 4px;font-size:14px}
+    .info-row p{margin:0;color:var(--muted);font-size:12px;line-height:1.58}
+    .legal h3{font-size:14px;margin:14px 0 6px}
+    .legal p{font-size:12px;color:#5f6d80;line-height:1.72;margin:0}
+    .version-box{background:linear-gradient(135deg,#f0fdfa,#ecfeff);border:1px solid #c7f2ea;border-radius:20px;padding:16px}
+    .version-box strong{display:block;font-size:16px}
+    .version-box p{font-size:12px;color:#52706c;line-height:1.62;margin:8px 0 0}
+    .about-app{
+      display:grid;grid-template-columns:1fr .95fr;gap:12px;align-items:stretch
+    }
+    .device-preview{
+      border-radius:20px;padding:12px;border:1px solid var(--line);background:linear-gradient(180deg,#ffffff,#fbfdff)
+    }
+    .device-shell{
+      background:#0f172a;border-radius:24px;padding:8px;width:100%;max-width:280px;margin:0 auto
+    }
+    .device-screen{
+      background:linear-gradient(180deg,#f8fffe,#ecfeff);border-radius:18px;padding:14px;height:430px;overflow:hidden;position:relative
+    }
+    .mini-top{height:18px;width:90px;border-radius:999px;background:#0f172a;margin:0 auto 14px}
+    .mini-card{background:#fff;border-radius:15px;padding:12px;border:1px solid #e8edf2;box-shadow:0 10px 22px rgba(15,23,42,.05);margin-bottom:10px}
+    .mini-card h4{margin:0 0 8px;font-size:12px}
+    .mini-card .bar{height:8px;border-radius:999px;background:#edf3f6;margin-top:8px;overflow:hidden}
+    .mini-card .bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--primary2))}
+    .bottom-nav{
+      position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(920px,100%);
+      background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-top:1px solid var(--line);
+      display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px calc(8px + var(--safe-bottom));z-index:20
+    }
+    .nav-btn{
+      border:0;background:transparent;color:#7a8799;padding:5px 3px;display:flex;flex-direction:column;
+      align-items:center;gap:4px;font-size:10px;font-weight:700
+    }
+    .nav-btn.active{color:var(--primary)}
+    .nav-btn svg{width:20px;height:20px}
+    .modal{
+      position:fixed;inset:0;background:rgba(8,18,32,.45);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:18px
+    }
+    .modal.show{display:flex}
+    .modal-sheet{
+      width:min(760px,100%);background:#fff;border-radius:24px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.22);max-height:88vh;overflow:auto
+    }
+    .modal-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
+    .modal-top h3{margin:0;font-size:16px}
+    .close{width:36px;height:36px;border:0;border-radius:12px;background:#f2f5f8;color:#4d5d72}
+    .toast{
+      position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:#142536;color:white;
+      padding:10px 14px;border-radius:12px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.2)
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media (max-width:760px){
+      .hero-grid,.about-app{grid-template-columns:1fr}
+      .hero-illustration{min-height:160px}
+      .banner-grid{grid-template-columns:1fr 1fr}
+      .quick-grid{grid-template-columns:repeat(2,1fr)}
+      .guide-list,.tips-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:540px){
+      .content{padding:12px}
+      .card{padding:14px}
+      .hero h1{font-size:16px}
+      .hero-stats{grid-template-columns:1fr 1fr}
+      .form-grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .kpi-grid,.banner-grid{grid-template-columns:1fr}
+      .guide-card{align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="brand">
+      <div class="brand-main">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M4 19V8.8L12 4l8 4.8V19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 19v-6h8v6M8 9.5h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Dự Toán Vật Tư Thi Công MONEY POT Diệp Linh</h1>
+          <p>Ứng dụng lập dự toán vật tư thi công với giao diện trực quan</p>
+        </div>
+      </div>
+      <div class="tag-live">Sẵn sàng sử dụng</div>
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-panel">
+        <h2>Quản lý dự toán ngay trên điện thoại</h2>
+        <p>Hỗ trợ nhập vật tư, tính hao hụt, tổng hợp chi phí nhân công, vận chuyển, chi phí khác và lưu lịch sử dự toán theo từng công trình.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><small>Tổng dự toán</small><strong id="heroTotal">0 ₫</strong></div>
+          <div class="hero-stat"><small>Số vật tư</small><strong id="heroItems">0 mục</strong></div>
+          <div class="hero-stat"><small>Bản đã lưu</small><strong id="heroSaved">0 bản</strong></div>
+        </div>
+      </div>
+      <div class="hero-illustration">
+        <svg width="100%" height="190" viewBox="0 0 360 190" fill="none" aria-hidden="true">
+          <rect x="34" y="30" width="132" height="110" rx="18" fill="rgba(255,255,255,0.94)"/>
+          <rect x="58" y="52" width="84" height="10" rx="5" fill="#d7eeea"/>
+          <rect x="58" y="71" width="56" height="10" rx="5" fill="#e6f3f0"/>
+          <rect x="58" y="98" width="84" height="14" rx="7" fill="#0f766e"/>
+          <rect x="183" y="52" width="140" height="96" rx="18" fill="rgba(255,255,255,0.95)"/>
+          <rect x="206" y="72" width="88" height="12" rx="6" fill="#e3fbf8"/>
+          <rect x="206" y="92" width="78" height="12" rx="6" fill="#d0f6f0"/>
+          <rect x="206" y="112" width="96" height="12" rx="6" fill="#b7efe5"/>
+          <circle cx="305" cy="71" r="18" fill="#14b8a6"/>
+          <path d="M297 71l5 5 10-11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="86" y="135" width="182" height="16" rx="8" fill="rgba(255,255,255,0.82)"/>
+          <path d="M112 145l16-24 10 12 20-33 22 28 12-16 18 24" stroke="#0ea5a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="109" cy="146" r="6" fill="#0f766e"/>
+          <circle cx="263" cy="145" r="12" fill="rgba(255,255,255,0.9)"/>
+          <path d="M258 145h10M263 140v10" stroke="#0f766e" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <section id="screen-home" class="screen active">
+      <div class="section-title">
+        <div>
+          <h2>Tổng quan chi phí</h2>
+          <p>Thông tin tổng hợp của dự toán hiện tại</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="cap"><span class="dot"></span>Chi phí vật tư</div>
+          <strong id="kpiMaterial">0 ₫</strong>
+          <small>Tính theo khối lượng, đơn giá và hao hụt</small>
+        </div>
+        <div class="kpi">
+          <div class="cap"><span class="dot"></span>Chi phí nhân công</div>
+          <strong id="kpiLabor">0 ₫</strong>
+          <small>Gồm thi công và lắp đặt</small>
+        </div>
+        <div class="kpi">
+          <div class="cap"><span class="dot"></span>Chi phí bổ sung</div>
+          <strong id="kpiOther">0 ₫</strong>
+          <small>Vận chuyển, chi phí khác và dự phòng</small>
+        </div>
+        <div class="kpi">
+          <div class="cap"><span class="dot"></span>Tiến độ nhập liệu</div>
+          <strong id="kpiProgress">0%</strong>
+          <small>Dựa trên thông tin đã hoàn thiện</small>
+          <div class="progress"><span id="inputProgress"></span></div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Thao tác nhanh</h2>
+          <p>Truy cập nhanh các chức năng chính</p>
+        </div>
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick" onclick="go('estimate')">
+          <div class="icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span>Tạo dự toán</span>
+          <small>Nhập thông tin công trình</small>
+        </button>
+        <button class="quick" onclick="openMaterialModal()">
+          <div class="icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <span>Thêm vật tư</span>
+          <small>Tạo hạng mục mới</small>
+        </button>
+        <button class="quick" onclick="go('history')">
+          <div class="icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span>Lịch sử</span>
+          <small>Xem và mở lại bản lưu</small>
+        </button>
+        <button class="quick" onclick="go('guide')">
+          <div class="icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H20v17H7.5A3.5 3.5 0 0 0 4 22zM4 5.5V22M8 6h8M8 10h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <span>Hướng dẫn</span>
+          <small>Xem quy trình sử dụng</small>
+        </button>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Hạng mục minh họa</h2>
+          <p>Các nhóm vật tư thường dùng trong thi công</p>
+        </div>
+      </div>
+
+      <div class="banner-grid">
+        <div class="mini-banner">
+          <h3>Kết cấu và khung</h3>
+          <p>Khung sắt hộp, nẹp, vít và phụ kiện cố định dùng cho thi công lắp đặt ngoài hiện trường.</p>
+          <div class="svg-box">
+            <svg width="100" height="88" viewBox="0 0 100 88" fill="none">
+              <rect x="8" y="18" width="54" height="42" rx="10" fill="#d9f5ef"/>
+              <rect x="18" y="28" width="14" height="24" rx="4" fill="#0f766e"/>
+              <rect x="38" y="28" width="14" height="24" rx="4" fill="#14b8a6"/>
+              <path d="M68 19h20v42H68z" fill="#fff"/>
+              <path d="M72 24h12M72 32h12M72 40h12M72 48h8" stroke="#0f766e" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="mini-banner">
+          <h3>In ấn và bề mặt</h3>
+          <p>Alu, decal, bạt in, mica và các vật liệu xử lý bề mặt tạo nên phần hiển thị hoàn thiện.</p>
+          <div class="svg-box">
+            <svg width="102" height="88" viewBox="0 0 102 88" fill="none">
+              <rect x="14" y="18" width="72" height="48" rx="12" fill="#e6f4ff"/>
+              <rect x="22" y="26" width="56" height="10" rx="5" fill="#91c8ff"/>
+              <rect x="22" y="42" width="42" height="8" rx="4" fill="#b7dbff"/>
+              <circle cx="75" cy="48" r="10" fill="#2563eb"/>
+              <path d="M70 48h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="mini-banner">
+          <h3>Điện và chiếu sáng</h3>
+          <p>Đèn LED, nguồn, dây điện và phụ kiện chiếu sáng phục vụ cho biển hiệu và hạng mục quảng cáo.</p>
+          <div class="svg-box">
+            <svg width="102" height="88" viewBox="0 0 102 88" fill="none">
+              <circle cx="51" cy="34" r="18" fill="#fff2c5"/>
+              <path d="M51 10v8M51 50v8M27 34h8M67 34h8M34 17l6 6M68 17l-6 6" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+              <rect x="36" y="52" width="30" height="14" rx="6" fill="#fde68a"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Dự toán gần đây</h2>
+          <p>Các bản đã lưu trên thiết bị</p>
+        </div>
+      </div>
+      <div id="homeRecent"></div>
+    </section>
+
+    <section id="screen-estimate" class="screen">
+      <div class="section-title">
+        <div>
+          <h2>Thông tin công trình</h2>
+          <p>Nhập thông tin cơ bản cho bản dự toán</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Tên công trình</label>
+            <input id="projectName" maxlength="80" placeholder="Ví dụ: Thi công biển quảng cáo cửa hàng">
+          </div>
+          <div class="field">
+            <label>Khách hàng</label>
+            <input id="customer" maxlength="60" placeholder="Tên khách hàng">
+          </div>
+          <div class="field">
+            <label>Ngày dự kiến</label>
+            <input id="projectDate" type="date">
+          </div>
+          <div class="field full">
+            <label>Địa điểm thi công</label>
+            <input id="location" maxlength="100" placeholder="Địa điểm công trình">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Danh sách vật tư</h2>
+          <p>Quản lý khối lượng, đơn vị, đơn giá và hao hụt</p>
+        </div>
+        <button class="btn soft" onclick="openMaterialModal()">Thêm vật tư</button>
+      </div>
+
+      <div class="card">
+        <div class="material-head">
+          <div>
+            <h3>Vật tư thi công</h3>
+            <p id="materialCountText">Chưa có vật tư</p>
+          </div>
+          <span class="badge" id="materialTotalBadge">0 ₫</span>
+        </div>
+        <div id="materials" class="materials"></div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Chi phí bổ sung</h2>
+          <p>Nhân công, vận chuyển, chi phí khác và dự phòng</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-grid">
+          <div class="field">
+            <label>Chi phí nhân công</label>
+            <input id="laborCost" inputmode="decimal" type="number" min="0" step="1000" placeholder="0" oninput="updateUI()">
+          </div>
+          <div class="field">
+            <label>Chi phí vận chuyển</label>
+            <input id="transportCost" inputmode="decimal" type="number" min="0" step="1000" placeholder="0" oninput="updateUI()">
+          </div>
+          <div class="field">
+            <label>Chi phí khác</label>
+            <input id="otherCost" inputmode="decimal" type="number" min="0" step="1000" placeholder="0" oninput="updateUI()">
+          </div>
+          <div class="field">
+            <label>Dự phòng phần trăm</label>
+            <input id="reservePercent" inputmode="decimal" type="number" min="0" max="100" step="0.1" placeholder="0" oninput="updateUI()">
+          </div>
+          <div class="field full">
+            <label>Ghi chú</label>
+            <textarea id="notes" maxlength="500" placeholder="Ghi chú về điều kiện thi công hoặc yêu cầu đặc biệt"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Tổng hợp dự toán</h2>
+          <p>Kết quả được tính tự động theo dữ liệu đã nhập</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="summary-line"><span>Chi phí vật tư</span><strong id="sumMaterial">0 ₫</strong></div>
+        <div class="summary-line"><span>Chi phí nhân công</span><strong id="sumLabor">0 ₫</strong></div>
+        <div class="summary-line"><span>Chi phí vận chuyển</span><strong id="sumTransport">0 ₫</strong></div>
+        <div class="summary-line"><span>Chi phí khác</span><strong id="sumOther">0 ₫</strong></div>
+        <div class="summary-line"><span>Dự phòng</span><strong id="sumReserve">0 ₫</strong></div>
+        <div class="summary-line total"><span>Tổng dự toán</span><strong id="sumTotal">0 ₫</strong></div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Gợi ý sử dụng</h2>
+          <p>Mẹo để nhập dữ liệu chính xác hơn</p>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip">
+          <div class="head">
+            <div class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.9 5.8 21l1.2-6.8-5-4.9 6.9-1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Nhập đúng đơn vị</h3>
+          </div>
+          <p>Nên chọn đơn vị phù hợp như mét, mét vuông, tấm hoặc bộ để tiện so sánh chi phí giữa các hạng mục.</p>
+        </div>
+        <div class="tip">
+          <div class="head">
+            <div class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Tính hao hụt hợp lý</h3>
+          </div>
+          <p>Tỷ lệ hao hụt thường phụ thuộc cách thi công, vận chuyển và cắt ghép vật liệu. Chỉ nên nhập giá trị cần thiết.</p>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="saveEstimate()">Lưu dự toán</button>
+        <button class="btn light" onclick="resetCurrent()">Đặt lại</button>
+      </div>
+    </section>
+
+    <section id="screen-history" class="screen">
+      <div class="section-title">
+        <div>
+          <h2>Lịch sử dự toán</h2>
+          <p>Tìm kiếm, mở lại và quản lý dữ liệu đã lưu</p>
+        </div>
+      </div>
+
+      <div class="history-toolbar">
+        <input id="historySearch" placeholder="Tìm theo công trình hoặc khách hàng" oninput="renderHistory()">
+      </div>
+
+      <div class="switcher">
+        <button id="filterAll" class="active" onclick="setHistoryFilter('all')">Tất cả</button>
+        <button id="filterSaved" onclick="setHistoryFilter('saved')">Đã lưu</button>
+        <button id="filterSample" onclick="setHistoryFilter('sample')">Dữ liệu mẫu</button>
+      </div>
+
+      <div style="height:10px"></div>
+      <div id="historyList"></div>
+    </section>
+
+    <section id="screen-guide" class="screen">
+      <div class="section-title">
+        <div>
+          <h2>Hướng dẫn sử dụng</h2>
+          <p>Các bước thực hiện một bản dự toán hoàn chỉnh</p>
+        </div>
+      </div>
+
+      <div class="guide-list">
+        <div class="guide-card">
+          <div class="step">1</div>
+          <div><h3>Khởi tạo công trình</h3><p>Điền tên công trình, khách hàng, ngày dự kiến và địa điểm để tạo hồ sơ dự toán rõ ràng.</p></div>
+        </div>
+        <div class="guide-card">
+          <div class="step">2</div>
+          <div><h3>Thêm vật tư</h3><p>Nhập tên vật tư, nhóm vật tư, đơn vị, khối lượng, đơn giá và phần trăm hao hụt cho từng hạng mục.</p></div>
+        </div>
+        <div class="guide-card">
+          <div class="step">3</div>
+          <div><h3>Bổ sung chi phí liên quan</h3><p>Nhập chi phí nhân công, vận chuyển, chi phí khác và dự phòng nếu cần.</p></div>
+        </div>
+        <div class="guide-card">
+          <div class="step">4</div>
+          <div><h3>Kiểm tra tổng hợp</h3><p>Theo dõi phần tổng hợp dự toán để rà soát kết quả và tránh thiếu chi phí trước khi lưu.</p></div>
+        </div>
+        <div class="guide-card">
+          <div class="step">5</div>
+          <div><h3>Lưu vào lịch sử</h3><p>Sau khi kiểm tra, nhấn lưu để tạo bản ghi. Các bản đã lưu có thể mở lại và chỉnh sửa sau.</p></div>
+        </div>
+        <div class="guide-card">
+          <div class="step">6</div>
+          <div><h3>Xóa dữ liệu không cần thiết</h3><p>Người dùng có thể xóa từng bản ghi hoặc xóa toàn bộ dữ liệu đã lưu ngay trong ứng dụng.</p></div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Mô phỏng giao diện ứng dụng</h2>
+          <p>Minh họa bố cục hiển thị trên màn hình điện thoại</p>
+        </div>
+      </div>
+
+      <div class="about-app">
+        <div class="card device-preview">
+          <div class="device-shell">
+            <div class="device-screen">
+              <div class="mini-top"></div>
+              <div class="mini-card">
+                <h4>Tổng dự toán</h4>
+                <strong style="font-size:17px;color:#0f766e">18.460.000 ₫</strong>
+                <div class="bar"><span style="width:78%"></span></div>
+              </div>
+              <div class="mini-card">
+                <h4>Danh sách vật tư</h4>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#6c7a90"><span>Tấm alu 3 mm</span><span>3.840.000 ₫</span></div>
+                <div class="bar"><span style="width:64%"></span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#6c7a90;margin-top:8px"><span>Khung sắt hộp</span><span>2.420.000 ₫</span></div>
+                <div class="bar"><span style="width:48%"></span></div>
+              </div>
+              <div class="mini-card">
+                <h4>Chi phí bổ sung</h4>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#6c7a90"><span>Nhân công</span><span>1.800.000 ₫</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#6c7a90;margin-top:8px"><span>Vận chuyển</span><span>500.000 ₫</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="info-list">
+            <div class="info-row">
+              <div class="ico">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 4h12v16H6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div><h3>Giao diện giống ứng dụng</h3><p>Bố cục chia theo màn hình chức năng riêng, có thanh điều hướng dưới cùng và các thẻ thông tin nổi bật.</p></div>
+            </div>
+            <div class="info-row">
+              <div class="ico">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 4v5c0 4.6-2.9 8-7 10-4.1-2-7-5.4-7-10V7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              </div>
+              <div><h3>Kiểm tra dữ liệu đầu vào</h3><p>Các trường số đều giới hạn giá trị âm và ngăn dữ liệu không hợp lệ để kết quả luôn ổn định.</p></div>
+            </div>
+            <div class="info-row">
+              <div class="ico">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 12l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div><h3>Phù hợp công cụ nội bộ</h3><p>Ứng dụng tập trung vào nghiệp vụ dự toán vật tư thi công, có lịch sử, hướng dẫn và thông tin chính sách đầy đủ.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-more" class="screen">
+      <div class="section-title">
+        <div>
+          <h2>Thông tin ứng dụng</h2>
+          <p>Giới thiệu, điều khoản, riêng tư và phiên bản</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="info-list">
+          <div class="info-row">
+            <div class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 17v-6M12 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div><h3>Giới thiệu</h3><p>Dự Toán Vật Tư Thi Công MONEY POT Diệp Linh là công cụ hỗ trợ ghi nhận vật tư và dự toán chi phí thi công theo từng công trình.</p></div>
+          </div>
+          <div class="info-row" onclick="openLegal('terms')" style="cursor:pointer">
+            <div class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l3 3v15H6zM9 11h6M9 15h6M9 7h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div><h3>Điều khoản sử dụng</h3><p>Xem quy định sử dụng ứng dụng và trách nhiệm của người dùng trong quá trình nhập dữ liệu dự toán.</p></div>
+          </div>
+          <div class="info-row" onclick="openLegal('privacy')" style="cursor:pointer">
+            <div class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.6-2.9 8-7 10-4.1-2-7-5.4-7-10V6zM9.5 12l1.7 1.7 3.5-3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div><h3>Chính sách riêng tư</h3><p>Xem cách dữ liệu dự toán được lưu cục bộ trên thiết bị và quyền kiểm soát dữ liệu của người dùng.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <h2>Phiên bản</h2>
+          <p>Thông tin bản hiện tại của ứng dụng</p>
+        </div>
+      </div>
+
+      <div class="version-box">
+        <strong>Phiên bản 1.1.0</strong>
+        <p>Đã bổ sung giao diện chi tiết hơn thẻ minh họa biểu tượng trực quan tổng quan chi phí nhanh danh mục vật tư hướng dẫn nhiều bước và mô phỏng màn hình ứng dụng</p>
+      </div>
+
+      <div style="height:12px"></div>
+      <button class="btn danger block" onclick="clearAllData()">Xóa toàn bộ dữ liệu đã lưu</button>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-screen="home" onclick="go('home')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 10.5L12 4l8 6.5V20H4zM9 20v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Tổng quan</span>
+    </button>
+    <button class="nav-btn" data-screen="estimate" onclick="go('estimate')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h10v18H7zM9.5 7h5M9.5 11h2M14 11h.01M9.5 15h2M14 15h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Dự toán</span>
+    </button>
+    <button class="nav-btn" data-screen="history" onclick="go('history')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Lịch sử</span>
+    </button>
+    <button class="nav-btn" data-screen="guide" onclick="go('guide')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H20v17H7.5A3.5 3.5 0 0 0 4 22zM4 5.5V22M8 6h8M8 10h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Hướng dẫn</span>
+    </button>
+    <button class="nav-btn" data-screen="more" onclick="go('more')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h.01M12 12h.01M19 12h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span>Thêm</span>
+    </button>
+  </nav>
+</div>
+
+<div id="materialModal" class="modal" onclick="if(event.target===this)closeMaterialModal()">
+  <div class="modal-sheet">
+    <div class="modal-top">
+      <h3 id="materialModalTitle">Thêm vật tư</h3>
+      <button class="close" onclick="closeMaterialModal()">Đóng</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Nhóm vật tư</label>
+        <select id="mCategory">
+          <option value="Vật liệu chính">Vật liệu chính</option>
+          <option value="Khung và kết cấu">Khung và kết cấu</option>
+          <option value="In ấn và bề mặt">In ấn và bề mặt</option>
+          <option value="Điện và chiếu sáng">Điện và chiếu sáng</option>
+          <option value="Phụ kiện">Phụ kiện</option>
+          <option value="Khác">Khác</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Đơn vị</label>
+        <select id="mUnit">
+          <option>m²</option>
+          <option>m</option>
+          <option>tấm</option>
+          <option>bộ</option>
+          <option>cái</option>
+          <option>kg</option>
+          <option>cuộn</option>
+          <option>hộp</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>Tên vật tư</label>
+        <input id="mName" maxlength="70" placeholder="Ví dụ: Tấm alu 3 mm">
+      </div>
+      <div class="field">
+        <label>Khối lượng</label>
+        <input id="mQty" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Đơn giá</label>
+        <input id="mPrice" type="number" inputmode="decimal" min="0" step="1000" placeholder="0">
+      </div>
+      <div class="field full">
+        <label>Hao hụt phần trăm</label>
+        <input id="mWaste" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="0">
+      </div>
+    </div>
+
+    <div style="height:13px"></div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="saveMaterial()">Lưu vật tư</button>
+      <button class="btn light" onclick="closeMaterialModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div id="legalModal" class="modal" onclick="if(event.target===this)closeLegal()">
+  <div class="modal-sheet">
+    <div class="modal-top">
+      <h3 id="legalTitle">Thông tin</h3>
+      <button class="close" onclick="closeLegal()">Đóng</button>
+    </div>
+    <div id="legalContent" class="legal"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  const APP_KEY='dl_money_pot_estimates_v2';
+  let materials=[];
+  let editingMaterial=-1;
+  let editingEstimateId=null;
+  let historyFilter='all';
+
+  const money=n=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND',maximumFractionDigits:0}).format(Math.max(0,Number(n)||0));
+  const val=id=>{const n=Number(document.getElementById(id)?.value||0);return Number.isFinite(n)&&n>0?n:0};
+  const clean=id=>(document.getElementById(id)?.value||'').trim();
+  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+  const sampleEstimate={
+    id:'sample_001',sample:true,name:'Biển quảng cáo mặt tiền mẫu',customer:'Khách hàng mẫu',date:'2026-08-26',location:'Địa điểm mẫu',
+    labor:1800000,transport:500000,other:300000,reservePercent:5,notes:'Dữ liệu mẫu để minh họa chức năng.',
+    materials:[
+      {category:'Khung và kết cấu',name:'Khung sắt hộp',unit:'m',qty:18,price:85000,waste:5},
+      {category:'In ấn và bề mặt',name:'Tấm alu',unit:'m²',qty:12,price:320000,waste:8},
+      {category:'Điện và chiếu sáng',name:'Bộ đèn LED',unit:'bộ',qty:4,price:420000,waste:0}
+    ],
+    createdAt:'2026-08-26T08:00:00'
+  };
+
+  function getHistory(){
+    try{const x=JSON.parse(localStorage.getItem(APP_KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return[]}
+  }
+  function setHistory(x){localStorage.setItem(APP_KEY,JSON.stringify(x))}
+  function allHistory(){return [sampleEstimate,...getHistory()]}
+  function calcMaterial(m){return Math.max(0,(Number(m.qty)||0)*(Number(m.price)||0)*(1+(Number(m.waste)||0)/100))}
+  function calcSavedTotals(x){
+    const material=(x.materials||[]).reduce((s,m)=>s+calcMaterial(m),0);
+    const labor=Math.max(0,Number(x.labor)||0),transport=Math.max(0,Number(x.transport)||0),other=Math.max(0,Number(x.other)||0);
+    const base=material+labor+transport+other;
+    const reserve=base*Math.min(100,Math.max(0,Number(x.reservePercent)||0))/100;
+    return {material,labor,transport,other,reserve,total:base+reserve};
+  }
+  function totals(){
+    const material=materials.reduce((s,m)=>s+calcMaterial(m),0);
+    const labor=val('laborCost'),transport=val('transportCost'),other=val('otherCost');
+    const base=material+labor+transport+other;
+    const reserve=Math.max(0,base*(Math.min(100,val('reservePercent'))/100));
+    return {material,labor,transport,other,reserve,total:base+reserve}
+  }
+
+  function go(name){
+    document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+    document.getElementById('screen-'+name).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));
+    if(name==='history')renderHistory();
+    if(name==='home')renderHome();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function computeProgress(){
+    let score=0;
+    if(clean('projectName'))score+=20;
+    if(clean('customer'))score+=10;
+    if(document.getElementById('projectDate').value)score+=10;
+    if(clean('location'))score+=10;
+    if(materials.length>0)score+=30;
+    if(val('laborCost')||val('transportCost')||val('otherCost'))score+=10;
+    if(clean('notes'))score+=10;
+    return Math.min(100,score);
+  }
+
+  function updateUI(){
+    const t=totals();
+    const savedCount=getHistory().length;
+    const progress=computeProgress();
+    document.getElementById('heroTotal').textContent=money(t.total);
+    document.getElementById('heroItems').textContent=materials.length+' mục';
+    document.getElementById('heroSaved').textContent=savedCount+' bản';
+    document.getElementById('kpiMaterial').textContent=money(t.material);
+    document.getElementById('kpiLabor').textContent=money(t.labor);
+    document.getElementById('kpiOther').textContent=money(t.transport+t.other+t.reserve);
+    document.getElementById('kpiProgress').textContent=progress+'%';
+    document.getElementById('inputProgress').style.width=progress+'%';
+    document.getElementById('sumMaterial').textContent=money(t.material);
+    document.getElementById('sumLabor').textContent=money(t.labor);
+    document.getElementById('sumTransport').textContent=money(t.transport);
+    document.getElementById('sumOther').textContent=money(t.other);
+    document.getElementById('sumReserve').textContent=money(t.reserve);
+    document.getElementById('sumTotal').textContent=money(t.total);
+    document.getElementById('materialTotalBadge').textContent=money(t.material);
+    document.getElementById('materialCountText').textContent=materials.length?materials.length+' vật tư trong dự toán':'Chưa có vật tư';
+    renderMaterials();
+    renderHome();
+  }
+
+  function renderMaterials(){
+    const box=document.getElementById('materials');
+    if(!materials.length){
+      box.innerHTML='<div class="empty"><svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M6 4h12v16H6zM9 8h6M9 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><strong>Chưa có vật tư</strong><span>Hãy thêm vật tư đầu tiên cho công trình.</span></div>';
+      return;
+    }
+    box.innerHTML=materials.map((m,i)=>`
+      <div class="material">
+        <div class="material-top">
+          <div>
+            <div class="material-name">${esc(m.name)}</div>
+            <div class="material-meta">${esc(m.category)} · ${num(m.qty)} ${esc(m.unit)} · Hao hụt ${num(m.waste)}%</div>
+          </div>
+          <div class="price">${money(calcMaterial(m))}</div>
+        </div>
+        <div class="material-actions">
+          <button class="icon-btn" onclick="editMaterial(${i})">Chỉnh sửa</button>
+          <button class="icon-btn danger" onclick="deleteMaterial(${i})">Xóa</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function openMaterialModal(){
+    editingMaterial=-1;
+    document.getElementById('materialModalTitle').textContent='Thêm vật tư';
+    ['mName','mQty','mPrice','mWaste'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('mCategory').selectedIndex=0;
+    document.getElementById('mUnit').selectedIndex=0;
+    document.getElementById('materialModal').classList.add('show');
+  }
+  function editMaterial(i){
+    const m=materials[i];
+    editingMaterial=i;
+    document.getElementById('materialModalTitle').textContent='Chỉnh sửa vật tư';
+    document.getElementById('mCategory').value=m.category;
+    document.getElementById('mUnit').value=m.unit;
+    document.getElementById('mName').value=m.name;
+    document.getElementById('mQty').value=m.qty;
+    document.getElementById('mPrice').value=m.price;
+    document.getElementById('mWaste').value=m.waste;
+    document.getElementById('materialModal').classList.add('show');
+  }
+  function closeMaterialModal(){document.getElementById('materialModal').classList.remove('show')}
+  function saveMaterial(){
+    const name=clean('mName');
+    const qty=Number(document.getElementById('mQty').value);
+    const price=Number(document.getElementById('mPrice').value);
+    const waste=Number(document.getElementById('mWaste').value||0);
+    if(!name)return toast('Vui lòng nhập tên vật tư.');
+    if(!Number.isFinite(qty)||qty<=0)return toast('Khối lượng phải lớn hơn 0.');
+    if(!Number.isFinite(price)||price<0)return toast('Đơn giá không hợp lệ.');
+    if(!Number.isFinite(waste)||waste<0||waste>100)return toast('Hao hụt phải từ 0 đến 100 phần trăm.');
+    const m={category:document.getElementById('mCategory').value,name,unit:document.getElementById('mUnit').value,qty,price,waste};
+    if(editingMaterial>=0)materials[editingMaterial]=m; else materials.push(m);
+    closeMaterialModal();
+    updateUI();
+    toast(editingMaterial>=0?'Đã cập nhật vật tư.':'Đã thêm vật tư.');
+  }
+  function deleteMaterial(i){
+    if(!confirm('Bạn có chắc muốn xóa vật tư này không?'))return;
+    materials.splice(i,1);
+    updateUI();
+    toast('Đã xóa vật tư.');
+  }
+
+  function saveEstimate(){
+    const name=clean('projectName');
+    if(!name)return toast('Vui lòng nhập tên công trình.');
+    if(!materials.length)return toast('Vui lòng thêm ít nhất một vật tư.');
+    const t=totals();
+    if(t.total<=0)return toast('Tổng dự toán phải lớn hơn 0.');
+    const data={
+      id:editingEstimateId||uid(),sample:false,name,customer:clean('customer'),date:document.getElementById('projectDate').value,
+      location:clean('location'),labor:val('laborCost'),transport:val('transportCost'),other:val('otherCost'),
+      reservePercent:Math.min(100,val('reservePercent')),notes:clean('notes'),materials:JSON.parse(JSON.stringify(materials)),
+      createdAt:new Date().toISOString()
+    };
+    let list=getHistory();
+    const idx=list.findIndex(x=>x.id===data.id);
+    if(idx>=0)list[idx]=data; else list.unshift(data);
+    setHistory(list);
+    editingEstimateId=data.id;
+    updateUI();
+    renderHistory();
+    toast(idx>=0?'Đã cập nhật dự toán.':'Đã lưu dự toán.');
+  }
+
+  function resetCurrent(){
+    if(!confirm('Bạn có chắc muốn đặt lại dự toán hiện tại không?'))return;
+    editingEstimateId=null;
+    materials=[];
+    ['projectName','customer','projectDate','location','laborCost','transportCost','otherCost','reservePercent','notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('projectDate').value=new Date().toISOString().slice(0,10);
+    updateUI();
+    toast('Đã đặt lại dự toán.');
+  }
+
+  function renderHistory(){
+    const q=(document.getElementById('historySearch')?.value||'').toLowerCase().trim();
+    let list=allHistory();
+    if(historyFilter==='saved')list=list.filter(x=>!x.sample);
+    if(historyFilter==='sample')list=list.filter(x=>x.sample);
+    if(q)list=list.filter(x=>(x.name+' '+(x.customer||'')+' '+(x.location||'')).toLowerCase().includes(q));
+    const box=document.getElementById('historyList');
+    if(!list.length){
+      box.innerHTML='<div class="card empty"><strong>Không có dữ liệu phù hợp</strong><span>Hãy tạo và lưu một dự toán mới.</span></div>';
+      return;
+    }
+    box.innerHTML=list.map(x=>{
+      const t=calcSavedTotals(x);
+      return `<div class="history-item">
+        <div class="history-title">
+          <div>
+            <h3>${esc(x.name)}</h3>
+            ${x.sample?'<span class="badge sample">Dữ liệu mẫu</span>':''}
+          </div>
+          <strong>${money(t.total)}</strong>
+        </div>
+        <div class="history-meta">
+          <span>${x.customer?esc(x.customer):'Chưa có khách hàng'}</span>
+          <span>${x.date?formatDate(x.date):formatDateTime(x.createdAt)}</span>
+          <span>${(x.materials||[]).length} vật tư</span>
+        </div>
+        <div class="material-actions">
+          <button class="icon-btn" onclick="loadEstimate('${x.id}')">${x.sample?'Xem bản mẫu':'Mở lại'}</button>
+          ${x.sample?'':`<button class="icon-btn danger" onclick="deleteEstimate('${x.id}')">Xóa</button>`}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function setHistoryFilter(f){
+    historyFilter=f;
+    ['all','saved','sample'].forEach(x=>document.getElementById('filter'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===f));
+    renderHistory();
+  }
+
+  function loadEstimate(id){
+    const x=allHistory().find(v=>v.id===id);
+    if(!x)return;
+    editingEstimateId=x.sample?null:x.id;
+    materials=JSON.parse(JSON.stringify(x.materials||[]));
+    document.getElementById('projectName').value=x.sample?x.name.replace(' mẫu',''):x.name;
+    document.getElementById('customer').value=x.sample?'':(x.customer||'');
+    document.getElementById('projectDate').value=x.date||new Date().toISOString().slice(0,10);
+    document.getElementById('location').value=x.sample?'':(x.location||'');
+    document.getElementById('laborCost').value=x.labor||'';
+    document.getElementById('transportCost').value=x.transport||'';
+    document.getElementById('otherCost').value=x.other||'';
+    document.getElementById('reservePercent').value=x.reservePercent||'';
+    document.getElementById('notes').value=x.sample?'':(x.notes||'');
+    updateUI();
+    go('estimate');
+    toast(x.sample?'Đã nạp dữ liệu mẫu để tham khảo.':'Đã mở dự toán.');
+  }
+
+  function deleteEstimate(id){
+    if(!confirm('Bạn có chắc muốn xóa bản dự toán này không?'))return;
+    const list=getHistory().filter(x=>x.id!==id);
+    setHistory(list);
+    if(editingEstimateId===id)editingEstimateId=null;
+    renderHistory();
+    updateUI();
+    toast('Đã xóa dự toán.');
+  }
+
+  function renderHome(){
+    const list=getHistory().slice(0,2);
+    const box=document.getElementById('homeRecent');
+    if(!list.length){
+      box.innerHTML='<div class="card empty"><strong>Chưa có dự toán đã lưu</strong><span>Dữ liệu mẫu có sẵn trong mục Lịch sử để tham khảo.</span></div>';
+    }else{
+      box.innerHTML=list.map(x=>{
+        const t=calcSavedTotals(x);
+        return `<div class="history-item" onclick="loadEstimate('${x.id}')" style="cursor:pointer">
+          <div class="history-title"><h3>${esc(x.name)}</h3><strong>${money(t.total)}</strong></div>
+          <div class="history-meta"><span>${formatDateTime(x.createdAt)}</span><span>${(x.materials||[]).length} vật tư</span></div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  function openLegal(type){
+    const title=document.getElementById('legalTitle');
+    const c=document.getElementById('legalContent');
+    if(type==='terms'){
+      title.textContent='Điều khoản sử dụng';
+      c.innerHTML=`<h3>1. Phạm vi sử dụng</h3><p>Ứng dụng hỗ trợ người dùng lập và lưu dự toán vật tư cùng các chi phí liên quan đến công trình. Kết quả là dữ liệu tham khảo dựa trên thông tin người dùng nhập.</p>
+      <h3>2. Trách nhiệm của người dùng</h3><p>Người dùng có trách nhiệm kiểm tra khối lượng đơn giá tỷ lệ hao hụt và các chi phí trước khi áp dụng vào công việc thực tế.</p>
+      <h3>3. Dữ liệu dự toán</h3><p>Dữ liệu được lưu trên thiết bị trong phạm vi chức năng của ứng dụng. Người dùng có thể chỉnh sửa hoặc xóa dữ liệu đã lưu.</p>
+      <h3>4. Giới hạn trách nhiệm</h3><p>Ứng dụng không thay thế hồ sơ dự toán chuyên môn hợp đồng báo giá hoặc xác nhận kỹ thuật tại công trình.</p>`;
+    }else{
+      title.textContent='Chính sách riêng tư';
+      c.innerHTML=`<h3>1. Dữ liệu được xử lý</h3><p>Ứng dụng xử lý các thông tin do người dùng tự nhập như tên công trình khách hàng địa điểm vật tư khối lượng đơn giá và chi phí.</p>
+      <h3>2. Mục đích sử dụng</h3><p>Dữ liệu được sử dụng để tính toán tổng dự toán hiển thị lịch sử và hỗ trợ người dùng mở lại bản dự toán đã lưu.</p>
+      <h3>3. Lưu trữ</h3><p>Trong phiên bản này dữ liệu dự toán được lưu cục bộ trên thiết bị. Ứng dụng không yêu cầu người dùng nhập mật khẩu hoặc thông tin thanh toán.</p>
+      <h3>4. Quyền của người dùng</h3><p>Người dùng có thể chỉnh sửa xóa từng bản dự toán hoặc xóa toàn bộ dữ liệu đã lưu trong mục Thêm.</p>`;
+    }
+    document.getElementById('legalModal').classList.add('show');
+  }
+  function closeLegal(){document.getElementById('legalModal').classList.remove('show')}
+
+  function clearAllData(){
+    if(!confirm('Bạn có chắc muốn xóa toàn bộ dữ liệu dự toán đã lưu không?'))return;
+    localStorage.removeItem(APP_KEY);
+    editingEstimateId=null;
+    updateUI();
+    renderHistory();
+    toast('Đã xóa toàn bộ dữ liệu đã lưu.');
+  }
+
+  function toast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    clearTimeout(window.__tt);
+    window.__tt=setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function num(n){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:2}).format(Number(n)||0)}
+  function formatDate(d){try{return new Intl.DateTimeFormat('vi-VN').format(new Date(d+'T00:00:00'))}catch(e){return d}}
+  function formatDateTime(d){try{return new Intl.DateTimeFormat('vi-VN',{dateStyle:'short',timeStyle:'short'}).format(new Date(d))}catch(e){return ''}}
+
+  ['projectName','customer','location','notes','laborCost','transportCost','otherCost','reservePercent'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',updateUI);
+  });
+  document.getElementById('projectDate').addEventListener('change',updateUI);
+  document.getElementById('projectDate').value=new Date().toISOString().slice(0,10);
+  updateUI();
+</script>
+</body>
+</html>

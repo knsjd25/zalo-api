@@ -164,6 +164,38 @@
       .saved-item .item-actions { justify-content: flex-start; }
       .section-heading { align-items: start; flex-direction: column; gap: 4px; }
     }
+  
+    /* REVIEW_EXPERIENCE_STYLES */
+    .review-experience { position: relative; overflow: hidden; }
+    .review-experience::before { content: ""; position: absolute; inset: 0 auto auto 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--accent, #2dd4bf), transparent); }
+    .review-demo-banner, .review-publisher-warning { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.045); color: var(--muted); }
+    .review-demo-banner strong, .review-publisher-warning strong { color: var(--text); }
+    .review-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr); gap: 14px; }
+    .review-card { border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: rgba(8,18,27,.45); }
+    .review-card h3 { margin: 0 0 8px; }
+    .review-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+    .review-form-grid .full { grid-column: 1 / -1; }
+    .review-checks { margin: 12px 0 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .review-checks legend { padding: 0 6px; color: var(--text); font-weight: 750; }
+    .review-checks label { display: flex; gap: 8px; align-items: center; color: var(--muted); }
+    .review-actions { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; margin-top: 13px; }
+    .review-result-list { display: grid; gap: 8px; margin-top: 13px; }
+    .review-result { padding: 10px 12px; border-radius: 11px; border: 1px solid var(--line); color: var(--muted); background: rgba(255,255,255,.035); }
+    .review-result strong { color: var(--text); display: block; margin-bottom: 3px; }
+    .review-result.pass { border-color: rgba(74,222,128,.45); }
+    .review-result.warn { border-color: rgba(251,191,36,.58); }
+    .review-result.info { border-color: rgba(96,165,250,.48); }
+    .review-guide ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    .review-guide li + li { margin-top: 7px; }
+    .review-led-preview { position: relative; min-height: 150px; margin-top: 12px; border-radius: 14px; border: 1px solid var(--line); background: radial-gradient(circle at center, rgba(236,72,153,.12), rgba(5,8,14,.9)); overflow: hidden; }
+    .review-led-dot { position: absolute; width: 28px; height: 28px; margin: -14px; border-radius: 50%; box-shadow: 0 0 28px currentColor; border: 1px solid rgba(255,255,255,.75); }
+    .review-publisher-grid { display: grid; grid-template-columns: minmax(150px,.45fr) minmax(0,1fr); margin: 12px 0 0; border: 1px solid var(--line); border-radius: 13px; overflow: hidden; }
+    .review-publisher-grid dt, .review-publisher-grid dd { margin: 0; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+    .review-publisher-grid dt { color: var(--muted); background: rgba(255,255,255,.03); }
+    .review-publisher-grid dd { color: var(--text); }
+    .review-publisher-grid dt:last-of-type, .review-publisher-grid dd:last-of-type { border-bottom: 0; }
+    @media (max-width: 760px) { .review-layout { grid-template-columns: 1fr; } .review-form-grid, .review-checks { grid-template-columns: 1fr; } .review-publisher-grid { grid-template-columns: 1fr; } .review-publisher-grid dt { border-bottom: 0; padding-bottom: 3px; } }
+
   </style>
 </head>
 <body>
@@ -297,6 +329,50 @@
         </div>
       </section>
 
+      
+      <!-- REVIEW_EXPERIENCE_START -->
+      <section class="section review-experience" id="kham-pha-nhanh" data-review-experience data-demo-only="true" data-review-mode="pc">
+        <div class="section-heading"><div><h2>Kiểm tra nhanh một cấu hình trước khi lưu</h2><p>So sánh năm ràng buộc cơ bản bằng thông số do bạn cung cấp. Kết quả chỉ ra từng mục phù hợp hoặc cần kiểm tra lại.</p></div><span class="hint">Khám phá nhanh</span></div>
+        <div class="review-demo-banner"><strong>Dữ liệu minh họa.</strong> Các giá trị AM5 DDR5 ATX và kích thước bên dưới chỉ là ví dụ kỹ thuật để minh họa phép kiểm tra. Chúng không phải một bộ máy đang bán. Mọi thay đổi trong khu vực này không được lưu và không thay đổi dữ liệu cá nhân của bạn.</div>
+        <div class="review-layout">
+          <article class="review-card">
+            <h3>Thử ngay với ví dụ có sẵn</h3>
+            <form data-review-form novalidate>
+              
+      <div class="review-form-grid">
+        <div class="field"><label for="reviewCpuSocket">Ổ cắm CPU</label><select id="reviewCpuSocket"><option>AM5</option><option>AM4</option><option>LGA1700</option><option>LGA1851</option></select></div>
+        <div class="field"><label for="reviewBoardSocket">Ổ cắm bo mạch</label><select id="reviewBoardSocket"><option>AM5</option><option>AM4</option><option>LGA1700</option><option>LGA1851</option></select></div>
+        <div class="field"><label for="reviewRamType">Thế hệ RAM</label><select id="reviewRamType"><option>DDR5</option><option>DDR4</option></select></div>
+        <div class="field"><label for="reviewBoardRam">RAM bo mạch hỗ trợ</label><select id="reviewBoardRam"><option>DDR5</option><option>DDR4</option></select></div>
+        <div class="field"><label for="reviewBoardSize">Kích thước bo mạch</label><select id="reviewBoardSize"><option>ATX</option><option>Micro ATX</option><option>Mini ITX</option></select></div>
+        <div class="field"><label for="reviewCaseBoard">Kích thước lớn nhất của vỏ</label><select id="reviewCaseBoard"><option>ATX</option><option>Micro ATX</option><option>Mini ITX</option></select></div>
+        <div class="field"><label for="reviewGpuLength">Chiều dài card đồ họa mm</label><input id="reviewGpuLength" type="number" min="1" max="1000" value="300"></div>
+        <div class="field"><label for="reviewCaseGpu">Khoảng trống card của vỏ mm</label><input id="reviewCaseGpu" type="number" min="1" max="1000" value="330"></div>
+        <div class="field"><label for="reviewLoad">Công suất tải ước tính W</label><input id="reviewLoad" type="number" min="1" max="5000" value="500"></div>
+        <div class="field"><label for="reviewPsu">Công suất nguồn W</label><input id="reviewPsu" type="number" min="1" max="5000" value="750"></div>
+      </div>
+              <div class="review-actions"><button class="btn primary" type="submit">Phân tích dữ liệu minh họa</button><span class="hint">Không ghi vào bộ nhớ cá nhân</span></div>
+            </form>
+            <div class="review-result-list" data-review-results role="status" aria-live="polite"></div>
+          </article>
+          <article class="review-card review-guide"><h3>Cách đọc kết quả</h3><ul><li>Ổ cắm CPU và bo mạch phải trùng nhau.</li><li>Thế hệ RAM phải đúng loại bo mạch hỗ trợ.</li><li>Vỏ phải nhận kích thước bo mạch và đủ khoảng trống cho card.</li><li>Khoảng dự phòng nguồn trong công cụ là phép so sánh số học. Hãy xác nhận đầu nối và khuyến nghị của nhà sản xuất trước khi lắp.</li></ul></article>
+        </div>
+      </section>
+      <section class="section review-publisher" id="thong-tin-nha-phat-trien">
+        <div class="section-heading"><div><h2>Thông tin nhà phát triển và hỗ trợ</h2><p>Thông tin bắt buộc phải là dữ liệu thật trước khi gửi xét duyệt.</p></div><span class="hint">Trạng thái phát hành</span></div>
+        <div class="review-publisher-warning"><strong>Chưa sẵn sàng gửi xét duyệt.</strong> Chủ sở hữu chưa cung cấp đủ thông tin thật bên dưới. Không sử dụng dữ liệu giả hoặc dữ liệu mẫu cho phần này.</div>
+        <dl class="review-publisher-grid">
+          <!-- REVIEW_PUBLISHER_NAME --><dt>Chủ thể chịu trách nhiệm</dt><dd data-review-missing-publisher="name">Chưa được cung cấp</dd>
+          <!-- REVIEW_REGISTRATION_ID --><dt>Mã đăng ký áp dụng</dt><dd data-review-missing-publisher="registration">Chưa được cung cấp</dd>
+          <!-- REVIEW_ADDRESS --><dt>Địa chỉ</dt><dd data-review-missing-publisher="address">Chưa được cung cấp</dd>
+          <!-- REVIEW_PHONE --><dt>Số điện thoại</dt><dd data-review-missing-publisher="phone">Chưa được cung cấp</dd>
+          <!-- REVIEW_SUPPORT_CHANNEL --><dt>Hỗ trợ và tiếp nhận khiếu nại</dt><dd data-review-missing-publisher="support">Chưa được cung cấp</dd>
+          <dt>Dịch vụ cung cấp</dt><dd>So sánh năm ràng buộc cơ bản bằng thông số do bạn cung cấp. Kết quả chỉ ra từng mục phù hợp hoặc cần kiểm tra lại.</dd>
+          <dt>Phiên bản nội dung</dt><dd>1.1.0</dd>
+        </dl>
+      </section>
+      <!-- REVIEW_EXPERIENCE_END -->
+
       <section class="section" id="huong-dan">
         <div class="section-heading"><div><h2>Trợ giúp và thông tin</h2><p>Đọc cách dùng và các giới hạn trước khi bắt đầu.</p></div></div>
         <details class="info-card" open>
@@ -322,7 +398,7 @@
           <div class="prose">
             <p>Người dùng chịu trách nhiệm về tính chính xác và quyền sử dụng của dữ liệu đã nhập. Ứng dụng không xác nhận linh kiện có tương thích hay phù hợp với một trò chơi cụ thể.</p>
             <p>Không sử dụng kết quả trong ứng dụng như cam kết về hiệu năng, giá, tình trạng hàng hóa hoặc dịch vụ của bất kỳ bên nào. Bạn tự kiểm tra thông tin trước khi đưa ra quyết định.</p>
-            <p>Chủ thể cung cấp, thông tin đăng ký và kênh tiếp nhận phản hồi sẽ được công bố theo yêu cầu trước khi ứng dụng phát hành chính thức.</p>
+            <p><strong>Trạng thái phát hành:</strong> Thông tin thật về chủ thể, đăng ký, địa chỉ, số điện thoại và kênh hỗ trợ vẫn đang chờ chủ sở hữu cung cấp. Phiên bản này chưa sẵn sàng gửi xét duyệt.</p>
           </div>
         </details>
         <details class="info-card">
@@ -334,7 +410,7 @@
         </details>
         <details class="info-card">
           <summary>Phiên bản</summary>
-          <div class="prose"><p>Phiên bản hiện tại: <strong>1.0.0</strong>.</p><p>Bản phát hành này tập trung vào nhập linh kiện, tính tổng ngân sách, lưu, tải, tìm kiếm, chỉnh sửa và xóa phương án.</p></div>
+          <div class="prose"><p>Phiên bản hiện tại: <strong>1.1.0</strong>.</p><p>Bản phát hành này tập trung vào nhập linh kiện, tính tổng ngân sách, lưu, tải, tìm kiếm, chỉnh sửa và xóa phương án.</p></div>
         </details>
       </section>
     </main>
@@ -758,5 +834,116 @@
       renderSaved();
     }());
   </script>
+
+  <script>
+  /* REVIEW_EXPERIENCE_RUNTIME */
+  (function () {
+    "use strict";
+    var section = document.querySelector("[data-review-experience]");
+    if (!section) return;
+    var form = section.querySelector("[data-review-form]");
+    var results = section.querySelector("[data-review-results]");
+    var mode = section.getAttribute("data-review-mode");
+    function value(id) { var node = section.querySelector("#" + id); return node ? String(node.value || "").trim() : ""; }
+    function number(id) { var parsed = Number(value(id)); return Number.isFinite(parsed) ? parsed : NaN; }
+    function result(status, title, text) { return { status: status, title: title, text: text }; }
+    function fixed(valueNumber, digits) { return Number(valueNumber).toLocaleString("vi-VN", { maximumFractionDigits: digits, minimumFractionDigits: 0 }); }
+    function evaluate() {
+      if (mode === "pc") {
+        var rows = [];
+        rows.push(value("reviewCpuSocket") === value("reviewBoardSocket") ? result("pass", "Ổ cắm phù hợp", "CPU và bo mạch cùng dùng " + value("reviewCpuSocket") + ".") : result("warn", "Ổ cắm không trùng", "CPU dùng " + value("reviewCpuSocket") + " nhưng bo mạch dùng " + value("reviewBoardSocket") + "."));
+        rows.push(value("reviewRamType") === value("reviewBoardRam") ? result("pass", "Thế hệ RAM phù hợp", "RAM và bo mạch cùng dùng " + value("reviewRamType") + ".") : result("warn", "Thế hệ RAM không trùng", "RAM " + value("reviewRamType") + " không khớp lựa chọn " + value("reviewBoardRam") + " của bo mạch."));
+        var rank = { "Mini ITX": 1, "Micro ATX": 2, "ATX": 3 };
+        rows.push(rank[value("reviewBoardSize")] <= rank[value("reviewCaseBoard")] ? result("pass", "Kích thước bo mạch nằm trong giới hạn", "Vỏ nhận tối đa " + value("reviewCaseBoard") + ".") : result("warn", "Vỏ nhỏ hơn bo mạch", "Hãy chọn vỏ hỗ trợ " + value("reviewBoardSize") + " hoặc lớn hơn."));
+        var gpu = number("reviewGpuLength"), gpuMax = number("reviewCaseGpu");
+        rows.push(gpu > 0 && gpuMax > 0 && gpu <= gpuMax ? result("pass", "Card nằm trong khoảng trống", "Còn " + fixed(gpuMax - gpu, 0) + " mm theo hai số đã nhập.") : result("warn", "Cần kiểm tra chiều dài card", "Chiều dài card đang lớn hơn hoặc dữ liệu chưa hợp lệ."));
+        var load = number("reviewLoad"), psu = number("reviewPsu"), ratio = psu / load;
+        rows.push(load > 0 && psu > 0 && ratio >= 1.25 ? result("pass", "Có khoảng dự phòng công suất", "Nguồn bằng " + fixed(ratio, 2) + " lần tải ước tính.") : result("warn", "Khoảng dự phòng nguồn cần xem lại", "So sánh hiện tại dưới một phẩy hai mươi lăm lần hoặc dữ liệu chưa hợp lệ."));
+        return rows;
+      }
+      if (mode === "accessories") {
+        var scenario = value("reviewUseCase");
+        var requirements = {
+          fps: [["mouse", "Chuột"], ["keyboard", "Bàn phím"], ["audio", "Âm thanh hoặc tai nghe"]],
+          stream: [["microphone", "Microphone"], ["audio", "Âm thanh hoặc tai nghe"], ["webcam", "Webcam nếu cần hình ảnh"]],
+          shared: [["audio", "Tai nghe hoặc âm thanh riêng"], ["keyboard", "Bàn phím"], ["mouse", "Chuột"]]
+        }[scenario];
+        var checked = Array.prototype.map.call(section.querySelectorAll("[data-review-category]:checked"), function (node) { return node.value; });
+        var missing = requirements.filter(function (item) { return checked.indexOf(item[0]) < 0; }).map(function (item) { return item[1]; });
+        return [result(missing.length ? "warn" : "pass", missing.length ? "Còn nhóm cần cân nhắc" : "Các nhóm chính đã được đánh dấu", missing.length ? missing.join(", ") + "." : "Hãy tiếp tục xác nhận kết nối kích thước và dữ liệu thực tế."), result("info", "Dữ liệu cá nhân vẫn tách riêng", "Kết quả này không thêm mục vào danh sách và không thay đổi ngân sách đã lưu.")];
+      }
+      if (mode === "keyboard") {
+        var needNumpad = value("reviewNumpad") === "yes", desk = number("reviewDeskWidth"), travel = value("reviewTravel") === "yes";
+        var group = needNumpad ? (desk < 75 || travel ? "nhóm 96 phần trăm" : "Full size") : (desk < 70 || travel ? "nhóm 75 hoặc 65 phần trăm" : "TKL");
+        var rowsKeyboard = [result("pass", "Nhóm nên bắt đầu xem xét", group + ". Kết quả dựa trên bàn phím số không gian và nhu cầu mang theo đã chọn.")];
+        if (value("reviewQuiet") === "yes") rowsKeyboard.push(result("info", "Ưu tiên tiếng gõ", "Hãy kiểm tra công tắc vật liệu vỏ lót và thử âm thanh thực tế."));
+        if (value("reviewWireless") === "yes") rowsKeyboard.push(result("info", "Ưu tiên không dây", "Hãy xác nhận kiểu kết nối thời lượng pin và khả năng chuyển thiết bị từ thông số thật."));
+        return rowsKeyboard;
+      }
+      if (mode === "mouse") {
+        var oldDpi = number("reviewOldDpi"), oldSensitivity = number("reviewOldSensitivity"), newDpi = number("reviewNewDpi");
+        if (!(oldDpi > 0 && oldSensitivity > 0 && newDpi > 0)) return [result("warn", "Dữ liệu chưa hợp lệ", "Ba giá trị phải lớn hơn không.")];
+        var edpi = oldDpi * oldSensitivity, nextSensitivity = edpi / newDpi;
+        return [result("pass", "eDPI hiện tại", fixed(edpi, 4) + "."), result("pass", "Độ nhạy mới để giữ cùng eDPI", fixed(nextSensitivity, 6) + "."), result("info", "Phạm vi so sánh", "Chỉ áp dụng trong cùng trò chơi và cùng bối cảnh thiết lập.")];
+      }
+      if (mode === "desk") {
+        var deskW = number("reviewDeskW"), deskD = number("reviewDeskD"), monitorW = number("reviewMonitorW"), monitorD = number("reviewMonitorD"), keyboardW = number("reviewKeyboardW"), keyboardD = number("reviewKeyboardD"), matW = number("reviewMatW"), gap = number("reviewGap");
+        var front = keyboardW + matW + gap, depth = monitorD + keyboardD + gap;
+        return [result(front <= deskW ? "pass" : "warn", "Chiều rộng hàng trước", "Cần " + fixed(front, 1) + " cm trên mặt bàn rộng " + fixed(deskW, 1) + " cm."), result(depth <= deskD ? "pass" : "warn", "Chiều sâu hai hàng", "Cần khoảng " + fixed(depth, 1) + " cm trên mặt bàn sâu " + fixed(deskD, 1) + " cm."), result(monitorW <= deskW ? "pass" : "warn", "Chân màn hình", "Chiều rộng chân là " + fixed(monitorW, 1) + " cm.")];
+      }
+      if (mode === "monitor") {
+        var diagonal = number("reviewDiagonal"), pxW = number("reviewPixelsW"), pxH = number("reviewPixelsH");
+        if (!(diagonal > 0 && pxW > 0 && pxH > 0)) return [result("warn", "Dữ liệu chưa hợp lệ", "Đường chéo và độ phân giải phải lớn hơn không.")];
+        var diagonalPixels = Math.sqrt(pxW * pxW + pxH * pxH), ppi = diagonalPixels / diagonal, pitch = 25.4 / ppi;
+        var ratioLength = Math.sqrt(pxW * pxW + pxH * pxH), widthInches = diagonal * pxW / ratioLength, heightInches = diagonal * pxH / ratioLength;
+        return [result("pass", "Mật độ điểm ảnh", fixed(ppi, 2) + " PPI."), result("info", "Khoảng cách điểm ảnh ước tính", fixed(pitch, 3) + " mm."), result("info", "Vùng hiển thị ước tính", fixed(widthInches * 2.54, 1) + " cm rộng và " + fixed(heightInches * 2.54, 1) + " cm cao.")];
+      }
+      if (mode === "led") {
+        var count = Math.max(1, Math.min(6, Math.round(number("reviewLedZones") || 1))), purpose = value("reviewLedPurpose"), brightness = Math.max(0, Math.min(100, number("reviewLedBrightness") || 0));
+        var preview = section.querySelector("#reviewLedPreview");
+        if (preview) {
+          preview.textContent = "";
+          var palettes = { focus: ["#f472b6", "#60a5fa"], relax: ["#fb7185", "#f59e0b"], accent: ["#ec4899", "#a855f7"] };
+          for (var ledIndex = 0; ledIndex < count; ledIndex += 1) {
+            var dot = document.createElement("span"); dot.className = "review-led-dot"; dot.style.left = ((ledIndex + 1) * 100 / (count + 1)) + "%"; dot.style.top = (ledIndex % 2 ? 62 : 38) + "%"; dot.style.color = palettes[purpose][ledIndex % 2]; dot.style.background = palettes[purpose][ledIndex % 2]; dot.style.opacity = String(0.45 + brightness / 200); preview.appendChild(dot);
+          }
+        }
+        return [result("pass", "Sơ đồ minh họa đã tạo", count + " vùng với độ sáng nền " + fixed(brightness, 0) + " phần trăm."), result("info", "Không điều khiển thiết bị", "Sơ đồ chỉ giúp hình dung vị trí tương đối trên màn hình.")];
+      }
+      if (mode === "schedule") {
+        var parts = [["Khởi động", number("reviewWarmup")], ["Luyện tập chính", number("reviewPractice")], ["Xem lại", number("reviewReview")], ["Nghỉ", number("reviewBreak")]];
+        if (parts.some(function (part) { return !Number.isFinite(part[1]) || part[1] < 0; })) return [result("warn", "Dữ liệu chưa hợp lệ", "Thời lượng phải là số không âm.")];
+        var total = parts.reduce(function (sum, part) { return sum + part[1]; }, 0), empty = parts.filter(function (part) { return part[1] === 0; }).map(function (part) { return part[0]; });
+        return [result(total > 0 ? "pass" : "warn", "Tổng thời lượng", fixed(total, 0) + " phút."), result(empty.length ? "warn" : "pass", empty.length ? "Phần đang để trống" : "Đã có đủ bốn phần", empty.length ? empty.join(", ") + ". Hãy tự quyết định có cần bổ sung hay không." : "Kế hoạch minh họa gồm khởi động luyện tập xem lại và nghỉ.")];
+      }
+      if (mode === "usb") {
+        var code = value("reviewCableCode") || "Cáp chưa đặt mã", data = value("reviewDataRating"), power = value("reviewPowerRating");
+        var label = code + " | " + value("reviewEndA") + " đến " + value("reviewEndB") + " | dữ liệu " + (data === "unknown" ? "chưa xác định" : data) + " | công suất " + (power === "unknown" ? "chưa xác định" : power);
+        var unknown = data === "unknown" || power === "unknown";
+        return [result("pass", "Nhãn được tạo từ dữ liệu đã chọn", label + "."), result(unknown ? "warn" : "info", unknown ? "Còn thuộc tính chưa xác định" : "Các thuộc tính đã được người dùng đánh dấu", unknown ? "Không suy đoán tốc độ hoặc công suất từ hình dạng đầu nối." : "Hãy bảo đảm các giá trị đến từ nhãn hoặc tài liệu thật của cáp.")];
+      }
+      if (mode === "gamepad") {
+        var mappings = [["A", value("reviewMapA")], ["B", value("reviewMapB")], ["X", value("reviewMapX")], ["Y", value("reviewMapY")]], blanks = mappings.filter(function (item) { return !item[1]; }).map(function (item) { return item[0]; });
+        var seen = {}, duplicates = [];
+        mappings.forEach(function (item) { var normalized = item[1].toLocaleLowerCase("vi"); if (!normalized) return; if (seen[normalized] && duplicates.indexOf(item[1]) < 0) duplicates.push(item[1]); else seen[normalized] = true; });
+        return [result(blanks.length ? "warn" : "pass", blanks.length ? "Phím chưa có ghi chú" : "Bốn phím đều có ghi chú", blanks.length ? blanks.join(", ") + "." : "A B X Y đã có nội dung."), result(duplicates.length ? "warn" : "pass", duplicates.length ? "Thao tác xuất hiện nhiều lần" : "Không thấy thao tác lặp", duplicates.length ? duplicates.join(", ") + ". Hãy xác nhận đây có phải chủ ý hay không." : "Mỗi thao tác minh họa hiện được ghi một lần.")];
+      }
+      return [result("warn", "Không nhận diện được công cụ", "Vui lòng tải lại trang.")];
+    }
+    function render(rows) {
+      results.textContent = "";
+      rows.forEach(function (row) {
+        var node = document.createElement("div"); node.className = "review-result " + row.status;
+        var strong = document.createElement("strong"); strong.textContent = row.title;
+        var span = document.createElement("span"); span.textContent = row.text;
+        node.appendChild(strong); node.appendChild(span); results.appendChild(node);
+      });
+    }
+    function run(event) { if (event) event.preventDefault(); render(evaluate()); }
+    form.addEventListener("submit", run);
+    run();
+  }());
+  </script>
+
 </body>
 </html>

@@ -29,7 +29,7 @@
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; min-width: 320px; padding-bottom: 46px; color: var(--text); background: radial-gradient(circle at 8% 0%, rgba(233, 185, 255, .15), transparent 30rem), radial-gradient(circle at 100% 28%, rgba(217, 148, 243, .12), transparent 27rem), var(--bg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
+    body { margin: 0; min-width: 0; padding-bottom: 46px; color: var(--text); background: radial-gradient(circle at 8% 0%, rgba(233, 185, 255, .15), transparent 30rem), radial-gradient(circle at 100% 28%, rgba(217, 148, 243, .12), transparent 27rem), var(--bg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid rgba(233, 185, 255, .47); outline-offset: 2px; }
@@ -65,6 +65,7 @@
     .card { padding: 19px; }
     .card h3 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
     .card-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+    .section-heading > :first-child, .card-head > :first-child, .result-head > :first-child { min-width: 0; }
     .card-head small { color: var(--muted); font-size: 12px; }
     .calc-grid { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); gap: 18px; align-items: start; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -139,7 +140,7 @@
     .contact-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
     .footer-note { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
     @media (max-width: 860px) { .hero, .calc-grid, .info-grid { grid-template-columns: 1fr; } .hero-art { min-height: 205px; } .hero-art img { min-height: 205px; } }
-    @media (max-width: 580px) { .content { padding: 17px 12px; } .topbar { padding-left: 12px; padding-right: 12px; } .storage-badge { display: none; } .form-grid, .summary-grid { grid-template-columns: 1fr 1fr; } .summary-item:last-child { grid-column: 1 / -1; } .ingredient-row, .saved-row { align-items: start; flex-direction: column; } .row-actions { justify-content: start; } .card { padding: 15px; } }
+    @media (max-width: 580px) { .content { padding: 17px 12px; } .topbar { padding-left: 12px; padding-right: 12px; } .storage-badge { display: none; } .form-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } .summary-grid { grid-template-columns: 1fr 1fr; } .summary-item:last-child { grid-column: 1 / -1; } .section-heading, .card-head, .result-head { align-items: flex-start; flex-direction: column; gap: 8px; } .section-heading > :first-child, .card-head > :first-child, .result-head > :first-child { width: 100%; } .actions { width: 100%; } .actions > .btn { flex: 1 1 100%; min-width: 0; } input, select, textarea { font-size: 16px; } .result-head > .btn { width: 100%; min-width: 0; } .ingredient-row, .saved-row { align-items: start; flex-direction: column; } .ingredient-main, .saved-main, .row-actions, .contact-actions { width: 100%; } .row-actions, .contact-actions { justify-content: start; } .row-actions > .btn, .contact-actions > .btn { flex: 1 1 120px; min-width: 0; } .row-title { overflow: visible; overflow-wrap: anywhere; white-space: normal; } .result-row { align-items: flex-start; flex-direction: column; gap: 6px; } .result-name, .result-value { width: 100%; overflow-wrap: anywhere; } .result-value { text-align: left; } .btn, .btn.small { min-height: 44px; } .card { padding: 15px; } }
     @media print { body { color: #111; background: #fff; } .topbar, .hero, .calc-grid > .card:first-child, .section-heading, .info-grid, .footer-note, .actions, .unit-note, .notice, .fraction-notice, .ratio-card { display: none !important; } .content { padding: 0; } .calc-grid { display: block; } .result-panel, .card { border: 0; box-shadow: none; background: #fff; } .result-row, .summary-item { color: #111; border-color: #bbb; background: #fff; } .result-name, .result-value, .result-conversion, .summary-item span, .summary-item strong { color: #111; } }
   </style>
 </head>
